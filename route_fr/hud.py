@@ -9,7 +9,7 @@ import cv2
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
-from .classes import CATEGORIES, CLASSES
+from .classes import CATEGORIES, CLASSES, CODE_AFFICHE
 
 HERE = Path(__file__).resolve().parent
 FONT = HERE / "fonts" / "DejaVuSans.ttf"
@@ -149,7 +149,7 @@ class Hud:
                 blit(p, ic, 16 + (50 - ic.shape[1]) // 2, y + (50 - ic.shape[0]) // 2)
             color = CATEGORIES[c.categorie][0]
             put_text(p, c.nom, (78, y + 2), 16, (255, 255, 255), True)
-            put_text(p, f"{c.code}  ·  {int(time.time() - t_ev)} s", (78, y + 26), 13, color)
+            put_text(p, f"{CODE_AFFICHE.get(c.code, c.code)}  ·  {int(time.time() - t_ev)} s", (78, y + 26), 13, color)
             for j, line in enumerate(lines):
                 put_text(p, line, (78, y + 50 + 19 * j), 14, (205, 205, 205))
             y += need

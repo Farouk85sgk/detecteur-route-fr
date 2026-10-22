@@ -326,7 +326,7 @@ _SUFFIX = ["", "", "", "", "-SUR-LOIRE", "-EN-BRIE", "-LES-BAINS", "-SUR-MER", "
 
 def town_name(rng):
     if rng is None:
-        return "STE LUCILLE"
+        return "VILLE"  # icônes : nom générique
     name = rng.choice(_PREFIX) + rng.choice(_ROOTS) + rng.choice(_SUFFIX)
     return name.replace("SAINT-", "ST ").replace("SAINTE-", "STE ") if rng.random() < 0.3 else name
 

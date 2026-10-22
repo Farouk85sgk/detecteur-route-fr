@@ -3,8 +3,9 @@
 Application de détection **en direct** des panneaux de signalisation et des marquages au sol français, construite
 sur le code de [YOLOv5](https://github.com/ultralytics/yolov5) (dossier `yolov5/`).
 
-**Version téléphone, sans installation : https://farouk85sgk.github.io/detecteur-route-fr/** (voir
-« Version téléphone » plus bas).
+**Version téléphone « Repère », sans installation : https://farouk85sgk.github.io/detecteur-route-fr/** :
+détection en direct avec feux, piétons et cyclistes, trajets en photos, album, quiz, examens blancs, quête et
+profils (voir « Version téléphone » plus bas).
 
 - **87 classes** : 67 panneaux (danger, priorité, interdiction, obligation, fin, zones, agglomération, indication)
   et 20 marquages au sol (lignes continue / discontinue / mixte, ligne STOP, ligne cédez-le-passage, passage piétons,
@@ -78,21 +79,63 @@ rencontrés, à ouvrir dans Excel pour le débriefing d'une leçon). `python app
 1. Installez **IP Webcam** (Android) ou **DroidCam** (Android / iPhone), téléphone et ordinateur sur le même Wi-Fi.
 2. Lancez le serveur vidéo dans l'appli, puis `python app.py --source http://<adresse-du-téléphone>:8080/video`.
 
-### Version téléphone (navigateur, sans installation)
+### Version téléphone : l'appli « Repère » (navigateur, sans installation)
 
-Le dossier `docs/` contient la même détection fonctionnant **directement dans le navigateur du téléphone**
-(caméra arrière, calcul sur l'appareil avec ONNX Runtime Web : WebGPU si disponible, sinon WebAssembly ;
-aucune image n'est envoyée sur Internet). Fonctions : cadres, vitesse en cours, dernier panneau avec son
-explication, annonces vocales (bouton « Voix »), plein écran, analyse d'une vidéo enregistrée.
+Le dossier `docs/` contient une application complète qui fonctionne **directement dans le navigateur du
+téléphone** : **https://farouk85sgk.github.io/detecteur-route-fr/**. Le calcul se fait sur l'appareil (ONNX Runtime
+Web : carte graphique WebGPU si disponible, sinon processeur) et **rien n'est envoyé sur Internet** : profils,
+photos, trajets et progression restent sur le téléphone. Sur Android ou iPhone, menu du navigateur →
+« Ajouter à l'écran d'accueil » pour l'installer comme une appli.
 
-- **Sur le téléphone** : ouvrir **https://farouk85sgk.github.io/detecteur-route-fr/** et autoriser la caméra
-  (le navigateur ne donne accès à la caméra qu'en HTTPS, ce que fournit GitHub Pages).
-- **Mise en ligne, une seule fois** : sur la page GitHub du dépôt, onglet **Settings** → **Pages** → *Build and
-  deployment* : Source « Deploy from a branch », branche `main`, dossier `/docs` → **Save**. Le site est en ligne
-  une à deux minutes plus tard et se met à jour à chaque envoi sur GitHub (gratuit pour un dépôt public).
-- **Sur l'ordinateur** : `python -m http.server --directory docs 8000` puis ouvrir http://localhost:8000
-- Paramètres d'adresse : `?taille=512` (plus rapide), `?backend=wasm` (si la carte graphique pose problème).
-- Après un réentraînement : `python tools/export_web.py` met à jour `docs/` (modèles ONNX, classes, icônes).
+- **Détection en direct** (caméra ou vidéo) : les 87 panneaux et marquages, plus **feux tricolores** (couleur lue,
+  annonce du passage au vert), **piétons, cyclistes et deux-roues** avec leur distance approximative. Carte du
+  dernier élément avec son explication, historique en pastilles, vitesse maximale en cours, lignes à gauche et à
+  droite, annonces vocales (« Limitation à 50 », règle expliquée à voix haute), vibration. Pause : pincer pour
+  zoomer, toucher un cadre pour ouvrir sa fiche. Mode paysage : la route à gauche, le panneau à droite.
+- **Mes trajets** : une photo de la route à chaque élément repéré (cadres incrustés), avec l'heure, le moment de la
+  vidéo et la position GPS (lien vers la carte) ; vidéo du trajet à enregistrer ou partager ; quiz du trajet.
+- **Album** : les 93 éléments rangés en 10 familles, en couleur une fois repérés sur la route, avec leur fiche
+  (sens, bon réflexe, comment le reconnaître, ta photo).
+- **Quiz** : dernier trajet, album, tout le code, par famille, erreurs à revoir, **examen blanc** (40 questions de
+  20 s, 35 pour réussir), **séries de code importées** de l'auto-école (voir ci-dessous).
+- **La quête** : une carte avec une région par famille ; repérer 4 éléments de la famille sur la route ouvre le
+  donjon de son gardien (10 questions, 3 cœurs, loupe et potion) ; chaque gardien vaincu donne un éclat du Panneau
+  d'Or. Quêtes du jour, panneau mystère, coffre, flamme des jours de suite, pépites, échoppe (objets et titres),
+  niveaux, 16 badges, **classement** en 8 catégories entre les profils du téléphone et des amis ajoutés par code.
+- **Profils** : plusieurs élèves sur un même téléphone, chacun avec ses réglages, sa couleur de fond (Auto, Blanc,
+  Crème, Sauge, Bleu nuit), son album, ses trajets et sa progression.
+- **Mes panneaux** : un panneau que l'appli ne connaît pas, ou qu'elle confond ? On le prend en photo, on dit ce
+  que c'est, et l'appli le reconnaît ensuite (modèle d'empreintes `empreinte.onnx`).
+- **Réglages** : ce qu'il faut détecter (famille par famille ou élément par élément), qualité d'analyse (Rapide,
+  Équilibrée, Fine), photos, GPS, vidéo, paysage, sons, et un diagnostic. **Sans réseau** : bouton « Tout préparer
+  pour rouler sans réseau » (environ 50 Mo), puis l'appli fonctionne hors connexion.
+
+Mise en ligne (une seule fois) : sur la page GitHub du dépôt, **Settings** → **Pages** → Source « Deploy from a
+branch », branche `main`, dossier `/docs` → **Save**. Le site se met ensuite à jour à chaque envoi sur GitHub.
+Sur l'ordinateur : `python -m http.server --directory docs 8000` puis http://localhost:8000 (paramètre d'adresse
+`?backend=wasm` si la carte graphique pose problème). Après un réentraînement : `python tools/export_web.py`.
+
+**Séries de code de l'auto-école** (« Code et examens » sur l'accueil) : un fichier JSON importé depuis le
+téléphone ou par un lien `https://` (le serveur doit autoriser CORS). Une question a 2 à 6 choix ; `bonnes` donne la
+ou les bonnes réponses (à partir de 0) ; l'image est soit un panneau de l'appli (`panneau`, code de
+`route_fr/classes.py`), soit une adresse `https://` ou une image `data:` ; `type` vaut `serie` ou `examen`
+(examen : 20 s par question, corrigé à la fin).
+
+```json
+{
+  "titre": "Auto-école du Centre : séries de code",
+  "auteur": "Auto-école du Centre",
+  "series": [
+    { "titre": "Série 1", "type": "serie", "questions": [
+      { "question": "Que signifie ce panneau ?", "panneau": "AB4",
+        "choix": ["Arrêt obligatoire", "Cédez le passage", "Sens interdit"], "bonnes": [0],
+        "explication": "STOP : arrêt complet à la ligne, puis céder le passage." },
+      { "question": "Quelles affirmations sont vraies ?", "image": "https://exemple.fr/photo.jpg",
+        "choix": ["Je peux dépasser", "Je dois ralentir", "Je cède le passage"], "bonnes": [1, 2] }
+    ]}
+  ]
+}
+```
 
 ### Aller plus vite
 
@@ -148,6 +191,12 @@ Tests sur de vraies images :
 - **300 vraies images de route** (américaines, donc sans panneau français), image par image : 9 fausses détections
   de panneaux (3 % des images), surtout des panneaux propres aux États-Unis. En direct, l'exigence de 2 détections
   consécutives et d'une taille minimale en élimine une partie.
+
+Version web, sur un processeur de bureau sans carte graphique (WebAssembly, un seul cœur) : environ 230 ms par
+image à la taille « Équilibrée » avec panneaux, classifieur, feux et usagers (4 à 5 images/s) ; bien plus rapide
+avec WebGPU. « Mes panneaux » : sur des panneaux jamais vus (validation de 784 dessins inventés, parfois très
+proches), une seule photo suffit pour retrouver le panneau dans 30 à 50 % des images au seuil retenu (0,2 % de
+chances qu'un autre panneau soit pris pour lui), et dans 98 % des cas pour corriger un panneau déjà connu.
 
 **Limite importante** : ces mesures portent sur des images synthétiques ; les performances sur de vraies routes
 françaises n'ont pas pu être mesurées (aucune image réelle annotée disponible). Le modèle fourni est une **base de
@@ -206,7 +255,11 @@ python synth/prepare_backgrounds.py --src <dossier comma10k converti> --out data
 python synth/find_real_stops.py --fonds datasets_src/fonds
 python synth/generate.py --fonds datasets_src/fonds --out datasets/route_fr --train 24000 --val 1500
 python synth/generate_crops.py --fonds datasets_src/fonds --out datasets/panneaux_cls --par-classe 1500
-python tools/make_icons.py          # icônes du panneau latéral
+python tools/make_icons.py          # icônes (panneau latéral, version web, icônes de l'appli installée)
+# « Mes panneaux » (version web) : 7 843 panneaux-identités, puis modèle d'empreintes -> docs/empreinte.onnx
+python synth/generate_identites.py --fonds datasets_src/fonds --out datasets/empreintes
+python tools/train_empreinte.py --data datasets/empreintes
+python tools/export_web.py          # modèles ONNX, classes et icônes de la version web
 ```
 
 ## 6. Organisation
@@ -221,8 +274,10 @@ route_fr/hud.py         affichage (cadres, vitesse en cours, historique, explica
 route_fr/video.py       capture threadée (webcam, fichier, flux réseau, écran)
 route_fr/signs_svg.py   dessins vectoriels des panneaux
 synth/                  génération du jeu de données synthétique
-tools/                  entraînement CPU bf16, extraction d'images, pré-annotation, icônes, export web
-docs/                   version web (navigateur du téléphone), publiée par GitHub Pages
+tools/                  entraînement CPU bf16, extraction d'images, pré-annotation, icônes, export web,
+                        modèle d'empreintes (train_empreinte.py)
+docs/                   appli web « Repère » publiée par GitHub Pages : index.html, css/, js/ (moteur.js
+                        détection, camera.js, quiz.js, quete.js, album.js...), modèles ONNX, icônes, polices
 weights/                modèles entraînés
 yolov5/                 code YOLOv5 (ultralytics/yolov5, commit af08ba1, non modifié)
 ```
@@ -231,4 +286,6 @@ yolov5/                 code YOLOv5 (ultralytics/yolov5, commit af08ba1, non mod
 
 - YOLOv5 : AGPL-3.0 (Ultralytics). Ce projet, qui en dérive, est distribué sous la même licence (`LICENSE`).
 - Images comma10k (entraînement uniquement, non incluses) : MIT. Polices DejaVu : licence libre Bitstream Vera /
-  DejaVu (`route_fr/fonts/LICENSE`). ONNX Runtime Web (chargé par la version web) : MIT.
+  DejaVu (`route_fr/fonts/LICENSE`). Polices de la version web Bricolage Grotesque et Overpass : licence OFL
+  (`docs/polices/LICENSE.txt`). ONNX Runtime Web (chargé par la version web) : MIT. Détection des piétons, vélos,
+  motos et feux : YOLOv5n COCO d'origine (Ultralytics, AGPL-3.0).

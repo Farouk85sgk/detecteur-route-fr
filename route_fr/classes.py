@@ -83,8 +83,8 @@ CLASSES = [
     RoadClass("B34", "Fin d'interdiction de dépasser", "fin", "Le dépassement est de nouveau autorisé (si la manœuvre est sans danger)."),
     # --- Obligation (B21, B22) ---
     RoadClass("B21b", "Tout droit obligatoire", "obligation", "Direction obligatoire à la prochaine intersection : tout droit."),
-    RoadClass("B21d1", "Obligation à droite", "obligation", "Obligation de tourner à droite (B21-1, B21d1)."),
-    RoadClass("B21d2", "Obligation à gauche", "obligation", "Obligation de tourner à gauche (B21-2, B21d2)."),
+    RoadClass("B21d1", "Obligation à droite", "obligation", "Obligation de tourner à droite (B21-1 avant le panneau, B21c1 à la prochaine intersection)."),
+    RoadClass("B21d2", "Obligation à gauche", "obligation", "Obligation de tourner à gauche (B21-2 avant le panneau, B21c2 à la prochaine intersection)."),
     RoadClass("B21c1", "Tout droit ou à droite", "obligation", "Directions obligatoires : tout droit ou à droite."),
     RoadClass("B21c2", "Tout droit ou à gauche", "obligation", "Directions obligatoires : tout droit ou à gauche."),
     RoadClass("B21e", "À droite ou à gauche", "obligation", "Directions obligatoires : à droite ou à gauche."),
@@ -132,3 +132,6 @@ NAMES = [c.code for c in CLASSES]
 BY_CODE = {c.code: i for i, c in enumerate(CLASSES)}
 SIGN_CODES = [c.code for c in CLASSES if c.categorie != "marquage"]
 MARKING_CODES = [c.code for c in CLASSES if c.categorie == "marquage"]
+
+# Codes officiels (IISR) affichés, quand ils diffèrent de l'identifiant interne de la classe (gardé pour les modèles)
+CODE_AFFICHE = {"B21d1": "B21c1", "B21d2": "B21c2", "B21c1": "B21d1", "B21c2": "B21d2"}

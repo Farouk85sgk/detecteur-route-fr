@@ -53,15 +53,11 @@ def background(rng, fonds, names):
     return cv2.resize(img[y : y + p, x : x + p], (CANVAS, CANVAS), interpolation=cv2.INTER_LINEAR).astype(np.float32)
 
 
-def make(job):
-    idx, seed, split, cls, fonds, names, out = job
-    rng, nrng = random.Random(seed), np.random.default_rng(seed)
+def crop_image(svg, rng, nrng, fonds, names, low_min=10, clean=False):
+    """Vignette 64 x 64 : `svg` (ou rien, pour une vignette de fond) en perspective sur un fond routier réel.
+    `low_min` : résolution minimale simulée (px) ; `clean` : vignette nette (sans voile, flou ni bruit)."""
     canvas = background(rng, fonds, names)
-    kind = cls
-    if cls == "fond":
-        kind = rng.choice(DECOY_KINDS + ["patch", "patch", "patch"])
-    if kind != "patch":
-        svg = other_sign(rng) if cls == "autre" else decoy(kind, rng) if cls == "fond" else build(kind, rng)
+    if svg is not None:
         rgba, aspect = rasterize(svg, 160)
         w, h = (aspect, 1.0) if aspect >= 1 else (1.0, 1 / aspect)
         size = rng.uniform(0.72, 0.98) * CANVAS  # grand côté du panneau : recadrage carré autour de la détection
@@ -83,19 +79,31 @@ def make(job):
                 alpha, color = foliage(canvas.shape, (ax0, ay0, ax1, ay1), rng, nrng)
                 alpha = alpha[..., None] * 0.8
                 canvas = canvas * (1 - alpha) + color * alpha
-    if rng.random() < 0.25:  # voile / reflet : couleurs pâlies et désaturées (vitre, soleil, affiche brillante)
+    if not clean and rng.random() < 0.25:  # voile / reflet : couleurs pâlies et désaturées (vitre, soleil, affiche brillante)
         veil = rng.uniform(0.1, 0.45)
         grey = canvas.mean(2, keepdims=True)
         canvas = (canvas * (1 - veil) + 255 * veil) * 0.7 + grey * 0.3 * (1 - veil) + 255 * 0.3 * veil
     img = np.clip(canvas, 0, 255).astype(np.uint8)
     # basse résolution : un panneau lointain occupe peu de pixels avant agrandissement
-    low = int(np.clip(math.exp(rng.uniform(math.log(10), math.log(72))), 10, SIZE))
+    low = SIZE if clean else int(np.clip(math.exp(rng.uniform(math.log(low_min), math.log(72))), low_min, SIZE))
     img = cv2.resize(img, (low, low), interpolation=cv2.INTER_AREA)
-    if rng.random() < 0.3:
+    if not clean and rng.random() < 0.3:
         img = cv2.GaussianBlur(img, (0, 0), rng.uniform(0.3, 0.9))
-    if rng.random() < 0.5:
+    if not clean and rng.random() < 0.5:
         img = np.clip(img + nrng.normal(0, rng.uniform(1, 7), img.shape), 0, 255).astype(np.uint8)
-    img = cv2.resize(img, (SIZE, SIZE), interpolation=cv2.INTER_LINEAR)
+    return cv2.resize(img, (SIZE, SIZE), interpolation=cv2.INTER_LINEAR)
+
+
+def make(job):
+    idx, seed, split, cls, fonds, names, out = job
+    rng, nrng = random.Random(seed), np.random.default_rng(seed)
+    kind = cls
+    if cls == "fond":
+        kind = rng.choice(DECOY_KINDS + ["patch", "patch", "patch"])
+    svg = None
+    if kind != "patch":
+        svg = other_sign(rng) if cls == "autre" else decoy(kind, rng) if cls == "fond" else build(kind, rng)
+    img = crop_image(svg, rng, nrng, fonds, names)
     cv2.imwrite(f"{out}/{split}/{cls}/{idx:06d}.jpg", img, [cv2.IMWRITE_JPEG_QUALITY, rng.randint(55, 95)])
     return 1
 
