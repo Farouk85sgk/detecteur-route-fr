@@ -1,0 +1,6 @@
+# Scripts Windows : fins de ligne CRLF conservées telles quelles
+*.bat -text
+# Scripts shell : toujours LF (sinon erreurs sous macOS / Linux / WSL)
+*.sh text eol=lf
+# Code YOLOv5 copié sans modification : exclu des statistiques de langages GitHub
+yolov5/** linguist-vendored

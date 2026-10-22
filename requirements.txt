@@ -1,0 +1,8 @@
+# Application temps réel : dépendances de YOLOv5 (PyTorch, OpenCV...)
+-r yolov5/requirements.txt
+onnxruntime>=1.15   # inférence rapide sur processeur avec weights/route_fr_yolov5n.onnx
+
+# Optionnels
+# mss               # --source ecran (capture d'écran)
+# pyttsx3           # --voix (annonces vocales hors ligne)
+# cairosvg          # régénérer le jeu de données synthétique / les icônes

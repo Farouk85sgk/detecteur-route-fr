@@ -1,0 +1,28 @@
+# Jeux de données et entraînements (volumineux, régénérables : voir README sections 4 et 5)
+/datasets
+/datasets_src
+/runs/
+/mes_donnees/
+/mes_videos/
+yolov5/runs/
+yolov5/*.pt
+
+# Modèles exportés localement (OpenVINO, TensorRT...)
+weights/*_openvino_model/
+weights/*.engine
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Sorties de l'application (touches S et R)
+capture_*.jpg
+enregistrement_*.mp4
+
+# Système
+.DS_Store
+Thumbs.db
