@@ -243,7 +243,7 @@ function dessiner() {
     if (!t.ok || t.misses > 2) continue;
     const it = D.items[moteur.classe(t)];
     if (!it) continue;
-    if (it.groupe === "m" && /^M_ligne_(continue|discontinue|mixte)$/.test(it.code)) {
+    if (it.groupe === "m" && /^M_ligne_(continue|discontinue|mixte|dissuasion|rive)$/.test(it.code)) {
       const cote = (t.box[0] + t.box[2]) / 2 < C.vw / 2 ? "g" : "d";
       if (!lignes[cote] || t.conf > lignes[cote].conf) lignes[cote] = { nom: it.nom, conf: t.conf };
     }
@@ -256,7 +256,7 @@ function dessiner() {
     const ty = y1 - th - 3 * dpr > 0 ? y1 - th - 3 * dpr : y2 + 3 * dpr;
     ctx.fillStyle = it.couleur;
     ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x1, ty, tw, th, 8 * dpr) : ctx.rect(x1, ty, tw, th); ctx.fill();
-    ctx.fillStyle = ["zone", "priorite", "marquage", "feu"].includes(it.categorie) ? "#111" : "#fff";
+    ctx.fillStyle = ["zone", "priorite", "marquage", "feu", "temporaire", "panonceau"].includes(it.categorie) ? "#111" : "#fff";
     ctx.fillText(txt, x1 + 7 * dpr, ty + th / 2 + dpr);
   }
   // lignes de part et d'autre, vitesse en cours
@@ -286,7 +286,7 @@ function composer(canvas, largeur, focus = null) {
     const txt = etiquette(it, t), tw = g.measureText(txt).width + W / 70, th = W / 30;
     const ty = y1 - th > 0 ? y1 - th : y2;
     g.fillStyle = it.couleur; g.fillRect(x1, ty, tw, th);
-    g.fillStyle = ["zone", "priorite", "marquage", "feu"].includes(it.categorie) ? "#111" : "#fff";
+    g.fillStyle = ["zone", "priorite", "marquage", "feu", "temporaire", "panonceau"].includes(it.categorie) ? "#111" : "#fff";
     g.fillText(txt, x1 + W / 140, ty + th / 2);
   }
   const it = focus || (C.historique[0] && D.parCode[C.historique[0]]);

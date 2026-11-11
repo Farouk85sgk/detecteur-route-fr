@@ -167,6 +167,7 @@ async function diagnostic(zone, moteur) {
     ["Temps par image", moteur.ms ? `${Math.round(moteur.ms)} ms` : "—"],
     ["Taille d'analyse", `${moteur.cote} px`],
     ["Processeur", `${navigator.hardwareConcurrency || "?"} cœurs`],
+    ["Calcul sur plusieurs cœurs", self.crossOriginIsolated ? (moteur.pret && moteur.fils > 1 ? `actif (${moteur.fils} fils)` : "disponible") : "à la prochaine ouverture de l'appli"],
     ["WebGPU", "gpu" in navigator ? "disponible" : "non disponible"],
     ["Stockage utilisé", est ? `${(est.usage / 1e6).toFixed(1)} Mo sur ${(est.quota / 1e9).toFixed(1)} Go` : "—"],
     ["Mode hors ligne", navigator.serviceWorker?.controller ? "actif" : "inactif"],

@@ -180,9 +180,10 @@ class Scene:
         self.night = float(cv2.cvtColor(self.img, cv2.COLOR_BGR2GRAY).mean()) < 55
 
     def bord(self, cote):
-        """Position latérale (m) du bord de la chaussée, à droite (cote = 1) ou à gauche (-1) ; None s'il n'est pas visible."""
+        """Bord de la chaussée à droite (cote = 1) ou à gauche (-1) : sa position latérale (m) s'il est visible,
+        "loin" si la chaussée continue jusqu'au bord de l'image, None si on ne peut pas le situer (véhicule, tracé flou)."""
         cam, (H, W) = self.cam, self.mask.shape
-        xc, xs = (self.xl + self.xr) / 2, []
+        xc, xs, hors, lignes = (self.xl + self.xr) / 2, [], 0, 0
         for v in np.linspace(cam.v0 + 0.1 * H, H - 2, 10).astype(int):
             if v <= cam.v0 + 4 or v >= H:
                 continue
@@ -191,14 +192,18 @@ class Scene:
             row = self.mask[v]
             if not 0 <= u < W or row[u] != ROAD:
                 continue
+            lignes += 1
             autres = np.nonzero(row[u:] != ROAD)[0] if cote > 0 else np.nonzero(row[: u + 1][::-1] != ROAD)[0]
             if len(autres) == 0:
-                continue  # la chaussée sort de l'image
+                hors += 1  # la chaussée sort de l'image
+                continue
             e = u + cote * int(autres[0])
             if row[e] in (MOVABLE, MYCAR):
                 continue  # bord caché par un véhicule
             xs.append((e - cam.u0) * z / cam.f)
-        return float(np.median(xs)) if len(xs) >= 3 and np.std(xs) < 1.0 else None
+        if len(xs) >= 3 and np.std(xs) < 1.0:
+            return float(np.median(xs))
+        return "loin" if lignes >= 4 and hors >= 0.7 * lignes else None
 
     def occluder(self, z):
         occ = self.hood.copy()
@@ -255,33 +260,27 @@ def plan_markings(sc, rng):
         elif code in TRANSVERSAUX + ("M_passage_pietons", "M_damier"):
             z_end = min(z_end, z - 0.4)
         items.append(make_local(code, x, z, lw, rng, cam))
-    # lignes longitudinales : axe à gauche de la voie, voie de droite ou rive, selon la position du bord de la chaussée
+    # lignes longitudinales. Une ligne qui longe le bord de la chaussée est une ligne de rive, les autres séparent des
+    # voies : quand le bord n'est pas situé avec certitude, on ne trace rien de ce côté (pas d'exemple ambigu).
     if rng.random() < 0.88:
         z0 = 1.5
-        xd, xg = sc.bord(1), sc.bord(-1)
-        rive_d = xd is not None and xd - xr < 1.3 and rng.random() < 0.75  # la voie longe le bord droit : ligne de rive
-        rive_g = xg is not None and xl - xg < 1.3 and rng.random() < 0.6  # sens unique, chaussée séparée : rive à gauche
-        if rive_g:
-            items.append(longitudinal("M_ligne_rive", max(xl, xg + rng.uniform(0.12, 0.4)), z0, z_end, rng))
-        else:
-            style = rng.choices(["M_ligne_continue", "M_ligne_discontinue", "M_ligne_mixte", "M_ligne_dissuasion", None], [0.3, 0.34, 0.16, 0.15, 0.05])[0]
+        for cote, x_voie, styles, poids in ((-1, xl, ["M_ligne_continue", "M_ligne_discontinue", "M_ligne_mixte", "M_ligne_dissuasion", None], [0.3, 0.34, 0.16, 0.15, 0.05]),
+                                            (1, xr, ["M_ligne_continue", "M_ligne_discontinue", None], [0.3, 0.45, 0.25])):
+            bord = sc.bord(cote)
+            if bord is None:
+                continue
+            marge = float("inf") if bord == "loin" else cote * (bord - x_voie)  # largeur de chaussée au-delà de la ligne de la voie
+            if marge < 1.3:  # la voie longe le bord : ligne de rive (ou rien)
+                if rng.random() < 0.8:
+                    items.append(longitudinal("M_ligne_rive", x_voie if marge > 0.4 else bord - cote * rng.uniform(0.12, 0.4), z0, z_end, rng))
+                continue
+            style = rng.choices(styles, poids)[0]
             if style:
-                items.append(longitudinal(style, xl, z0, z_end, rng))
-        if rive_d:
-            items.append(longitudinal("M_ligne_rive", min(xr, xd - rng.uniform(0.12, 0.4)), z0, z_end, rng))
-        else:
-            style = rng.choices(["M_ligne_continue", "M_ligne_discontinue", None], [0.3, 0.45, 0.25])[0]
-            if style:
-                items.append(longitudinal(style, xr, z0, z_end, rng))
-            if xd is not None and xd - xr > 2.2 and rng.random() < 0.6:  # chaussée large : rive au bord droit
-                items.append(longitudinal("M_ligne_rive", xd - rng.uniform(0.12, 0.4), z0, z_end, rng))
-            elif rng.random() < 0.3:
-                items.append(longitudinal(rng.choice(["M_ligne_continue", "M_ligne_discontinue"]), xr + lw, z0, z_end, rng))
-        if not rive_g:
-            if xg is not None and xl - xg > 2.2 and rng.random() < 0.5:
-                items.append(longitudinal("M_ligne_rive", xg + rng.uniform(0.12, 0.4), z0, z_end, rng))
-            elif rng.random() < 0.25:
-                items.append(longitudinal(rng.choice(["M_ligne_continue", "M_ligne_discontinue"]), xl - lw, z0, z_end, rng))
+                items.append(longitudinal(style, x_voie, z0, z_end, rng))
+            if bord != "loin" and marge > 2.2 and rng.random() < 0.6:  # chaussée plus large : rive au bord
+                items.append(longitudinal("M_ligne_rive", bord - cote * rng.uniform(0.12, 0.4), z0, z_end, rng))
+            if marge > lw + 1.5 and rng.random() < 0.3:  # ligne de la voie suivante
+                items.append(longitudinal(rng.choice(["M_ligne_continue", "M_ligne_discontinue"]), x_voie + cote * lw, z0, z_end, rng))
     return [m for m in items if m is not None]
 
 
@@ -332,7 +331,7 @@ def paint_markings(sc, rng, nrng):
             continue
         paint = yellow if mk.color == "yellow" else white
         img = img * (1 - av[..., None]) + paint * av[..., None]
-        labels.append((DET_MARQUAGE[mk.code], x0, y0, x1, y1))
+        labels.append((DET_MARQUAGE.get(mk.code, DET_IGNORER), x0, y0, x1, y1))  # marquage peint mais non appris : zone ignorée
     sc.img = np.clip(img, 0, 255).astype(np.uint8)
     return labels
 

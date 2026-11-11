@@ -53,16 +53,21 @@ def main():
     ap.add_argument("--out", default=str(ROOT / "datasets" / "vignettes"))
     ap.add_argument("--conf", type=float, default=0.15)
     ap.add_argument("--max", type=int, default=0)
+    ap.add_argument("--partie", default="0/1", help="i/n : ne traiter qu'une vue sur n (pour lancer n processus en parallèle)")
     a = ap.parse_args()
+    partie, parties = map(int, a.partie.split("/"))
+    if parties > 1:
+        torch.set_num_threads(1)
     model = attempt_load(a.poids, device=torch.device("cpu"), fuse=True).eval()
     cls = SignClassifier(a.classifieur, torch.device("cpu"))
     sources = [json.loads(l) for l in open(Path(a.reel) / "sources.jsonl", encoding="utf-8")]
-    sources = [s for s in sources if s["split"] == "train"][: a.max or None]
+    sources = [s for s in sources if s["split"] == "train"][: a.max or None][partie::parties]
     out, total = Path(a.out) / "train", collections.Counter()
     for d in ("fond", "autre"):
         (out / d).mkdir(parents=True, exist_ok=True)
-        for f in (out / d).glob("rejet_*.jpg"):  # récolte précédente
-            f.unlink()
+        if parties == 1:
+            for f in (out / d).glob("rejet_*.jpg"):  # récolte précédente (avec --partie, la supprimer avant de lancer)
+                f.unlink()
     for n, s in enumerate(sources):
         vue = cv2.imread(f"{a.vues}/{s['id']}.jpg")
         meta = json.loads(Path(f"{a.vues}/{s['id']}.json").read_text(encoding="utf-8"))
@@ -96,7 +101,7 @@ def main():
                 if r is not None:
                     cv2.imwrite(str(out / classe / f"rejet_{nom}_{k}_{r[1]}.jpg"), r[0], [cv2.IMWRITE_JPEG_QUALITY, 92])
                     total[classe] += 1
-        if n % 2000 == 0:
+        if n % 2000 == 0 and partie == 0:
             print(f"{n}/{len(sources)}  {dict(total)}", flush=True)
     print(f"Terminé : {dict(total)}")
 

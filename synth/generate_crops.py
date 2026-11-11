@@ -26,7 +26,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from route_fr.signs_svg import SVG_CODES, build, decoy, other_sign  # noqa: E402
+from route_fr.signs_svg import OTHER_HORS_CATALOGUE, SVG_CODES, build, decoy, other_sign  # noqa: E402
 from synth.generate import foliage, rasterize, warp_rgba  # noqa: E402
 
 SIZE = 64  # vignettes de crop_image()
@@ -167,7 +167,7 @@ def make(job):
             r = vignette(decoy(kind, rng) if kind else None, rng, nrng, fonds, names)
         elif cls == "autre":
             kind = rng.choice([None, None, None, "panonceau", "direction", "cartouche"])
-            r = vignette(decoy(kind, rng) if kind else other_sign(rng), rng, nrng, fonds, names)
+            r = vignette(decoy(kind, rng) if kind else other_sign(rng, OTHER_HORS_CATALOGUE), rng, nrng, fonds, names)
         else:
             r = vignette(build(cls, rng), rng, nrng, fonds, names, panonceau=cls not in SANS_PANONCEAU and rng.random() < 0.1)
         if r is not None:

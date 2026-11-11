@@ -5,7 +5,8 @@
   exemples de la classe « panneau » ; ce qui est douteux (objet non identifié, panneau minuscule ou coupé) est déclaré
   « _ignorer » : ni exemple ni contre-exemple. Les marquages au sol de ces photos ne sont pas annotés : une zone « _reel »
   (toute l'image, ou seulement sous l'horizon quand il est connu) indique à l'entraînement de n'y tirer aucune
-  conclusion sur les marquages. Pour la validation, labels/ ne garde que les panneaux et labels_complets/ garde tout ;
+  conclusion sur les marquages. Pour la validation, labels/ ne garde que les panneaux, labels_complets/ garde tout et
+  codes/ donne le type de chaque panneau (pour évaluer la chaîne complète, tools/evaluer_chaine.py) ;
 - du classifieur (--vignettes) : <out>/vignettes/<train|val>/<classe>/*.jpg, panneaux découpés à pleine définition avec
   leur décor, dans lesquels tools/train_classifieur.py tire ensuite ses recadrages d'entraînement.
 
@@ -63,7 +64,7 @@ def fenetre(m, rng, ppd, principal=True):
 
 def etiquettes(m, x0, y0, S, ppd):
     """Lignes YOLO du recadrage : panneaux sûrs en classe « panneau », le reste en zone ignorée, et la zone « _reel »."""
-    e, out = T / S, []
+    e, out, codes = T / S, [], []
     haut = 0.0  # la route ne monte guère à plus de 6° au-dessus de l'horizon : plus haut, pas de marquage possible
     if m["horizon"] is not None:
         haut = float(np.clip((m["horizon"] - 6 * ppd - y0) / S, 0, 1))
@@ -76,13 +77,15 @@ def etiquettes(m, x0, y0, S, ppd):
             continue
         visible = (cx2 - cx1) * (cy2 - cy1) / max((bx2 - bx1) * (by2 - by1), 1e-6)
         bw, bh = (cx2 - cx1) * e, (cy2 - cy1) * e
-        nature, _ = code_catalogue(a["code"])
+        nature, code = code_catalogue(a["code"])
         sur = nature != "inconnu" and visible >= 0.6 and max(bw, bh) >= PETIT and min(bw, bh) >= 4 and (a["det"] is None or a["det"] >= 0.35)
         if not sur and max(bw, bh) < 3:
             continue
         k = DET_PANNEAU if sur else DET_IGNORER
         out.append(f"{k} {((cx1 + cx2) / 2 - x0) / S:.6f} {((cy1 + cy2) / 2 - y0) / S:.6f} {(cx2 - cx1) / S:.6f} {(cy2 - cy1) / S:.6f}")
-    return out
+        if sur:  # type du panneau, pour évaluer la chaîne détecteur + classifieur : code du catalogue, « autre » ou « ? »
+            codes.append(f"{code or ('autre' if nature == 'autre' else '?')} {out[-1][2:]}")
+    return out, codes
 
 
 def ecrire_etiquettes(racine, split, nom, lignes):
@@ -164,8 +167,11 @@ def traiter(job):
         fenetres[nom] = [x0, y0, S]
         im = cv2.resize(img[y0 : y0 + S, x0 : x0 + S], (T, T), interpolation=cv2.INTER_AREA if S > T else cv2.INTER_LINEAR)
         cv2.imwrite(str(out / "reel" / "images" / split / f"{nom}.jpg"), im, [cv2.IMWRITE_JPEG_QUALITY, 90])
-        lignes = etiquettes(m, x0, y0, S, ppd)
+        lignes, codes = etiquettes(m, x0, y0, S, ppd)
         ecrire_etiquettes(out / "reel", split, nom, lignes)
+        if split == "val":
+            (out / "reel" / "codes" / split).mkdir(parents=True, exist_ok=True)
+            (out / "reel" / "codes" / split / f"{nom}.txt").write_text("\n".join(codes) + ("\n" if codes else ""))
         stats["images"] += 1
         stats["panneaux"] += sum(l.startswith(f"{DET_PANNEAU} ") for l in lignes)
         stats["ignorés"] += sum(l.startswith(f"{DET_IGNORER} ") for l in lignes)

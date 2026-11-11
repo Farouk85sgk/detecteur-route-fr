@@ -10,8 +10,8 @@ panneau, qui en change le sens (sens interdit « sauf vélos », cédez-le-passa
 cadrage est décalé au hasard (boîte de détection imprécise) et l'image dégradée (basse définition d'un panneau lointain,
 flou, bruit, éclairage, compression).
 
-Réseau : YOLOv5n-cls, initialisé avec un classifieur existant. Sorties : weights/panneaux_cls.pt, docs/panneaux.onnx
-et docs/panneaux.json (classes, taille d'entrée).
+Réseau : YOLOv5n-cls, initialisé avec un classifieur existant. Sorties : weights/panneaux_cls.pt et .onnx (application
+de bureau), docs/panneaux.onnx et docs/panneaux.json (version web : classes, taille d'entrée).
 
     python tools/train_classifieur.py --data datasets/vignettes datasets/vignettes_synth
 """
@@ -71,20 +71,52 @@ def degrade(img, rng):
     return img
 
 
-class Vignettes(Dataset):
-    """Vignettes en mémoire (JPEG) ; chaque accès tire un recadrage 64 x 96 autour de la boîte du panneau."""
+def recadrage(img, box, rng=None):
+    """Recadrage 64 x 96 d'une vignette autour de la boîte du panneau (en fractions du côté), comme le fait l'appli ;
+    avec `rng`, la boîte est d'abord décalée et agrandie ou réduite au hasard (détection imprécise)."""
+    S = img.shape[0]
+    x1, y1, x2, y2 = (v * S for v in box)
+    angle = 0.0
+    if rng is not None:
+        w, h = x2 - x1, y2 - y1
+        dx, dy = rng.gauss(0, 0.05) * w, rng.gauss(0, 0.05) * h
+        k = math.exp(rng.gauss(0, 0.06))
+        cx, cy = (x1 + x2) / 2 + dx, (y1 + y2) / 2 + dy
+        w, h = w * k * math.exp(rng.gauss(0, 0.04)), h * k * math.exp(rng.gauss(0, 0.04))
+        x1, y1, x2, y2 = cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2
+        angle = rng.gauss(0, 2.5)
+    fx, fy, fw, fh = fenetre((x1, y1, x2, y2))
+    M = np.array([[W_CLS / fw, 0, -fx * W_CLS / fw], [0, H_CLS / fh, -fy * H_CLS / fh]], np.float32)
+    if angle:
+        R = cv2.getRotationMatrix2D((W_CLS / 2, H_CLS / 3), angle, 1.0)
+        M = (np.vstack([R, [0, 0, 1]]) @ np.vstack([M, [0, 0, 1]]))[:2].astype(np.float32)
+    return cv2.warpAffine(img, M, (W_CLS, H_CLS), flags=cv2.INTER_AREA if fw > 1.5 * W_CLS else cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE)
 
-    def __init__(self, dossiers, split, train, max_par_classe=0):
-        self.items, self.train = [], train
+
+def tenseur(img):
+    x = (img[:, :, ::-1].astype(np.float32) / 255 - MEAN) / STD
+    return torch.from_numpy(np.ascontiguousarray(x.transpose(2, 0, 1)))
+
+
+class Vignettes(Dataset):
+    """Vignettes en mémoire (JPEG) ; chaque accès tire un recadrage 64 x 96 autour de la boîte du panneau. Les fichiers
+    listés dans <dossier>/exclus.txt (étiquettes jugées fausses par tools/nettoyer_vignettes.py) sont laissés de côté."""
+
+    def __init__(self, dossiers, split, train, max_par_classe=0, classes=CLASSES):
+        self.items, self.fichiers, self.train = [], [], train
         rng = random.Random(0)
         for k, d in enumerate(dossiers):
-            for c, nom in enumerate(CLASSES):
-                fichiers = sorted((Path(d) / split / nom).glob("*.jpg"))
-                if max_par_classe and len(fichiers) > max_par_classe:
-                    fichiers = rng.sample(fichiers, max_par_classe)
+            liste = Path(d) / "exclus.txt"
+            exclus = set(liste.read_text(encoding="utf-8").split("\n")) if liste.exists() else set()
+            for c, nom in enumerate(classes):
+                fichiers = [f for f in sorted((Path(d) / split / nom).glob("*.jpg")) if f"{split}/{nom}/{f.name}" not in exclus]
+                limite = max_par_classe * (8 if nom in ("autre", "fond") else 1)  # les rejets sont très variés
+                if limite and len(fichiers) > limite:
+                    fichiers = rng.sample(fichiers, limite)
                 for f in fichiers:
                     box = [int(v) / 1000 for v in f.stem.split("_")[-4:]]
                     self.items.append((np.frombuffer(f.read_bytes(), np.uint8), c, box, k))
+                    self.fichiers.append(f)
         self.y = np.array([it[1] for it in self.items])
         self.source = np.array([it[3] for it in self.items])
 
@@ -94,28 +126,10 @@ class Vignettes(Dataset):
     def __getitem__(self, i):
         data, c, box, _ = self.items[i]
         img = cv2.imdecode(data, cv2.IMREAD_COLOR)
-        S = img.shape[0]
-        x1, y1, x2, y2 = (v * S for v in box)
-        rng = random.Random(random.getrandbits(48)) if self.train else None
-        angle = 0.0
-        if self.train:  # boîte de détection imprécise : décalée et plus ou moins large
-            w, h = x2 - x1, y2 - y1
-            dx, dy = rng.gauss(0, 0.05) * w, rng.gauss(0, 0.05) * h
-            k = math.exp(rng.gauss(0, 0.06))
-            cx, cy = (x1 + x2) / 2 + dx, (y1 + y2) / 2 + dy
-            w, h = w * k * math.exp(rng.gauss(0, 0.04)), h * k * math.exp(rng.gauss(0, 0.04))
-            x1, y1, x2, y2 = cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2
-            angle = rng.gauss(0, 2.5)
-        fx, fy, fw, fh = fenetre((x1, y1, x2, y2))
-        M = np.array([[W_CLS / fw, 0, -fx * W_CLS / fw], [0, H_CLS / fh, -fy * H_CLS / fh]], np.float32)
-        if angle:
-            R = cv2.getRotationMatrix2D((W_CLS / 2, H_CLS / 3), angle, 1.0)
-            M = (np.vstack([R, [0, 0, 1]]) @ np.vstack([M, [0, 0, 1]]))[:2].astype(np.float32)
-        out = cv2.warpAffine(img, M, (W_CLS, H_CLS), flags=cv2.INTER_AREA if fw > 1.5 * W_CLS else cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE)
-        if self.train:
-            out = degrade(out, rng)
-        x = (out[:, :, ::-1].astype(np.float32) / 255 - MEAN) / STD
-        return torch.from_numpy(np.ascontiguousarray(x.transpose(2, 0, 1))), c
+        if not self.train:
+            return tenseur(recadrage(img, box)), c
+        rng = random.Random(random.getrandbits(48))
+        return tenseur(degrade(recadrage(img, box, rng), rng)), c
 
 
 @torch.inference_mode()
@@ -206,6 +220,14 @@ def main():
         web = ROOT / "docs"
         torch2onnx(model, torch.zeros(1, 3, H_CLS, W_CLS), web / "panneaux.onnx", opset=17, output_names=["output0"], dynamic={"images": {0: "batch"}, "output0": {0: "batch"}})
         (web / "panneaux.json").write_text(json.dumps({"classes": CLASSES, "taille": [W_CLS, H_CLS]}, ensure_ascii=False), encoding="utf-8")
+        import onnx  # noms des classes dans le fichier, comme le fait yolov5/export.py : l'application de bureau les y lit
+
+        m = onnx.load(web / "panneaux.onnx")
+        for cle, valeur in (("stride", 32), ("names", dict(enumerate(CLASSES)))):
+            meta = m.metadata_props.add()
+            meta.key, meta.value = cle, str(valeur)
+        onnx.save(m, web / "panneaux.onnx")
+        onnx.save(m, Path(a.sortie).with_suffix(".onnx"))
         print(f"Exporté : {web / 'panneaux.onnx'}")
 
 

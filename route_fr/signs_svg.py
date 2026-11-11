@@ -774,12 +774,17 @@ def moped(c):
     return bicycle(c) + rect(-6, 0, 9, 5.5, c, rx=1.5) + rect(-9, -9.5, 7, 2.5, c)
 
 
-def other_sign(rng) -> str:
-    """Panneau français absent de la liste (gabarit, poids, vitesse minimale, textes, pictogrammes inconnus).
-    Sert à apprendre au classifieur à ne pas forcer ces panneaux dans une classe connue."""
+OTHER_KINDS = ["unit", "unit", "text", "text_band", "text_band", "vehicle", "vehicle", "combo", "blob", "blob", "blue_number", "square_number", "misplaced"]
+# sortes qui ne ressemblent à aucun panneau reconnu par le classifieur (les autres imitent B9f, B10a, B12, B13, B3a, B19, B29, C4a...)
+OTHER_HORS_CATALOGUE = ["blob", "blob", "blob", "blue_number", "misplaced", "misplaced"]
+
+
+def other_sign(rng, kinds=OTHER_KINDS) -> str:
+    """Panneau français varié (gabarit, poids, vitesse minimale, textes, pictogrammes inconnus) : exemples de
+    « panneau » pour le détecteur ; avec kinds=OTHER_HORS_CATALOGUE, panneaux que le classifieur doit rejeter."""
     p = palette(rng)
     c, w, font = p["black"], p["white"], _font(rng)
-    kind = rng.choice(["unit", "unit", "text", "text_band", "text_band", "vehicle", "vehicle", "combo", "blob", "blob", "blue_number", "square_number", "misplaced"])
+    kind = rng.choice(kinds)
     if kind == "text_band":  # B4, B5a : deux mots séparés par une barre noire
         top, bottom = rng.choice([("HALTE", "POLICE"), ("DOUANE", "ZOLL"), ("HALTE", "GENDARMERIE"), ("DOUANE", "DOGANA"), ("PÉAGE", "STOP")])
         body = text(0, -8, top, 11, c, font, sx=0.9) + rect(-26, -3, 52, 6, c, rx=3) + text(0, 17, bottom, 11, c, font, sx=0.85)

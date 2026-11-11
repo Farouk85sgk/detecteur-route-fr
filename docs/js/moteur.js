@@ -44,15 +44,23 @@ export class Moteur {
   async charger({ backend = null, progression = () => {} } = {}) {
     this.fournisseurs = backend ? [backend] : ("gpu" in navigator) ? ["webgpu", "wasm"] : ["wasm"];
     // plusieurs fils de calcul seulement si la page est isolée (voir sw.js) ; sinon ONNX Runtime n'en utilise qu'un
-    this.fils = self.crossOriginIsolated ? Math.max(1, Math.min(4, Math.ceil((navigator.hardwareConcurrency || 2) / 2))) : 1;
+    let monofil = false;
+    try { monofil = localStorage.getItem("repere.monofil") === "1"; } catch { /* stockage indisponible */ }
+    this.fils = self.crossOriginIsolated && !monofil ? Math.max(1, Math.min(4, Math.ceil((navigator.hardwareConcurrency || 2) / 2))) : 1;
     ort.env.wasm.numThreads = this.fils;
     const opts = { executionProviders: this.fournisseurs, graphOptimizationLevel: "all" };
     progression("Chargement du détecteur…");
-    try { this.session = await ort.InferenceSession.create("detecteur.onnx", opts); }
-    catch (e) {  // WebGPU indisponible ou défaillant : repli sur le processeur
-      if (this.fournisseurs[0] === "wasm") throw e;
-      this.fournisseurs = ["wasm"];
-      this.session = await ort.InferenceSession.create("detecteur.onnx", { ...opts, executionProviders: ["wasm"] });
+    try {
+      try { this.session = await ort.InferenceSession.create("detecteur.onnx", opts); }
+      catch (e) {  // WebGPU indisponible ou défaillant : repli sur le processeur
+        if (this.fournisseurs[0] === "wasm") throw e;
+        this.fournisseurs = ["wasm"];
+        this.session = await ort.InferenceSession.create("detecteur.onnx", { ...opts, executionProviders: ["wasm"] });
+      }
+    } catch (e) {
+      // le calcul sur plusieurs fils ne démarre pas sur ce navigateur : on le note et on recharge l'appli avec un seul fil
+      if (this.fils > 1) { try { localStorage.setItem("repere.monofil", "1"); location.reload(); await new Promise(() => {}); } catch { /* on laisse l'erreur remonter */ } }
+      throw e;
     }
     this.opts = { ...opts, executionProviders: this.fournisseurs };
     // classe du détecteur -> élément du catalogue (marquages), SIGN pour « panneau », -1 pour les classes techniques

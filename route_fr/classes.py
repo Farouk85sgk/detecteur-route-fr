@@ -9,8 +9,8 @@
   réentraîner.
 - CLASSES = PANNEAUX + MARQUAGES : l'indice dans cette liste est l'identifiant de classe utilisé par l'application.
 
-Les panneaux de FICHES_SEULES ont une fiche (album, quiz) mais ne sont pas reconnus par les modèles, faute de photos
-réelles en nombre suffisant.
+Les panneaux de FICHES_SEULES et les marquages de MARQUAGES_FICHES ont une fiche (album, quiz) mais ne sont pas
+reconnus par les modèles, faute de photos réelles en nombre suffisant ou parce qu'ils sont trop difficiles à voir.
 """
 
 from __future__ import annotations
@@ -423,15 +423,19 @@ BY_CODE = {c.code: i for i, c in enumerate(CLASSES)}
 SIGN_CODES = [c.code for c in PANNEAUX]
 MARKING_CODES = [c.code for c in MARQUAGES]
 
+# Marquages du catalogue que le détecteur n'apprend pas (fiche seulement) : la ligne d'effet des feux, trait trop fin
+# pour être vu de loin, se confondait avec les lignes de STOP et de cédez-le-passage.
+MARQUAGES_FICHES = {"M_ligne_feux"}
+
 # Réseau de détection : « panneau », puis les marquages, puis deux classes techniques réservées à l'entraînement :
 # « _ignorer » (zone douteuse : ni objet ni fond) et « _reel » (zone d'une vraie photo, où seuls les panneaux sont annotés)
-DETECTEUR = ["panneau"] + MARKING_CODES + ["_ignorer", "_reel"]
+DETECTEUR = ["panneau"] + [c for c in MARKING_CODES if c not in MARQUAGES_FICHES] + ["_ignorer", "_reel"]
 DET_PANNEAU, DET_IGNORER, DET_REEL = 0, len(DETECTEUR) - 2, len(DETECTEUR) - 1
-DET_MARQUAGE = {c: 1 + i for i, c in enumerate(MARKING_CODES)}
+DET_MARQUAGE = {c: i for i, c in enumerate(DETECTEUR) if c.startswith("M_")}
 
 # Fiches seulement (pas ou trop peu de photos réelles pour apprendre à les reconnaître)
 FICHES_SEULES = {
-    "B4", "B5a", "B5b", "B9c", "B9e", "B6b5", "B50e", "B58", "B59", "B22c", "B25", "B35", "B39", "B42", "B43", "B44", "B45b", "B49", "C4b",
+    "B4", "B5a", "B5b", "B9c", "B9e", "B6b5", "B50b", "B50e", "B58", "B59", "B22c", "B25", "B35", "B39", "B42", "B43", "B44", "B45b", "B49", "C4b",
     "C9", "C13c", "C13d", "C14", "C24b", "C24c", "C25a", "C28", "C29a", "C30", "C50", "C51a", "C64a",
     "CE1", "CE2b", "CE3b", "CE4b", "CE6b", "CE8", "CE9", "CE10", "CE20a", "CE20b", "CE25", "CE26", "CE29", "CE30a", "CE30b", "CE50",
     "AK31", "AK32", "J10", "M1", "M2", "M3", "M4a", "M4b", "M4c", "M4d1", "M4d2", "M4f", "M4g", "M5", "M6a", "M6c", "M6d", "M6j",

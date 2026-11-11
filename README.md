@@ -173,64 +173,58 @@ ou les bonnes réponses (à partir de 0) ; l'image est soit un panneau de l'appl
 | GPU NVIDIA | `--appareil 0 --demi` (ou export TensorRT : `--include engine --device 0`) |
 | Mac Apple Silicon | `--appareil mps` |
 
-## 3. Comment le modèle a été entraîné
+## 3. Comment les modèles ont été entraînés
 
-Aucun jeu de données public de panneaux **et** marquages français n'étant disponible, le jeu d'entraînement est
-**synthétique, mais sur de vraies images de route** :
+### De vraies photos de routes françaises
+
+[Panoramax](https://panoramax.fr) est le géocommun de photos de rues porté par l'IGN et OpenStreetMap France. Son
+instance IGN publie, sous **Licence Ouverte 2.0**, des millions de photos de routes où les panneaux ont été repérés
+et identifiés par des modèles automatiques (code du panneau et boîte englobante). Le projet s'en sert ainsi :
+
+1. `tools/panoramax_index.py` interroge l'API pour chaque code de panneau (`data/panoramax_codes.txt`) et note les
+   photos qui le contiennent : 338 000 photos indexées.
+2. `tools/panoramax_telecharge.py` en choisit jusqu'à 200 par panneau (les plus rares d'abord, séquences et auteurs
+   variés) et télécharge **26 000 vues** : un morceau des photos à 360° autour du panneau, ou la photo entière des
+   caméras ordinaires.
+3. `tools/panoramax_dataset.py` en tire les données du **détecteur** (recadrages ramenés à l'échelle d'un téléphone,
+   les panneaux en une seule classe « panneau ») et les **vignettes du classifieur** (chaque panneau à pleine
+   définition avec son décor), en gardant pour la validation des zones géographiques entières.
+
+Les étiquettes viennent de modèles automatiques : elles sont filtrées (confiance élevée) et les cas douteux ne sont
+ni des exemples ni des contre-exemples (zones « _ignorer »). Les marquages au sol de ces photos ne sont pas
+annotés : une zone « _reel » demande à l'entraînement de n'y corriger le réseau que s'il voit un panneau là où il
+n'y en a pas, jamais s'il y voit un marquage (`tools/train_cpu_bf16.py`).
+
+### Des images synthétiques pour les marquages et les cas rares
+
+Les marquages au sol s'apprennent sur des images **synthétiques, mais sur de vraies images de route** :
 
 1. **Fonds réels** : 9 888 images de conduite [comma10k](https://github.com/commaai/comma10k) (licence MIT) avec
    leur segmentation (chaussée, véhicules, capot). `synth/prepare_backgrounds.py` estime l'horizon et la position
    des voies, efface les marquages américains et écarte les images contenant d'autres peintures au sol.
 2. **Marquages français** (`synth/markings.py`) dessinés dans le repère de la route puis projetés en perspective
-   (lignes T1, T2, T3, mixtes, STOP, cédez-le-passage, flèches, zébras...), avec usure, éclairage de la chaussée et
-   occultation par les véhicules.
-3. **Panneaux français** (`route_fr/signs_svg.py`) dessinés en vectoriel d'après l'IISR et les affiches ENPC, placés
-   en 3D au bord de la route sur poteau (taille réelle, distance, orientation), avec décoloration, reflets, flou,
-   feuillage, panonceaux et leurres non annotés (dos de panneaux, panneaux de direction, plaques de rue...).
-4. Les **vrais panneaux STOP** des images américaines (identiques au AB4 français) sont repérés avec le YOLOv5
-   d'origine (COCO) et annotés AB4 (`synth/find_real_stops.py`). Les 28 STOP de face confirmés à l'œil servent
-   aussi d'exemples réels au classifieur.
-5. Entraînement YOLOv5n (pré-entraîné COCO), **sans miroir horizontal** (il inverserait droite / gauche et les
-   textes) et avec une variation de teinte réduite (la couleur porte le sens du panneau).
-6. Classifieur de panneaux YOLOv5n-cls (pré-entraîné ImageNet) sur 118 000 vignettes (synthétiques, plus 420 vignettes de vrais STOP)
-   (`synth/generate_crops.py`) : 67 panneaux + « autre panneau » + « fond », avec perspective, flou, basse
-   résolution (panneaux lointains), éclairage et feuillage.
+   (lignes T1, T2, T3, mixtes, de rive, STOP, cédez-le-passage, effet des feux, flèches, zébras...), avec usure,
+   éclairage de la chaussée et occultation par les véhicules.
+3. **Panneaux** dessinés en vectoriel (`route_fr/signs_svg.py`), placés en 3D au bord de la route sur poteau, avec
+   décoloration, reflets, flou, feuillage et leurres (dos de panneaux, plaques de rue, publicités).
+
+Le détecteur YOLOv5n part du modèle précédent et s'entraîne sur les deux sources à la fois, **sans miroir
+horizontal** (il inverserait droite / gauche et les textes) et avec une variation de teinte réduite (la couleur
+porte le sens du panneau).
+
+### Le classifieur de panneaux
+
+`tools/train_classifieur.py` entraîne un YOLOv5n-cls à 212 sorties : les 210 panneaux reconnus, « autre » (panneau
+hors catalogue) et « fond » (fausse détection). Il voit un carré autour de la boîte détectée, prolongé vers le bas
+(64 x 96 px) pour lire le panonceau. À l'entraînement, le cadrage est décalé au hasard et l'image dégradée
+(panneau lointain de quelques pixels, flou, bruit, contre-jour, compression). Un second tour ajoute à « fond » et à
+« autre » ce que le détecteur propose à tort sur les photos d'entraînement (`tools/miner_rejets.py`).
 
 ### Résultats mesurés
 
-Validation synthétique (1 500 images jamais vues, fonds réels distincts de l'entraînement ; une détection compte si
-la classe exacte est trouvée avec un recouvrement IoU > 0,5, seuil de confiance par défaut) :
+[[RESULTATS]]
 
-| | Rappel | Précision |
-|---|---|---|
-| Marquages au sol (3 762) | 80,5 % | 82,0 % |
-| Panneaux (3 090), détecteur seul | 42,8 % | 70,7 % |
-| **Panneaux, détecteur + classifieur** | **86,3 %** | **92,2 %** |
-
-Rappel des panneaux selon leur taille à l'image (échelle 640 px) : 95 % au-delà de 32 px, 93 % de 16 à 32 px, 67 %
-en dessous de 16 px (panneaux lointains, qui grossissent à l'approche). Classifieur seul : 98 % de bonnes réponses
-sur ses vignettes de validation.
-
-Tests sur de vraies images :
-- **Photo de l'affiche ENPC « Signalisation routière »** (vrais panneaux imprimés, reflets) : 87 panneaux détectés,
-  dont environ 60 correctement identifiés, et une seule limitation de vitesse lue (la bonne). La majorité des
-  erreurs portent sur des panneaux absents de la liste des 67 classes.
-- **300 vraies images de route** (américaines, donc sans panneau français), image par image : 9 fausses détections
-  de panneaux (3 % des images), surtout des panneaux propres aux États-Unis. En direct, l'exigence de 2 détections
-  consécutives et d'une taille minimale en élimine une partie.
-
-Version web, sur un processeur de bureau sans carte graphique (WebAssembly, un seul cœur) : environ 230 ms par
-image à la taille « Équilibrée » avec panneaux, classifieur, feux et usagers (4 à 5 images/s) ; bien plus rapide
-avec WebGPU. « Mes panneaux » : sur des panneaux jamais vus (validation de 784 dessins inventés, parfois très
-proches), une seule photo suffit pour retrouver le panneau dans 30 à 50 % des images au seuil retenu (0,2 % de
-chances qu'un autre panneau soit pris pour lui), et dans 98 % des cas pour corriger un panneau déjà connu.
-
-**Limite importante** : ces mesures portent sur des images synthétiques ; les performances sur de vraies routes
-françaises n'ont pas pu être mesurées (aucune image réelle annotée disponible). Le modèle fourni est une **base de
-départ** : pour une utilisation sérieuse, affinez-le avec quelques centaines d'images réelles annotées (section
-suivante) — c'est le levier le plus efficace.
-
-## 4. Améliorer le modèle avec vos propres vidéos (recommandé)
+## 4. Améliorer les modèles avec vos propres vidéos
 
 Filmez vos trajets habituels (caméra embarquée ou téléphone sur support), puis :
 
@@ -242,77 +236,95 @@ python tools/pre_annoter.py mes_donnees/images
 ```
 
 3. Corrigez les annotations dans un outil gratuit acceptant le format YOLO : **Label Studio**, **CVAT**,
-   **Roboflow** ou **LabelImg** (ajoutez les objets oubliés, supprimez les erreurs). Placez ensuite les `.txt` dans
+   **Roboflow** ou **LabelImg** (ajoutez les objets oubliés, supprimez les erreurs). Les classes sont celles du
+   détecteur : `panneau` pour tous les panneaux, puis les marquages. Placez ensuite les `.txt` dans
    `mes_donnees/labels/` (même nom que l'image).
-4. Créez `data/mes_donnees.yaml` en reprenant `data/route_fr.yaml`, avec par exemple
-   `train: [/chemin/datasets/route_fr/images/train, /chemin/mes_donnees/images]`.
+4. Créez `data/mes_donnees.yaml` en reprenant `data/route_fr.yaml` et en ajoutant votre dossier à `train`.
 5. Réentraînez à partir du modèle actuel :
 
 ```bash
 # Avec un GPU NVIDIA
-python yolov5/train.py --data data/mes_donnees.yaml --weights weights/route_fr_yolov5n.pt --hyp data/hyp_route_fr.yaml --img 640 --epochs 50 --batch 32
+python yolov5/train.py --data data/mes_donnees.yaml --weights weights/route_fr_yolov5n.pt --hyp data/hyp_route_fr.yaml --img 640 --epochs 30 --batch 32
 # Sur processeur Intel récent (précision mixte bfloat16, ~2,4x plus rapide qu'en float32)
-python tools/train_cpu_bf16.py --data data/mes_donnees.yaml --weights weights/route_fr_yolov5n.pt --hyp data/hyp_route_fr.yaml --img 640 --epochs 50 --batch 32
+python tools/train_cpu_bf16.py --data data/mes_donnees.yaml --weights weights/route_fr_yolov5n.pt --hyp data/hyp_route_fr.yaml --img 640 --epochs 30 --batch 32
 ```
 
-Le meilleur modèle est écrit dans `yolov5/runs/train/exp*/weights/best.pt` ; copiez-le dans `weights/`.
+Le meilleur modèle est écrit dans `yolov5/runs/train/exp*/weights/best.pt` ; copiez-le dans `weights/`, puis
+`python tools/export_web.py` pour la version web. (Les zones « _ignorer » et « _reel » ne sont prises en compte que
+par `tools/train_cpu_bf16.py`.)
 
-Classifieur de panneaux (dossiers d'images par classe, voir `synth/generate_crops.py`) : vous pouvez y ajouter vos
-propres vignettes de panneaux réels (`datasets/panneaux_cls/train/<code>/`), puis
+**Classifieur** : ajoutez vos vignettes de panneaux dans `datasets/vignettes/train/<code>/` (image carrée avec le
+panneau au centre et du décor autour ; la boîte du panneau, en millièmes du côté, termine le nom du fichier :
+`..._x1_y1_x2_y2.jpg`), puis `python tools/train_classifieur.py`. Dans l'appli web, « Mes panneaux » permet aussi
+d'apprendre un panneau à partir d'une seule photo, sans réentraînement.
 
-```bash
-python tools/train_cpu_bf16.py --classifieur --model weights/panneaux_cls.pt --data datasets/panneaux_cls --img 64 --epochs 10 --batch-size 128
-```
-Export ONNX (utilisé par défaut par l'application, plus rapide sur processeur) :
+**Ajouter un panneau au catalogue** : une ligne dans `route_fr/classes.py` (et son code retiré de `FICHES_SEULES`
+s'il doit être reconnu), son icône (`tools/make_icons.py`), des vignettes d'exemple, puis réentraîner le
+classifieur. Le détecteur, lui, n'a pas besoin d'être réentraîné : il cherche « un panneau », quel qu'il soit.
 
-```bash
-python yolov5/export.py --weights weights/route_fr_yolov5n.pt --include onnx --dynamic --img 640
-python yolov5/export.py --weights weights/panneaux_cls.pt --include onnx --dynamic --img 64
-```
-
-Ajouter un panneau : une entrée dans `route_fr/classes.py` (à la fin de la liste), son dessin dans
-`route_fr/signs_svg.py`, puis régénérer les données et réentraîner.
-
-## 5. Régénérer le jeu de données synthétique
+## 5. Tout régénérer
 
 ```bash
 pip install cairosvg
-# images comma10k (≈ 6,5 Go) : https://github.com/commaai/comma10k, dossiers imgs/ et masks/
+# --- vraies photos (Panoramax, instance IGN) : index, téléchargement (≈ 13 Go), jeux de données ---
+python tools/panoramax_index.py --codes data/panoramax_codes.txt --out datasets_src/panoramax
+python tools/panoramax_telecharge.py --index datasets_src/panoramax --out datasets_src/panoramax --par-code 200
+python tools/panoramax_dataset.py --vues datasets_src/panoramax --out datasets --vignettes
+# --- images synthétiques : fonds comma10k (≈ 6,5 Go, https://github.com/commaai/comma10k, dossiers imgs/ et masks/) ---
 python synth/prepare_backgrounds.py --src <dossier comma10k converti> --out datasets_src/fonds
 python synth/find_real_stops.py --fonds datasets_src/fonds
-python synth/generate.py --fonds datasets_src/fonds --out datasets/route_fr --train 24000 --val 1500
-python synth/generate_crops.py --fonds datasets_src/fonds --out datasets/panneaux_cls --par-classe 1500
-python tools/make_icons.py          # icônes (panneau latéral, version web, icônes de l'appli installée)
-# « Mes panneaux » (version web) : 7 843 panneaux-identités, puis modèle d'empreintes -> docs/empreinte.onnx
+python synth/generate.py --fonds datasets_src/fonds --out datasets/route_fr --train 14000 --val 800
+python synth/generate_crops.py --fonds datasets_src/fonds --out datasets/vignettes_synth --par-classe 400
+# --- entraînements ---
+python tools/train_cpu_bf16.py --data data/route_fr.yaml --weights weights/route_fr_yolov5n.pt --hyp data/hyp_route_fr.yaml --img 416 --epochs 10 --batch 32
+python tools/evaluer_detecteur.py --poids weights/route_fr_yolov5n.pt --images datasets/reel/images/val datasets/route_fr/images/val
+python tools/train_classifieur.py --data datasets/vignettes datasets/vignettes_synth
+python tools/miner_rejets.py && python tools/train_classifieur.py --data datasets/vignettes datasets/vignettes_synth --epochs 4 --lr 5e-4
+# --- appli ---
+python tools/make_icons.py --commons datasets_src/commons   # icônes (schémas officiels de Wikimedia Commons)
+python tools/construire_series.py                           # banque de questions du code
+python tools/photos_quiz.py --vues datasets_src/panoramax --classifieur weights/panneaux_cls.pt   # quiz « En situation réelle »
+python tools/export_web.py                                  # détecteur ONNX, catalogue, icônes et crédits de la version web
+# « Mes panneaux » (version web) : panneaux-identités, puis modèle d'empreintes -> docs/empreinte.onnx
 python synth/generate_identites.py --fonds datasets_src/fonds --out datasets/empreintes
 python tools/train_empreinte.py --data datasets/empreintes
-python tools/export_web.py          # modèles ONNX, classes et icônes de la version web
 ```
 
 ## 6. Organisation
 
 ```
 app.py                  application temps réel
-route_fr/classes.py     classes, libellés, rappels du code de la route, effets sur la vitesse
+route_fr/classes.py     catalogue : panneaux et marquages, libellés, rappels du code, effets sur la vitesse
+route_fr/panoramax.py   correspondance entre les annotations Panoramax et le catalogue
 route_fr/detector.py    inférence YOLOv5 (DetectMultiBackend : .pt, .onnx, OpenVINO, TensorRT...)
-route_fr/classifier.py  second étage : classifieur de panneaux sur vignettes
+route_fr/classifier.py  second étage : classifieur de panneaux (vignette 64 x 96 : panneau et panonceau)
 route_fr/tracker.py     stabilisation temporelle (suivi IoU, vote de classe, lissage)
 route_fr/hud.py         affichage (cadres, vitesse en cours, historique, explications)
 route_fr/video.py       capture threadée (webcam, fichier, flux réseau, écran)
-route_fr/signs_svg.py   dessins vectoriels des panneaux
-synth/                  génération du jeu de données synthétique
-tools/                  entraînement CPU bf16, extraction d'images, pré-annotation, icônes, export web,
-                        modèle d'empreintes (train_empreinte.py)
-docs/                   appli web « Repère » publiée par GitHub Pages : index.html, css/, js/ (moteur.js
-                        détection, camera.js, quiz.js, quete.js, album.js...), modèles ONNX, icônes, polices
+route_fr/signs_svg.py   dessins vectoriels des panneaux (images synthétiques)
+route_fr/icones/        icônes de l'application et leurs crédits
+synth/                  génération des images synthétiques
+tools/                  données réelles (panoramax_*.py), entraînements (train_cpu_bf16.py, train_classifieur.py,
+                        train_empreinte.py), évaluation, icônes, banque de questions, photos du quiz, export web
+data/                   configuration des entraînements, codes Panoramax, crédits des schémas, questions du code
+docs/                   appli web « Repère » publiée par GitHub Pages : index.html, css/, js/ (moteur.js détection,
+                        camera.js, quiz.js, series.js, quete.js, album.js...), modèles ONNX, icônes, séries, polices
 weights/                modèles entraînés
 yolov5/                 code YOLOv5 (ultralytics/yolov5, commit af08ba1, non modifié)
 ```
 
-## Licences
+## Licences et sources
 
 - YOLOv5 : AGPL-3.0 (Ultralytics). Ce projet, qui en dérive, est distribué sous la même licence (`LICENSE`).
+- **Photos d'entraînement et photos du quiz « En situation réelle »** : contributeurs de
+  [Panoramax](https://panoramax.fr), instance IGN, **Licence Ouverte 2.0 (Etalab)**. Les photos du quiz portent le nom
+  de leur auteur dans l'appli ; la liste complète est dans `docs/series/photos.json`. Les étiquettes de panneaux de
+  ces photos proviennent des modèles de détection et de classification de Panoramax.
+- **Icônes des panneaux** : schémas de Wikimedia Commons (Roulex 45 et autres auteurs), sous licences CC BY-SA 3.0 ou
+  4.0, CC BY 4.0, CC0 ou domaine public selon le schéma : détail dans `route_fr/icones/CREDITS.md` (page
+  `credits.html` de l'appli). Les icônes dérivées restent sous la licence de leur schéma d'origine.
 - Images comma10k (entraînement uniquement, non incluses) : MIT. Polices DejaVu : licence libre Bitstream Vera /
   DejaVu (`route_fr/fonts/LICENSE`). Polices de la version web Bricolage Grotesque et Overpass : licence OFL
   (`docs/polices/LICENSE.txt`). ONNX Runtime Web (chargé par la version web) : MIT. Détection des piétons, vélos,
   motos et feux : YOLOv5n COCO d'origine (Ultralytics, AGPL-3.0).
+- Questions du code de la route (`data/series/questions/`) : rédigées pour ce projet, même licence que le projet.

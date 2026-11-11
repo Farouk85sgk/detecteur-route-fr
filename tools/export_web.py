@@ -31,7 +31,7 @@ from models.experimental import attempt_load  # noqa: E402
 from models.yolo import Detect  # noqa: E402
 from ultralytics.utils.export import torch2onnx  # noqa: E402
 
-from route_fr.classes import CLASSES, CODE_AFFICHE, DETECTEUR, FICHES_SEULES  # noqa: E402
+from route_fr.classes import CLASSES, CODE_AFFICHE, DETECTEUR, FICHES_SEULES, MARQUAGES_FICHES  # noqa: E402
 
 USAGERS = [0, 1, 3, 9]  # classes COCO gardées : personne, vélo, moto, feu tricolore
 
@@ -101,8 +101,9 @@ def main():
     web = ROOT / "docs"
     if not a.sans_modeles:
         export_onnx(a.poids, web / "detecteur.onnx", 640)
+        shutil.copy(web / "detecteur.onnx", Path(a.poids).with_suffix(".onnx"))  # même fichier pour l'application de bureau
         export_usagers(a.usagers, web / "usagers.onnx")
-    items = [dict(dataclasses.asdict(c), affiche=CODE_AFFICHE.get(c.code, c.code), detecte=c.code not in FICHES_SEULES) for c in CLASSES]
+    items = [dict(dataclasses.asdict(c), affiche=CODE_AFFICHE.get(c.code, c.code), detecte=c.code not in FICHES_SEULES | MARQUAGES_FICHES) for c in CLASSES]
     (web / "catalogue.json").write_text(json.dumps({"detecteur": DETECTEUR, "items": items}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     shutil.rmtree(web / "icones", ignore_errors=True)
     shutil.copytree(ROOT / "route_fr" / "icones", web / "icones", ignore=shutil.ignore_patterns("*.md"))

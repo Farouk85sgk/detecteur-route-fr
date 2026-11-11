@@ -24,7 +24,7 @@ export function pageAlbum(racine) {
         ${n ? `<circle cx="75" cy="75" r="64" stroke="var(--jaune)" stroke-width="14" fill="none" stroke-linecap="round" stroke-dasharray="${(circ * n / total).toFixed(1)} ${circ.toFixed(1)}"/>` : ""}</svg>
         <div><b>${n}</b><small>/${total}</small></div></div>
         <p class="doux">Chaque panneau, feu, marquage ou usager repéré pendant un trajet rejoint l'album. Touche une case pour voir sa fiche, même si tu ne l'as pas encore croisé.
-          Les cases au cadre pointillé sont de simples fiches : la caméra ne sait pas encore reconnaître ces panneaux.</p></div>
+          Les cases au cadre pointillé sont de simples fiches : la caméra ne sait pas encore reconnaître ces éléments.</p></div>
       ${FAMILLES.map(f => {
         const items = itemsFamille(f.id), nd = detectables(f.id).length, vus = Math.min(vuFamille(p, f.id), nd);
         return `<section class="section-album"><h2>${esc(f.nom)} <small>${vus}/${nd}</small></h2><div class="jauge"><i style="width:${nd ? 100 * vus / nd : 0}%"></i></div>
@@ -43,7 +43,7 @@ export async function ouvrirFiche(code) {
   const corps = ouvrirFeuille(it.nom, `
     <div class="fiche-tete"><img src="${esc(icone(it))}" alt=""><div><p class="doux">${esc(f?.nom || "Mes panneaux")}</p>
       <p style="margin:8px 0"><span class="code-badge">${esc(it.etiquette)}</span></p>
-      <p class="doux">${a ? `Repéré ${a.vu} fois, la première fois le ${dateCourte(a.premier).toLowerCase()}` : it.detecte ? "Pas encore repéré sur la route" : "Fiche : la caméra ne reconnaît pas encore ce panneau"}</p></div></div>
+      <p class="doux">${a ? `Repéré ${a.vu} fois, la première fois le ${dateCourte(a.premier).toLowerCase()}` : it.detecte ? "Pas encore repéré sur la route" : `Fiche : la caméra ne reconnaît pas encore ce ${it.groupe === "m" ? "marquage" : "panneau"}`}</p></div></div>
     <div class="fiche-bloc"><h4>Ce qu'il signifie</h4><p>${esc(it.explication)}</p></div>
     ${it.reflexe && it.reflexe !== it.explication ? `<div class="fiche-bloc"><h4>Bon réflexe</h4><p>${esc(it.reflexe)}</p></div>` : ""}
     ${f ? `<div class="fiche-bloc"><h4>Le reconnaître</h4><p>${esc(f.forme)}</p></div>` : ""}

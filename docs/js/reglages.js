@@ -113,7 +113,7 @@ function filtrer(corps, q) {
   const norm = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
   q = norm(q.trim());
   if (!q) { z.classList.add("cache"); filtres.classList.remove("cache"); return; }
-  const r = profil().reglages, trouves = D.items.filter(it => norm(`${it.nom} ${it.affiche} ${it.explication}`).includes(q)).slice(0, 30);
+  const r = profil().reglages, trouves = D.items.filter(it => it.detecte && norm(`${it.nom} ${it.affiche} ${it.explication}`).includes(q)).slice(0, 30);
   z.innerHTML = trouves.length ? trouves.map(it => ligneElement(it, r)).join("") : `<p class="vide">Aucun élément ne correspond.</p>`;
   z.classList.remove("cache"); filtres.classList.add("cache");
 }

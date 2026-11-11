@@ -1,7 +1,7 @@
 // La quête : carte (une région par famille, repérages sur la route puis gardien au donjon), quêtes du jour,
 // classement (profils du téléphone et amis ajoutés par code) et échoppe (objets et titres).
 import { CATEGORIES_CLASSEMENT, FAMILLES, OBJETS, QUETE, TITRES } from "./contenu.js";
-import { D, icone, itemsFamille } from "./donnees.js";
+import { D, detectables, icone } from "./donnees.js";
 import { aller } from "./nav.js";
 import { assurerJour, codeAmi, etatRegion, lireCodeAmi, majCoeurs, minutesProchainCoeur, nbEclats, nbQuetesFaites, ouvrirCoffre, participants, queteDef, regionCourante } from "./progression.js";
 import { profil, sauver } from "./stockage.js";
@@ -92,7 +92,7 @@ function carte(p) {
 function ouvrirRegion(i) {
   const p = profil(), f = FAMILLES[i], e = etatRegion(p, i);
   majCoeurs(p);
-  const items = itemsFamille(f.id);
+  const items = detectables(f.id);  // ce que la caméra peut repérer dans cette région
   const texte = {
     bloquee: () => `Cette région s'ouvre quand le gardien de « ${FAMILLES[i - 1]?.region} » est vaincu.`,
     reperage: () => `Repère sur la route ${e.besoin} éléments différents de la famille « ${f.nom} » (ceux déjà dans ton album comptent) : ${e.vus}/${e.besoin}. Ensuite, ${f.gardien} t'attendra au donjon.`,
