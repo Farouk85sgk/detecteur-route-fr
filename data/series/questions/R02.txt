@@ -1,0 +1,88 @@
+# Pluie, brouillard, neige et vent
+
+? Sur une chaussée mouillée, par rapport à une chaussée sèche, la distance de freinage est environ :
+- la même
+- multipliée par 1,2
++ multipliée par 2
+! Sur route mouillée, l'adhérence diminue et la distance de freinage peut doubler. C'est pourquoi les vitesses maximales sont abaissées par temps de pluie et qu'il faut augmenter les distances de sécurité.
+@ pluie : distance de freinage | 1
+
+? La chaussée est particulièrement glissante :
++ pendant les premières minutes de pluie
+- après plusieurs heures de pluie
+- uniquement quand il gèle
+! Au début d'une averse, l'eau se mélange aux poussières, à la gomme et aux traces d'huile déposées sur la route : cela forme un film très glissant, avant que la pluie ne nettoie la chaussée.
+@ début de pluie | 2
+
+? L'aquaplanage se produit quand :
+- les freins sont mouillés
++ les pneus n'arrivent plus à évacuer l'eau et perdent le contact avec la route
+- le moteur aspire de l'eau
+! Quand la couche d'eau est trop épaisse pour être évacuée, le pneu flotte sur l'eau : plus de direction ni de freinage. La vitesse, des pneus usés ou sous-gonflés augmentent le risque.
+@ aquaplanage : causes | 1
+
+? Ma voiture part en aquaplanage. Je :
+- freine énergiquement
+- donne un coup de volant pour retrouver l'adhérence
++ lâche l'accélérateur et je tiens le volant droit, sans freiner brusquement
+! En aquaplanage, je relâche l'accélérateur, je garde les roues droites et j'attends que les pneus retrouvent le contact. Freiner fort ou braquer provoquerait une perte de contrôle au retour de l'adhérence.
+@ aquaplanage : réaction | 2
+
+? Dans le brouillard, pour rouler en sécurité :
++ je réduis ma vitesse
++ j'allume mes feux de croisement et mes feux de brouillard
++ j'augmente la distance avec le véhicule qui me précède
+- j'allume mes feux de route pour voir plus loin
+! Dans le brouillard, les feux de route se reflètent sur les gouttelettes et forment un mur blanc. J'utilise les feux de croisement et de brouillard, je ralentis et j'allonge mes distances.
+@ brouillard | 1
+
+? Dans le brouillard, je suis tenté de suivre de près les feux du véhicule qui me précède. C'est :
++ dangereux : je n'aurai pas la distance pour m'arrêter s'il freine
+- la meilleure façon de se guider
+- obligatoire sur autoroute
+! Suivre de près dans le brouillard est la cause des carambolages. Je garde une distance qui me permet de m'arrêter, et je me repère sur le marquage de la chaussée.
+@ brouillard : distances | 2
+
+? Sur une route enneigée ou verglacée, je conduis :
++ avec douceur, sans coup de frein ni coup de volant
++ en utilisant le frein moteur
+- en freinant fort avant chaque virage
+- à la même vitesse que d'habitude
+! Sur la neige ou le verglas, l'adhérence est très faible et les distances de freinage sont multipliées. J'anticipe, j'accélère, je freine et je tourne en douceur, et je garde de très grandes distances.
+@ neige et verglas | 1
+
+? Par temps froid, le verglas se forme d'abord :
++ sur les ponts
++ dans les zones à l'ombre et les sous-bois
+- sur les portions ensoleillées
+! Les ponts, refroidis par-dessus et par-dessous, et les zones ombragées gèlent en premier et dégèlent en dernier. Une route qui paraît seulement mouillée peut être verglacée par endroits.
+@ verglas : zones à risque | 2
+
+? Dans certaines communes de montagne, du 1er novembre au 31 mars, ma voiture doit :
++ être équipée de pneus hiver, ou transporter des chaînes ou des chaussettes à neige
+- rouler avec des pneus cloutés
+- afficher un macaron spécial
+! Dans les zones de montagne désignées par les préfets, signalées par des panneaux à l'entrée, les véhicules doivent être équipés de pneus hiver ou détenir des chaînes ou chaussettes à neige du 1er novembre au 31 mars.
+@ équipements d'hiver | 2 | B58
+
+? Ce panneau m'annonce :
+- une zone où le stationnement est interdit par grand vent
++ un risque de vent latéral fort
+- un aérodrome
+! La manche à air signale une zone où un vent latéral violent souffle souvent : viaduc, sortie de tunnel, trouée dans une haie. Je ralentis et je tiens fermement le volant.
+@ vent latéral | 1 | A24
+
+? Par vent fort, le risque d'écart de trajectoire est le plus grand :
++ en dépassant un camion
++ en sortant d'un tunnel ou d'une zone abritée
++ sur un pont ou un viaduc
+- dans une rue étroite bordée d'immeubles
+! Le vent surprend surtout quand son effet change brusquement : le camion que je dépasse me protège puis ne me protège plus, la sortie d'un abri m'expose d'un coup. J'anticipe en ralentissant.
+@ vent : situations à risque | 2
+
+? En automne, des feuilles mortes mouillées couvrent la chaussée. Elles :
++ rendent la route glissante, comme du verglas
+- améliorent l'adhérence
+- n'ont aucun effet
+! Feuilles mouillées, boue, gravillons, plaques d'égout et marquages au sol humides réduisent fortement l'adhérence. J'évite d'y freiner ou d'y braquer brusquement.
+@ chaussée glissante | 1

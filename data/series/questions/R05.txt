@@ -1,0 +1,85 @@
+# Passages à niveau, tramways et chantiers
+
+? Ce panneau m'annonce :
++ un passage à niveau muni de barrières
+- un passage à niveau sans barrière
+- une clôture électrique
+! La barrière dans le triangle annonce un passage à niveau équipé de barrières ou de demi-barrières. La locomotive, elle, annonce un passage à niveau sans barrière.
+@ passage à niveau : panneaux | 1 | A7
+
+? À l'approche d'un passage à niveau, des balises portent une, deux ou trois bandes rouges obliques. La balise à une seule bande est placée :
+- la plus loin du passage à niveau
++ la plus près du passage à niveau
+- au niveau des rails
+! Trois bandes, puis deux, puis une : les balises décomptent la distance, de 150 m à 50 m environ avant le passage à niveau.
+@ passage à niveau : balises | 2 | J10
+
+? Le feu rouge du passage à niveau se met à clignoter et la sonnerie retentit, mais les barrières ne sont pas encore baissées. Je :
+- accélère pour passer avant la fermeture
++ m'arrête avant le feu
+- passe si je ne vois pas de train
+! Le feu rouge clignotant impose l'arrêt absolu dès qu'il s'allume. Il annonce l'arrivée d'un train, qui ne peut pas s'arrêter : il lui faut plusieurs centaines de mètres.
+@ passage à niveau : feu rouge clignotant | 1
+
+? La circulation est ralentie de l'autre côté d'un passage à niveau ouvert. Je :
+- m'engage et j'attends sur les voies que cela avance
++ ne m'engage que si je suis certain de pouvoir dégager le passage
+- m'arrête entre les deux barrières
+! Je ne m'engage jamais sur un passage à niveau si je risque d'y rester immobilisé. J'attends d'avoir toute la place nécessaire de l'autre côté.
+@ passage à niveau : ne pas s'immobiliser | 1
+
+? Ma voiture cale et reste immobilisée sur un passage à niveau. Je commence par :
+- essayer de redémarrer pendant plusieurs minutes
++ faire sortir tous les occupants et les éloigner des voies
+- attendre de l'aide à bord
+! La priorité est de mettre tout le monde à l'abri, loin des voies. J'alerte ensuite avec le téléphone du passage à niveau, relié directement à la SNCF, ou à défaut en appelant le 112.
+@ passage à niveau : véhicule immobilisé | 1
+
+? Les barrières se ferment alors que je suis engagé sur le passage à niveau. Je :
+- m'arrête et recule
++ avance, quitte à enfoncer la barrière qui est conçue pour céder
+- sors du véhicule et l'abandonne aussitôt
+! Si je suis coincé entre les barrières, je n'hésite pas : j'avance et je brise la barrière, prévue pour casser. Le matériel se répare, pas une collision avec un train.
+@ passage à niveau : barrières | 2
+
+? En ville, un tramway arrive sur ma droite à une intersection sans feu. Qui passe en premier ?
+- Moi, s'il n'a pas mis son clignotant
++ Le tramway
+- Le premier arrivé
+! Le tramway est prioritaire sur les autres usagers, piétons compris : lourd et guidé par ses rails, il ne peut ni s'écarter ni s'arrêter rapidement.
+@ tramway : priorité | 1 | A9
+
+? Un tramway est arrêté à une station sans refuge : les voyageurs descendent directement sur la chaussée. Je :
+- le dépasse par la droite sans ralentir
++ m'arrête et laisse les voyageurs monter et descendre
+- klaxonne pour signaler mon passage
+! Quand les voyageurs doivent traverser ma voie pour monter ou descendre, je m'arrête pour les laisser passer. Je ne circule jamais sur la plateforme réservée au tramway.
+@ tramway : arrêt | 2
+
+? Sur un chantier, la circulation est alternée. Un ouvrier me présente un piquet dont la face rouge est tournée vers moi. Je :
++ m'arrête
+- passe au ralenti
+- passe si personne n'arrive en face
+! Le piquet mobile (K10) a une face rouge et une face verte. Face rouge : arrêt. Face verte : je peux passer, lentement. Ses indications s'imposent comme celles d'un feu.
+@ chantier : piquet K10 | 2
+
+? Sur un chantier, un feu tricolore provisoire est au rouge et personne ne semble arriver en face. Je :
+- passe prudemment
++ attends le feu vert
+- passe si le véhicule devant moi est passé
+! Les feux de chantier règlent une circulation alternée sur une seule voie, souvent sans visibilité sur l'autre extrémité. Ils se respectent exactement comme des feux permanents.
+@ chantier : feux provisoires | 1 | AK17
+
+? Ce panneau à fond jaune m'annonce :
++ des gravillons qui peuvent être projetés
+- une chute de pierres
+- une chaussée inondée
+! Sur une chaussée fraîchement gravillonnée, je ralentis nettement, j'augmente les distances et j'évite de freiner ou d'accélérer fort : les gravillons font glisser et brisent les pare-brise.
+@ chantier : gravillons | 1 | AK22
+
+? Ce panneau annonce :
+- un pont étroit
++ un pont mobile
+- un passage à gué
+! Un pont mobile peut se lever ou tourner pour laisser passer les bateaux. Un feu rouge clignotant et des barrières interdisent alors le passage.
+@ pont mobile | 2 | A6

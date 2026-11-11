@@ -1,0 +1,86 @@
+# Virages, montagne et tunnels
+
+? À l'approche d'un virage, je réduis ma vitesse :
++ avant le virage, en ligne droite
+- au milieu du virage
+- à la sortie du virage
+! Je freine et je rétrograde avant le virage, tant que les roues sont droites. Freiner fort en plein virage peut faire perdre l'adhérence. Je réaccélère progressivement en sortie.
+@ virages : vitesse d'entrée | 1 | A1a
+
+? Dans un virage, mon regard se porte :
+- juste devant le capot
++ le plus loin possible, vers la sortie du virage
+- sur le bord extérieur de la route
+! La voiture va là où le regard se pose. En regardant loin vers la sortie du virage, j'ajuste naturellement ma trajectoire et je repère plus tôt un obstacle.
+@ virages : regard | 1
+
+? Dans un virage, la force centrifuge tend à entraîner ma voiture :
+- vers l'intérieur du virage
++ vers l'extérieur du virage
+- vers l'arrière
+! La force centrifuge pousse le véhicule vers l'extérieur du virage. Elle augmente très vite avec la vitesse (quatre fois plus forte à vitesse double) et quand le virage est serré.
+@ force centrifuge | 2
+
+? Dans un virage à gauche sans visibilité, sur une route à double sens, je me place :
++ bien à droite dans ma voie
+- près de la ligne médiane pour couper le virage
+- au milieu de la chaussée
+! Sans visibilité, je serre à droite : un véhicule peut arriver en face en mordant sur ma voie. Couper un virage est interdit et dangereux.
+@ virages : placement | 2 | A1b
+
+? Dans une longue descente, pour ne pas faire surchauffer mes freins, je :
+- me mets au point mort
++ rétrograde pour utiliser le frein moteur
+- freine en continu, légèrement
+! En descente, j'engage un rapport inférieur : le frein moteur retient la voiture. Un freinage continu échauffe les freins, qui perdent leur efficacité. Le point mort est interdit et dangereux.
+@ descente : frein moteur | 1 | A16
+
+? Sur une route de montagne en lacets, avant un virage serré sans visibilité, je peux :
++ ralentir fortement et serrer à droite
++ avertir de ma présence par un bref coup d'avertisseur, de jour, hors agglomération
+- prendre le virage au large pour mieux voir
+! En montagne, les virages masqués se négocient lentement et bien à droite. Hors agglomération, l'avertisseur sonore peut servir à prévenir de son approche ; la nuit, on utilise plutôt les appels de phares.
+@ montagne : virages masqués | 2
+
+? Un panneau de voie de détresse est installé dans une longue descente. Cette voie sert :
+- à stationner pour admirer le paysage
++ à arrêter un véhicule dont les freins ne répondent plus
+- à dépasser les véhicules lents
+! La voie de détresse, souvent en forte montée et remplie de gravier, arrête un véhicule privé de freins. Il est interdit d'y stationner ou de s'y arrêter.
+@ voie de détresse | 2 | C26a
+
+? Sur une route étroite sans marquage central, je croise un autre véhicule. Je :
++ ralentis et serre à droite
+- garde ma place au milieu
+- accélère pour libérer la route
+! Sur une route étroite, chacun ralentit et serre son bord droit. Si la place manque, celui qui dispose d'un emplacement pour se ranger s'arrête et laisse passer l'autre.
+@ routes étroites | 1 | A3
+
+? Ma voiture tombe en panne dans un tunnel. Je :
++ allume mes feux de détresse et m'arrête si possible sur un emplacement d'arrêt d'urgence
++ coupe le moteur et laisse la clé sur le contact
++ rejoins une niche de sécurité pour alerter les secours
+- reste à bord en attendant qu'on vienne me chercher
+! En tunnel, je me range au mieux, feux de détresse allumés, moteur coupé. J'alerte depuis un poste d'appel d'urgence, qui me localise, plutôt qu'avec mon téléphone.
+@ tunnel : panne | 2 | C8
+
+? Dans un tunnel, de la fumée apparaît devant moi : un véhicule est en feu. Je ne peux pas faire demi-tour. Je :
+- reste dans ma voiture, vitres fermées
++ m'arrête à distance, coupe le moteur, laisse la clé et rejoins à pied une issue de secours
+- traverse la fumée le plus vite possible
+! La fumée tue plus vite que les flammes. Je m'arrête loin du foyer, je quitte mon véhicule sans attendre en laissant la clé sur le contact, et je gagne l'issue de secours la plus proche.
+@ tunnel : incendie | 2 | CE30a
+
+? De nuit, hors agglomération, un animal sauvage surgit sur la route. La meilleure réaction est de :
+- donner un grand coup de volant pour l'éviter
++ freiner fort en gardant ma trajectoire
+- accélérer pour passer avant lui
+! Un coup de volant à pleine vitesse fait courir le risque d'un choc bien plus grave, contre un arbre ou un véhicule venant en face. Je freine en ligne ; un animal est souvent suivi d'autres.
+@ animaux sauvages | 2 | A15b
+
+? En montée, je suis un camion très lent sur une route sinueuse. Je :
++ patiente à distance jusqu'à trouver une zone avec une visibilité suffisante
+- le dépasse dès que possible, même dans un virage
+- le suis de très près pour dépasser plus vite
+! Derrière un véhicule lent, je garde mes distances pour voir loin et je ne dépasse qu'avec une visibilité complète. Certaines routes offrent des créneaux de dépassement : je les attends.
+@ montée : véhicule lent | 1

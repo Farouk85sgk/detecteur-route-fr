@@ -1,6 +1,6 @@
 // Feuilles « Réglages » et « Profils » (ouvertes depuis l'accueil ou depuis la caméra).
 import { APP, FAMILLES, FONDS } from "./contenu.js";
-import { D, icone, itemsFamille } from "./donnees.js";
+import { D, detectables, icone } from "./donnees.js";
 import { nbAlbum } from "./progression.js";
 import { ajouterProfil, changerProfil, effacerHistorique, profil, profils, renommer, sauver, supprimerProfil } from "./stockage.js";
 import { $, $$, ICONES, avatar, bascule, confirmer, demander, esc, ouvrirFeuille, fermerFeuille, toast } from "./ui.js";
@@ -17,12 +17,13 @@ const OPTIONS = [
   ["video", "Enregistrer chaque trajet en vidéo", "Démarre avec la caméra, cadres et panneau annoncé incrustés. À la fin du trajet : enregistrer ou partager. Le bouton rond en haut lance ou arrête aussi l'enregistrement."],
   ["paysage", "Écran en paysage pendant la conduite", "L'écran passe en paysage au lancement : la route à gauche, le panneau annoncé à droite."],
   ["sons", "Effets sonores", "Petits sons des quiz, de l'album et de la quête."],
+  ["multicoeur", "Calcul sur plusieurs cœurs", "Analyse plus rapide sur les téléphones sans accélération graphique. À couper si l'appli devient instable. Prend effet à la prochaine ouverture."],
 ];
 const QUALITES = [["rapide", "Rapide"], ["equilibree", "Équilibrée"], ["fine", "Fine"]];
 
-function nbActifs(p) {
+export function nbActifs(p) {
   const r = p.reglages;
-  return D.items.filter(it => (it.famille === "perso" || r.familles[it.famille] !== false) && !r.exclus.includes(it.code)).length;
+  return D.items.filter(it => it.detecte && (it.famille === "perso" || r.familles[it.famille] !== false) && !r.exclus.includes(it.code)).length;
 }
 
 export function appliquerTheme(p = profil()) { document.documentElement.dataset.fond = p.fond || "sauge"; }
@@ -87,14 +88,17 @@ function dessiner(corps, depuisCamera) {
     <div class="reglage"><div><h3>Afficher les zones testées</h3><p>Cadres violets de toutes les détections brutes, avant confirmation : pour régler l'appli.</p></div>${bascule("debug", r.debug)}</div>
     <button class="btn" data-r="effacer">Effacer l'historique</button>
     <p class="credits">${esc(APP.nom)} ${APP.version}. Détection : YOLOv5 © Ultralytics, licence AGPL-3.0, réentraîné pour les panneaux et marquages français ;
-      exécuté par ONNX Runtime Web © Microsoft, licence MIT. Images d'entraînement : comma10k, licence MIT. Polices Bricolage Grotesque et Overpass, licence OFL.
+      exécuté par ONNX Runtime Web © Microsoft, licence MIT. Photos d'entraînement : contributeurs de Panoramax (instance IGN), Licence Ouverte Etalab 2.0, et comma10k, licence MIT.
+      Icônes des panneaux : schémas de Wikimedia Commons (Roulex 45 et autres auteurs, licences CC BY-SA, CC BY, CC0 ou domaine public), <a href="credits.html" target="_blank" rel="noopener">crédits détaillés</a>.
+      Polices Bricolage Grotesque et Overpass, licence OFL.
       <a href="${APP.depot}" target="_blank" rel="noopener">Code source (licence AGPL-3.0)</a>.
       Outil d'aide pédagogique : il ne remplace ni ton attention ni la signalisation réelle.${depuisCamera ? "" : ""}</p>`;
   majCompte(corps);
 }
 
 function ligneFamille(f, r) {
-  const items = itemsFamille(f.id);
+  const items = detectables(f.id);
+  if (!items.length) return "";
   return `<div class="famille-filtre"><img src="${esc(icone(D.parCode[f.icone]))}" alt=""><div><b>${esc(f.nom)}</b><span class="doux">${items.length} élément${items.length > 1 ? "s" : ""}</span></div>
     <label class="bascule"><input type="checkbox" data-famille="${f.id}" ${r.familles[f.id] !== false ? "checked" : ""} aria-label="${esc(f.nom)}"><span></span></label>
     <details><summary>Choisir parmi les ${items.length} ${ICONES.chevron.replace("<svg", '<svg class="chevron"')}</summary>${items.map(it => ligneElement(it, r)).join("")}</details></div>`;
@@ -102,7 +106,7 @@ function ligneFamille(f, r) {
 const ligneElement = (it, r) => `<div class="element-filtre"><img src="${esc(icone(it))}" alt=""><span>${esc(it.nom)}</span>
   <label class="bascule"><input type="checkbox" data-element="${esc(it.code)}" ${r.exclus.includes(it.code) ? "" : "checked"} aria-label="${esc(it.nom)}"><span></span></label></div>`;
 
-function majCompte(corps) { const z = $(".compte-actifs", corps); if (z) z.textContent = `${nbActifs(profil())} sur ${D.items.length}`; }
+function majCompte(corps) { const z = $(".compte-actifs", corps); if (z) z.textContent = `${nbActifs(profil())} sur ${D.items.filter(it => it.detecte).length}`; }
 
 function filtrer(corps, q) {
   const z = $(".resultats-recherche", corps), filtres = $(".filtres", corps);

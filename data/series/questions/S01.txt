@@ -1,0 +1,88 @@
+# Ceinture, airbags et sièges enfants
+
+? Le port de la ceinture de sécurité est obligatoire :
+- à l'avant seulement
+- hors agglomération seulement
++ à toutes les places équipées, à l'avant comme à l'arrière
+! La ceinture est obligatoire pour tous les occupants, à l'avant et à l'arrière, en ville comme sur route, même pour un court trajet. À l'arrière, un passager non attaché est projeté sur les sièges avant.
+@ ceinture : obligation | 1
+
+? Je conduis sans ceinture de sécurité. Je risque :
+- un simple rappel à la loi
++ une amende de 135 € et un retrait de 3 points
+- une amende de 35 €
+! Le conducteur non attaché encourt 135 € d'amende et un retrait de 3 points. Un passager majeur non attaché paie lui-même une amende de 135 €.
+@ ceinture : sanction | 1
+
+? Un passager de 15 ans n'a pas attaché sa ceinture à l'arrière. Qui est responsable ?
++ Le conducteur
+- Le passager lui-même
+- Ses parents, même absents
+! Le conducteur est responsable du port de la ceinture ou du dispositif de retenue de tous ses passagers de moins de 18 ans : c'est lui qui paie l'amende de 135 €.
+@ ceinture : passagers mineurs | 2
+
+? La ceinture de sécurité est bien portée quand :
++ la sangle haute passe sur l'épaule et le thorax
++ la sangle basse est placée sur les os du bassin, et non sur le ventre
+- elle passe sous le bras pour ne pas gêner
+- elle est desserrée pour le confort
+! La ceinture doit être bien tendue, à plat, sans être vrillée : la sangle diagonale sur l'épaule et la poitrine, la sangle ventrale sur les hanches. Passée sous le bras ou trop lâche, elle peut blesser gravement.
+@ ceinture : bon port | 1
+
+? Une femme enceinte doit-elle porter la ceinture de sécurité ?
++ Oui : sangle basse sous le ventre, sangle haute entre les seins
+- Non, elle en est dispensée
+- Oui, mais seulement à l'arrière
+! La ceinture protège la mère et l'enfant. La sangle ventrale passe sous le ventre, à plat sur le haut des cuisses, et la sangle diagonale au-dessus du ventre, entre les seins.
+@ ceinture : femme enceinte | 2
+
+? L'airbag :
++ complète la ceinture de sécurité
+- remplace la ceinture de sécurité
+- fonctionne mieux sans ceinture
+! L'airbag est conçu pour fonctionner avec la ceinture : elle retient le corps, il amortit la tête et le thorax. Sans ceinture, l'occupant arrive trop tôt et trop près du coussin, ce qui peut le blesser gravement.
+@ airbags | 1
+
+? J'installe un bébé dans un siège dos à la route, sur le siège du passager avant. Je dois d'abord :
++ désactiver l'airbag frontal du passager
+- reculer le siège au maximum, cela suffit
+- attacher le siège avec deux ceintures
+! Le déploiement de l'airbag frontal contre un siège dos à la route peut être mortel pour l'enfant. Il est interdit d'y installer un siège dos à la route si l'airbag n'est pas désactivé.
+@ airbag et siège bébé | 1
+
+? Un enfant doit voyager dans un dispositif de retenue adapté (siège, rehausseur) jusqu'à l'âge de :
+- 5 ans
+- 7 ans
++ 10 ans
+- 14 ans
+! Jusqu'à 10 ans, un enfant doit être installé dans un dispositif de retenue homologué, adapté à sa taille et à son poids. Au-delà, il utilise la ceinture si sa taille le permet ; sinon, il garde un rehausseur.
+@ enfants : dispositif de retenue | 1
+
+? Un enfant de moins de 10 ans peut voyager à l'avant :
++ dans un siège dos à la route, airbag passager désactivé
++ si le véhicule n'a pas de banquette arrière ou si elle n'a pas de ceintures
++ si les places arrière sont déjà occupées par d'autres enfants de moins de 10 ans
+- dès qu'il le demande
+! Les enfants de moins de 10 ans voyagent à l'arrière, sauf exceptions : siège dos à la route (airbag désactivé), absence de sièges arrière ou de ceintures à l'arrière, places arrière déjà occupées par des enfants de moins de 10 ans.
+@ enfants : place avant | 3
+
+? Le prétensionneur de ceinture :
++ plaque l'occupant contre son siège dès le début du choc
+- empêche la voiture de démarrer si la ceinture n'est pas attachée
+- desserre la ceinture en cas d'accident
+! Au moment du choc, le prétensionneur retend instantanément la ceinture pour supprimer le jeu et retenir le corps le plus tôt possible. Après son déclenchement, la ceinture doit être remplacée.
+@ prétensionneurs | 2
+
+? Lors d'un choc à 50 km/h, un passager arrière non attaché est projeté vers l'avant avec une force équivalente à :
+- son propre poids
+- deux fois son poids
++ plusieurs dizaines de fois son poids
+! À 50 km/h, un adulte non attaché est projeté avec une force de plus d'une tonne : il peut tuer l'occupant du siège devant lui. Personne ne peut se retenir avec ses bras, même à 20 km/h.
+@ choc sans ceinture | 2
+
+? Un appuie-tête réglé trop bas :
++ augmente le risque de lésion des cervicales en cas de choc arrière
+- n'a aucune importance
+- protège mieux la nuque
+! Lors d'un choc arrière, la tête part violemment en arrière : c'est le « coup du lapin ». L'appuie-tête, réglé à hauteur du sommet du crâne et proche de la tête, limite ce mouvement.
+@ appuie-tête | 1

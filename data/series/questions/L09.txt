@@ -1,0 +1,86 @@
+# Voies, directions et manœuvres
+
+? Sur une route à double sens, hors dépassement, je circule :
+- au milieu de la chaussée pour mieux voir
++ près du bord droit de la chaussée
+- sur la voie de mon choix
+! En marche normale, je maintiens mon véhicule près du bord droit de la chaussée, autant que son état le permet. La voie de gauche sert au dépassement et à la préparation d'un changement de direction.
+@ circulation à droite | 1
+
+? Sur une autoroute à trois voies peu chargée, je roule sur la voie du milieu alors que la voie de droite est libre. Cette pratique est :
+- autorisée
++ interdite : je dois me rabattre à droite
+- conseillée pour laisser entrer les autres
+! La règle de la circulation à droite vaut aussi sur autoroute : rester sans raison sur la voie centrale ou de gauche est une infraction (35 € d'amende). Les voies de gauche servent à dépasser.
+@ circulation à droite sur autoroute | 2
+
+? Avant de changer de direction, dans quel ordre est-ce que j'agis ?
+- Clignotant, puis contrôles dans les rétroviseurs
++ Contrôles (rétroviseurs et angle mort), clignotant, puis placement
+- Placement, puis clignotant
+! Je m'informe d'abord (rétroviseurs, angle mort), j'avertis ensuite avec le clignotant, puis je me place et j'adapte ma vitesse. Le clignotant ne donne aucun droit : il prévient les autres de ce que je vais faire.
+@ changer de direction | 1
+
+? Pour tourner à gauche sur une route à double sens, je me place :
+- le plus à droite possible
++ près de l'axe médian, sans le dépasser
+- sur la voie de sens inverse
+! Pour tourner à gauche, je serre l'axe de la chaussée sans le franchir : cela annonce mon intention et permet aux véhicules qui me suivent de me dépasser par la droite si la place le permet.
+@ tourner à gauche | 1
+
+? Je suis engagé dans une voie marquée de cette flèche, mais je voulais aller tout droit. Je :
+- vais tout droit quand même
+- m'arrête pour changer de voie
++ tourne à gauche, puis je retrouverai mon itinéraire plus loin
+! Les flèches de sélection sont obligatoires : une fois dans la voie, je suis la direction indiquée. Si je me suis trompé, je la suis quand même et je corrige mon itinéraire plus loin, sans manœuvre dangereuse.
+@ voies de présélection | 2 | M_fleche_gauche
+
+? Une voie porte l'inscription « BUS » et un panneau rond bleu avec un autobus. En voiture, je peux l'emprunter :
+- pour dépasser un véhicule lent
+- en dehors des heures de pointe
++ jamais, sauf indication contraire, mais je peux la traverser pour tourner ou me garer
+! Une voie réservée aux bus est interdite aux autres véhicules, pour circuler comme pour s'arrêter. Je peux seulement la franchir pour changer de direction ou accéder à une propriété, en cédant le passage aux bus.
+@ voies réservées : bus | 2 | B27a
+
+? À un feu rouge, un espace marqué d'un vélo est tracé entre la ligne d'arrêt des voitures et le passage pour piétons. Au feu rouge, je m'arrête :
++ avant cet espace, réservé aux cyclistes
+- dans cet espace, pour repartir plus vite
+- sur le passage pour piétons
+! C'est un sas pour cyclistes : il leur permet de se placer devant les voitures pour être vus et démarrer en sécurité. Au feu rouge, une voiture qui s'y arrête commet une infraction.
+@ sas pour cyclistes | 2 | M_velo
+
+? Sur ma voie, un panneau annonce que la voie de droite disparaît 200 m plus loin et la circulation est dense. Les conducteurs de la voie supprimée :
+- doivent se rabattre immédiatement
++ peuvent rouler jusqu'au rétrécissement, puis s'insérer un véhicule sur deux
+- sont prioritaires
+! C'est le principe de la fermeture éclair : utiliser les deux voies jusqu'au rétrécissement puis s'insérer à tour de rôle fluidifie la circulation. Celui qui change de voie n'a pas la priorité : la courtoisie fait le reste.
+@ fermeture éclair | 2 | C28
+
+? Sur une voie d'insertion, pour entrer sur une route à chaussées séparées, je :
++ accélère pour atteindre la vitesse des véhicules qui circulent
++ cède le passage aux véhicules déjà sur la route
+- m'arrête systématiquement au bout de la voie
+! La voie d'insertion sert à prendre de la vitesse pour s'insérer dans un créneau sans gêner. Je n'ai pas la priorité, mais je ne m'arrête au bout de la voie qu'en dernier recours.
+@ voie d'insertion | 2
+
+? Le demi-tour est interdit :
++ sur autoroute
++ là où la visibilité est insuffisante, comme dans un virage
+- dans toutes les rues en agglomération
++ lorsqu'il faut franchir une ligne continue
+! Le demi-tour est interdit sur autoroute et route à accès réglementé, là où un panneau l'interdit, et partout où il serait dangereux : virage, sommet de côte, ligne continue à franchir.
+@ demi-tour | 2 | B2c
+
+? En marche arrière, je dois :
++ rouler au pas et céder le passage aux autres usagers
+- allumer mes feux de détresse et rouler normalement
+- klaxonner pour avoir la priorité
+! La marche arrière est une manœuvre exceptionnelle : je recule lentement, en regardant directement derrière moi et dans les rétroviseurs, et je n'ai aucune priorité. Elle est interdite sur autoroute.
+@ marche arrière | 1
+
+? J'ai manqué ma sortie sur une route à chaussées séparées. Je :
+- recule sur la bande d'arrêt d'urgence
+- fais demi-tour par le terre-plein
++ continue jusqu'à la sortie suivante
+! Reculer ou faire demi-tour sur une route à chaussées séparées ou une autoroute est interdit et extrêmement dangereux. Je poursuis ma route et je sors à la sortie suivante.
+@ erreur d'itinéraire | 1

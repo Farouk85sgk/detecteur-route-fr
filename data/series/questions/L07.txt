@@ -1,0 +1,88 @@
+# Dépasser et croiser
+
+? Avant de dépasser, je dois m'assurer que :
++ la voie de gauche est libre sur une distance suffisante
++ personne n'a commencé à me dépasser
++ je pourrai me rabattre sans gêner le véhicule dépassé
+- le véhicule devant moi roule à moins de 50 km/h
+! Dépasser demande de la visibilité, de la place et un écart de vitesse suffisant. Je contrôle l'avant, les rétroviseurs et l'angle mort, je mets mon clignotant, et je vérifie que je pourrai reprendre ma place sans gêner.
+@ dépassement : conditions | 1
+
+? Je m'approche du sommet d'une côte sur une route à double sens à deux voies. Dépasser est :
++ interdit, car je ne vois pas ce qui arrive en face
+- autorisé si je roule vite
+- autorisé si j'utilise l'avertisseur sonore
+! Au sommet d'une côte comme dans un virage, la visibilité est insuffisante : le dépassement par la gauche est interdit quand il oblige à emprunter la voie de sens inverse.
+@ dépassement : interdictions | 1
+
+? Hors agglomération, je dépasse un cycliste. Je dois laisser entre lui et ma voiture un espace latéral d'au moins :
+- 0,50 m
+- 1 m
++ 1,50 m
+- 2 m
+! Pour dépasser un piéton, un cycliste, un cavalier ou une trottinette, je laisse au moins 1,50 m hors agglomération et 1 m en agglomération. Si la place manque, j'attends derrière.
+@ dépassement : cycliste hors agglomération | 1
+
+? En agglomération, l'espace latéral minimal pour dépasser un cycliste est de :
+- 0,50 m
++ 1 m
+- 1,50 m
+! En agglomération, je laisse au moins 1 m entre ma voiture et le cycliste que je dépasse ; hors agglomération, au moins 1,50 m. Un écart trop faible peut le déséquilibrer.
+@ dépassement : cycliste en agglomération | 1
+
+? Un cycliste roule devant moi et une ligne continue est tracée au centre de la route. Pour le dépasser :
+- je dois attendre la fin de la ligne continue
++ je peux chevaucher la ligne si la visibilité est suffisante et que personne n'arrive en face
+- je peux le serrer de près pour rester dans ma voie
+! Le chevauchement d'une ligne continue est autorisé pour dépasser un cycliste, à condition que la manœuvre soit sans danger et que la distance latérale (1 m ou 1,50 m) soit respectée.
+@ dépassement : cycliste et ligne continue | 2
+
+? Un véhicule est en train de me dépasser. Je dois :
+- accélérer pour l'aider à voir la route
++ serrer à droite et ne pas accélérer
+- freiner brusquement
+! Quand on me dépasse, je serre immédiatement à droite sans accélérer. Accélérer pendant qu'on me dépasse est une infraction qui met en danger les deux véhicules.
+@ être dépassé | 1
+
+? Dans quels cas puis-je dépasser un véhicule par la droite ?
++ Il a signalé qu'il tourne à gauche et m'a laissé la place
++ La circulation s'est établie en files ininterrompues et ma file avance plus vite
+- Il roule lentement sur la voie de gauche d'une autoroute fluide
++ Il s'agit d'un tramway circulant au milieu de la chaussée
+! Le dépassement se fait à gauche. Par la droite, il n'est permis que dans quelques cas : véhicule qui tourne à gauche, circulation en files, tramway au milieu de la chaussée. Doubler par la droite un véhicule lent sur autoroute est interdit.
+@ dépassement par la droite | 3
+
+? Je dépasse un camion sur une route à double sens. Par rapport à une voiture, le dépassement :
++ demande plus de temps et de distance
+- demande moins de distance
+- peut se faire sans visibilité
+! Un camion est long : le dépasser prend plus de temps, donc plus de distance libre devant moi. Je garde aussi mes distances avant de déboîter, pour voir loin devant lui.
+@ dépassement : véhicule long | 2
+
+? Sur une route de montagne étroite, je descends et je croise une voiture qui monte. Le croisement est impossible. En principe :
++ c'est à moi de m'arrêter, voire de reculer
+- c'est au véhicule qui monte de reculer
+- le plus rapide passe en premier
+! Sur les routes de montagne et à forte pente, quand le croisement est difficile, le véhicule descendant s'arrête à temps le premier. S'il faut reculer, entre deux voitures, c'est aussi au véhicule descendant de le faire, sauf si celui qui monte dispose d'une place d'évitement toute proche.
+@ croisement en montagne | 3
+
+? Un obstacle (travaux, voiture en stationnement) occupe ma voie et m'oblige à me déporter à gauche. Un véhicule arrive en face. Je :
+- passe en premier : je suis plus près de l'obstacle
++ m'arrête et le laisse passer
+- klaxonne pour qu'il s'arrête
+! Quand l'obstacle est de mon côté, c'est à moi de céder le passage aux véhicules qui viennent en face, sauf si un panneau règle la priorité.
+@ croisement : obstacle de mon côté | 2
+
+? Ce panneau m'indique que, dans le passage étroit :
+- je passe en premier
++ je cède le passage aux véhicules qui viennent en face
+- le croisement est interdit
+! La flèche rouge est celle de mon sens : je dois laisser passer ceux qui arrivent en face (flèche noire). Le panneau carré bleu, flèche blanche pour mon sens, donne au contraire la priorité.
+@ croisement : panneaux de priorité | 2 | B15
+
+? Le dépassement est interdit à l'approche d'un passage pour piétons :
++ quand je n'ai pas une vue complète sur le passage
+- dans tous les cas, même si le passage est vide et bien visible
+- seulement la nuit
+! Je ne dois pas dépasser à l'approche d'un passage pour piétons si je ne suis pas certain qu'aucun piéton ne s'y est engagé : le véhicule que je double peut précisément me cacher un piéton.
+@ dépassement : passage pour piétons | 3

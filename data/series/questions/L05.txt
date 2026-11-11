@@ -1,0 +1,85 @@
+# Intersections et priorités
+
+? J'arrive à une intersection sans panneau, sans feu et sans marquage. Je dois céder le passage :
+- aux véhicules venant de gauche
++ aux véhicules venant de droite
+- à personne : la route la plus large est prioritaire
+! Sans signalisation, c'est la priorité à droite : je cède le passage à tout véhicule qui débouche par ma droite, quelle que soit la largeur des routes.
+@ priorité à droite | 1
+
+? Ce panneau m'annonce :
++ une intersection où je dois céder le passage aux véhicules venant de droite
+- une intersection où je suis prioritaire
+- un passage à niveau
+! La croix noire dans un triangle de danger annonce une intersection où la priorité à droite s'applique. Je ralentis et je regarde à droite, prêt à m'arrêter.
+@ priorité à droite : panneau | 1 | AB1
+
+? Ce panneau m'indique que :
+- je dois céder le passage à la prochaine intersection
++ je suis prioritaire à la prochaine intersection seulement
+- je suis prioritaire à toutes les intersections suivantes
+! Ce panneau ne vaut que pour la prochaine intersection : les usagers de la route croisée doivent me céder le passage. Je reste prudent, car un autre conducteur peut commettre une erreur.
+@ priorité ponctuelle | 2 | AB2
+
+? Ce panneau signifie que :
++ je circule sur une route prioritaire à toutes les intersections
+- je dois laisser la priorité à droite
+- je suis prioritaire jusqu'à la prochaine intersection seulement
+! Le losange jaune indique une route à caractère prioritaire : j'ai la priorité à chaque intersection, jusqu'au panneau de fin (le même losange barré de noir). En agglomération, il est rappelé avant chaque intersection ou presque.
+@ route prioritaire | 1 | AB6
+
+? Au panneau STOP, aucun véhicule n'arrive. Je :
+- peux passer au ralenti sans m'arrêter
++ dois quand même marquer l'arrêt complet
+- peux m'arrêter après la ligne
+! Le STOP impose toujours un arrêt complet à la limite de la chaussée abordée, roues immobiles, même si la route est vide. Ne pas le marquer coûte 135 € et 4 points.
+@ STOP | 1 | AB4
+
+? À ce panneau, si aucun usager n'arrive sur la route que je rejoins, je :
++ peux passer sans m'arrêter
+- dois marquer un arrêt
+- dois attendre trois secondes
+! Le cédez-le-passage oblige à laisser passer les usagers de l'autre route, pas à s'arrêter. J'aborde l'intersection assez lentement pour pouvoir m'arrêter si quelqu'un arrive.
+@ cédez-le-passage | 1 | AB3a
+
+? J'aborde un carrefour annoncé par ce panneau. Qui est prioritaire ?
+- Moi, car j'arrive par la droite
++ Les véhicules qui circulent déjà sur l'anneau
+- Le véhicule le plus rapide
+! Dans un carrefour à sens giratoire, signalé par ce panneau et par des cédez-le-passage aux entrées, la priorité appartient aux usagers déjà engagés sur l'anneau. J'attends un créneau pour m'insérer.
+@ giratoire | 1 | AB25
+
+? Sur une place ronde, sans aucun panneau « cédez le passage » aux entrées, les véhicules qui tournent sur la place doivent :
++ céder le passage aux véhicules qui entrent par leur droite
+- passer en premier, comme dans un giratoire
+- s'arrêter à chaque entrée
+! Sans la signalisation du giratoire, c'est un rond-point classique où la priorité à droite s'applique : ceux qui entrent sont prioritaires sur ceux qui tournent déjà. C'est le cas, par exemple, de la place de l'Étoile à Paris.
+@ rond-point à priorité à droite | 3
+
+? Je sors d'un parking, d'un chemin de terre ou d'une propriété privée pour rejoindre la route. Je :
+- suis prioritaire si j'arrive par la droite
++ cède le passage à tous les usagers de la route
+- suis prioritaire sur les seuls vélos
+! Celui qui débouche d'un chemin de terre, d'un parking, d'une aire de stationnement ou d'une propriété n'a aucune priorité : il cède le passage à tous, y compris aux piétons du trottoir qu'il traverse.
+@ sortie de parking ou de chemin | 2
+
+? À une intersection, un camion de pompiers arrive par ma gauche, gyrophare et sirène en action. Mon feu est vert. Je :
+- passe, puisque mon feu est vert
++ lui cède le passage
+- accélère pour dégager avant lui
+! Les véhicules d'intérêt général prioritaires (pompiers, police, gendarmerie, SAMU, douanes) en intervention urgente, avec avertisseurs sonore et lumineux, sont prioritaires partout : je leur cède le passage, même au feu vert.
+@ véhicules prioritaires | 1
+
+? Je veux tourner à gauche à une intersection. Un véhicule arrive en face et continue tout droit. Sans signalisation particulière :
+- je passe en premier car j'ai mis mon clignotant
++ je le laisse passer avant de tourner
+- le premier arrivé passe
+! En tournant à gauche, je coupe la route des véhicules qui viennent en face : je leur cède le passage, ainsi qu'aux piétons qui traversent la rue où je m'engage.
+@ tourner à gauche : priorité | 2
+
+? Ce panneau m'annonce :
+- la fin d'une limitation de vitesse
++ la fin de la route prioritaire
+- le début d'une route prioritaire
+! Le losange jaune barré met fin au caractère prioritaire de la route. Aux intersections suivantes, je regarde les panneaux ; s'il n'y en a pas, je cède le passage à droite.
+@ fin de route prioritaire | 1 | AB7

@@ -25,13 +25,17 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from route_fr.classes import BY_CODE, MARKING_CODES, NAMES, SIGN_CODES  # noqa: E402
-from route_fr.signs_svg import DECOY_KINDS, build, decoy  # noqa: E402
+from route_fr.classes import DET_IGNORER, DET_MARQUAGE, DET_PANNEAU, DETECTEUR, MARKING_CODES  # noqa: E402
+from route_fr.signs_svg import DECOY_KINDS, SVG_CODES, build, decoy, other_sign  # noqa: E402
 from synth.markings import Camera, longitudinal, make_local, render_alpha  # noqa: E402
 
 ROAD, MOVABLE, MYCAR = 1, 4, 5
 OUT = 416  # taille des images générées (échelle d'une inférence en 640 sur une image 16:9)
-LOCAL_MARKINGS = [c for c in MARKING_CODES if c not in ("M_ligne_continue", "M_ligne_discontinue", "M_ligne_mixte")]
+LONGITUDINAUX = ("M_ligne_continue", "M_ligne_discontinue", "M_ligne_mixte", "M_ligne_dissuasion", "M_ligne_rive")
+LOCAL_MARKINGS = [c for c in MARKING_CODES if c not in LONGITUDINAUX]
+TRANSVERSAUX = ("M_ligne_stop", "M_ligne_cedez", "M_ligne_feux")
+# leurres qui ressemblent à des panneaux : ni exemples positifs ni fond (zones ignorées à l'entraînement)
+LEURRES_IGNORES = ("panonceau", "direction", "cartouche")
 
 # dimensions réelles (largeur en m) : gammes miniature / petite / normale / grande
 SIGN_WIDTHS = {
@@ -46,6 +50,8 @@ SIGN_WIDTHS = {
 
 
 def sign_shape(code):
+    if code is None:
+        return "circle"
     if code[0] == "A" or code in ("AB1", "AB2", "AB25", "AB3a"):
         return "triangle"
     if code == "AB4":
@@ -151,7 +157,7 @@ class Scene:
             c = np.clip(b, 0, [cw, ch, cw, ch])
             full, inside = (b[2] - b[0]) * (b[3] - b[1]), max(0, c[2] - c[0]) * max(0, c[3] - c[1])
             if full > 0 and inside / full >= 0.6 and min(c[2] - c[0], c[3] - c[1]) >= 8:
-                self.real.append((BY_CODE["AB4"], *c))
+                self.real.append((DET_PANNEAU, *c))
         self.xl = meta["xl"]
         self.xr = meta["xr"]
         lane_w = (self.xr - self.xl) if (self.xl is not None and self.xr is not None) else rng.uniform(3.0, 3.7)
@@ -173,6 +179,27 @@ class Scene:
         self.hood = (self.mask == MYCAR).astype(np.float32)
         self.night = float(cv2.cvtColor(self.img, cv2.COLOR_BGR2GRAY).mean()) < 55
 
+    def bord(self, cote):
+        """Position latérale (m) du bord de la chaussée, à droite (cote = 1) ou à gauche (-1) ; None s'il n'est pas visible."""
+        cam, (H, W) = self.cam, self.mask.shape
+        xc, xs = (self.xl + self.xr) / 2, []
+        for v in np.linspace(cam.v0 + 0.1 * H, H - 2, 10).astype(int):
+            if v <= cam.v0 + 4 or v >= H:
+                continue
+            z = cam.z_at_v(v)
+            u = int(round(cam.u0 + cam.f * xc / z))
+            row = self.mask[v]
+            if not 0 <= u < W or row[u] != ROAD:
+                continue
+            autres = np.nonzero(row[u:] != ROAD)[0] if cote > 0 else np.nonzero(row[: u + 1][::-1] != ROAD)[0]
+            if len(autres) == 0:
+                continue  # la chaussée sort de l'image
+            e = u + cote * int(autres[0])
+            if row[e] in (MOVABLE, MYCAR):
+                continue  # bord caché par un véhicule
+            xs.append((e - cam.u0) * z / cam.f)
+        return float(np.median(xs)) if len(xs) >= 3 and np.std(xs) < 1.0 else None
+
     def occluder(self, z):
         occ = self.hood.copy()
         for zm, m in self.movers:
@@ -193,6 +220,8 @@ def plan_markings(sc, rng):
     if rng.random() < 0.38:
         zi = rng.uniform(zb + 6, 34)
         kind = rng.choice(["stop", "cedez", "feux"])
+        if kind == "feux" and rng.random() < 0.8:
+            items.append(make_local("M_ligne_feux", xc, zi, lw, rng, cam))
         if kind == "stop":
             items.append(make_local("M_ligne_stop", xc, zi, lw, rng, cam))
             if rng.random() < 0.6:
@@ -202,7 +231,7 @@ def plan_markings(sc, rng):
             if rng.random() < 0.55:
                 items.append(make_local("M_triangle_cedez", xc, zi - rng.uniform(4, 9), lw, rng, cam))
         if rng.random() < (0.75 if kind == "feux" else 0.35):
-            zp = zi + (rng.uniform(1.2, 3) if kind != "feux" else 0)
+            zp = zi + rng.uniform(1.2, 3)
             items.append(make_local("M_passage_pietons", xc + rng.uniform(-0.5, 0.5), zp + 2, lw, rng, cam))
             if rng.random() < 0.25:
                 items.append(make_local("M_damier", xc, zp + 6.5, lw, rng, cam))
@@ -223,22 +252,36 @@ def plan_markings(sc, rng):
             x = xl - rng.uniform(0.6, 1.6)
         elif code == "M_fleche_rabattement":
             x = xl + rng.uniform(0.6, 1.2) if rng.random() < 0.5 else xc - 0.3
-        elif code in ("M_ligne_stop", "M_ligne_cedez", "M_passage_pietons", "M_damier"):
+        elif code in TRANSVERSAUX + ("M_passage_pietons", "M_damier"):
             z_end = min(z_end, z - 0.4)
         items.append(make_local(code, x, z, lw, rng, cam))
-    # lignes longitudinales
-    if rng.random() < 0.85:
+    # lignes longitudinales : axe à gauche de la voie, voie de droite ou rive, selon la position du bord de la chaussée
+    if rng.random() < 0.88:
         z0 = 1.5
-        style = rng.choices(["M_ligne_continue", "M_ligne_discontinue", "M_ligne_mixte", None], [0.35, 0.4, 0.2, 0.05])[0]
-        if style:
-            items.append(longitudinal(style, xl, z0, z_end, rng))
-        style = rng.choices(["M_ligne_continue", "M_ligne_discontinue", None], [0.3, 0.45, 0.25])[0]
-        if style:
-            items.append(longitudinal(style, xr, z0, z_end, rng))
-        if rng.random() < 0.3:
-            items.append(longitudinal(rng.choice(["M_ligne_continue", "M_ligne_discontinue"]), xr + lw, z0, z_end, rng))
-        if rng.random() < 0.25:
-            items.append(longitudinal(rng.choice(["M_ligne_continue", "M_ligne_discontinue"]), xl - lw, z0, z_end, rng))
+        xd, xg = sc.bord(1), sc.bord(-1)
+        rive_d = xd is not None and xd - xr < 1.3 and rng.random() < 0.75  # la voie longe le bord droit : ligne de rive
+        rive_g = xg is not None and xl - xg < 1.3 and rng.random() < 0.6  # sens unique, chaussée séparée : rive à gauche
+        if rive_g:
+            items.append(longitudinal("M_ligne_rive", max(xl, xg + rng.uniform(0.12, 0.4)), z0, z_end, rng))
+        else:
+            style = rng.choices(["M_ligne_continue", "M_ligne_discontinue", "M_ligne_mixte", "M_ligne_dissuasion", None], [0.3, 0.34, 0.16, 0.15, 0.05])[0]
+            if style:
+                items.append(longitudinal(style, xl, z0, z_end, rng))
+        if rive_d:
+            items.append(longitudinal("M_ligne_rive", min(xr, xd - rng.uniform(0.12, 0.4)), z0, z_end, rng))
+        else:
+            style = rng.choices(["M_ligne_continue", "M_ligne_discontinue", None], [0.3, 0.45, 0.25])[0]
+            if style:
+                items.append(longitudinal(style, xr, z0, z_end, rng))
+            if xd is not None and xd - xr > 2.2 and rng.random() < 0.6:  # chaussée large : rive au bord droit
+                items.append(longitudinal("M_ligne_rive", xd - rng.uniform(0.12, 0.4), z0, z_end, rng))
+            elif rng.random() < 0.3:
+                items.append(longitudinal(rng.choice(["M_ligne_continue", "M_ligne_discontinue"]), xr + lw, z0, z_end, rng))
+        if not rive_g:
+            if xg is not None and xl - xg > 2.2 and rng.random() < 0.5:
+                items.append(longitudinal("M_ligne_rive", xg + rng.uniform(0.12, 0.4), z0, z_end, rng))
+            elif rng.random() < 0.25:
+                items.append(longitudinal(rng.choice(["M_ligne_continue", "M_ligne_discontinue"]), xl - lw, z0, z_end, rng))
     return [m for m in items if m is not None]
 
 
@@ -281,15 +324,15 @@ def paint_markings(sc, rng, nrng):
         bw, bh = x1 - x0, y1 - y0
         if mk.label_zmax:  # ligne longitudinale
             too_small = bw < 6 or bh < 8
-        elif mk.code in ("M_ligne_stop", "M_ligne_cedez"):
-            too_small = bw < 20 or bh < 3
+        elif mk.code in TRANSVERSAUX:
+            too_small = bw < 20 or bh < (2 if mk.code == "M_ligne_feux" else 3)
         else:  # trop loin pour être lisible : ni peint ni annoté
             too_small = bw < 10 or bh < 5 or bw * bh < 80
         if too_small:
             continue
         paint = yellow if mk.color == "yellow" else white
         img = img * (1 - av[..., None]) + paint * av[..., None]
-        labels.append((BY_CODE[mk.code], x0, y0, x1, y1))
+        labels.append((DET_MARQUAGE[mk.code], x0, y0, x1, y1))
     sc.img = np.clip(img, 0, 255).astype(np.uint8)
     return labels
 
@@ -360,17 +403,19 @@ def foliage(shape, box, rng, nrng):
 
 
 def place_objects(sc, rng, nrng):
-    """Panneaux annotés et leurres (dos de panneaux, panonceaux, directions...)."""
+    """Panneaux annotés (classe unique « panneau » : le type est reconnu ensuite par le classifieur) et leurres : dos de
+    panneaux, plaques de rue et publicités (fond) ; panonceaux, directions et cartouches (zones ignorées)."""
     cam = sc.cam
     labels = []
     n_signs = rng.choices([0, 1, 2, 3, 4, 5], [0.06, 0.2, 0.3, 0.24, 0.12, 0.08])[0]
     n_decoys = rng.choices([0, 1, 2, 3], [0.35, 0.35, 0.2, 0.1])[0]
-    jobs = [("sign", rng.choice(SIGN_CODES)) for _ in range(n_signs)] + [("decoy", rng.choice(DECOY_KINDS)) for _ in range(n_decoys)]
+    jobs = [("sign", rng.choice(SVG_CODES) if rng.random() < 0.75 else None) for _ in range(n_signs)]  # None : panneau hors liste
+    jobs += [("decoy", rng.choice(DECOY_KINDS)) for _ in range(n_decoys)]
     placed = [tuple(r[1:]) for r in sc.real]
     for kind, what in jobs:
         for _ in range(12):
             if kind == "sign":
-                svg = build(what, rng)
+                svg = build(what, rng) if what else other_sign(rng)
                 shape = sign_shape(what)
                 widths, probs = SIGN_WIDTHS[shape]
                 wm = rng.choices(widths, probs)[0] * rng.uniform(0.95, 1.05)
@@ -449,7 +494,9 @@ def place_objects(sc, rng, nrng):
             la = leaves[0][..., None]
             sc.img = (sc.img * (1 - la) + leaves[1] * la).astype(np.uint8)
         if kind == "sign" and box is not None:
-            labels.append((BY_CODE[what], *box))
+            labels.append((DET_PANNEAU, *box))
+        elif kind == "decoy" and what in LEURRES_IGNORES and box is not None:
+            labels.append((DET_IGNORER, *box))
         if kind == "sign" and not overhead and rng.random() < 0.18:  # panonceau sous le panneau
             psvg = decoy("panonceau", rng)
             pvb = [float(x) for x in re.search(r'viewBox="([^"]+)"', psvg).group(1).split()]
@@ -459,7 +506,9 @@ def place_objects(sc, rng, nrng):
             prgba, _ = rasterize(psvg, int(np.clip(2 * (pquad[:, 0].max() - pquad[:, 0].min()), 24, 300)))
             pout = warp_rgba(photometric(prgba, sc, rng, region_mean), pquad)
             if pout is not None:
-                paste(sc.img, pout[0], pout[1], pout[2], occ)
+                pbox = paste(sc.img, pout[0], pout[1], pout[2], occ)
+                if pbox is not None:
+                    labels.append((DET_IGNORER, *pbox))
     return labels
 
 
@@ -500,14 +549,28 @@ def make_sample(job):
     stem = f"{split}_{idx:06d}"
     cv2.imwrite(f"{out}/images/{split}/{stem}.jpg", final, [cv2.IMWRITE_JPEG_QUALITY, rng.randint(60, 95)])
     H, W = final.shape[:2]
+    lignes = []
+    for c, x0, y0, x1, y1 in labels:
+        x0, x1 = np.clip([x0, x1], 0, W)
+        y0, y1 = np.clip([y0, y1], 0, H)
+        if x1 - x0 < 2 or y1 - y0 < 2:
+            continue
+        lignes.append(f"{c} {(x0 + x1) / 2 / W:.6f} {(y0 + y1) / 2 / H:.6f} {(x1 - x0) / W:.6f} {(y1 - y0) / H:.6f}\n")
+    if split == "val":  # validation : les vrais objets dans labels/, tout (zones ignorées comprises) dans labels_complets/
+        with open(f"{out}/labels_complets/{split}/{stem}.txt", "w") as fh:
+            fh.writelines(lignes)
+        lignes = [l for l in lignes if int(l.split()[0]) < DET_IGNORER]
     with open(f"{out}/labels/{split}/{stem}.txt", "w") as fh:
-        for c, x0, y0, x1, y1 in labels:
-            x0, x1 = np.clip([x0, x1], 0, W)
-            y0, y1 = np.clip([y0, y1], 0, H)
-            if x1 - x0 < 2 or y1 - y0 < 2:
-                continue
-            fh.write(f"{c} {(x0 + x1) / 2 / W:.6f} {(y0 + y1) / 2 / H:.6f} {(x1 - x0) / W:.6f} {(y1 - y0) / H:.6f}\n")
+        fh.writelines(lignes)
     return len(labels)
+
+
+def ecrire_yaml(racine):
+    """data/route_fr.yaml : images synthétiques (<racine>/route_fr) et vraies vues (<racine>/reel, tools/panoramax_dataset.py)."""
+    with open(ROOT / "data" / "route_fr.yaml", "w") as fh:
+        fh.write("# Jeu de données du détecteur : images synthétiques (synth/generate.py) et vraies vues (tools/panoramax_dataset.py)\n")
+        fh.write(f"path: {racine}  # relatif au dossier yolov5/\ntrain: [reel/images/train, route_fr/images/train]\nval: [reel/images/val, route_fr/images/val]\n\nnames:\n")
+        fh.writelines(f"  {i}: {n}\n" for i, n in enumerate(DETECTEUR))
 
 
 def _init(meta):
@@ -535,11 +598,9 @@ def main():
     for split, count in (("train", a.train), ("val", a.val)):
         os.makedirs(f"{a.out}/images/{split}", exist_ok=True)
         os.makedirs(f"{a.out}/labels/{split}", exist_ok=True)
+        os.makedirs(f"{a.out}/labels_complets/{split}", exist_ok=True)
         jobs += [(i, a.seed * 10_000_000 + (0 if split == "train" else 5_000_000) + i, split, split_names[split], a.fonds, a.out) for i in range(count)]
-    with open(ROOT / "data" / "route_fr.yaml", "w") as fh:
-        fh.write("# Jeu de données synthétique : panneaux et marquages au sol français (généré par synth/generate.py)\n")
-        fh.write(f"path: {Path(a.out).resolve()}\ntrain: images/train\nval: images/val\n\nnames:\n")
-        fh.writelines(f"  {i}: {n}\n" for i, n in enumerate(NAMES))
+    ecrire_yaml(os.path.relpath(os.path.abspath(os.path.join(a.out, "..")), ROOT / "yolov5"))
     n_obj = 0
     with ProcessPoolExecutor(a.workers, initializer=_init, initargs=(meta,)) as ex:
         for i, n in enumerate(ex.map(make_sample, jobs, chunksize=16)):

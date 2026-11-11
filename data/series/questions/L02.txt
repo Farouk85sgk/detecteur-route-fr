@@ -1,0 +1,86 @@
+# Interdictions, obligations et zones
+
+? Je croise ce panneau. À partir de quel endroit dois-je respecter la limitation ?
++ À partir du panneau
+- 50 m après le panneau
+- À partir de la prochaine intersection
+! Une interdiction ou une limitation s'applique à partir du panneau qui la signale. Je dois donc avoir fini de ralentir en arrivant à sa hauteur.
+@ interdictions : début | 1 | B14_70
+
+? Après un panneau « 70 », je traverse une intersection sans revoir de panneau. Hors agglomération, la limitation à 70 km/h :
+- continue jusqu'à la prochaine ville
++ prend fin : la limitation générale de la route s'applique de nouveau
+- continue pendant encore 1 km
+! Hors agglomération, les interdictions (vitesse, dépassement...) prennent fin à l'intersection suivante si le panneau n'est pas répété, ou au panneau de fin d'interdiction. En cas de doute, je garde une vitesse prudente.
+@ interdictions : fin | 3
+
+? Ce panneau annonce :
+- la fin de la seule limitation de vitesse
++ la fin de toutes les interdictions signalées auparavant aux véhicules en mouvement
+- la fin de l'agglomération
+! Le disque blanc barré de noir met fin à toutes les interdictions précédemment signalées pour les véhicules en mouvement (vitesse, dépassement...). Les règles générales s'appliquent de nouveau.
+@ fin d'interdiction | 2 | B31
+
+? Ce panneau interdit de stationner :
+- des deux côtés de la rue
++ du côté où il est placé, jusqu'à la prochaine intersection
+- sur 50 m après le panneau
+! L'interdiction de stationner vaut du côté de la chaussée où le panneau est implanté, depuis le panneau jusqu'à la prochaine intersection, sauf panonceau précisant autre chose. L'arrêt (pour déposer quelqu'un) reste autorisé.
+@ stationnement interdit : étendue | 2 | B6a1
+
+? Dans la zone annoncée par ce panneau :
++ la vitesse est limitée à 20 km/h
++ les piétons peuvent circuler sur la chaussée et sont prioritaires
+- les piétons doivent rester sur les trottoirs
+- le stationnement est autorisé partout
+! Dans une zone de rencontre, piétons et véhicules partagent la chaussée : les piétons y sont prioritaires sur tous les véhicules (sauf le tramway), la vitesse est limitée à 20 km/h et l'on ne stationne que sur les emplacements aménagés.
+@ zone de rencontre | 2 | B52
+
+? Dans une aire piétonne, un véhicule autorisé à y circuler (riverain, livraison) roule :
+- à 30 km/h au maximum
+- à 20 km/h au maximum
++ au pas
+! L'aire piétonne est réservée aux piétons. Les rares véhicules autorisés y circulent à l'allure du pas et laissent toujours la priorité aux piétons.
+@ aire piétonne | 2 | B54
+
+? Dans une zone 30, sauf indication contraire, les rues à sens unique :
+- sont interdites aux vélos à contresens
++ peuvent être empruntées par les vélos dans les deux sens
+- sont réservées aux riverains
+! Dans les zones 30, toutes les chaussées sont à double sens pour les cyclistes, sauf décision contraire de la mairie. Je peux donc croiser un vélo dans une rue où je roule en sens unique.
+@ zone 30 : double-sens cyclable | 3 | B30
+
+? Quelle est la différence entre ces deux situations : un panneau « sens interdit » et un panneau « circulation interdite » (disque blanc cerclé de rouge, vide) ?
++ Le sens interdit ne ferme la rue que dans mon sens ; la circulation interdite la ferme dans les deux sens
+- Il n'y en a aucune
+- La circulation interdite ne concerne que les poids lourds
+! Le sens interdit m'empêche d'entrer dans la rue par ce côté : des véhicules y circulent, en face. La circulation interdite ferme la voie à tous les véhicules, dans les deux sens.
+@ sens interdit et circulation interdite | 2 | B0
+
+? Sous un panneau « sens interdit », un panonceau indique « SAUF » suivi d'un vélo. En voiture :
+- je peux m'engager en roulant au pas
++ je ne peux pas m'engager, et des vélos peuvent sortir de cette rue face à moi
+- je peux m'engager si aucun vélo n'arrive
+! La rue reste interdite aux voitures dans ce sens. Les cyclistes, eux, peuvent l'emprunter : c'est un double-sens cyclable. Je m'attends à croiser des vélos en sortie de rue.
+@ sens interdit sauf vélos | 1 | B1_M9v
+
+? Ce panneau m'oblige à :
+- tourner à droite à la prochaine intersection
++ contourner l'obstacle par la droite
+- me garer à droite
+! La flèche oblique sur fond bleu impose de passer du côté indiqué : elle est placée sur un îlot ou un obstacle que je dois contourner par la droite.
+@ obligations : contournement | 1 | B21a1
+
+? Ce panneau signale une piste ou une bande :
+- conseillée aux cyclistes
++ obligatoire pour les cyclistes
+- interdite aux cyclistes
+! Le disque bleu rend la piste obligatoire pour les cycles : ils ne doivent pas rouler sur la chaussée voisine. Le panneau carré bleu, lui, signale une piste seulement conseillée. Dans les deux cas, les voitures n'y circulent pas.
+@ obligations : piste cyclable | 2 | B22a
+
+? Ce panneau m'interdit de dépasser :
++ les voitures et les camions
+- les motos et les cyclomoteurs à deux roues
+- tous les véhicules, sans exception
+! L'interdiction de dépasser concerne les véhicules à moteur, à l'exception des deux-roues sans side-car. Je peux donc dépasser une moto ou un cyclomoteur si la manœuvre est sans danger et qu'aucune ligne continue ne l'interdit.
+@ interdiction de dépasser | 3 | B3

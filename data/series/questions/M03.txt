@@ -1,0 +1,85 @@
+# Feux, visibilité et pannes
+
+? À l'arrière d'une voiture, les feux de position sont de couleur :
+- blanche
+- orange
++ rouge
+! À l'arrière : feux de position, feux stop et feu de brouillard rouges, feux de recul blancs, clignotants orange. À l'avant : feux blancs ou jaunes, clignotants orange.
+@ feux : couleurs | 1
+
+? Quels feux une voiture doit-elle obligatoirement avoir à l'arrière ?
++ Deux feux de position rouges
++ Des feux stop
++ Un éclairage de la plaque d'immatriculation
+- Deux feux de brouillard
+! À l'arrière, sont obligatoires : les feux de position, les feux stop (dont un troisième surélevé sur les voitures récentes), les clignotants, l'éclairage de la plaque, les catadioptres et au moins un feu de brouillard.
+@ feux obligatoires | 2
+
+? Mes feux de croisement, mal réglés, éclairent trop haut. La conséquence est que :
++ j'éblouis les autres usagers
+- je consomme plus de carburant
+- mes pneus s'usent plus vite
+! Des feux réglés trop haut éblouissent ; trop bas, ils n'éclairent pas assez loin. Quand la voiture est chargée, je corrige leur hauteur avec la molette prévue au tableau de bord.
+@ feux : réglage | 1
+
+? Des optiques de phares sales :
++ réduisent fortement l'éclairage de la route
+- n'ont aucun effet
+- améliorent la portée des feux
+! La saleté peut faire perdre une grande partie de la lumière émise et la diffuse, ce qui éblouit. Je nettoie régulièrement les optiques et les feux arrière, surtout en hiver.
+@ feux : propreté | 1
+
+? Mes essuie-glaces laissent des traces et broutent sur le pare-brise. Je :
++ remplace les balais
+- augmente la vitesse de balayage
+- roule sans essuie-glaces
+! Des balais usés ne chassent plus l'eau correctement : la visibilité se dégrade, surtout la nuit et sous la pluie. Ils se changent environ une fois par an.
+@ essuie-glaces | 1
+
+? Un impact fissure mon pare-brise, dans le champ de vision du conducteur. Je :
++ le fais réparer ou remplacer rapidement
+- attends le prochain contrôle technique
+- colle un autocollant dessus
+! Une fissure gêne la vision, fragilise le pare-brise et peut s'étendre d'un coup. Dans le champ de vision du conducteur, elle peut entraîner une contre-visite au contrôle technique.
+@ pare-brise | 2
+
+? Les vitres de ma voiture se couvrent de buée. Pour la faire disparaître rapidement, j'utilise :
++ la ventilation dirigée vers le pare-brise, avec la climatisation ou le chauffage
+- un chiffon tout en conduisant
+- le recyclage de l'air de l'habitacle
+! L'air sec de la climatisation, dirigé vers les vitres, enlève la buée rapidement ; la lunette arrière a son propre dégivrage. Le recyclage de l'air, au contraire, garde l'humidité à l'intérieur.
+@ désembuage | 2
+
+? L'avertisseur sonore est-il un équipement obligatoire sur une voiture ?
++ Oui
+- Non
+! Toute voiture doit être munie d'un avertisseur sonore en état de marche. Son usage reste limité : danger immédiat en agglomération, et pour avertir les autres usagers hors agglomération.
+@ avertisseur sonore | 1
+
+? Lors du contrôle technique, une défaillance « critique » est relevée. Cela signifie que :
++ le véhicule ne peut plus circuler à partir de minuit le jour même, sauf pour aller le faire réparer
+- je dispose de deux mois pour réparer, en roulant normalement
+- le contrôle est validé avec une remarque
+! Une défaillance critique représente un danger direct et immédiat : le contrôle n'est valable que jusqu'à la fin de la journée. Une défaillance majeure laisse deux mois pour la contre-visite ; une mineure n'en impose pas.
+@ contrôle technique : défaillances | 3
+
+? Ma voiture tombe en panne sur une route ordinaire, hors agglomération. Je commence par :
++ allumer mes feux de détresse et me ranger au mieux hors de la chaussée
+- ouvrir le capot au milieu de la route
+- téléphoner à un ami avant toute chose
+! Je me range si possible hors de la chaussée, feux de détresse allumés. J'enfile mon gilet avant de sortir, je mets mes passagers à l'abri et je place le triangle à 30 m au moins.
+@ panne : se signaler | 1
+
+? Ma voiture à boîte manuelle doit être remorquée par une autre voiture sur quelques centaines de mètres. Pendant le remorquage :
++ les feux de détresse du véhicule remorqué sont allumés
++ quelqu'un reste au volant du véhicule remorqué pour diriger et freiner
+- le véhicule remorqué peut rester sans conducteur
+! Le remorquage par un autre véhicule n'est qu'un dépannage sur une courte distance, à allure très réduite, feux de détresse allumés. Moteur arrêté, la direction et le freinage sont beaucoup plus durs. Il est interdit sur autoroute.
+@ remorquage | 3
+
+? Le voyant orange du moteur s'allume et reste allumé. Je :
++ fais contrôler le véhicule rapidement
+- m'arrête immédiatement sur la chaussée
+- l'ignore tant que la voiture roule
+! Le voyant orange de diagnostic moteur signale une anomalie de fonctionnement ou de dépollution. Je peux en général continuer prudemment, mais je fais vérifier la voiture sans tarder. S'il clignote, je m'arrête dès que possible.
+@ voyant orange moteur | 2

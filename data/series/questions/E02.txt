@@ -1,0 +1,85 @@
+# Pollution et mobilités
+
+? La vignette Crit'Air classe les véhicules selon :
++ leurs émissions de polluants, d'après leur motorisation et leur date de mise en circulation
+- leur couleur
+- leur puissance fiscale uniquement
+! Le certificat qualité de l'air (Crit'Air) classe les véhicules de la catégorie « zéro émission » (électrique, hydrogène) à la catégorie 5, selon la motorisation et la norme antipollution. Les plus anciens ne sont pas classés.
+@ Crit'Air : principe | 1
+
+? La vignette Crit'Air se commande :
++ sur le site officiel du certificat qualité de l'air, pour quelques euros
+- chez n'importe quel garagiste, pour 50 €
+- elle est envoyée automatiquement chaque année
+! La vignette se commande uniquement sur le site officiel de l'État, pour un prix modique. Elle est valable tant qu'elle reste lisible. Attention aux sites frauduleux qui la vendent bien plus cher.
+@ Crit'Air : obtention | 2
+
+? Lors d'un pic de pollution, le préfet peut décider :
++ d'abaisser les vitesses maximales autorisées
++ de n'autoriser à circuler que les véhicules les moins polluants (circulation différenciée)
+- de supprimer les limitations de vitesse
+! En cas d'épisode de pollution, les vitesses peuvent être réduites de 20 km/h et la circulation réservée aux véhicules portant certaines vignettes Crit'Air. Ces mesures sont annoncées sur les panneaux lumineux et dans les médias.
+@ pic de pollution | 2
+
+? Le covoiturage permet :
++ de réduire le nombre de voitures en circulation
++ de partager les frais du trajet
+- de dépasser les limitations de vitesse sur les voies réservées
+! Partager son véhicule réduit le trafic, la pollution et le coût des trajets. Des aires et, sur certains axes, des voies réservées lui sont consacrées.
+@ covoiturage | 1 | CE52
+
+? Sur certaines voies rapides, un losange blanc affiché sur un panneau lumineux signale une voie réservée :
++ aux véhicules transportant au moins deux personnes, aux taxis, aux transports en commun et aux véhicules à très faibles émissions
+- aux poids lourds
+- aux motos uniquement
+! Le losange blanc désigne une voie réservée au covoiturage (au moins deux occupants) et à certains véhicules : transports en commun, taxis, véhicules à très faibles émissions. Y circuler seul est sanctionné par une amende de 135 €.
+@ voies réservées au covoiturage | 3
+
+? En ville, à faible vitesse, une voiture électrique est :
++ très silencieuse : les piétons et les cyclistes peuvent ne pas l'entendre arriver
+- plus bruyante qu'une voiture thermique
+- interdite dans les zones piétonnes
+! À basse vitesse, un véhicule électrique ou hybride fait très peu de bruit, même si un avertisseur sonore de proximité est désormais obligatoire sur les modèles récents. Je redouble d'attention près des piétons.
+@ véhicules électriques : silence | 1
+
+? Je conduis une voiture électrique. Mon autonomie diminue plus vite :
++ à vitesse élevée, sur autoroute
++ par temps froid, avec le chauffage
+- en ville, à faible vitesse
+! La vitesse, le froid, le chauffage et la climatisation réduisent l'autonomie d'un véhicule électrique. En ville, les ralentissements rechargent la batterie grâce au freinage régénératif. Je prépare mes recharges sur les longs trajets.
+@ véhicules électriques : autonomie | 2
+
+? Je me gare sur une place équipée d'une borne de recharge, signalée par ce panneau, avec une voiture qui ne recharge pas. Je :
++ commets une infraction : la place est réservée aux véhicules en charge
+- suis en règle si je ne reste pas longtemps
+- suis en règle si ma voiture est hybride
+! Ces emplacements sont réservés aux véhicules électriques ou hybrides rechargeables pendant leur recharge. S'y garer sans recharger est un stationnement gênant.
+@ places de recharge | 2 | B6d_M6i
+
+? Après avoir fait la vidange de ma voiture moi-même, je dépose l'huile usagée :
++ dans une déchetterie ou un point de collecte
+- dans les égouts
+- dans la poubelle ordinaire
+! Un litre d'huile de vidange peut polluer une très grande surface d'eau. Huiles, batteries, pneus, liquides et filtres usagés sont des déchets dangereux : ils se déposent en déchetterie ou chez un professionnel.
+@ déchets automobiles | 1
+
+? Ma batterie est hors d'usage et je la remplace. L'ancienne batterie :
++ doit être rapportée à un point de collecte ou reprise par le vendeur
+- peut être jetée avec les ordures ménagères
+- peut être abandonnée dans la nature
+! Une batterie contient du plomb et de l'acide. Le vendeur d'une batterie neuve a l'obligation de reprendre l'ancienne ; les déchetteries l'acceptent aussi.
+@ recyclage des batteries | 1
+
+? Le dioxyde de carbone (CO2) rejeté par les moteurs thermiques est surtout :
++ un gaz à effet de serre, qui contribue au réchauffement climatique
+- un gaz qui provoque directement des maladies respiratoires
+- un gaz sans aucun effet
+! Le CO2 est le principal gaz à effet de serre émis par les transports. Les oxydes d'azote et les particules fines, eux, dégradent la qualité de l'air et la santé.
+@ gaz à effet de serre | 2
+
+? Les particules fines émises par la circulation (moteurs, mais aussi freins et pneus) :
++ pénètrent profondément dans les poumons et nuisent à la santé
+- sont sans danger
+- ne concernent que les camions
+! Les particules fines aggravent les maladies respiratoires et cardiovasculaires. Elles proviennent des gaz d'échappement, mais aussi de l'usure des freins, des pneus et de la chaussée : une conduite souple en émet moins.
+@ particules et santé | 2

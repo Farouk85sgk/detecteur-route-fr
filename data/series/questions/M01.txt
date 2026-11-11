@@ -1,0 +1,87 @@
+# Pneus
+
+? La profondeur minimale légale des rainures principales d'un pneu est de :
+- 0,6 mm
++ 1,6 mm
+- 3 mm
+- 5 mm
+! En dessous de 1,6 mm, le pneu est interdit : 135 € d'amende par pneu et immobilisation possible du véhicule. L'adhérence sur route mouillée se dégrade bien avant cette limite.
+@ pneus : usure légale | 1
+
+? Les témoins d'usure d'un pneu sont :
++ de petites bosses situées au fond des rainures
+- des voyants au tableau de bord
+- des étiquettes collées sur le flanc
+! Les témoins d'usure sont des surépaisseurs de 1,6 mm au fond des rainures principales. Quand la gomme arrive à leur niveau, le pneu a atteint la limite légale et doit être remplacé.
+@ pneus : témoins d'usure | 1
+
+? Je contrôle la pression de mes pneus :
++ environ une fois par mois et avant un long trajet
+- uniquement au contrôle technique
+- une fois par an
+! La pression se contrôle tous les mois et avant chaque long trajet, sans oublier la roue de secours. Les pressions recommandées figurent dans le carnet du véhicule, sur la portière ou la trappe à carburant.
+@ pneus : fréquence du contrôle | 1
+
+? La pression des pneus se contrôle de préférence :
++ à froid
+- à chaud, juste après un long trajet
+- peu importe
+! La pression recommandée est donnée pour des pneus froids, c'est-à-dire ayant peu roulé. À chaud, la pression monte : on ajoute alors 0,3 bar à la valeur indiquée, et on ne dégonfle jamais un pneu chaud.
+@ pneus : pression à froid | 2
+
+? Des pneus sous-gonflés :
++ augmentent la consommation de carburant
++ s'usent plus vite et risquent d'éclater
++ dégradent la tenue de route
+- réduisent la distance de freinage
+! Un pneu sous-gonflé s'écrase, chauffe, s'use sur les bords et peut éclater. Il allonge le freinage, dégrade la tenue de route et augmente la consommation.
+@ pneus : sous-gonflage | 1
+
+? Sur un même essieu, les deux pneus doivent être :
++ de même marque, de même type et de mêmes dimensions
+- de marques différentes pour comparer
+- l'un neuf, l'autre usé
+! Les deux pneus d'un même essieu doivent avoir la même structure, les mêmes dimensions et le même type, avec une usure proche (5 mm d'écart au plus).
+@ pneus : même essieu | 2
+
+? Je remarque une hernie (une bosse) sur le flanc d'un pneu. Je :
++ fais remplacer le pneu sans attendre
+- continue à rouler en surveillant la bosse
+- dégonfle un peu le pneu
+! Une hernie, une coupure profonde ou une déchirure du flanc signalent que la structure du pneu est atteinte : il peut éclater à tout moment, surtout à vitesse élevée.
+@ pneus : flancs abîmés | 1
+
+? Sur autoroute, un pneu avant éclate. Je :
++ tiens fermement le volant et ralentis progressivement, sans freiner brutalement
+- freine le plus fort possible
+- donne un coup de volant du côté opposé
+! En cas d'éclatement, la voiture tire du côté du pneu crevé. Je maintiens ma trajectoire à deux mains, je lâche l'accélérateur, je laisse la vitesse tomber et je me range sur la bande d'arrêt d'urgence.
+@ éclatement | 2
+
+? Par temps de pluie, le rôle principal des sculptures du pneu est :
++ d'évacuer l'eau pour garder le contact avec la route
+- de faire moins de bruit
+- de refroidir le pneu
+! Les rainures évacuent l'eau entre le pneu et la chaussée. Plus elles sont usées, moins elles évacuent : le risque d'aquaplanage augmente et les distances de freinage s'allongent.
+@ pneus : pluie | 1
+
+? Un pneu hiver se reconnaît à son marquage :
++ « 3PMSF » : un flocon de neige dans une montagne à trois pics
+- « XL »
+- « TUBELESS »
+! Le pictogramme du flocon dans une montagne à trois pics (3PMSF) identifie les pneus homologués pour l'hiver. Leur gomme reste souple par temps froid et leurs lamelles accrochent sur la neige.
+@ pneus hiver | 3
+
+? Ma voiture est équipée d'une roue de secours de type « galette ». Avec elle, je :
++ limite ma vitesse, en général à 80 km/h
++ rejoins rapidement un garage pour faire réparer ma roue
+- peux rouler normalement aussi longtemps que je veux
+! Une roue galette n'est qu'un dépannage : vitesse limitée (en général 80 km/h, indiquée sur la roue), tenue de route et freinage dégradés. Je fais réparer ou remplacer le pneu au plus vite.
+@ roue de secours | 2
+
+? Des pneus surgonflés :
++ réduisent la surface de contact avec la route
++ s'usent plus vite au centre
+- améliorent l'adhérence sur route mouillée
+! Trop gonflé, le pneu ne porte que sur sa partie centrale : l'adhérence et le confort diminuent, la distance de freinage s'allonge et le pneu devient plus fragile aux chocs.
+@ pneus : surgonflage | 2

@@ -1,0 +1,88 @@
+# Stupéfiants, médicaments et santé
+
+? Conduire après avoir fait usage de stupéfiants est :
+- un délit, mais seulement au-delà d'un seuil fixé par la loi
++ un délit, quelle que soit la quantité consommée
+- une contravention, tant que je ne provoque pas d'accident
+! Contrairement à l'alcool, aucun seuil n'est toléré : toute trace révélée par l'analyse salivaire ou sanguine suffit. C'est un délit, passible de 3 ans d'emprisonnement, avec retrait de 6 points et suspension ou annulation possible du permis.
+@ stupéfiants : interdiction totale | 1
+
+? Concernant le dépistage salivaire de stupéfiants lors d'un contrôle routier, quelles affirmations sont exactes ?
++ Il peut être pratiqué même sans infraction ni accident
+- Il ne détecte que le cannabis
++ S'il est positif, un prélèvement est analysé en laboratoire
++ Refuser de se soumettre aux vérifications est un délit
+! Le dépistage peut être préventif, sans infraction ni accident, et recherche aussi cocaïne, opiacés, ecstasy et amphétamines. S'il est positif, un prélèvement salivaire ou sanguin est analysé en laboratoire. Refuser ces vérifications est un délit, puni comme la conduite après usage de stupéfiants.
+@ stupéfiants : dépistage salivaire | 3
+
+? Quels sont les effets du cannabis sur la conduite ?
+- Il améliore la concentration
++ Il allonge le temps de réaction
++ Il provoque de la somnolence
+- Il raccourcit la distance d'arrêt
+! Le cannabis provoque une somnolence, ralentit la coordination des mouvements, allonge le temps de réaction et diminue les facultés visuelles et auditives. Comme le conducteur réagit plus tard, sa distance d'arrêt augmente.
+@ cannabis : effets | 1
+
+? J'ai fumé du cannabis hier soir. Ce matin, je ne ressens plus aucun effet. Un dépistage salivaire peut-il encore être positif ?
++ Oui
+- Non
+! Les effets du cannabis durent plusieurs heures, et il reste détectable dans la salive encore plus longtemps : plusieurs heures, voire plusieurs jours chez un consommateur régulier. Ne plus rien ressentir ne garantit donc ni un test négatif, ni des capacités intactes.
+@ cannabis : durée et détection | 2
+
+? Consommer à la fois de l'alcool et du cannabis avant de conduire :
+- n'est pas plus dangereux que l'alcool seul
+- est moins dangereux, car les effets se compensent
++ multiplie fortement le risque d'accident mortel
+! Les effets de l'alcool et du cannabis ne se compensent pas, ils se cumulent : vigilance, réflexes et perception sont encore plus dégradés. Selon la Sécurité routière, ce mélange multiplie par 29 le risque de provoquer un accident mortel.
+@ alcool et stupéfiants : risque | 1
+
+? Je conduis après avoir fait usage de stupéfiants, avec en plus une alcoolémie égale ou supérieure au taux légal. Ce délit entraîne un retrait de :
+- 6 points
+- 8 points
++ 9 points
+- 12 points
+! Le cumul alcool et stupéfiants est puni plus sévèrement que l'alcool seul ou les stupéfiants seuls (6 points) : retrait de 9 points, soit les trois quarts du maximum de 12 points, et jusqu'à 5 ans d'emprisonnement.
+@ alcool et stupéfiants : sanctions | 3
+
+? La boîte de mon médicament porte un pictogramme rouge « Niveau 3 ». Je me sens en forme : puis-je conduire ?
+- Oui
++ Non
+! Le niveau 3 (rouge) signifie « Attention, danger : ne pas conduire ». Le médicament rend la conduite dangereuse, même si l'on se sent bien. Pour reprendre le volant, il faut demander l'avis d'un médecin.
+@ médicaments : pictogramme niveau 3 | 1
+
+? Quel message accompagne le pictogramme orange « Niveau 2 » sur une boîte de médicament ?
+- Attention, danger : ne pas conduire
+- Soyez prudent. Ne pas conduire sans avoir lu la notice
++ Soyez très prudent. Ne pas conduire sans l'avis d'un professionnel de santé
+! Niveau 2 (orange) : le médicament peut altérer la conduite, il faut l'avis d'un médecin ou d'un pharmacien avant de prendre le volant. Lire la notice correspond au niveau 1 (jaune), et l'interdiction de conduire au niveau 3 (rouge).
+@ médicaments : pictogramme niveau 2 | 2
+
+? J'achète sans ordonnance un médicament contre le rhume. Avant de prendre le volant, je :
+- n'ai rien à vérifier : il est vendu sans ordonnance
++ vérifie le pictogramme et la notice, ou demande conseil au pharmacien
+- peux conduire sans crainte si je respecte la dose indiquée
+! Même vendus sans ordonnance, certains médicaments (rhume, toux, allergies…) provoquent somnolence ou baisse de vigilance, même à la dose normale. Avant de conduire, je regarde le pictogramme sur la boîte, je lis la notice et, au besoin, je demande conseil au pharmacien.
+@ automédication | 2
+
+? Mon médecin me prescrit un nouveau traitement. Pour limiter les risques au volant, je lui indique :
++ que je conduis régulièrement
+- uniquement mes symptômes : le reste ne le concerne pas
++ les autres médicaments que je prends déjà
+! Sachant que je conduis, le médecin peut rechercher le traitement qui altère le moins la conduite. Connaître tous mes médicaments lui permet d'éviter les associations qui renforcent la somnolence.
+@ médicaments : avis du médecin | 2
+
+? Titulaire du permis B, j'apprends que je souffre d'une affection pouvant être incompatible avec la conduite, comme l'épilepsie. Je dois :
+- simplement en informer mon assureur
+- attendre une convocation de la préfecture
++ faire contrôler mon aptitude par un médecin agréé par le préfet
+- demander un certificat à mon médecin traitant, cela suffit
+! C'est au conducteur de se soumettre, de sa propre initiative, à un contrôle médical auprès d'un médecin agréé par le préfet, qui ne peut pas être son médecin traitant. À défaut, il risque de ne pas être couvert par son assurance en cas d'accident lié à son état de santé.
+@ maladies et aptitude à conduire | 3
+
+? Pour conduire une voiture, mon acuité visuelle, les deux yeux ensemble et avec correction si nécessaire, doit être d'au moins :
+- 3/10
++ 5/10
+- 8/10
+- 10/10
+! Pour le permis B, l'acuité visuelle binoculaire doit atteindre au moins 5/10, avec lunettes ou lentilles si nécessaire. Si le permis porte le code 01, cette correction est obligatoire pour conduire, sous peine d'amende et d'un retrait de 3 points.
+@ vue : acuité visuelle | 3

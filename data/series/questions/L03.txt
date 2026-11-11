@@ -1,0 +1,85 @@
+# Marquages au sol
+
+? Une ligne continue sépare les deux sens de circulation. Je peux :
+- la franchir pour dépasser si la route est dégagée
+- la chevaucher sans la franchir
++ ni la franchir ni la chevaucher
+! La ligne continue ne se franchit pas et ne se chevauche pas. Une seule exception : pour dépasser un cycliste, je peux la chevaucher si la visibilité est suffisante et la manœuvre sans danger.
+@ ligne continue | 1 | M_ligne_continue
+
+? Franchir une ligne continue pour dépasser une voiture est sanctionné par :
+- une simple amende, sans retrait de points
++ une amende et un retrait de 3 points
+- une amende et un retrait de 6 points
+! Franchir une ligne continue coûte 135 € d'amende forfaitaire et 3 points. La chevaucher (rouler dessus sans passer de l'autre côté) coûte 135 € et 1 point.
+@ ligne continue : sanctions | 3
+
+? Une ligne mixte (une ligne continue accolée à une ligne discontinue) sépare les deux sens. Je peux la franchir pour dépasser :
++ si la ligne discontinue est de mon côté
+- si la ligne continue est de mon côté
+- dans tous les cas
+! Je ne tiens compte que de la ligne la plus proche de moi. Si c'est la discontinue, je peux franchir pour dépasser, puis me rabattre même si la ligne est alors continue de mon côté.
+@ ligne mixte | 2 | M_ligne_mixte
+
+? Au centre de la route, les traits de la ligne deviennent longs et rapprochés. Cette ligne de dissuasion :
+- interdit tout dépassement
++ permet seulement de dépasser un véhicule très lent
+- annonce la fin d'une interdiction de dépasser
+! La ligne de dissuasion (traits de 3 m très rapprochés) remplace une ligne continue là où l'on doit pouvoir dépasser les véhicules très lents : tracteur, cycliste, voiturette. Pour les autres dépassements, je patiente.
+@ ligne de dissuasion | 2 | M_ligne_dissuasion
+
+? Des flèches obliques sont peintes au centre de la chaussée, pointées vers ma voie. Elles m'indiquent :
+- que je peux commencer un dépassement
++ de me rabattre : une ligne continue approche
+- qu'une voie supplémentaire commence à gauche
+! Les flèches de rabattement annoncent une ligne continue. Si je suis en train de dépasser, je termine au plus vite et je me rabats ; sinon, je ne commence pas de dépassement.
+@ flèches de rabattement | 1 | M_fleche_rabattement
+
+? Sur le bord droit de la chaussée, la ligne de rive discontinue :
+- m'interdit de m'arrêter sur l'accotement
++ marque la limite de la chaussée
++ peut être franchie pour s'arrêter sur l'accotement en cas de nécessité
+! La ligne de rive délimite le bord de la chaussée et aide à se repérer, surtout la nuit ou dans le brouillard. Discontinue, elle peut être franchie pour s'arrêter sur un accotement praticable.
+@ ligne de rive | 2 | M_ligne_rive
+
+? Sur autoroute, la bande d'arrêt d'urgence est séparée de la voie de droite par :
+- une ligne continue
++ une ligne discontinue aux traits très longs
+- une double ligne continue
+! La bande d'arrêt d'urgence est bordée d'une ligne discontinue aux traits très longs (39 m, espacés de 13 m). L'intervalle entre deux traits sert de repère de distance de sécurité : « un trait, danger ; deux traits, sécurité ».
+@ bande d'arrêt d'urgence | 3
+
+? Au STOP, je dois arrêter mon véhicule :
+- juste après la ligne, pour mieux voir
++ avant la large ligne blanche continue
+- n'importe où, si je marque un arrêt
+! La ligne d'arrêt du STOP est une large bande blanche continue tracée en travers de ma voie : je m'arrête avant elle, roues immobiles. Si la visibilité est insuffisante, j'avance ensuite doucement avant de m'engager.
+@ ligne de STOP | 1 | M_ligne_stop
+
+? À un feu tricolore, une ligne faite de petits traits blancs est tracée en travers de ma voie. Elle indique :
+- l'endroit où commence le passage pour piétons
++ l'endroit où je dois m'arrêter si le feu est rouge ou jaune
+- une voie réservée aux bus
+! La ligne d'effet des feux marque la limite à ne pas dépasser au feu rouge, ou au feu jaune si je peux m'arrêter en sécurité. Elle est placée avant le passage pour piétons, qui doit rester libre.
+@ ligne d'effet des feux | 2 | M_ligne_feux
+
+? Le long du trottoir, une ligne jaune en zigzag signale :
+- une place de livraison
++ un arrêt d'autobus
+- un stationnement payant
+! Le zigzag jaune marque l'emplacement d'un arrêt d'autobus. L'arrêt et le stationnement y sont interdits aux autres véhicules.
+@ marquage jaune : arrêt de bus | 1 | M_zigzag
+
+? Sur un chantier, des lignes jaunes sont tracées à côté des lignes blanches habituelles. Je suis :
+- les lignes blanches
++ les lignes jaunes
+- celles qui m'arrangent
+! Le marquage temporaire est jaune. Comme toute la signalisation temporaire, il l'emporte sur le marquage blanc permanent.
+@ marquage temporaire jaune | 1
+
+? Une zone couverte de bandes blanches obliques (zébras) est peinte sur la chaussée. Je peux :
+- y circuler si elle est vide
+- m'y arrêter quelques instants
++ ni y circuler ni m'y arrêter
+! Les zébras délimitent une zone neutralisée, par exemple avant un îlot ou entre deux voies qui se séparent. Il est interdit d'y circuler, de s'y arrêter et d'y stationner.
+@ zébras | 1 | M_zebras

@@ -1,0 +1,85 @@
+# Voir et percevoir
+
+? En conduisant, la plupart des informations utiles me parviennent par :
+- l'ouïe
++ la vue
+- le toucher
+! Environ 90 % des informations nécessaires à la conduite passent par les yeux. Une bonne vue, un pare-brise propre et un regard mobile sont donc essentiels.
+@ rôle de la vue | 1
+
+? Je porte des lunettes pour conduire et mon permis mentionne cette obligation. Je dois :
++ les porter chaque fois que je conduis
+- les porter seulement la nuit
+- les garder dans la boîte à gants
+! Si le permis porte la mention d'un dispositif de correction de la vue, lunettes ou lentilles sont obligatoires au volant. Avoir une paire de rechange dans la voiture est conseillé.
+@ correction de la vue | 1
+
+? Ma vue baisse progressivement sans que je m'en rende compte. Pour conduire en sécurité, je :
++ fais contrôler ma vue régulièrement
+- attends d'avoir un accident pour consulter
+- compense en roulant plus près du véhicule qui précède
+! La vue évolue avec l'âge, souvent sans qu'on le remarque. Un contrôle régulier chez un professionnel permet d'adapter la correction avant que la conduite ne devienne dangereuse.
+@ contrôle de la vue | 1
+
+? La nuit, l'œil a besoin de temps pour retrouver une vision normale après un éblouissement. Ce temps est d'environ :
+- une demi-seconde
++ plusieurs secondes
+- une heure
+! Après un éblouissement, la vision reste dégradée pendant plusieurs secondes, et plus longtemps avec l'âge ou la fatigue. Pendant ce temps, je roule presque à l'aveugle : je ralentis.
+@ éblouissement : récupération | 2
+
+? En entrant dans un tunnel par une journée ensoleillée :
++ mes yeux mettent un moment à s'adapter à l'obscurité
+- je vois immédiatement aussi bien qu'à l'extérieur
+- je dois garder mes lunettes de soleil
+! Le passage brutal de la lumière à l'ombre laisse l'œil quelques instants presque aveugle. Je ralentis avant l'entrée, j'allume mes feux de croisement et je retire mes lunettes de soleil.
+@ adaptation à l'obscurité | 1
+
+? Quand je fixe mon attention sur un point précis, par exemple un panneau à lire :
++ je perçois moins bien ce qui se passe sur les côtés
+- mon champ visuel s'élargit
+- je vois aussi nettement partout
+! La vision nette ne couvre que quelques degrés au centre du regard ; le reste est perçu de façon floue par la vision périphérique. D'où l'importance de déplacer sans cesse son regard.
+@ vision centrale et périphérique | 2
+
+? Sur une route droite et dégagée, la vitesse d'un véhicule qui arrive en face est :
+- toujours facile à estimer
++ difficile à estimer, surtout de loin
+- impossible à sous-estimer
+! L'œil apprécie mal la vitesse d'un véhicule qui s'approche de face. Avant de dépasser ou de m'engager, je prends une marge de sécurité ; dans le doute, je renonce.
+@ estimation des vitesses | 2
+
+? Avant de changer de direction à droite en ville, je contrôle le rétroviseur droit et l'angle mort pour :
++ ne pas couper la route à un cycliste ou à une trottinette
+- vérifier la couleur du feu
+- surveiller mon chargement
+! Un cycliste ou une trottinette peuvent remonter sur ma droite. Le contrôle visuel direct, juste avant de tourner, est le seul moyen de les voir.
+@ angle mort droit | 1
+
+? Les montants du pare-brise de ma voiture :
++ peuvent me cacher un piéton ou un deux-roues
+- n'ont aucun effet sur ma visibilité
+- améliorent ma vision de nuit
+! Les montants créent des angles morts vers l'avant, particulièrement gênants dans les virages et les giratoires. Bouger légèrement la tête suffit pour voir derrière eux.
+@ angles morts avant | 2
+
+? Par temps de pluie, la nuit, je vois moins bien parce que :
++ les reflets sur la chaussée mouillée me gênent
++ les gouttes sur le pare-brise diffusent la lumière
+- mes feux éclairent plus loin
+! La pluie de nuit cumule les difficultés : reflets, halos, marquage au sol moins visible, piétons en vêtements sombres presque invisibles. Je réduis nettement ma vitesse.
+@ visibilité : pluie de nuit | 1
+
+? De nuit, un piéton habillé de sombre devient visible dans mes feux de croisement à environ :
++ 30 m
+- 100 m
+- 150 m
+! Un piéton en vêtements sombres n'est vu qu'à une trentaine de mètres en feux de croisement, contre plus de 150 m s'il porte des éléments rétroréfléchissants. À 80 km/h, 30 m ne suffisent pas pour s'arrêter.
+@ visibilité des piétons la nuit | 2
+
+? Un pare-brise sale ou rayé :
++ aggrave l'éblouissement face au soleil ou aux phares
+- n'a d'effet que de jour
+- améliore le contraste
+! Saleté, traces grasses et micro-rayures diffusent la lumière : face au soleil bas ou aux phares, la gêne devient très forte. Je nettoie le pare-brise à l'extérieur comme à l'intérieur.
+@ pare-brise et éblouissement | 1

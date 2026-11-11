@@ -1,0 +1,88 @@
+# Permis à points et catégorie B
+
+? Hors période probatoire, le permis de conduire est doté d'un capital maximal de :
+- 6 points
+- 10 points
++ 12 points
+- 20 points
+! Le permis compte au maximum 12 points. Le permis probatoire en compte 6 au départ et atteint 12 points à la fin de la période probatoire, si aucune infraction n'a entraîné de retrait.
+@ permis à points : capital | 1
+
+? Après une formation traditionnelle, sans infraction, mon capital de points évolue ainsi :
++ 6 points, puis 8, puis 10, puis 12 au bout de trois ans
+- 6 points pendant trois ans, puis 12 d'un coup
+- 12 points dès le premier jour
+! Sans infraction, le permis probatoire gagne 2 points par an pendant trois ans (ou 3 points par an pendant deux ans après une conduite accompagnée) jusqu'à atteindre 12 points.
+@ période probatoire : progression | 2
+
+? Je commets plusieurs infractions au cours du même contrôle. Le nombre maximal de points retirés en une seule fois est de :
+- 6 points
++ 8 points
+- 12 points
+! Lorsque plusieurs infractions sont constatées en même temps, le retrait total ne peut pas dépasser 8 points. Une seule infraction peut en coûter au maximum 6.
+@ retrait de points : maximum | 3
+
+? J'ai perdu un seul point pour un petit excès de vitesse. Sans nouvelle infraction, je le récupère au bout de :
++ 6 mois
+- 2 ans
+- 3 ans
+! Un retrait d'un seul point est annulé au bout de 6 mois sans autre infraction. Pour les autres retraits, le capital est reconstitué après 2 ans sans infraction, ou 3 ans si l'infraction était une contravention de 4e ou 5e classe ou un délit.
+@ récupération de points | 3
+
+? Un stage de sensibilisation à la sécurité routière permet de récupérer jusqu'à :
+- 2 points
++ 4 points
+- 6 points
+- la totalité des points
+! Un stage volontaire de deux jours permet de récupérer jusqu'à 4 points, dans la limite du plafond du permis. Il n'est possible qu'une fois par an.
+@ stage de récupération de points | 2
+
+? Mon solde de points tombe à zéro. Mon permis est :
+- suspendu pendant un mois
++ invalidé : je ne peux plus conduire et je dois le repasser
+- maintenu si je paie une amende
+! Un solde nul entraîne l'invalidation du permis. Je dois le restituer et attendre en principe six mois avant de pouvoir le repasser, après un examen médical et psychotechnique.
+@ invalidation du permis | 2
+
+? Le permis B permet de conduire un véhicule dont le poids total autorisé en charge (PTAC) ne dépasse pas :
+- 2,5 tonnes
++ 3,5 tonnes
+- 7,5 tonnes
+! Le permis B autorise la conduite des véhicules de 3,5 tonnes de PTAC au maximum, comportant au plus neuf places assises, conducteur compris.
+@ catégorie B : poids | 1
+
+? Avec le permis B, le nombre maximal de places assises du véhicule, conducteur compris, est de :
+- 5
+- 7
++ 9
+! Le permis B couvre les véhicules de neuf places assises au plus, conducteur compris. Au-delà, il faut un permis de transport en commun (D1 ou D).
+@ catégorie B : places | 2
+
+? Avec le permis B, sans formation complémentaire, je peux tracter une remorque :
++ dont le PTAC ne dépasse pas 750 kg
++ plus lourde, si la somme des PTAC de la voiture et de la remorque ne dépasse pas 3 500 kg
+- de n'importe quel poids
+! Le permis B suffit pour une remorque de 750 kg de PTAC au plus, ou plus lourde si le total voiture + remorque reste dans la limite de 3 500 kg. Entre 3 500 et 4 250 kg, il faut la formation B96 ; au-delà, le permis BE.
+@ catégorie B : remorque | 3
+
+? En France, on peut passer l'épreuve pratique du permis B à partir de :
+- 16 ans
++ 17 ans
+- 18 ans
+! Depuis le 1er janvier 2024, le permis B peut être passé, et la conduite seul autorisée, dès 17 ans.
+@ âge du permis | 2
+
+? La réussite à l'examen du code reste valable :
+- 1 an
+- 3 ans
++ 5 ans
+- sans limite de durée
+! Le code est valable 5 ans et pour cinq présentations à l'épreuve pratique au maximum. Passé ce délai, il faut le repasser.
+@ validité du code | 2
+
+? Pour être reçu à l'examen du code (épreuve théorique générale), il faut au moins :
+- 30 bonnes réponses sur 40
++ 35 bonnes réponses sur 40
+- 40 bonnes réponses sur 40
+! L'épreuve compte 40 questions : il faut au moins 35 bonnes réponses, soit 5 erreurs au maximum.
+@ examen du code | 1

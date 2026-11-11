@@ -2,7 +2,7 @@
 // ce que c'est. L'appli garde l'empreinte de ce panneau (modèle empreinte.onnx) et le reconnaît ensuite sur la route.
 import { D, definirAppris, estPanneau, icone, officiels } from "./donnees.js";
 import { verifierBadges } from "./progression.js";
-import { idbMettre, idbSupprimer, idbTout, profil, sauver } from "./stockage.js";
+import { CODES_V3, idbMettre, idbSupprimer, idbTout, profil, sauver } from "./stockage.js";
 import { $, ICONES, confirmer, esc, ouvrirFeuille, fermerFeuille, toast } from "./ui.js";
 
 let urls = [];
@@ -10,7 +10,13 @@ let urls = [];
 // panneaux appris du profil -> éléments supplémentaires et références pour le moteur
 export async function chargerAppris(moteur, p = profil()) {
   urls.forEach(u => URL.revokeObjectURL(u)); urls = [];
-  const liste = (await idbTout("appris")).map(x => x.valeur).filter(a => a.profil === p.id).sort((a, b) => a.cree - b.cree);
+  const tous = await idbTout("appris");
+  for (const { cle, valeur: a } of tous) if (!a.v3) {  // version 3 : codes officiels (voir stockage.js)
+    a.v3 = true;
+    if (CODES_V3[a.code]) a.code = CODES_V3[a.code];
+    await idbMettre("appris", cle, a);
+  }
+  const liste = tous.map(x => x.valeur).filter(a => a.profil === p.id).sort((a, b) => a.cree - b.cree);
   for (const a of liste) { a.vignetteUrl = URL.createObjectURL(a.vignette); urls.push(a.vignetteUrl); }
   definirAppris(liste);
   const refs = [];

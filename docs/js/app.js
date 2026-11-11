@@ -9,10 +9,10 @@ import { verifierBadges } from "./progression.js";
 import { pageQuete } from "./quete.js";
 import { lancer, pageQuiz } from "./quiz.js";
 import { EVENEMENTS, appliquerTheme } from "./reglages.js";
-import { brancherCodes, carteCodes } from "./series.js";
+import { pageCodes } from "./series.js";
 import { charger, profil } from "./stockage.js";
 import { pageTrajet, pageTrajets } from "./trajets.js";
-import { ICONES, esc } from "./ui.js";
+import { esc } from "./ui.js";
 
 const racine = document.getElementById("app");
 let appris = [], dernier = null;
@@ -32,7 +32,7 @@ async function rendre() {
     else if (page === "quete") pageQuete(zone, a);
     else if (page === "trajets") pageTrajets(zone);
     else if (page === "trajet") await pageTrajet(zone, a);
-    else if (page === "codes") await pageCodes(zone);
+    else if (page === "codes") await pageCodes(zone, rendre);
     else return aller("#/");
   } catch (e) {
     console.error(e);
@@ -41,12 +41,6 @@ async function rendre() {
   scrollTo({ top: 0 });
 }
 NAV.rendre = rendre;
-
-async function pageCodes(zone) {
-  zone.innerHTML = `<div class="page"><div class="entete"><h1>Séries de code</h1><button class="btn-rond" data-nav="#/quiz" aria-label="Fermer">${ICONES.fermer}</button></div>
-    <div class="contenu zone-codes">${await carteCodes()}</div></div>`;
-  brancherCodes(zone.querySelector(".zone-codes"), rendre);
-}
 
 function lancerCamera(fichier = null) {
   if (cameraOuverte()) return;
@@ -71,7 +65,13 @@ async function demarrer() {
   verifierBadges(profil());
   await rendre();
   if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
-    navigator.serviceWorker.register("sw.js").then(() => navigator.serviceWorker.ready).then(r => r.active?.postMessage({ type: "mode", mode: profil().reglages.reseau })).catch(e => console.warn("Service worker", e));
+    // isolation de la page (calcul sur plusieurs cœurs) : appliquée par le service worker à partir de l'ouverture suivante
+    const safari = /^((?!chrome|android|crios|fxios).)*safari/i.test(navigator.userAgent);
+    const coep = profil().reglages.multicoeur === false ? "non" : safari ? "require-corp" : "credentialless";
+    navigator.serviceWorker.register("sw.js").then(() => navigator.serviceWorker.ready).then(r => {
+      r.active?.postMessage({ type: "mode", mode: profil().reglages.reseau });
+      r.active?.postMessage({ type: "isolation", coep });
+    }).catch(e => console.warn("Service worker", e));
   }
 }
 demarrer();

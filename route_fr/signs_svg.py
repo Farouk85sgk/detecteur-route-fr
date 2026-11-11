@@ -626,11 +626,13 @@ def build(code: str, rng=None) -> str:
         return end_sign(G(car_rear(p["grey"], p["white"]), -11.5, 1, 1.45) + G(car_rear(p["grey"], p["white"]), 11.5, 1, 1.45), p, rng, 7.5)
     w = p["white"]
     obligations = {
+        "B21-1": lambda: _ob_straight(w, 90),
+        "B21-2": lambda: _ob_straight(w, -90),
         "B21b": lambda: _ob_straight(w),
-        "B21d1": lambda: _ob_bent(w) if rng is None or rng.random() < 0.5 else _ob_straight(w, 90),
-        "B21d2": lambda: _ob_bent(w, False) if rng is None or rng.random() < 0.5 else _ob_straight(w, -90),
-        "B21c1": lambda: _ob_straight_or(w),
-        "B21c2": lambda: _ob_straight_or(w, False),
+        "B21c1": lambda: _ob_bent(w),
+        "B21c2": lambda: _ob_bent(w, False),
+        "B21d1": lambda: _ob_straight_or(w),
+        "B21d2": lambda: _ob_straight_or(w, False),
         "B21e": lambda: _ob_left_or_right(w),
         "B21a1": lambda: _ob_straight(w, 135),
         "B21a2": lambda: _ob_straight(w, -135),
@@ -658,6 +660,14 @@ def build(code: str, rng=None) -> str:
     if code == "C207":
         return _c207(p)
     raise KeyError(code)
+
+
+# Panneaux que build() sait dessiner (les autres classes du catalogue ne s'apprennent que sur de vraies photos)
+SVG_CODES = (
+    "A1a A1b A1c A1d A2b A3 A4 A7 A8 A13a A13b A14 A15b A16 A17 A18 A21 AB1 AB2 AB25 AB3a AB4 AB6 AB7 "
+    "B0 B1 B2a B2b B2c B3 B8 B9a B9b B15 B6a1 B6d B31 B33 B34 B21-1 B21-2 B21b B21c1 B21c2 B21d1 B21d2 B21e B21a1 B21a2 "
+    "B22a B22b B30 B51 EB10 EB20 C1a C12 C13a C18 C20a C107 C207"
+).split() + [f"B14_{v}" for v in (5, 10, 15, 20, 30, 40, 45, 50, 60, 70, 80, 90, 100, 110, 130)]
 
 
 # ----------------------------------------------------------------------------- leurres (non annotés)

@@ -1,0 +1,86 @@
+# Santé, émotions et état du conducteur
+
+? Je viens d'apprendre une très mauvaise nouvelle et je dois prendre la route. Mon état émotionnel :
++ peut réduire fortement mon attention à la conduite
+- n'a aucune influence si je conduis bien d'habitude
+- me rend plus prudent à coup sûr
+! Une émotion forte (chagrin, colère, euphorie) occupe l'esprit et détourne l'attention de la route. Si je ne me sens pas en état, j'attends, je me fais conduire ou je reporte le trajet.
+@ émotions | 1
+
+? J'ai une forte fièvre et je me sens faible. Conduire dans cet état :
++ allonge mon temps de réaction, comme la fatigue
+- ne pose aucun problème
+- est conseillé pour aller plus vite chez le médecin
+! La maladie, la fièvre ou une forte douleur diminuent la vigilance et les réflexes, et certains médicaments ajoutent de la somnolence. Mieux vaut se faire accompagner.
+@ maladie | 1
+
+? Avec l'âge, certaines capacités utiles à la conduite évoluent. Un conducteur âgé peut compenser en :
++ évitant de conduire la nuit ou aux heures de pointe
++ faisant contrôler régulièrement sa vue et son audition
++ choisissant des trajets qu'il connaît
+- roulant très en dessous des limitations sur la voie de gauche
+! Vue, audition, souplesse et temps de réaction diminuent avec l'âge. L'expérience et quelques adaptations simples permettent de continuer à conduire en sécurité.
+@ âge et conduite | 2
+
+? Un conducteur qui conduit le bras dans le plâtre ou avec une minerve :
++ peut être verbalisé s'il n'est pas en état d'exécuter toutes les manœuvres
+- est toujours en règle
+- bénéficie d'une tolérance d'un mois
+! Tout conducteur doit se tenir constamment en état et en position d'exécuter commodément et sans délai toutes les manœuvres. Un plâtre ou une minerve peuvent l'en empêcher, et l'assureur peut refuser de couvrir l'accident.
+@ état physique | 2
+
+? Je mange un sandwich en conduisant. Cette pratique :
++ occupe une main et détourne une partie de mon attention
++ peut être sanctionnée si elle m'empêche de conduire correctement
+- est expressément autorisée par le code de la route
+! Manger, boire, se maquiller ou fumer au volant ne sont pas interdits en tant que tels, mais le conducteur doit rester maître de son véhicule : s'il ne l'est plus, il peut être verbalisé.
+@ activités annexes | 2
+
+? Fumer en voiture est interdit :
++ en présence d'un mineur
+- uniquement sur autoroute
+- uniquement vitres fermées
+! Il est interdit de fumer dans un véhicule en présence d'un enfant de moins de 18 ans, sous peine d'amende. Par ailleurs, allumer ou rattraper une cigarette détourne l'attention.
+@ tabac en voiture | 3
+
+? J'écoute de la musique très fort dans ma voiture. Le risque principal est :
++ de ne pas entendre un avertisseur ou la sirène d'un véhicule de secours
+- d'user la batterie
+- de consommer plus de carburant
+! Un volume élevé isole de l'environnement sonore : sirènes, klaxons, bruits anormaux de la voiture. Une musique très rythmée pousse aussi à rouler plus vite.
+@ musique | 1
+
+? Après une nuit blanche, mes capacités de conduite sont comparables à celles d'une personne :
+- parfaitement reposée
++ ayant bu de l'alcool
+- plus concentrée que d'habitude
+! Rester éveillé une vingtaine d'heures dégrade les réflexes et le jugement autant qu'une alcoolémie proche de la limite légale. Et, comme avec l'alcool, on s'en rend mal compte soi-même.
+@ privation de sommeil | 2
+
+? Je conduis sur un trajet que je fais tous les jours. Le risque particulier est :
++ la routine : je fais moins attention à ce qui change
+- de me perdre
+- nul, puisque je connais la route par cœur
+! Sur un trajet habituel, on conduit « en pilote automatique » et on ne s'attend plus à l'imprévu. La majorité des accidents se produisent pourtant sur des trajets courts et familiers.
+@ trajets habituels | 1
+
+? En tant que conducteur, le sentiment de pouvoir tout maîtriser au volant est :
++ une illusion fréquente, qui pousse à prendre des risques
+- la preuve d'une bonne conduite
+- réservé aux conducteurs expérimentés
+! La plupart des conducteurs s'estiment meilleurs que la moyenne. Cette illusion de contrôle fait sous-estimer les risques, alors que personne ne maîtrise le comportement des autres ni l'imprévu.
+@ illusion de contrôle | 2
+
+? Une dispute éclate avec un passager pendant que je conduis. Je :
++ propose d'en reparler à l'arrêt et je me concentre sur la route
+- me tourne vers lui pour répondre
+- accélère pour arriver plus vite
+! Une discussion vive accapare l'attention. Si la tension monte, je m'arrête dans un endroit sûr plutôt que de continuer à conduire l'esprit ailleurs.
+@ conflit à bord | 1
+
+? Une personne diabétique ou cardiaque peut-elle conduire ?
++ Oui, si son état est stabilisé et suivi médicalement
+- Non, jamais
+- Oui, sans aucune précaution
+! Certaines affections sont compatibles avec la conduite si elles sont suivies et stabilisées ; d'autres imposent un avis médical ou un permis de durée limitée. En cas de doute, on consulte un médecin agréé.
+@ maladies chroniques | 3

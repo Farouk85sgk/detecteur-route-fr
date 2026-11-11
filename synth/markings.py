@@ -240,12 +240,18 @@ def render_alpha(cam, mk, ss=2, zmin=1.2):
 
 
 # ----------------------------------------------------------------------------- constructeurs de marquages
-LINE_PATTERNS = [(3.0, 10.0), (3.0, 10.0), (1.5, 5.0), (3.0, 3.5), (3.0, 1.33), (20.0, 6.0), (39.0, 13.0), (5.0, 5.0)]
+# modulations (trait, intervalle) en mètres : T1 et T'1 (axe, voies), T2 (voies spécialisées), T3 (dissuasion), T'3 et T4 (rive)
+LINE_PATTERNS = [(3.0, 10.0), (3.0, 10.0), (1.5, 5.0), (3.0, 3.5), (5.0, 5.0)]
+RIVE_PATTERNS = [(3.0, 3.5), (3.0, 3.5), (3.0, 3.5), (20.0, 6.0), (39.0, 13.0), None, None]  # None : rive continue
+DISSUASION = (3.0, 1.33)
 
 
 def longitudinal(code, x, z0, z1, rng, width=None):
-    """Ligne continue, discontinue ou mixte à la position latérale x, de z0 à z1."""
-    width = width or rng.choice([0.10, 0.12, 0.15, 0.15, 0.18, 0.20])
+    """Ligne continue, discontinue, mixte, de dissuasion ou de rive à la position latérale x, de z0 à z1."""
+    if code == "M_ligne_rive":
+        width = width or rng.choice([0.15, 0.18, 0.20, 0.225, 0.25])
+    else:
+        width = width or rng.choice([0.10, 0.12, 0.15, 0.15, 0.18, 0.20])
     polys = []
 
     def dashed(xx, ww, pattern):
@@ -261,6 +267,14 @@ def longitudinal(code, x, z0, z1, rng, width=None):
         polys.append(rect_xz(x - width / 2, x + width / 2, z0, z1))
     elif code == "M_ligne_discontinue":
         dashed(x, width, rng.choice(LINE_PATTERNS))
+    elif code == "M_ligne_dissuasion":
+        dashed(x, width, DISSUASION)
+    elif code == "M_ligne_rive":
+        pattern = rng.choice(RIVE_PATTERNS)
+        if pattern is None:
+            polys.append(rect_xz(x - width / 2, x + width / 2, z0, z1))
+        else:
+            dashed(x, width, pattern)
     else:  # mixte : continue + discontinue côte à côte
         sep = rng.uniform(0.08, 0.16) + width
         side = rng.choice([-1, 1])
@@ -317,6 +331,12 @@ def make_local(code, xc, zc, lane_w, rng, cam):
             while x + 0.5 <= x1:
                 mk.polys.append(rect_xz(x, x + 0.5, zc, zc + 0.5))
                 x += 1.0
+    elif code == "M_ligne_feux":  # ligne d'effet des feux : traits de 50 cm, larges de 15 cm
+        x, x1 = xc - lane_w / 2 + rng.uniform(0, 0.3), xc + lane_w / 2
+        ep = rng.choice([0.15, 0.15, 0.18, 0.2])
+        while x + 0.5 <= x1:
+            mk.polys.append(rect_xz(x, x + 0.5, zc, zc + ep))
+            x += 1.0
     elif code in ("M_stop_sol", "M_bus"):
         word = "STOP" if code == "M_stop_sol" else "BUS"
         wm = min(lane_w * rng.uniform(0.55, 0.8), 2.6)

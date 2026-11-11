@@ -1,0 +1,86 @@
+# Se garer et quitter le véhicule
+
+? Je gare ma voiture à boîte manuelle dans une rue en forte descente. Pour bien l'immobiliser avant de la quitter :
++ Je serre le frein de stationnement
++ J'engage la marche arrière
+- Je laisse le levier de vitesses au point mort
+! En pente, le frein de stationnement seul peut ne pas suffire : j'engage en plus une vitesse qui s'oppose au sens de la pente, la marche arrière en descente (la première en montée). Au point mort, plus rien ne retient la voiture si le frein lâche.
+@ stationnement en pente : frein et vitesse | 2
+
+? Je stationne dans une rue en forte descente, le long du trottoir situé à ma droite. Par sécurité, comment est-ce que je place les roues avant ?
++ Braquées vers la droite, côté trottoir
+- Braquées vers la gauche, côté chaussée
+- Bien droites, dans l'axe de la voiture
+! En descente, je braque les roues vers le trottoir : si le frein de stationnement lâche, la roue avant bute aussitôt contre la bordure et la voiture s'arrête, au lieu de dévaler la rue ou de partir vers la chaussée.
+@ stationnement en pente : roues braquées | 2
+
+? Je suis au volant et ma portière est à ma gauche. Pour repérer un cycliste qui arriverait par l'arrière, il est conseillé de l'ouvrir avec :
+- La main gauche
++ La main droite
+- N'importe quelle main : seul le rétroviseur compte
+! « Portière gauche, main droite » : saisir la poignée avec la main opposée oblige à pivoter le buste et la tête vers l'arrière. Je contrôle ainsi le rétroviseur extérieur et l'angle mort avant d'ouvrir. Côté passager, c'est l'inverse : main gauche.
+@ portière : méthode de la main opposée | 2
+
+? Garé le long du trottoir, je m'apprête à sortir de ma voiture. En regardant derrière moi, je vois un cycliste qui approche. Dans cette situation :
+- J'ouvre vite ma portière : j'ai le temps de sortir
+- J'entrouvre ma portière pour qu'il s'écarte
++ J'attends qu'il soit passé pour ouvrir ma portière
+! Il est interdit d'ouvrir une portière quand cela crée un danger pour soi ou pour les autres usagers (article R417-7 du Code de la route). Je laisse passer le cycliste, puis je contrôle de nouveau le rétroviseur et l'angle mort avant d'ouvrir.
+@ portière : regarder avant d'ouvrir | 1
+
+? Je suis garé en ville. Mon passager adulte ouvre sa portière sans regarder et fait chuter un cycliste. Qui a commis l'infraction d'ouverture dangereuse d'une portière ?
++ Mon passager
+- Moi, car le conducteur répond de ses passagers
+- Personne : c'était au cycliste de s'écarter
+! L'article R417-7 interdit à tout occupant d'un véhicule à l'arrêt ou en stationnement d'ouvrir une portière si cela crée un danger : l'infraction est commise par celui qui ouvre, conducteur ou passager. Je rappelle donc à mes passagers de regarder derrière eux avant de descendre.
+@ passagers : ouverture de portière | 3
+
+? Dans une rue à sens unique, je suis garé le long du trottoir de gauche. Mon enfant est assis à l'arrière. Par quelle portière est-il le plus sûr de le faire descendre ?
+- La portière arrière droite
++ La portière arrière gauche
+- L'une ou l'autre, la rue étant à sens unique
+! Un enfant descend toujours côté trottoir, à l'écart de la circulation : ici, le trottoir est à gauche. Je sors le premier et je lui ouvre moi-même la portière, pour qu'il ne se retrouve jamais seul sur la chaussée.
+@ enfants : descente côté trottoir | 3
+
+? Il fait chaud et ensoleillé. Je m'absente cinq minutes pour une course. Puis-je laisser mon enfant ou mon chien seul dans la voiture ?
+- Oui, si je laisse les vitres entrouvertes
+- Oui, si la voiture est garée à l'ombre
++ Non, même pour quelques minutes
+! Dans une voiture à l'arrêt, la température monte très vite et peut devenir mortelle ; entrouvrir les vitres ou se garer à l'ombre ne suffit pas. Un enfant ou un animal ne reste jamais seul à bord, même quelques minutes : il risque un coup de chaleur.
+@ enfant ou animal laissé dans le véhicule | 1
+
+? Je me gare devant une boulangerie et je descends acheter du pain. Ai-je le droit de laisser le moteur tourner pendant mon absence ?
++ Non, le moteur doit être arrêté
+- Oui, si mon absence dure moins de deux minutes
+- Oui, à condition de verrouiller les portes
+! En stationnement, le moteur doit être arrêté, sauf nécessité (arrêté du 12 novembre 1963, article 2). Moteur en marche et clé à bord, la voiture peut en plus être volée en quelques secondes : je coupe le contact et j'emporte la clé, même pour une course rapide.
+@ moteur en marche et clés à bord | 3
+
+? Je laisse ma voiture en stationnement dans la rue. Pour limiter le risque de vol, avant de m'éloigner :
++ Je ferme les vitres et je verrouille les portes
+- Je laisse une vitre entrouverte pour aérer l'habitacle
++ Je ne laisse aucun objet visible de l'extérieur
+- Je cache un double de la clé à bord, au cas où
+! Avant de quitter mon véhicule, je coupe le contact, j'emporte la clé, je ferme les vitres et je verrouille portes et coffre. Je ne laisse rien de tentant en vue : un sac ou un téléphone visible suffit à provoquer un bris de vitre.
+@ verrouillage et objets visibles | 1
+
+? Quand je laisse ma voiture en stationnement, est-il conseillé de laisser le certificat d'immatriculation dans la boîte à gants ?
+- Oui
++ Non
+! Le ministère de l'Intérieur recommande de ne laisser ni certificat d'immatriculation ni permis de conduire dans le véhicule : ils faciliteraient la tâche d'un voleur. Je les emporte et je garde une photocopie chez moi, utile pour déclarer rapidement un vol.
+@ papiers du véhicule en stationnement | 3
+
+? Je dois m'arrêter en urgence sur le bord de la route. À quel moment est-ce que j'enfile mon gilet de haute visibilité ?
++ Avant de sortir de mon véhicule
+- Une fois dehors, après l'avoir pris dans le coffre
+- Seulement s'il fait nuit ou si la visibilité est mauvaise
+! Après un arrêt d'urgence, le conducteur doit porter le gilet dès qu'il quitte son véhicule, de jour comme de nuit : je l'enfile donc avant de sortir. C'est pourquoi il se range à portée de main dans l'habitacle, et non dans le coffre (article R416-19).
+@ arrêt d'urgence : gilet | 2
+
+? Ma voiture est en panne sur la bande d'arrêt d'urgence d'une autoroute, feux de détresse allumés. Que doivent faire mes passagers ?
+- Rester attachés à bord en attendant le dépanneur
++ Sortir par les portières de droite
+- Attendre devant la voiture, sur la bande d'arrêt d'urgence
++ Se mettre à l'abri derrière la glissière de sécurité
+! Un véhicule immobilisé sur la bande d'arrêt d'urgence risque d'être percuté : personne ne reste à bord ni à proximité. Tous les occupants sortent côté droit, à l'opposé de la circulation, et attendent les secours derrière la glissière.
+@ arrêt d'urgence : se mettre à l'abri | 1

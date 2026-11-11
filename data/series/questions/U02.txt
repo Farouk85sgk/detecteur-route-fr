@@ -1,0 +1,88 @@
+# Cyclistes et trottinettes
+
+? En agglomération, quelle distance latérale minimale dois-je laisser entre ma voiture et le cycliste que je dépasse ?
+- 50 centimètres
++ 1 mètre
+- 1,50 mètre
+- 2 mètres
+! En agglomération, je ne dois pas m'approcher à moins d'un mètre du cycliste que je dépasse ; hors agglomération, c'est 1,50 m. Cette marge le protège s'il fait un écart (trou, coup de vent, portière qui s'ouvre). Si je ne peux pas la laisser, je reste derrière lui.
+@ dépasser un cycliste : distance latérale | 1
+
+? Hors agglomération, je rattrape un cycliste sur une route marquée d'une ligne continue. La visibilité est bonne et personne n'arrive en face. Pour le dépasser :
+- je dois attendre la fin de la ligne continue
++ je peux chevaucher la ligne continue en lui laissant au moins 1,50 m
+- je peux le doubler dans ma voie, à 50 cm de lui, si je roule doucement
+! Le chevauchement d'une ligne continue est permis pour dépasser un cycliste (ou une trottinette électrique) quand le dépassement est sans danger, en laissant 1,50 m hors agglomération. Je peux donc mordre sur la ligne, mais pas la franchir entièrement ; cette tolérance ne vaut pas pour dépasser une voiture ou un tracteur.
+@ dépasser un cycliste : ligne continue | 3
+
+? Le feu est rouge. Devant moi, le sas vélo (l'espace marqué d'un vélo entre deux lignes d'arrêt) est vide. Ai-je le droit d'y avancer ma voiture ?
+- Oui
++ Non
+! Le sas est réservé aux cyclistes et aux trottinettes électriques : ils s'y placent devant les voitures pour être bien vus et démarrer en sécurité. Même s'il est vide, je m'arrête à la première ligne, avant le sas.
+@ sas vélo | 1
+
+? Après ce panneau d'entrée de zone 30, je roule dans une rue à sens unique. Un cycliste arrive en face de moi. Est-il en règle ?
+- Non : le sens unique s'impose à tous les véhicules
+- Oui, mais seulement s'il roule au pas
++ Oui, en principe : la rue est à double sens pour les cyclistes
+! Dans une zone 30, comme dans toute rue limitée à 30 km/h ou moins, les chaussées sont à double sens pour les cyclistes, sauf décision contraire signalée. Dans une rue à sens unique, je m'attends donc à croiser des vélos et je regarde des deux côtés avant de traverser ou de quitter un stationnement.
+@ double-sens cyclable | 1 | B30
+
+? Je suis arrêté au feu rouge. Sous le feu, un petit panneau triangulaire montre un vélo et une flèche jaunes vers la droite. À côté de moi, un cycliste veut tourner à droite. Il :
+- doit attendre le feu vert, comme moi
++ peut tourner sans attendre le vert, mais en cédant le passage
+- peut tourner, et les piétons qui traversent doivent le laisser passer
+! Ce panonceau transforme le feu rouge en cédez-le-passage pour les cyclistes, uniquement dans la direction de la flèche. Le cycliste peut donc tourner à droite au rouge, après avoir laissé passer les piétons et les véhicules qui ont le feu vert. En voiture, je reste arrêté.
+@ cédez-le-passage cycliste au feu (M12) | 2
+
+? Sous certains feux, un panonceau triangulaire (vélo et flèche jaunes) permet de franchir le feu rouge en cédant le passage. À quels usagers s'adresse-t-il ?
+- Aux cyclomoteurs
++ Aux cyclistes
+- Aux voitures qui tournent à droite
++ Aux conducteurs de trottinettes électriques
+! Ce panonceau de cédez-le-passage cycliste au feu concerne les cyclistes et, depuis 2024, les conducteurs de trottinettes électriques et autres engins de déplacement personnel motorisés. Cyclomoteurs, motos et voitures doivent rester arrêtés tant que le feu est rouge.
+@ cédez-le-passage cycliste au feu : usagers concernés | 3
+
+? Je viens de me garer le long du trottoir. Avant de descendre côté circulation, il est conseillé d'ouvrir ma portière conducteur avec :
+- la main gauche, la plus proche de la poignée
++ la main droite, la plus éloignée de la portière
+- n'importe quelle main, pourvu que j'ouvre vite
+! Ouvrir avec la main opposée à la portière (la « poignée hollandaise ») fait pivoter le buste : le regard passe par le rétroviseur puis par l'angle mort, là où un cycliste peut arriver. Il est interdit à tout occupant d'ouvrir une portière si cela crée un danger.
+@ ouverture de portière | 2
+
+? En ville, dans une rue limitée à 50 km/h, le cycliste qui me précède roule à environ un mètre des voitures en stationnement au lieu de les longer de près. En a-t-il le droit ?
++ Oui
+- Non
+! Sur les voies limitées à 50 km/h ou moins, un cycliste peut s'écarter des véhicules en stationnement de la distance nécessaire à sa sécurité : il évite ainsi une portière qui s'ouvre. Je reste derrière lui et je ne le dépasse que si je peux lui laisser un mètre.
+@ portières : cycliste écarté des voitures garées | 3
+
+? Quel est l'âge minimal pour conduire une trottinette électrique sur la voie publique ?
+- 10 ans
+- 12 ans
++ 14 ans
+- 16 ans
+! Il faut avoir au moins 14 ans pour conduire un engin de déplacement personnel motorisé (trottinette électrique, gyropode, monoroue). Cet âge, auparavant de 12 ans, a été relevé en 2023 pour mieux protéger les plus jeunes, très exposés aux accidents.
+@ trottinettes électriques : âge minimal | 2
+
+? Le conducteur d'une trottinette électrique :
++ doit emprunter les pistes ou bandes cyclables en agglomération, s'il y en a
+- peut rouler sur le trottoir quand la chaussée est encombrée
++ doit être seul sur son engin, sans passager
+- peut circuler sur toutes les routes hors agglomération
+! En agglomération, une trottinette électrique roule sur les pistes ou bandes cyclables ; à défaut, sur les chaussées limitées à 50 km/h. Le trottoir lui est interdit, sauf autorisation locale, et elle ne transporte qu'une personne. Hors agglomération, elle est en principe limitée aux voies vertes et aux pistes cyclables.
+@ trottinettes électriques : circulation et passager | 3
+
+? En ville, je vais tourner à droite alors qu'une bande cyclable longe ma voie. Avant de tourner, je :
++ contrôle le rétroviseur droit puis l'angle mort, en tournant la tête
+- passe avant les cyclistes : mon clignotant me donne la priorité
+- me contente du rétroviseur intérieur, qui montre tout l'arrière
++ laisse passer le cycliste qui continue tout droit sur la bande
+! Un cycliste qui arrive sur ma droite peut être caché dans l'angle mort : après le rétroviseur, seul un regard direct par-dessus l'épaule permet de le voir. S'il continue tout droit, je lui couperais la route en tournant : je le laisse passer. Le clignotant avertit, il ne donne aucune priorité.
+@ angle mort en tournant à droite | 1
+
+? Dans un giratoire à deux voies, je roule sur la voie de gauche et je veux sortir. Un cycliste roule à ma hauteur sur la voie de droite et continue de tourner. Je :
+- sors devant lui : c'est à lui de ralentir
+- klaxonne : il n'a pas le droit de faire le tour par la droite
++ le laisse passer, puis je sors derrière lui
+! Dans un giratoire, serrer à gauche pour sortir plus loin n'est qu'une possibilité : un cycliste peut rester sur la voie de droite pendant tout le tour. En sortant depuis la voie de gauche, je coupe sa voie : je contrôle le rétroviseur et l'angle mort droits et je le laisse passer.
+@ vélo dans un giratoire | 2

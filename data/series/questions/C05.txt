@@ -1,0 +1,87 @@
+# Jeune conducteur, comportement et anticipation
+
+? Après une formation traditionnelle (sans conduite accompagnée), la période probatoire dure :
+- 1 an
+- 2 ans
++ 3 ans
+- 5 ans
+! La période probatoire dure 3 ans après une formation traditionnelle, et 2 ans après l'apprentissage anticipé de la conduite (conduite accompagnée). Une formation complémentaire suivie après le permis peut la raccourcir.
+@ période probatoire : durée | 1
+
+? Le jour où j'obtiens mon premier permis, mon capital est de :
++ 6 points
+- 8 points
+- 12 points
+! Le permis probatoire débute avec 6 points. Sans infraction entraînant un retrait de points, il augmente chaque année pour atteindre 12 points à la fin de la période probatoire.
+@ période probatoire : points | 1
+
+? En période probatoire, je dois apposer à l'arrière de mon véhicule :
++ un disque « A »
+- un disque « 90 »
+- aucun signe particulier
+! Le disque « A » (apprenti), blanc à lettre rouge, doit être visible à l'arrière du véhicule pendant toute la période probatoire. Son absence est punie d'une amende.
+@ disque A | 1
+
+? Les 18-24 ans représentent une part des tués sur la route :
+- inférieure à leur part dans la population
+- égale à leur part dans la population
++ environ deux fois supérieure à leur part dans la population
+! Les 18-24 ans représentent environ 8 % de la population mais environ 16 % des personnes tuées sur la route. Manque d'expérience, vitesse, alcool, fatigue et sorties de nuit se cumulent.
+@ jeunes conducteurs : accidents | 2
+
+? Chez les jeunes conducteurs, les accidents mortels surviennent plus souvent :
++ la nuit et le week-end
+- en semaine, aux heures de bureau
+- sur les parkings
+! Les nuits de week-end concentrent les facteurs de risque : fatigue, alcool ou stupéfiants, vitesse, passagers qui distraient ou encouragent à prendre des risques.
+@ jeunes conducteurs : facteurs | 1
+
+? Mes passagers me pressent de rouler plus vite pour arriver à l'heure. Je :
+- accélère : ils sont plus nombreux que moi
++ garde une conduite adaptée : je suis seul responsable de la conduite
+- les laisse décider de la vitesse
+! Le conducteur est responsable de son véhicule et de la sécurité de ses passagers. Savoir résister à la pression du groupe fait partie des compétences d'un bon conducteur.
+@ influence des passagers | 1
+
+? Après quelques mois de permis, je me sens très à l'aise au volant. Ce sentiment :
++ peut me conduire à sous-estimer les risques
+- prouve que je n'ai plus rien à apprendre
+- me protège des accidents
+! L'excès de confiance arrive souvent avant la véritable expérience : on connaît les gestes, pas encore toutes les situations. C'est une période où le risque d'accident est élevé.
+@ excès de confiance | 2
+
+? Un conducteur me fait une queue de poisson puis freine devant moi. La bonne réaction est de :
+- le coller pour lui montrer mon mécontentement
+- le doubler et lui rendre la pareille
++ garder mon calme et augmenter la distance avec lui
+! Répondre à l'agressivité par l'agressivité fait monter le risque pour tout le monde. Je laisse de la distance, j'évite le conflit ; en cas de mise en danger, je peux relever l'immatriculation et le signaler.
+@ agressivité au volant | 1
+
+? Je suis en retard et stressé. Au volant, le stress :
++ réduit mon attention et favorise les erreurs
+- améliore toujours mes réflexes
+- n'a aucun effet sur la conduite
+! Stress, colère et précipitation accaparent l'attention, poussent à rouler plus vite et à prendre des risques. Mieux vaut prévenir de son retard avant de partir et conduire normalement.
+@ stress | 1
+
+? Sur une rue bordée de voitures en stationnement, un ballon roule sur la chaussée devant moi. Je :
+- continue : ce n'est qu'un ballon
++ ralentis fortement, prêt à m'arrêter : un enfant peut le suivre
+- klaxonne et accélère pour passer avant
+! Anticiper, c'est tirer des conclusions des indices : un ballon annonce souvent un enfant, une portière entrouverte un conducteur qui va sortir, des roues braquées une voiture qui va démarrer.
+@ anticipation : indices | 1
+
+? Quels indices montrent qu'une voiture en stationnement risque de démarrer devant moi ?
++ Une personne est assise au volant
++ Les roues avant sont braquées vers la chaussée
++ De la fumée sort de l'échappement ou les feux sont allumés
+- Les rétroviseurs sont rabattus
+! Conducteur à bord, roues braquées, feux allumés, clignotant ou fumée d'échappement annoncent un départ possible. Je ralentis et je m'écarte si je le peux.
+@ anticipation : véhicule en stationnement | 2
+
+? La conduite accompagnée (apprentissage anticipé de la conduite) peut commencer dès l'âge de :
++ 15 ans
+- 16 ans
+- 17 ans
+! L'apprentissage anticipé de la conduite est accessible dès 15 ans. Après la formation initiale en auto-école, l'élève parcourt au moins 3 000 km avec un accompagnateur. Le permis peut être passé dès 17 ans.
+@ conduite accompagnée | 2

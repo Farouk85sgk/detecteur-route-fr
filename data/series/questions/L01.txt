@@ -1,0 +1,94 @@
+# Formes, couleurs et familles de panneaux
+
+? Un panneau triangulaire, pointe en haut, bordé de rouge, annonce :
+- une interdiction
++ un danger
+- une obligation
+- une simple indication
+! Le triangle bordé de rouge, pointe en haut, signale un danger. Il ne m'impose rien directement, mais il m'invite à redoubler d'attention et à adapter ma vitesse avant d'arriver sur le danger.
+@ formes : triangle de danger | 1 | A14
+
+? Un panneau rond à fond blanc cerclé de rouge indique en général :
++ une interdiction
+- une obligation
+- un danger
+! Le rond cerclé de rouge marque une interdiction : sens interdit, limitation de vitesse, interdiction de dépasser, de tourner, de stationner... Elle s'applique à partir du panneau.
+@ formes : rond rouge | 1 | B3
+
+? Un panneau rond à fond bleu indique :
+- une interdiction
+- une indication facultative
++ une obligation
+! Le rond bleu impose une obligation : direction à suivre, voie réservée à certains usagers (piste cyclable), équipement obligatoire (chaînes à neige)...
+@ formes : rond bleu | 1 | B21b
+
+? Les panneaux carrés ou rectangulaires à fond bleu donnent le plus souvent :
+- un ordre à respecter immédiatement
++ une indication utile à la conduite
+- l'annonce d'un danger
+! Les panneaux carrés à fond bleu sont des panneaux d'indication : parking, sens unique, impasse, passage pour piétons, début d'autoroute... Ils renseignent sur l'usage de la route.
+@ formes : carré bleu | 1 | C12
+
+? Hors agglomération, un panneau de danger est placé avant le danger, à une distance d'environ :
+- 50 m
+- 100 m
++ 150 m
+- 300 m
+! Hors agglomération, les panneaux de danger sont implantés à environ 150 m du danger, pour laisser le temps de ralentir. Si la distance est différente, un panonceau la précise.
+@ panneaux de danger : distance | 2
+
+? En agglomération, un panneau de danger est placé avant le danger, à une distance d'environ :
++ 50 m
+- 150 m
+- 200 m
+! En agglomération, où l'on roule moins vite, les panneaux de danger sont placés à environ 50 m du danger, parfois même plus près.
+@ panneaux de danger : distance | 2
+
+? Sous un panneau de danger, un panonceau indique « 300 m ». Cela signifie que :
++ le danger commence dans 300 m
+- le danger s'étend sur 300 m
+- le danger est passé depuis 300 m
+! Un panonceau qui indique seulement une distance (panonceau de distance) précise à quelle distance commence le danger ou la règle annoncés par le panneau.
+@ panonceaux : distance | 1 | M1
+
+? Sous un panneau, un panonceau porte une distance encadrée par deux flèches verticales. Il indique :
+- la distance avant le début du danger
++ la longueur de la section concernée
+- la distance jusqu'à la prochaine ville
+! Les deux flèches signalent un panonceau d'étendue : le danger ou la règle s'applique sur toute la longueur indiquée, à partir du panneau.
+@ panonceaux : étendue | 2 | M2
+
+? Un panneau d'interdiction est complété par un panonceau montrant la silhouette d'un camion. L'interdiction concerne :
+- tous les véhicules
+- tous les véhicules sauf les camions
++ seulement les véhicules de transport de marchandises
+! Un panonceau de catégorie limite la portée du panneau aux usagers représentés. En voiture, je ne suis pas concerné par cette interdiction.
+@ panonceaux : catégorie | 2 | M4g
+
+? Sur un chantier, un panneau à fond jaune limite la vitesse à 50 km/h alors que le panneau permanent indique 70 km/h. Je dois respecter :
+- le panneau permanent
++ le panneau à fond jaune
+- la limitation de mon choix
+! La signalisation temporaire, reconnaissable à son fond jaune, l'emporte sur la signalisation permanente : c'est elle qui décrit la situation du moment (chantier, déviation, accident).
+@ signalisation temporaire | 1 | AK5
+
+? En franchissant ce panneau, sauf indication contraire :
++ la vitesse est limitée à 50 km/h
++ l'usage de l'avertisseur sonore est interdit, sauf danger immédiat
+- la priorité à droite ne s'applique plus
+! Le panneau d'entrée d'agglomération entraîne à lui seul les règles de l'agglomération : 50 km/h au maximum, avertisseur sonore réservé au danger immédiat. Aux intersections sans signalisation, la priorité à droite s'applique.
+@ agglomération : entrée | 2 | EB10
+
+? Je franchis ce panneau sur une route à double sens sans séparateur central. Sauf indication contraire, la vitesse maximale devient :
+- 50 km/h
++ 80 km/h
+- 110 km/h
+! Le panneau de sortie d'agglomération met fin à la limitation à 50 km/h. Sur une route à double sens sans séparateur central, la vitesse maximale est de 80 km/h, sauf si un panneau l'a relevée à 90 km/h.
+@ agglomération : sortie | 2 | EB20
+
+? Pourquoi le panneau STOP est-il le seul à avoir une forme octogonale ?
+- Pour être moins cher à fabriquer
++ Pour être reconnu même de dos ou recouvert de neige
+- Pour signaler qu'il est temporaire
+! Sa forme unique permet de reconnaître le STOP sans lire l'inscription : par l'arrière, la nuit, ou quand il est masqué par la neige. Le cédez-le-passage se reconnaît de la même façon à son triangle pointe en bas.
+@ formes : STOP et cédez-le-passage | 2 | AB4

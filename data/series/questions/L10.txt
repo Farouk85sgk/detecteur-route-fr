@@ -1,0 +1,88 @@
+# Autoroute et routes à accès réglementé
+
+? Ce panneau annonce :
++ le début d'une autoroute
+- la fin d'une autoroute
+- une route pour automobiles
+! Le panneau à fond bleu montrant deux chaussées et un pont marque le début d'une section d'autoroute, où s'appliquent des règles particulières. Barré de rouge, il en annonce la fin.
+@ autoroute : début | 1 | C207
+
+? Lesquels de ces usagers n'ont pas le droit de circuler sur autoroute ?
++ Les piétons
++ Les cyclistes
++ Les cyclomoteurs
+- Les motos de plus de 125 cm³
+! L'autoroute est interdite aux piétons, aux cavaliers, aux cyclistes, aux cyclomoteurs, aux voiturettes et aux tracteurs. Les motos y sont admises.
+@ autoroute : usagers interdits | 1
+
+? Sur autoroute, je peux m'arrêter sur la bande d'arrêt d'urgence :
+- pour téléphoner
+- pour me reposer si je suis fatigué
++ en cas de panne ou de nécessité absolue
+- pour consulter mon itinéraire
+! La bande d'arrêt d'urgence est réservée aux arrêts d'urgence : panne, malaise, accident. Pour téléphoner, se reposer ou lire une carte, on rejoint une aire de repos ou de service.
+@ bande d'arrêt d'urgence | 1
+
+? Ma voiture tombe en panne sur autoroute et je parviens à m'arrêter sur la bande d'arrêt d'urgence. Mes passagers et moi :
+- restons dans la voiture, ceinture attachée
++ sortons par le côté droit et nous plaçons derrière la glissière de sécurité
+- restons devant la voiture pour faire signe aux autres
+! Sur la bande d'arrêt d'urgence, le risque d'être percuté est très élevé. J'allume mes feux de détresse, j'enfile mon gilet, tout le monde sort côté droit et se met à l'abri derrière la glissière avant d'appeler les secours.
+@ panne sur autoroute | 1
+
+? Après une panne sur autoroute, je préviens les secours de préférence :
+- en arrêtant un autre automobiliste
++ avec une borne d'appel d'urgence, ou à défaut avec mon téléphone
+- en marchant jusqu'à la prochaine sortie
+! Les bornes orange, placées tous les 2 km environ, me mettent en relation avec les secours et me localisent automatiquement. À défaut, j'appelle le 112. Seul un dépanneur agréé peut intervenir sur autoroute.
+@ panne sur autoroute : alerter | 2 | CE2a
+
+? Sur autoroute, pour garder une distance de sécurité suffisante avec le véhicule qui me précède, je laisse entre nous l'équivalent de :
+- un trait de la bande d'arrêt d'urgence
++ deux traits de la bande d'arrêt d'urgence
+- une longueur de voiture
+! Les traits qui bordent la bande d'arrêt d'urgence servent de repère : à 130 km/h, laisser deux traits (environ 90 m) correspond aux deux secondes de sécurité. « Un trait, danger ; deux traits, sécurité. »
+@ autoroute : distance de sécurité | 2
+
+? Pour quitter l'autoroute, je ralentis :
+- sur la voie de droite, bien avant la sortie
++ sur la voie de décélération, après avoir quitté la voie de droite
+- au dernier moment, en freinant fort
+! Je signale ma sortie au clignotant, je m'engage dès le début de la voie de décélération, et c'est seulement là que je ralentis, pour ne pas surprendre ceux qui me suivent.
+@ autoroute : sortie | 2
+
+? Je viens de rouler deux heures sur autoroute et je prends la bretelle de sortie. Le principal risque est :
++ de sous-estimer ma vitesse
+- de caler
+- d'être ébloui
+! Après un long trajet à vitesse élevée et régulière, on s'habitue à la vitesse et on la sous-estime. Sur la bretelle, je regarde mon compteur plutôt que de me fier à mes sensations.
+@ autoroute : accoutumance à la vitesse | 2
+
+? À l'approche d'un péage, je :
++ ralentis progressivement et choisis ma voie selon mon moyen de paiement
+- garde ma vitesse jusqu'à la barrière
+- peux changer de file au dernier moment
+! J'anticipe : je réduis ma vitesse, je repère les pictogrammes au-dessus des voies (télépéage, cartes, espèces) et je garde mes distances dans la file. La zone de péage concentre de nombreux accrochages.
+@ péage | 1 | B5c
+
+? Ce panneau annonce une route :
+- interdite aux voitures
++ à accès réglementé, réservée aux automobiles
+- à sens unique
+! La route à accès réglementé (ou route pour automobiles) suit des règles proches de l'autoroute : pas de piétons, de cyclistes, de cyclomoteurs ni de tracteurs, pas d'arrêt ni de demi-tour. La vitesse y est limitée à 110 km/h si les chaussées sont séparées.
+@ route à accès réglementé | 2 | C107
+
+? Dans un tunnel, pour ma sécurité, je :
++ allume mes feux de croisement
++ garde une distance de sécurité plus grande
+- peux m'arrêter sur la chaussée pour téléphoner
++ repère les issues de secours
+! Dans un tunnel, j'allume mes feux de croisement, je retire mes lunettes de soleil, je respecte la vitesse et la distance affichées et j'écoute la radio d'information. Je ne m'y arrête qu'en cas de nécessité absolue.
+@ tunnels | 2 | C111
+
+? Sur une aire de repos d'autoroute, la vitesse et la prudence doivent être adaptées parce que :
++ des piétons, dont des enfants, circulent entre les véhicules
+- la priorité à droite n'existe plus
+- le code de la route ne s'y applique pas
+! Sur une aire, les piétons sont nombreux et parfois distraits, les enfants peuvent échapper à la surveillance. Je roule au pas, je respecte la signalisation et je me gare sur les emplacements prévus.
+@ aires de repos | 1

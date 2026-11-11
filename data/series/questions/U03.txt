@@ -1,0 +1,87 @@
+# Motos et cyclomoteurs
+
+? Les conducteurs de deux-roues motorisés sont particulièrement vulnérables parce que :
++ ils n'ont pas de carrosserie pour les protéger
++ leur équilibre dépend de l'adhérence
++ leur faible largeur les rend moins visibles
+- ils freinent toujours plus court qu'une voiture
+! Sans carrosserie, ceinture ni airbag de série, le motard est exposé au moindre choc. Les deux-roues motorisés représentent environ 2 % du trafic mais plus de 20 % des tués.
+@ deux-roues motorisés : vulnérabilité | 1
+
+? Avant de changer de voie ou de tourner, pour ne pas couper la route à une moto, je :
++ contrôle mes rétroviseurs
++ tourne la tête pour vérifier l'angle mort
+- me fie uniquement au bruit des moteurs
+! Une moto, étroite et rapide, disparaît facilement dans l'angle mort ou derrière un montant de pare-brise. Les contrôles se font juste avant la manœuvre, clignotant mis.
+@ deux-roues : angle mort | 1
+
+? Je veux tourner à gauche et une moto arrive en face, encore loin. Par rapport à une voiture, sa vitesse et sa distance sont :
++ plus difficiles à évaluer : elle peut être plus proche et plus rapide qu'il n'y paraît
+- plus faciles à évaluer
+- sans importance, puisque je mets mon clignotant
+! La silhouette étroite d'une moto trompe l'œil : on la croit plus loin et plus lente. Beaucoup de collisions ont lieu quand une voiture tourne à gauche devant une moto. Dans le doute, j'attends.
+@ deux-roues : évaluation des vitesses | 2
+
+? Sur une autoroute embouteillée, des motos remontent entre les deux files de gauche. La circulation inter-files est :
+- interdite partout en France
++ autorisée sous conditions, sur autoroutes et routes à chaussées séparées, quand le trafic est dense
+- autorisée partout, y compris en ville
+! Depuis 2025, la circulation inter-files est autorisée pour les deux et trois-roues motorisés, sur les autoroutes et les routes à chaussées séparées limitées à 70 km/h ou plus, quand la circulation est en files ininterrompues : entre les deux voies les plus à gauche, à 50 km/h au maximum.
+@ circulation inter-files | 3
+
+? Dans un bouchon sur autoroute, avant de changer de file, je :
++ contrôle rétroviseurs et angle mort : une moto peut remonter entre les files
++ mets mon clignotant assez tôt
+- déboîte rapidement pour profiter d'un espace
+! Dans les files, je garde ma position, je signale tôt mes changements de voie et je vérifie qu'aucun deux-roues ne remonte. Je peux aussi m'écarter légèrement pour lui faciliter le passage.
+@ inter-files : précautions | 2
+
+? Derrière une moto, par temps de pluie, je garde une distance de sécurité :
+- plus courte qu'avec une voiture
++ au moins aussi grande, voire plus grande
+- nulle : elle freine moins bien
+! Sur chaussée mouillée, un deux-roues peut glisser et chuter : les marquages au sol, les plaques d'égout ou les rails sont de vrais pièges pour lui. Une distance suffisante me laisse le temps de l'éviter.
+@ distance derrière un deux-roues | 2
+
+? Un motard devant moi se déporte brusquement dans sa voie. La raison la plus probable est qu'il :
++ évite un obstacle : plaque d'égout, gravillons, trou ou flaque d'huile
+- veut m'empêcher de passer
+- s'apprête à s'arrêter
+! Ce qui est sans conséquence pour une voiture peut faire tomber un deux-roues. Ses écarts sont souvent des manœuvres d'évitement : je lui laisse de la place.
+@ deux-roues : écarts de trajectoire | 2
+
+? Pour dépasser un cyclomoteur hors agglomération, je laisse un espace latéral d'au moins :
+- 0,50 m
+- 1 m
++ 1,50 m
+! Comme pour un cycliste, je laisse au moins 1,50 m hors agglomération et 1 m en agglomération en dépassant un deux-roues. Le déplacement d'air de ma voiture peut le déséquilibrer.
+@ dépassement d'un deux-roues | 2
+
+? Un cyclomoteur est limité par construction à :
+- 25 km/h
++ 45 km/h
+- 60 km/h
+- 80 km/h
+! Un cyclomoteur (50 cm³ au plus) ne dépasse pas 45 km/h par construction. Hors agglomération, l'écart de vitesse avec les voitures est important : je l'anticipe de loin.
+@ cyclomoteurs : vitesse | 2
+
+? Une voiturette (« voiture sans permis ») roule devant moi hors agglomération. Sa vitesse maximale est de :
++ 45 km/h
+- 70 km/h
+- 90 km/h
+! Les quadricycles légers à moteur sont limités à 45 km/h et peuvent être conduits dès 14 ans avec le permis AM. Je les rattrape vite : je ralentis tôt et je ne dépasse qu'avec une bonne visibilité.
+@ voiturettes | 2
+
+? À un feu rouge, une moto s'arrête à côté de moi puis se place devant ma voiture. Au feu vert, je :
++ la laisse démarrer en gardant mes distances
+- démarre le plus vite possible pour passer devant
+- klaxonne pour protester
+! Une moto accélère plus fort qu'une voiture : la laisser partir devant est le plus simple et le plus sûr. Je vérifie aussi qu'aucun autre deux-roues ne remonte la file.
+@ deux-roues aux feux | 1
+
+? De nuit, je vois dans mon rétroviseur un seul phare qui approche. Il peut s'agir :
++ d'une moto
++ d'une voiture dont un feu est en panne
+- forcément d'un vélo
+! Un feu unique ne dit ni la largeur ni la vitesse du véhicule. Je reste prudent avant de changer de voie ou de tourner, tant que je n'ai pas identifié ce qui arrive.
+@ deux-roues la nuit | 2

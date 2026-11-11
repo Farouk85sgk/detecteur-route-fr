@@ -1,6 +1,7 @@
 // Moteur de détection dans le navigateur (ONNX Runtime Web : WebGPU si possible, sinon WebAssembly).
-// 1. YOLOv5n panneaux + marquages ; les panneaux sont d'abord regroupés en une pseudo-classe « panneau » et le
-//    classifieur (second étage) choisit la classe exacte ou rejette (même logique que route_fr/detector.py).
+// 1. YOLOv5n : marquages au sol classe par classe, et panneaux en une seule classe « panneau ». Le classifieur (second
+//    étage) dit ensuite de quel panneau il s'agit, ou le rejette (même logique que route_fr/detector.py). Il regarde un
+//    carré autour du panneau prolongé vers le bas, pour lire aussi le panonceau placé dessous.
 // 2. YOLOv5n COCO d'origine (une image sur deux) : piétons, cyclistes, deux-roues et feux tricolores (couleur lue
 //    sur l'image).
 // 3. « Mes panneaux » : empreinte de chaque panneau détecté comparée à celles des panneaux appris.
@@ -10,7 +11,7 @@
 import { D } from "./donnees.js";
 
 const CONF = 0.35, CONF_SIGNS = 0.15, SIGN_FACTOR = 1.3, IOU = 0.45, MIN_HITS = 2, MAX_MISSES = 6;
-const CLS_SIZE = 64, MEAN = [0.485, 0.456, 0.406], STD = [0.229, 0.224, 0.225];
+const EMB = 64, MEAN = [0.485, 0.456, 0.406], STD = [0.229, 0.224, 0.225];  // EMB : côté des vignettes d'empreinte
 const SIGN = -2;
 const COCO = { personne: 0, velo: 1, moto: 2, feu: 3 };  // ordre des classes gardées dans usagers.onnx
 const HAUTEUR = { U_pieton: 1.7, U_cycliste: 1.75, U_deux_roues: 1.45 };  // m, pour estimer la distance
@@ -31,11 +32,10 @@ function nms(dets, seuil = IOU, parClasse = true) {
 export class Moteur {
   constructor() {
     this.pret = false; this.session = null; this.cls = null; this.usagers = null; this.emp = null;
-    this.clsMap = []; this.fournisseurs = []; this.isSign = [];
+    this.clsMap = []; this.detMap = []; this.fournisseurs = []; this.wCls = 64; this.hCls = 96;
     this.cote = 640; this.avecUsagers = true; this.actifs = null; this.appris = []; this.seuilAppris = 0.5;
     this.work = document.createElement("canvas"); this.wctx = this.work.getContext("2d", { willReadFrequently: true });
-    this.crop = Object.assign(document.createElement("canvas"), { width: CLS_SIZE, height: CLS_SIZE });
-    this.cctx = this.crop.getContext("2d", { willReadFrequently: true });
+    this.crop = document.createElement("canvas"); this.cctx = this.crop.getContext("2d", { willReadFrequently: true });
     this.cfeu = document.createElement("canvas"); this.fctx = this.cfeu.getContext("2d", { willReadFrequently: true });
     this.reinitialiser();
     this.ms = 0; this.image = 0;
@@ -43,22 +43,27 @@ export class Moteur {
 
   async charger({ backend = null, progression = () => {} } = {}) {
     this.fournisseurs = backend ? [backend] : ("gpu" in navigator) ? ["webgpu", "wasm"] : ["wasm"];
+    // plusieurs fils de calcul seulement si la page est isolée (voir sw.js) ; sinon ONNX Runtime n'en utilise qu'un
+    this.fils = self.crossOriginIsolated ? Math.max(1, Math.min(4, Math.ceil((navigator.hardwareConcurrency || 2) / 2))) : 1;
+    ort.env.wasm.numThreads = this.fils;
     const opts = { executionProviders: this.fournisseurs, graphOptimizationLevel: "all" };
     progression("Chargement du détecteur…");
-    try { this.session = await ort.InferenceSession.create("modele.onnx", opts); }
+    try { this.session = await ort.InferenceSession.create("detecteur.onnx", opts); }
     catch (e) {  // WebGPU indisponible ou défaillant : repli sur le processeur
       if (this.fournisseurs[0] === "wasm") throw e;
       this.fournisseurs = ["wasm"];
-      this.session = await ort.InferenceSession.create("modele.onnx", { ...opts, executionProviders: ["wasm"] });
+      this.session = await ort.InferenceSession.create("detecteur.onnx", { ...opts, executionProviders: ["wasm"] });
     }
     this.opts = { ...opts, executionProviders: this.fournisseurs };
-    this.isSign = D.items.slice(0, D.nbModele).map(c => c.categorie !== "marquage");
+    // classe du détecteur -> élément du catalogue (marquages), SIGN pour « panneau », -1 pour les classes techniques
+    this.detMap = D.detecteur.map(n => n === "panneau" ? SIGN : D.parCode[n] ? D.parCode[n].index : -1);
     progression("Chargement du classifieur…");
     try {
-      const noms = await (await fetch("classifieur.json")).json();
-      this.cls = await ort.InferenceSession.create("classifieur.onnx", this.opts);
-      this.clsMap = noms.map(n => D.parCode[n] && D.parCode[n].index < D.nbModele ? D.parCode[n].index : -1);  // -1 : autre panneau ou fond
-    } catch (e) { console.warn("Classifieur indisponible", e); this.cls = null; }
+      const conf = await (await fetch("panneaux.json")).json();
+      [this.wCls, this.hCls] = conf.taille;
+      this.cls = await ort.InferenceSession.create("panneaux.onnx", this.opts);
+      this.clsMap = conf.classes.map(n => D.parCode[n] && D.parCode[n].index < D.nbModele ? D.parCode[n].index : -1);  // -1 : autre panneau ou fond
+    } catch (e) { console.warn("Classifieur indisponible : les panneaux ne seront pas identifiés", e); this.cls = null; }
     this.pret = true;
   }
   async chargerUsagers() {
@@ -102,47 +107,45 @@ export class Moteur {
   // ---------- panneaux et marquages ----------
   postRoute(out, { r, px, py }, seuilPanneaux = CONF_SIGNS) {
     const [, n, d] = out.dims, v = out.data, nc = d - 5, dets = [];
-    const bas = this.cls ? Math.min(CONF, seuilPanneaux) : CONF;
+    const bas = Math.min(CONF, seuilPanneaux);
     for (let i = 0; i < n; i++) {
       const o = i * d, obj = v[o + 4];
       if (obj < bas) continue;
+      let best = 0, c = 0;
+      for (let k = 0; k < nc; k++) if (v[o + 5 + k] > best) { best = v[o + 5 + k]; c = k; }
+      const cls = this.detMap[c], conf = obj * best;
+      if (cls === -1 || cls === undefined || conf < (cls === SIGN ? seuilPanneaux : CONF)) continue;
+      if (cls === SIGN && !this.cls) continue;  // sans classifieur, impossible de dire de quel panneau il s'agit
       const cx = v[o], cy = v[o + 1], w = v[o + 2], h = v[o + 3];
-      const box = [(cx - w / 2 - px) / r, (cy - h / 2 - py) / r, (cx + w / 2 - px) / r, (cy + h / 2 - py) / r];
-      if (this.cls) {  // probabilités des panneaux sommées : le classifieur choisira la classe exacte
-        let bm = 0, cm = 0, s = 0;
-        for (let k = 0; k < nc; k++) { const p = v[o + 5 + k]; if (this.isSign[k]) s += p; else if (p > bm) { bm = p; cm = k; } }
-        if (obj * bm >= CONF) dets.push({ box, conf: obj * bm, cls: cm });
-        if (obj * Math.min(1, s) >= seuilPanneaux) dets.push({ box: box.slice(), conf: obj * Math.min(1, s), cls: SIGN });
-      } else {
-        let best = 0, c = 0;
-        for (let k = 0; k < nc; k++) if (v[o + 5 + k] > best) { best = v[o + 5 + k]; c = k; }
-        if (obj * best >= CONF) dets.push({ box, conf: obj * best, cls: c });
-      }
+      dets.push({ box: [(cx - w / 2 - px) / r, (cy - h / 2 - py) / r, (cx + w / 2 - px) / r, (cy + h / 2 - py) / r], conf, cls });
     }
     return nms(dets).slice(0, 100);
   }
 
-  vignettes(src, boxes, marge = 1.15) {
-    const S = CLS_SIZE, plan = S * S, f = new Float32Array(boxes.length * 3 * plan);
+  // Vignettes W x H des boîtes, normalisées : un carré centré sur la boîte (grand côté x marge), prolongé vers le bas
+  // quand H > W (64 x 96 pour le classifieur, qui lit aussi le panonceau sous le panneau ; 64 x 64 pour les empreintes).
+  vignettes(src, boxes, W, H, marge = 1.15) {
+    const plan = W * H, f = new Float32Array(boxes.length * 3 * plan);
+    this.crop.width = W; this.crop.height = H;
     boxes.forEach((b, i) => {
       const [x1, y1, x2, y2] = b, s = Math.max(x2 - x1, y2 - y1) * marge, cx = (x1 + x2) / 2, cy = (y1 + y2) / 2;
-      this.cctx.fillStyle = "rgb(114,114,114)"; this.cctx.fillRect(0, 0, S, S);
-      this.cctx.drawImage(src, cx - s / 2, cy - s / 2, s, s, 0, 0, S, S);
-      const px = this.cctx.getImageData(0, 0, S, S).data, o = i * 3 * plan;
+      this.cctx.fillStyle = "rgb(114,114,114)"; this.cctx.fillRect(0, 0, W, H);
+      this.cctx.drawImage(src, cx - s / 2, cy - s / 2, s, s * H / W, 0, 0, W, H);
+      const px = this.cctx.getImageData(0, 0, W, H).data, o = i * 3 * plan;
       for (let k = 0; k < plan; k++) for (let c = 0; c < 3; c++) f[o + c * plan + k] = (px[4 * k + c] / 255 - MEAN[c]) / STD[c];
     });
-    return new ort.Tensor("float32", f, [boxes.length, 3, S, S]);
+    return new ort.Tensor("float32", f, [boxes.length, 3, H, W]);
   }
 
   async classer(src, signes) {
-    const x = this.vignettes(src, signes.map(d => d.box));
+    const x = this.vignettes(src, signes.map(d => d.box), this.wCls, this.hCls);
     const out = await this.cls.run({ [this.cls.inputNames[0]]: x });
     const logits = out[this.cls.outputNames[0]].data, nc = logits.length / signes.length;
     return signes.map((d, i) => {
       let m = -Infinity, k = 0, sum = 0;
       for (let j = 0; j < nc; j++) if (logits[i * nc + j] > m) { m = logits[i * nc + j]; k = j; }
       for (let j = 0; j < nc; j++) sum += Math.exp(logits[i * nc + j] - m);
-      return { g: this.clsMap[k], p: 1 / sum, x };
+      return { g: this.clsMap[k], p: 1 / sum };
     });
   }
 
@@ -154,11 +157,11 @@ export class Moteur {
 
   // second étage : classe exacte de chaque panneau, rejet des leurres, puis panneaux appris
   async affiner(src, dets) {
-    const signes = dets.filter(d => d.cls === SIGN), autres = dets.filter(d => d.cls !== SIGN);
+    const signes = dets.filter(d => d.cls === SIGN).slice(0, 16), autres = dets.filter(d => d.cls !== SIGN);  // triés par confiance
     if (!this.cls || !signes.length) return autres;
     const res = await this.classer(src, signes);
     let emb = null;
-    if (this.appris.length && this.emp) emb = await this.empreintes(res[0].x);
+    if (this.appris.length && this.emp) emb = await this.empreintes(this.vignettes(src, signes.map(d => d.box), EMB, EMB));
     const gardes = [];
     signes.forEach((d, i) => {
       let { g, p } = res[i];
@@ -332,9 +335,9 @@ export class Moteur {
     return (await this.empreintes(x)).map(e => Array.from(e));
   }
   vignettesMultiples(img, box, marges) {
-    const ts = marges.map(m => this.vignettes(img, [box], m).data);
+    const ts = marges.map(m => this.vignettes(img, [box], EMB, EMB, m).data);
     const f = new Float32Array(ts.length * ts[0].length);
     ts.forEach((t, i) => f.set(t, i * t.length));
-    return new ort.Tensor("float32", f, [ts.length, 3, CLS_SIZE, CLS_SIZE]);
+    return new ort.Tensor("float32", f, [ts.length, 3, EMB, EMB]);
   }
 }

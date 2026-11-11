@@ -1,0 +1,87 @@
+# Écoconduite
+
+? Pratiquer l'écoconduite, c'est notamment :
++ anticiper pour éviter les freinages et les accélérations inutiles
++ rouler à vitesse régulière
++ passer les rapports sans faire monter le moteur dans les tours
+- chauffer longuement le moteur à l'arrêt avant de partir
+! Une conduite souple et anticipée réduit la consommation de carburant, les émissions, l'usure du véhicule et le risque d'accident. Un moteur moderne se réchauffe en roulant doucement, pas à l'arrêt.
+@ écoconduite : principes | 1
+
+? À l'approche d'un feu rouge, la conduite la plus économe consiste à :
++ lever le pied tôt et laisser la voiture ralentir sur son élan, rapport engagé
+- garder ma vitesse puis freiner fort au dernier moment
+- passer au point mort de loin
+! En lâchant l'accélérateur rapport engagé, l'injection est coupée : le moteur ne consomme rien et le frein moteur ralentit la voiture. Au point mort, le moteur consomme pour tourner au ralenti et je perds le frein moteur.
+@ anticipation et frein moteur | 2
+
+? Sur autoroute, rouler à 120 km/h au lieu de 130 km/h :
++ réduit nettement ma consommation, pour quelques minutes de trajet en plus
+- augmente ma consommation
+- n'a aucun effet sur la consommation
+! La résistance de l'air augmente très vite avec la vitesse. Réduire sa vitesse de 10 km/h sur autoroute économise jusqu'à un litre de carburant aux 100 km, pour quelques minutes de plus par heure de trajet.
+@ vitesse et consommation | 2
+
+? Pour consommer moins, je passe le rapport supérieur :
++ tôt, sans attendre que le moteur monte haut dans les tours
+- le plus tard possible
+- uniquement à plus de 4 000 tours par minute
+! Je monte les rapports rapidement (vers 2 000 tours par minute pour un diesel, 2 500 pour un moteur à essence) et je roule sur le rapport le plus élevé possible, sans faire peiner le moteur.
+@ passage des rapports | 2
+
+? Quels éléments augmentent la consommation de carburant ?
++ Des pneus sous-gonflés
++ Un coffre de toit ou une galerie
++ La climatisation
+- Une conduite souple
+! Pneus sous-gonflés, charge inutile, coffre de toit ou galerie (résistance à l'air), climatisation poussée, vitres ouvertes à vitesse élevée : chacun de ces points alourdit la facture.
+@ consommation : facteurs | 1
+
+? Je laisse en permanence un coffre de toit vide sur ma voiture. Résultat :
++ ma consommation augmente
+- ma consommation baisse
+- rien ne change
+! Même vide, un coffre de toit, une galerie ou un porte-vélos augmentent la résistance de l'air et la consommation, surtout à vitesse élevée. Je les démonte quand je ne m'en sers pas.
+@ coffre de toit | 1
+
+? Je suis arrêté devant un passage à niveau fermé pour plusieurs minutes. Je :
++ coupe le moteur
+- laisse tourner le moteur au ralenti
+- donne des coups d'accélérateur
+! Au-delà d'une vingtaine de secondes d'arrêt, couper le moteur économise du carburant et évite de polluer inutilement. Les systèmes « stop and start » le font automatiquement.
+@ couper le moteur | 1
+
+? Laisser tourner le moteur d'un véhicule en stationnement, sans nécessité, est :
++ interdit et passible d'une amende
+- autorisé sans limite
+- obligatoire en hiver
+! Le moteur d'un véhicule à l'arrêt ou en stationnement doit être coupé, sauf nécessité : c'est une source de pollution et de bruit inutile, punie d'une amende de 135 €.
+@ moteur à l'arrêt | 3
+
+? Sur un trajet très court, moteur froid, ma voiture :
++ consomme et pollue beaucoup plus qu'à chaud
+- consomme moins que d'habitude
+- ne pollue pas
+! Sur le premier kilomètre, un moteur froid consomme nettement plus et son système antipollution n'est pas encore efficace. Pour les petits trajets, la marche, le vélo ou les transports sont plus adaptés.
+@ trajets courts | 1
+
+? Un entretien régulier du véhicule (vidange, filtres, réglages) permet :
++ de limiter la consommation et la pollution
++ de réduire le risque de panne
+- d'augmenter la vitesse maximale autorisée
+! Un moteur bien entretenu consomme moins et pollue moins. Un filtre à air encrassé ou une huile usée augmentent la consommation ; un mauvais entretien peut faire échouer le contrôle antipollution.
+@ entretien et pollution | 1
+
+? La climatisation augmente la consommation de carburant, surtout :
++ en ville et sur les petits trajets
+- sur autoroute uniquement
+- jamais
+! La climatisation peut augmenter la consommation de 10 à 25 % en ville. Je la règle sans excès (pas plus de 4 à 5 °C sous la température extérieure) et j'aère d'abord une voiture restée au soleil.
+@ climatisation | 2
+
+? Le bruit de la circulation est une nuisance pour les riverains. Pour la limiter, je :
++ évite les accélérations brutales et les régimes moteur élevés
++ n'utilise l'avertisseur sonore qu'en cas de danger
+- retire le silencieux d'échappement
+! Le bruit routier perturbe le sommeil et la santé. Conduite souple, vitesse modérée, échappement en bon état et usage limité du klaxon le réduisent. Modifier son échappement pour faire plus de bruit est interdit.
+@ bruit | 1

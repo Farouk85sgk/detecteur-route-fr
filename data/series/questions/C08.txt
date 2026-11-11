@@ -1,0 +1,86 @@
+# Vitesse, risque et conduite préventive
+
+? Lors d'un choc contre un obstacle fixe à 50 km/h, la violence subie équivaut à une chute :
+- d'un mètre de haut
++ du troisième étage d'un immeuble, environ 10 m
+- d'une chaise
+! Un choc à 50 km/h équivaut à une chute de 10 m, soit trois étages. À 90 km/h, c'est une chute d'une trentaine de mètres, soit dix étages.
+@ violence du choc | 2
+
+? Quand la vitesse double, l'énergie à dissiper en cas de choc est multipliée par :
+- deux
+- trois
++ quatre
+! L'énergie cinétique varie comme le carré de la vitesse : à 100 km/h, elle est quatre fois plus grande qu'à 50 km/h. C'est pourquoi les conséquences d'un accident s'aggravent si vite.
+@ énergie cinétique | 2
+
+? Sur un trajet de 20 km, rouler à 90 km/h au lieu de 80 km/h me fait gagner environ :
++ moins de 2 minutes
+- 5 minutes
+- 10 minutes
+! À 80 km/h, 20 km demandent 15 minutes ; à 90 km/h, un peu plus de 13 minutes. Le gain est dérisoire, alors que la distance d'arrêt et la gravité d'un choc augmentent nettement.
+@ vitesse et temps gagné | 2
+
+? Un piéton est heurté par une voiture. Ses chances de survie sont bien plus élevées si le choc a lieu à :
++ 30 km/h
+- 50 km/h
+- 70 km/h
+! À 30 km/h, la grande majorité des piétons survivent ; à 50 km/h, le risque de décès est plusieurs fois plus élevé. C'est tout l'intérêt des zones 30 et de la prudence en ville.
+@ vitesse et piétons | 1
+
+? La conduite préventive (ou défensive) consiste à :
++ anticiper les erreurs possibles des autres usagers
++ garder des marges de sécurité en distance et en vitesse
+- imposer sa priorité quoi qu'il arrive
+! Conduire de façon préventive, c'est prévoir ce qui peut mal tourner et se garder le temps et l'espace pour réagir : distances, vitesse adaptée, regard loin, et ne jamais compter uniquement sur le respect des règles par les autres.
+@ conduite préventive | 1
+
+? Je suis prioritaire à une intersection, mais une voiture arrive vite sur la route de gauche et ne semble pas ralentir. Je :
++ ralentis, prêt à m'arrêter
+- passe : j'ai la priorité
+- accélère en klaxonnant
+! La priorité ne se prend pas, elle se cède. Être dans son droit ne protège pas d'une collision : si l'autre ne s'arrête pas, je le laisse passer.
+@ priorité et prudence | 1
+
+? Quels facteurs retrouve-t-on le plus souvent dans les accidents mortels ?
++ Une vitesse excessive ou inadaptée
++ L'alcool ou les stupéfiants
++ L'inattention
+- Un défaut de signalisation
+! Vitesse, alcool, stupéfiants, inattention (téléphone, fatigue) et refus de priorité sont les principales causes d'accidents mortels. Dans la très grande majorité des cas, un comportement humain est en cause.
+@ causes des accidents | 1
+
+? Il pleut, il fait nuit et je suis fatigué. Ces facteurs de risque :
+- s'annulent
++ se cumulent, et le risque augmente beaucoup plus vite
+- n'ont pas d'influence les uns sur les autres
+! Les facteurs de risque ne s'additionnent pas simplement, ils se multiplient. Quand plusieurs sont réunis, je réduis fortement ma vitesse, j'augmente mes marges ou je reporte mon trajet.
+@ cumul des risques | 2
+
+? Les routes où l'on compte le plus de tués sont :
+- les autoroutes
++ les routes hors agglomération à double sens
+- les rues des centres-villes
+! Près de six tués sur dix le sont sur les routes hors agglomération, surtout les routes à double sens sans séparateur : vitesses élevées, chocs frontaux, obstacles en bord de route. L'autoroute est le réseau le plus sûr.
+@ accidents selon le réseau | 2
+
+? Je roule en file sur une route à double sens et j'ai envie de dépasser plusieurs voitures d'un coup. Avant de me décider, je me demande :
++ ce que je gagnerai vraiment et ce que je risque
+- seulement si ma voiture est assez puissante
+- si les autres vont me laisser la place en cas de problème
+! Évaluer le rapport entre le bénéfice (quelques secondes) et le risque (un choc frontal) fait partie de la conduite. La plupart du temps, la bonne décision est de patienter.
+@ prise de décision | 1
+
+? Un conducteur expérimenté a moins d'accidents qu'un débutant surtout parce qu'il :
++ repère plus tôt les situations dangereuses et les anticipe
+- roule plus vite
+- a de meilleurs réflexes
+! L'expérience n'améliore pas les réflexes, elle apprend à lire la route : repérer les indices, prévoir l'évolution d'une situation, adapter sa conduite avant que le danger n'apparaisse.
+@ expérience et anticipation | 2
+
+? Je me rends compte que je viens de commettre une erreur de conduite sans conséquence. La meilleure attitude est de :
++ l'analyser pour ne pas la reproduire
+- l'oublier aussitôt
+- considérer que c'est la faute des autres
+! Tous les conducteurs font des erreurs. Les reconnaître et comprendre pourquoi elles se sont produites (vitesse, distraction, mauvaise observation) permet de progresser.
+@ analyser ses erreurs | 1

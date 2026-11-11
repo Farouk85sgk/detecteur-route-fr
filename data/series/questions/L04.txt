@@ -1,0 +1,86 @@
+# Feux et agents de circulation
+
+? Le feu passe au jaune fixe alors que j'approche de l'intersection. Je dois :
+- accélérer pour passer avant le rouge
++ m'arrêter, sauf si je ne peux plus le faire dans des conditions de sécurité suffisantes
+- passer en klaxonnant
+! Le feu jaune fixe impose l'arrêt, comme le rouge. La seule tolérance : si je suis trop près pour m'arrêter sans danger (freinage brutal, véhicule qui me suit de près), je peux passer.
+@ feux : jaune fixe | 1
+
+? Passer au feu rouge est sanctionné par :
+- une amende de 35 €, sans retrait de points
+- une amende de 135 € et un retrait de 2 points
++ une amende de 135 € et un retrait de 4 points
+! Franchir un feu rouge est une contravention de 4e classe : 135 € d'amende forfaitaire et 4 points en moins. Le permis peut aussi être suspendu.
+@ feux : sanction du feu rouge | 2
+
+? Le feu est au jaune clignotant à une intersection. Cela signifie que :
+- je dois marquer l'arrêt
++ je peux passer avec prudence, en respectant les règles de priorité
+- je suis prioritaire sur tous les usagers
+! Le feu jaune clignotant attire l'attention sur un danger : je ralentis et j'applique les panneaux présents ou, à défaut, la priorité à droite. Il ne donne aucune priorité.
+@ feux : jaune clignotant | 1
+
+? Mon feu est vert. Je tourne à droite et des piétons traversent la rue dans laquelle j'entre, au feu vert pour eux. Je :
+- passe en premier : mon feu est vert
++ leur cède le passage
+- klaxonne pour qu'ils se dépêchent
+! Le feu vert m'autorise à m'engager, pas à passer devant tout le monde : en tournant, je cède le passage aux piétons qui traversent la voie où j'entre, et aux cyclistes qui continuent tout droit à ma droite.
+@ feux : vert et piétons | 2
+
+? Le feu est vert, mais la circulation est bloquée de l'autre côté de l'intersection. Je :
+- m'engage : le feu vert me donne le droit de passer
++ reste avant le feu tant que je ne suis pas sûr de pouvoir dégager l'intersection
+- m'engage en me plaçant sur le passage pour piétons
+! Même au feu vert, je ne dois pas m'engager dans une intersection si je risque d'y rester immobilisé et de gêner la circulation transversale. J'attends d'avoir la place de la dégager.
+@ feux : intersection encombrée | 2
+
+? Un agent règle la circulation à une intersection équipée de feux. Il me fait signe de passer alors que mon feu est rouge. Je :
+- attends le feu vert
++ passe : les indications de l'agent priment sur les feux
+- m'arrête pour lui demander confirmation
+! Ordre d'importance : les indications des agents, puis les feux, puis les panneaux et le marquage, puis les règles générales de priorité. L'agent a toujours le dernier mot.
+@ hiérarchie de la signalisation | 1
+
+? Un agent de la circulation, face à moi, lève le bras à la verticale. Ce geste signifie :
+- que je peux passer
++ arrêt pour tous les usagers, quelle que soit leur direction
+- que je dois accélérer
+! Le bras levé à la verticale équivaut à un feu jaune fixe : tous les usagers s'arrêtent, sauf ceux qui ne peuvent plus le faire en sécurité.
+@ gestes des agents | 2
+
+? Un agent règle la circulation au milieu de l'intersection, bras tendus à l'horizontale. Je le vois de profil. Je :
++ peux passer
+- dois m'arrêter
+- dois faire demi-tour
+! Les usagers qui voient l'agent de profil peuvent passer. Ceux qui le voient de face ou de dos, dont la route est barrée par ses bras, doivent s'arrêter.
+@ gestes des agents | 3
+
+? À une intersection, les feux sont éteints. Un panneau « cédez le passage » est fixé sur le support du feu. Je :
+- suis prioritaire, puisque le feu ne fonctionne pas
++ respecte le panneau et cède le passage
+- applique la priorité à droite
+! Quand les feux sont éteints ou au jaune clignotant, ce sont les panneaux placés sur leur support qui s'appliquent. S'il n'y en a pas, c'est la priorité à droite.
+@ feux en panne | 2 | AB3a
+
+? Au feu rouge, une flèche jaune clignotante vers la droite s'allume à côté du feu. Je peux :
+- tourner à droite sans précaution particulière
++ tourner à droite en cédant le passage aux piétons et aux véhicules qui circulent
+- continuer tout droit
+! La flèche jaune clignotante autorise à franchir le feu rouge dans la seule direction indiquée, avec prudence et sans aucune priorité : je cède le passage aux piétons et aux véhicules de la voie où je m'engage.
+@ feux : flèche jaune clignotante | 3
+
+? Un feu rouge clignotant peut se rencontrer :
++ à un passage à niveau
++ devant un pont mobile
+- à une intersection ordinaire, la nuit
++ à la sortie d'une caserne de pompiers
+! Le feu rouge clignotant impose l'arrêt absolu. On le trouve aux passages à niveau, devant les ponts mobiles, à la sortie de véhicules de secours, à l'entrée de certains tunnels ou sur une piste d'aviation.
+@ feu rouge clignotant | 2
+
+? Face à un feu rouge clignotant, je peux repartir :
+- dès que la voie me paraît libre
++ seulement quand le feu est éteint
+- après un arrêt de trois secondes
+! Le feu rouge clignotant interdit le passage tant qu'il fonctionne, même si rien ne semble arriver : un second train peut suivre le premier. Je ne repars qu'une fois le feu éteint et les barrières levées.
+@ feu rouge clignotant | 1

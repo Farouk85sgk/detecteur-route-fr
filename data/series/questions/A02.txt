@@ -1,0 +1,85 @@
+# Secourir
+
+? Une victime d'accident, consciente, se plaint de douleurs au dos et au cou. Elle n'est exposée à aucun danger immédiat. Je :
+- l'aide à sortir du véhicule et à s'allonger
++ ne la déplace pas, lui parle et la rassure en attendant les secours
+- lui fais faire quelques pas
+! Déplacer une victime peut aggraver des lésions de la colonne vertébrale. Je ne la bouge pas, sauf danger immédiat et impossible à écarter (incendie, risque de sur-accident).
+@ ne pas déplacer | 1
+
+? Dans quel cas dois-je dégager en urgence une victime de son véhicule ?
++ Le véhicule commence à prendre feu
+- Elle se plaint d'avoir froid
+- Elle demande à téléphoner
+! Le dégagement d'urgence est réservé au danger réel, immédiat et non contrôlable qui menace la victime : incendie, fumées, véhicule exposé à un choc. Sinon, on ne la déplace pas.
+@ dégagement d'urgence | 2
+
+? Une victime consciente me demande à boire. Je :
+- lui donne de l'eau
+- lui donne une boisson sucrée
++ ne lui donne ni à boire ni à manger
+! On ne donne jamais à boire ni à manger à une victime : elle devra peut-être être opérée en urgence, et elle risque de s'étouffer si son état se dégrade.
+@ ne pas donner à boire | 1
+
+? Un motard est allongé au sol après une chute. Il est conscient et respire. Dois-je lui retirer son casque ?
+- Oui, pour qu'il respire mieux
++ Non, sauf si je sais le faire et que c'est indispensable
+! Retirer le casque peut aggraver une lésion des cervicales. Je me contente d'ouvrir la visière ou de détacher la mentonnière si cela l'aide à respirer, et je lui demande de ne pas bouger la tête.
+@ casque du motard | 1
+
+? Une victime ne répond pas quand je lui parle et ne réagit pas, mais elle respire normalement. Je :
++ la place sur le côté, en position latérale de sécurité
+- la laisse sur le dos
+- l'assois contre un mur
+! Une victime inconsciente qui respire est placée en position latérale de sécurité : sur le côté, bouche ouverte vers le sol, pour que ses voies respiratoires restent libres. Je surveille ensuite sa respiration.
+@ position latérale de sécurité | 1
+
+? Une victime est inconsciente et ne respire plus. Après avoir fait alerter les secours, je :
++ commence un massage cardiaque
++ fais chercher un défibrillateur
+- la place en position latérale de sécurité
+- attends les secours sans rien faire
+! Sans respiration, chaque minute compte : j'alerte ou je fais alerter, je pratique des compressions thoraciques au milieu de la poitrine, à un rythme de 100 à 120 par minute, et j'utilise un défibrillateur dès qu'il est disponible.
+@ arrêt cardiaque | 2
+
+? Un défibrillateur automatisé externe (DAE) peut être utilisé :
+- uniquement par un médecin
+- uniquement par un secouriste diplômé
++ par toute personne, même sans formation
+! Toute personne peut utiliser un défibrillateur automatisé : l'appareil donne des instructions vocales et ne délivre un choc que si c'est nécessaire.
+@ défibrillateur | 1
+
+? Une victime saigne abondamment d'une plaie à la jambe. Je :
++ appuie fortement sur la plaie, avec un linge propre ou ma main protégée
+- la laisse saigner pour nettoyer la plaie
+- lui fais lever le bras
+! Face à une hémorragie, j'allonge la victime et je comprime directement et fermement l'endroit qui saigne, sans relâcher, jusqu'à l'arrivée des secours. Si possible, je protège ma main avec un gant ou un sac plastique.
+@ hémorragie | 1
+
+? Une personne s'est brûlée la main. Le premier geste est de :
+- appliquer un corps gras, comme du beurre
++ refroidir la brûlure sous l'eau fraîche qui ruisselle
+- percer les cloques
+! Je refroidis la brûlure le plus tôt possible, à l'eau courante tempérée, pendant au moins dix minutes. Ni corps gras, ni glace, ni cloques percées ; je n'enlève pas un vêtement collé à la peau.
+@ brûlure | 2
+
+? De la fumée s'échappe du capot d'un véhicule accidenté. Je :
++ coupe le contact si je le peux et j'éloigne les personnes
+- ouvre grand le capot pour voir d'où vient la fumée
+- arrose le moteur avec de l'essence pour vérifier
+! Je coupe le contact et j'éloigne tout le monde. Ouvrir le capot en grand apporte de l'air et attise le feu ; avec un extincteur, on l'entrouvre à peine et on vise la base des flammes.
+@ début d'incendie | 2
+
+? En attendant les secours, auprès d'une victime consciente, je :
++ lui parle, la rassure et la couvre
++ surveille son état
+- la laisse seule pour ne pas la déranger
+! Parler à la victime permet de la rassurer et de surveiller sa conscience. La couvrir limite le refroidissement. Si son état change, je rappelle les secours.
+@ réconforter et surveiller | 1
+
+? Pour savoir si une victime inconsciente respire, je :
++ regarde si son ventre et sa poitrine se soulèvent, pendant dix secondes au plus
+- prends son pouls au poignet pendant une minute
+- lui verse de l'eau sur le visage
+! Après avoir basculé prudemment sa tête en arrière pour libérer les voies aériennes, j'observe sa poitrine et son ventre et j'écoute son souffle pendant dix secondes au maximum.
+@ vérifier la respiration | 2

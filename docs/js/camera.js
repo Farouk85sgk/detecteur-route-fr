@@ -157,7 +157,7 @@ async function boucle() {
 }
 
 const visibilite = () => { if (C && !document.hidden) C.tPrec = performance.now(); };
-const decrireMoteur = () => `Prêt (${moteur.fournisseurs[0] === "webgpu" ? "carte graphique" : `processeur, ${navigator.hardwareConcurrency || "?"} cœurs`}, classifieur ${moteur.cls ? "actif" : "absent"}, `
+const decrireMoteur = () => `Prêt (${moteur.fournisseurs[0] === "webgpu" ? "carte graphique" : `processeur, ${moteur.fils > 1 ? `${moteur.fils} fils de calcul` : "un seul fil de calcul"}`}, classifieur ${moteur.cls ? "actif" : "absent"}, `
   + `usagers ${moteur.usagers ? "actifs" : "inactifs"}${moteur.emp ? ", Mes panneaux actif" : ""}, ${Math.round(moteur.ms)} ms par image, ${C?.fps ? C.fps.toFixed(1) : "?"} images/s).`;
 
 // ---------- annonce d'un élément confirmé ----------

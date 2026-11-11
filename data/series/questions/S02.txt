@@ -1,0 +1,88 @@
+# Aides à la conduite
+
+? Lors d'un freinage d'urgence, l'ABS :
++ empêche les roues de se bloquer
++ me permet de garder le contrôle de la direction
+- réduit toujours la distance de freinage
+- remplace la distance de sécurité
+! L'antiblocage des roues évite le blocage au freinage : la voiture reste dirigeable et je peux contourner un obstacle tout en freinant. Il ne raccourcit pas forcément la distance de freinage, notamment sur gravier ou sur neige.
+@ ABS | 1
+
+? Ma voiture est équipée de l'ABS. En cas de freinage d'urgence, je :
++ appuie fort et sans relâcher sur la pédale de frein
+- pompe sur la pédale
+- freine doucement pour ne pas déclencher l'ABS
+! Avec l'ABS, j'écrase la pédale et je maintiens la pression, même si elle vibre : ces vibrations sont normales. Je peux en même temps tourner le volant pour éviter l'obstacle.
+@ ABS : utilisation | 2
+
+? L'ESP (contrôle électronique de stabilité) sert à :
++ aider à garder la trajectoire quand la voiture commence à déraper
+- augmenter la puissance du moteur
+- remplacer les pneus hiver
+! L'ESP détecte l'amorce d'un dérapage et freine une ou plusieurs roues pour remettre la voiture sur sa trajectoire. Il ne repousse pas les lois de la physique : trop vite dans un virage, la voiture sortira quand même.
+@ ESP | 1
+
+? L'aide au freinage d'urgence (AFU) :
++ amplifie le freinage quand j'appuie très vite sur la pédale
+- freine à ma place en toutes circonstances
+- maintient la voiture à l'arrêt en côte
+! Beaucoup de conducteurs n'appuient pas assez fort en situation d'urgence. L'AFU détecte un appui brutal et applique aussitôt la puissance maximale de freinage ; les feux de détresse s'allument souvent automatiquement.
+@ aide au freinage d'urgence | 2
+
+? Le limiteur de vitesse :
++ m'empêche de dépasser la vitesse que j'ai choisie, tant que je n'écrase pas l'accélérateur
+- maintient la voiture à vitesse constante sans que je touche aux pédales
+- freine tout seul devant un obstacle
+! Avec le limiteur, je garde le pied sur l'accélérateur, mais la voiture ne dépasse pas la vitesse programmée, sauf appui franc à fond. Le régulateur, lui, maintient la vitesse sans action sur l'accélérateur.
+@ limiteur de vitesse | 2
+
+? Le régulateur de vitesse est déconseillé :
++ sur chaussée mouillée ou glissante
++ quand la circulation est dense
++ sur une route sinueuse
+- sur une autoroute dégagée par temps sec
+! Le régulateur convient aux routes dégagées et sèches. Ailleurs, il retarde la réaction (le pied n'est plus sur les pédales) et peut maintenir une vitesse inadaptée. Il favorise aussi la baisse de vigilance.
+@ régulateur de vitesse | 2
+
+? Ma voiture dispose d'un régulateur de vitesse adaptatif. Cet équipement :
++ adapte ma vitesse pour garder une distance avec le véhicule qui précède
+- me dispense de surveiller la route
+- détecte tous les obstacles, piétons compris, dans toutes les conditions
+! Le régulateur adaptatif règle la vitesse sur celle du véhicule précédent. Il a des limites (véhicule arrêté, deux-roues, mauvais temps) : je reste responsable et prêt à freiner.
+@ régulateur adaptatif | 2
+
+? L'alerte de franchissement involontaire de ligne :
++ me prévient si je quitte ma voie sans avoir mis le clignotant
+- remplace le contrôle des rétroviseurs
+- fonctionne même sans marquage au sol
+! Ce système repère le marquage avec une caméra et m'avertit, ou corrige légèrement la direction, si je dérive. Il ne fonctionne pas quand les lignes sont effacées, couvertes de neige ou absentes.
+@ alerte de franchissement de ligne | 2
+
+? Le détecteur d'angle mort de ma voiture ne signale rien. Avant de changer de voie :
++ je contrôle quand même mes rétroviseurs et l'angle mort
+- je peux déboîter sans regarder
+- je klaxonne pour prévenir
+! Les aides à la conduite assistent, elles ne remplacent ni les contrôles ni la vigilance : un capteur peut être sale, masqué, ou ne pas détecter un deux-roues rapide.
+@ limites des aides | 1
+
+? Lesquels de ces équipements relèvent de la sécurité passive (ils limitent les conséquences d'un accident) ?
++ La ceinture de sécurité
++ Les airbags
+- L'ABS
+- Les feux de croisement
+! La sécurité active aide à éviter l'accident : freins, ABS, ESP, pneus, éclairage. La sécurité passive en limite les conséquences : ceinture, airbags, appuie-tête, carrosserie déformable.
+@ sécurité active et passive | 2
+
+? Sur les voitures neuves, le système d'adaptation intelligente de la vitesse :
++ m'avertit quand je dépasse la limitation détectée
+- m'empêche totalement d'accélérer
+- me dispense de lire les panneaux
+! Obligatoire sur les voitures neuves depuis juillet 2024, ce système reconnaît les limitations (caméra, cartographie) et alerte le conducteur. Il peut se tromper : c'est la signalisation qui fait foi et je reste responsable.
+@ adaptation intelligente de la vitesse | 3
+
+? Le freinage automatique d'urgence :
++ peut freiner seul si une collision est imminente et que je ne réagis pas
+- garantit qu'il n'y aura jamais de choc
+- fonctionne uniquement sur autoroute
+! Le système alerte puis freine pour éviter le choc ou en réduire la violence. Ses capteurs ont des limites (vitesse, météo, type d'obstacle) : il ne remplace ni les distances de sécurité ni l'attention.
+@ freinage automatique d'urgence | 2

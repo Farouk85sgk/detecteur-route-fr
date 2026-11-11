@@ -1,0 +1,85 @@
+# En ville et hors agglomération
+
+? Je longe une file de voitures en stationnement. Le danger le plus fréquent est :
++ une portière qui s'ouvre ou un piéton qui surgit entre deux voitures
+- un éblouissement
+- un aquaplanage
+! Les véhicules en stationnement masquent les piétons, surtout les enfants, et une portière peut s'ouvrir à tout moment. Je ralentis et, si je le peux, je laisse un espace d'un mètre environ.
+@ ville : véhicules en stationnement | 1
+
+? Un autobus est arrêté à son arrêt, sur ma droite. En le dépassant, je me méfie surtout :
++ des piétons qui peuvent traverser devant lui, masqués
+- de sa vitesse au démarrage
+- de ses rétroviseurs
+! Des voyageurs descendus du bus peuvent traverser juste devant ou derrière lui, sans voir ni être vus. Je ralentis fortement et je suis prêt à m'arrêter.
+@ ville : bus à l'arrêt | 1 | C6
+
+? En agglomération, un autobus met son clignotant pour quitter son arrêt. Je :
++ ralentis et, au besoin, m'arrête pour le laisser repartir
+- accélère pour passer avant lui
+- klaxonne pour qu'il attende
+! En agglomération, je dois laisser les véhicules de transport en commun quitter leurs arrêts : je ralentis et je m'arrête si nécessaire.
+@ ville : bus quittant son arrêt | 2
+
+? Ce panneau m'annonce :
+- une aire de jeux interdite aux voitures
++ un endroit fréquenté par des enfants, comme une école
+- un passage pour piétons
+! Aux abords d'une école, d'un stade ou d'une aire de jeux, un enfant peut surgir sans regarder. Je ralentis nettement, surtout aux heures d'entrée et de sortie des classes.
+@ abords des écoles | 1 | A13a
+
+? Je roule hors agglomération. Sur ma droite, un chemin de terre débouche sur la route. Un tracteur s'y trouve. Je :
++ ralentis et me prépare à réagir, bien que je sois prioritaire
+- garde ma vitesse : il doit me céder le passage
+- klaxonne longuement
+! Être prioritaire ne protège pas d'une erreur de l'autre : le conducteur du tracteur peut mal estimer ma vitesse ou ne pas me voir. J'anticipe en levant le pied.
+@ hors agglomération : accès riverains | 2
+
+? Hors agglomération, je rattrape un tracteur qui roule à 25 km/h. Avant de le dépasser, je pense :
++ qu'il peut tourner à gauche vers un champ sans que je voie bien son clignotant
++ que son chargement ou son outil peut dépasser sur les côtés
+- qu'il va accélérer pour me laisser passer
+! Un engin agricole est large, lent, parfois sale au point de masquer ses feux, et il tourne souvent vers des chemins peu visibles. Je ne dépasse qu'avec une visibilité complète et un large écart.
+@ engins agricoles | 2
+
+? Ce panneau signale :
+- un zoo à proximité
++ un passage possible d'animaux sauvages
+- une interdiction de chasser
+! En forêt et dans les zones boisées, cerfs, chevreuils ou sangliers traversent surtout à l'aube et au crépuscule. Je réduis ma vitesse et je surveille les bas-côtés.
+@ animaux sauvages : panneau | 1 | A15b
+
+? Sur une route à deux fois deux voies séparées par un terre-plein, je circule :
++ sur la voie de droite, sauf pour dépasser
+- sur la voie de gauche pour rouler plus vite
+- indifféremment sur l'une ou l'autre
+! Même avec plusieurs voies dans mon sens, je roule à droite. La voie de gauche sert à dépasser, puis je me rabats.
+@ routes à plusieurs voies | 1
+
+? Je roule sur une route que je ne connais pas. Les lignes électriques et les rangées d'arbres visibles au loin peuvent m'aider à :
++ deviner le tracé de la route après un sommet de côte ou un virage
+- connaître la limitation de vitesse
+- savoir si je suis prioritaire
+! Lire la route, c'est utiliser tous les indices : alignement d'arbres ou de poteaux, panneaux, marquage, lueurs de phares la nuit. Ces indices restent des hypothèses : je reste prêt à être surpris.
+@ lecture de la route | 2
+
+? En agglomération, l'usage de l'avertisseur sonore est :
+- libre
++ interdit, sauf en cas de danger immédiat
+- autorisé pour saluer
+! En agglomération, le klaxon n'est permis qu'en cas de danger immédiat. Hors agglomération, il peut aussi servir à avertir, par exemple avant un virage sans visibilité.
+@ avertisseur sonore en ville | 1
+
+? Je viens de dépasser ma rue en ville. Pour revenir, je :
+- recule sur la chaussée jusqu'à l'intersection
++ continue et fais le tour du pâté de maisons
+- fais demi-tour sur le passage pour piétons
+! Une erreur d'itinéraire se corrige plus loin, calmement : tour du pâté de maisons, prochain giratoire ou demi-tour à un endroit autorisé et dégagé. Jamais de manœuvre improvisée.
+@ erreur de direction en ville | 1
+
+? Avant un long trajet sur des routes inconnues, je prépare mon itinéraire :
++ avant de partir, en repérant les grandes étapes et les pauses
+- en roulant, en regardant mon téléphone
+- inutile : les panneaux suffisent toujours
+! Connaître les grandes étapes, les numéros de route et les lieux de pause évite les hésitations dangereuses. Le guidage vocal du GPS aide, à condition de le programmer à l'arrêt.
+@ préparation de l'itinéraire | 1

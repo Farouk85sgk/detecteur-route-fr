@@ -1,0 +1,88 @@
+# Infractions et sanctions
+
+? Parmi ces infractions, lesquelles sont des délits ?
++ Conduire avec 0,8 g d'alcool ou plus par litre de sang
++ Prendre la fuite après un accident
++ Conduire sans permis
+- Stationner sur un trottoir
+! Les délits sont les infractions les plus graves du code de la route, jugées par le tribunal correctionnel : alcoolémie délictuelle, stupéfiants, délit de fuite, conduite sans permis ou sans assurance, refus d'obtempérer... Les autres infractions sont des contraventions.
+@ contraventions et délits | 2
+
+? Je dépasse la vitesse autorisée de 25 km/h hors agglomération. Je perds :
+- 1 point
++ 2 points
+- 3 points
+- 4 points
+! Excès de vitesse : moins de 20 km/h, 1 point (aucun en dessous de 5 km/h) ; de 20 à 29 km/h, 2 points ; de 30 à 39 km/h, 3 points ; de 40 à 49 km/h, 4 points ; 50 km/h et plus, 6 points.
+@ excès de vitesse : barème | 3
+
+? Un excès de vitesse de 40 km/h ou plus peut entraîner immédiatement :
++ la rétention du permis par les forces de l'ordre
+- une simple remarque
+- la confiscation de la plaque d'immatriculation
+! À partir de 40 km/h au-dessus de la limite, les forces de l'ordre peuvent retenir le permis sur-le-champ ; le préfet peut ensuite le suspendre.
+@ grand excès de vitesse : rétention | 2
+
+? Un excès de vitesse de 50 km/h ou plus est aujourd'hui :
+- une contravention de 4e classe
++ un délit, dès la première fois
+- une infraction sans retrait de points
+! Depuis la fin de l'année 2025, dépasser la vitesse autorisée de 50 km/h ou plus est un délit dès la première infraction, passible d'une peine de prison, d'une forte amende, de l'annulation du permis et de la confiscation du véhicule.
+@ très grand excès de vitesse | 3
+
+? La suspension du permis de conduire signifie que :
++ je n'ai plus le droit de conduire pendant une durée déterminée
+- mon permis est définitivement supprimé
+- je peux conduire seulement de jour
+! La suspension retire le droit de conduire pour une durée fixée par le préfet ou le juge. L'annulation, décidée par un juge, et l'invalidation, due à la perte de tous les points, obligent à repasser le permis.
+@ suspension, annulation, invalidation | 2
+
+? Après un accrochage, je quitte les lieux sans m'arrêter pour éviter les ennuis. Je commets :
+- une simple impolitesse
+- une contravention
++ un délit de fuite
+! Tout conducteur impliqué dans un accident doit s'arrêter et se faire connaître. Le délit de fuite est puni d'une peine de prison, d'une forte amende, d'un retrait de 6 points et de la suspension ou de l'annulation du permis.
+@ délit de fuite | 1
+
+? Conduire un véhicule sans être titulaire du permis correspondant est :
+- une contravention punie de 135 €
++ un délit
+- toléré sur un court trajet
+! La conduite sans permis est un délit, passible d'emprisonnement, d'amende et de la confiscation du véhicule. En cas d'accident, l'assurance peut se retourner contre le conducteur pour tout ce qu'elle a versé aux victimes.
+@ conduite sans permis | 1
+
+? Je reçois un avis de contravention pour une amende forfaitaire de 135 €. Si je paie rapidement, dans le délai indiqué, l'amende est :
++ minorée à 90 €
+- maintenue à 135 €
+- majorée à 375 €
+! L'amende forfaitaire de 135 € est minorée à 90 € si elle est payée dans les 15 jours (30 jours par télépaiement pour un avis envoyé). Non payée dans les 45 jours, elle est majorée à 375 €.
+@ amende forfaitaire | 2
+
+? Mon employeur reçoit un avis de contravention pour un excès de vitesse commis avec un véhicule de l'entreprise. Il doit :
++ désigner le salarié qui conduisait
+- payer sans rien faire d'autre, dans tous les cas
+- attendre la convocation du tribunal
+! Le représentant légal de l'entreprise doit désigner le conducteur dans les 45 jours. À défaut, l'entreprise s'expose à une amende spécifique pour non-désignation.
+@ désignation du conducteur | 3
+
+? Un radar « tronçon » contrôle :
+- ma vitesse à un instant précis
++ ma vitesse moyenne entre deux points
+- la distance qui me sépare du véhicule précédent
+! Le radar tronçon relève mon passage à deux points éloignés de plusieurs kilomètres et calcule ma vitesse moyenne. Freiner devant la première cabine ne sert donc à rien.
+@ radars : tronçon | 2 | SR3
+
+? Les radars automatiques peuvent contrôler :
++ la vitesse
++ le franchissement d'un feu rouge
++ le franchissement d'un passage à niveau
+- le taux d'alcool
+! Il existe des radars de vitesse (fixes, embarqués, tronçon, de chantier, urbains), des radars de feu rouge et des radars de passage à niveau. D'autres contrôles automatisés se développent.
+@ radars : types | 2
+
+? Refuser de se soumettre à un dépistage d'alcoolémie lors d'un contrôle est :
+- un droit
++ un délit, puni comme la conduite sous l'emprise de l'alcool
+- une contravention de 35 €
+! Refuser les vérifications de l'état alcoolique est un délit, sanctionné aussi sévèrement que l'alcoolémie délictuelle elle-même : retrait de 6 points, suspension ou annulation du permis, amende et prison possibles.
+@ refus de dépistage | 2

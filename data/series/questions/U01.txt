@@ -1,0 +1,87 @@
+# Piétons
+
+? En ville, une personne âgée arrêtée au bord du trottoir, face à un passage pour piétons, regarde vers moi et s'apprête à traverser. Je :
+- continue : elle n'a pas encore posé le pied sur la chaussée
++ m'arrête pour la laisser traverser, sans la presser
+- klaxonne pour lui demander d'attendre mon passage
+! Je dois céder le passage, au besoin en m'arrêtant, au piéton qui traverse mais aussi à celui qui manifeste clairement son intention de le faire. Refuser cette priorité coûte 135 € d'amende forfaitaire et 6 points. Une personne âgée a besoin de temps : je patiente.
+@ priorité du piéton : intention de traverser | 1
+
+? Il n'existe aucun passage pour piétons à moins de 50 m. Un piéton s'engage sur la chaussée pour traverser devant moi. Je dois lui céder le passage :
++ Oui
+- Non
+! Sans passage à moins de 50 m, le piéton peut traverser là où il se trouve : il s'engage régulièrement et je dois lui céder le passage, au besoin en m'arrêtant. S'il existe un passage à moins de 50 m, il doit l'emprunter, mais je reste toujours tenu de ne pas le mettre en danger.
+@ priorité du piéton : traversée hors passage | 3
+
+? En dehors des emplacements matérialisés, il est interdit de s'arrêter ou de stationner en voiture juste avant un passage pour piétons, sur une distance de :
+- 3 m
++ 5 m
+- 10 m
+- 15 m
+! S'arrêter ou stationner en voiture sur les 5 m qui précèdent un passage pour piétons, hors emplacement matérialisé, est très gênant (amende de 135 €). Le véhicule masquerait les piétons, surtout les enfants, aux conducteurs qui arrivent.
+@ passage piétons : arrêt et stationnement | 2
+
+? En ville, la voiture qui me précède ralentit puis s'arrête juste devant un passage pour piétons. Aucun véhicule n'arrive en face. Je :
+- la dépasse par la gauche, puisque la voie est libre
+- klaxonne pour qu'elle redémarre
++ reste derrière elle : elle me cache peut-être un piéton qui traverse
+! À l'approche d'un passage pour piétons, je ne peux dépasser qu'après m'être assuré qu'aucun piéton n'y est engagé. Une voiture qui s'arrête devant le passage laisse très souvent traverser un piéton qu'elle me masque : je reste derrière elle.
+@ passage piétons : dépassement | 2
+
+? En agglomération, près d'une école, je rencontre ce panneau. Je :
++ ralentis
+- klaxonne pour prévenir de mon arrivée
++ surveille les trottoirs et les espaces entre les véhicules garés
+- garde mon allure tant qu'aucun enfant n'est sur la chaussée
+! Ce panneau de danger annonce un endroit fréquenté par les enfants. Petit, un enfant est facilement masqué par les véhicules et peut s'élancer sur la chaussée sans regarder : je ralentis et je surveille les abords, prêt à m'arrêter. En agglomération, le klaxon est réservé au danger immédiat.
+@ enfants | 1 | A13a
+
+? Une personne tenant une canne blanche attend au bord du trottoir, face à un passage pour piétons. Je :
++ m'arrête et la laisse traverser sans la presser
+- lui fais un appel de phares pour lui indiquer qu'elle peut passer
+- passe sans ralentir : elle n'est pas encore engagée
+! La canne blanche signale une personne aveugle ou très malvoyante : elle ne voit ni ma voiture ni un appel de phares et se repère au bruit. Elle attend pour traverser : je m'arrête et je la laisse rejoindre l'autre trottoir, sans klaxonner.
+@ personne aveugle ou malvoyante (canne blanche) | 1
+
+? Hors agglomération, je dépasse un piéton qui marche au bord de la chaussée. La distance latérale minimale à respecter entre lui et ma voiture est de :
+- 0,50 m
+- 1 m
++ 1,50 m
+! Pour dépasser un piéton, je ne dois pas m'en approcher latéralement à moins de 1,50 m hors agglomération (1 m en agglomération), comme pour un cycliste. Si je ne peux pas m'écarter suffisamment, je ralentis et je reste derrière lui.
+@ piéton hors agglomération : dépassement | 2
+
+? De nuit, hors agglomération, je roule en feux de croisement. À quelle distance environ puis-je apercevoir un piéton vêtu de sombre qui marche sur l'accotement ?
++ 30 m
+- 100 m
+- 150 m
+! En feux de croisement, un piéton en vêtements sombres n'est visible qu'à 30 m environ, contre plus de 150 m s'il porte des éléments rétroréfléchissants. C'est bien moins que la distance nécessaire pour m'arrêter à 80 km/h : de nuit, je réduis ma vitesse.
+@ piéton de nuit : visibilité | 3
+
+? Dans une zone de rencontre, une personne en fauteuil roulant avance au milieu de la chaussée, devant ma voiture. Je :
+- klaxonne pour qu'elle se range sur le côté
++ reste derrière elle sans la presser : elle est prioritaire
+- la dépasse de près : sa place est sur le trottoir
+! Dans une zone de rencontre, les piétons, auxquels sont assimilées les personnes en fauteuil roulant, peuvent circuler sur la chaussée et sont prioritaires sur les véhicules, limités à 20 km/h. Je patiente derrière elle.
+@ zone de rencontre | 1
+
+? Riverain autorisé, j'entre en voiture dans une aire piétonne pour rejoindre mon garage. Dans cette aire :
+- je peux rouler jusqu'à 20 km/h
++ je roule à l'allure du pas
++ les piétons sont prioritaires sur ma voiture
+- les piétons doivent s'écarter à mon approche
+! Dans une aire piétonne, seuls les véhicules nécessaires à la desserte de la zone peuvent circuler : ils roulent à l'allure du pas, c'est-à-dire à la vitesse d'un piéton, et les piétons sont prioritaires sur eux. La limite de 20 km/h est celle de la zone de rencontre.
+@ aire piétonne | 3
+
+? En ville, je m'apprête à dépasser un autobus immobilisé à son arrêt : des voyageurs en descendent. Je :
++ réduis ma vitesse
+- klaxonne pour signaler mon passage
+- passe vite, avant que les voyageurs n'arrivent sur la chaussée
++ m'attends à ce qu'un piéton surgisse devant l'autobus
+! Je dois réduire ma vitesse lorsque je croise ou dépasse un véhicule de transport en commun au moment de la descente et de la montée des voyageurs. L'autobus me masque les piétons : l'un d'eux peut traverser juste devant lui sans me voir.
+@ voyageurs descendant d'un autobus | 2
+
+? Un tramway est arrêté en station : ses voyageurs descendent directement sur la chaussée, du côté où je circule. Je peux le dépasser de ce côté pendant leur descente :
+- Oui
++ Non
+! Il est interdit de dépasser un tramway à l'arrêt, pendant la montée ou la descente des voyageurs, du côté où elle s'effectue. Je m'arrête derrière lui et j'attends que les voyageurs aient quitté la chaussée.
+@ voyageurs descendant d'un tramway | 3

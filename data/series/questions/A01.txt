@@ -1,0 +1,86 @@
+# Protéger et alerter
+
+? J'arrive le premier sur les lieux d'un accident. Dans quel ordre est-ce que j'agis ?
++ Protéger, alerter, secourir
+- Secourir, alerter, protéger
+- Alerter, secourir, protéger
+! D'abord protéger, pour éviter un sur-accident ; ensuite alerter les secours ; enfin secourir les victimes, dans la limite de ce que je sais faire.
+@ protéger, alerter, secourir | 1
+
+? Je m'arrête pour porter secours après un accident sur une route. Je gare mon véhicule :
++ après le lieu de l'accident, si possible hors de la chaussée, feux de détresse allumés
+- juste avant l'accident, au milieu de la voie
+- de l'autre côté de la route, en travers
+! Je me gare après l'accident, hors de la chaussée si possible, pour ne pas gêner l'arrivée des secours ni créer un nouvel obstacle. J'allume mes feux de détresse et j'enfile mon gilet avant de sortir.
+@ protéger : se garer | 2
+
+? Sur une route ordinaire, je place le triangle de présignalisation :
+- juste derrière le véhicule accidenté
++ à 30 m au moins en amont, ou avant un virage ou un sommet de côte
+- à 500 m
+! Le triangle se place à 30 m au moins du véhicule ou de l'obstacle, et de façon à être visible à 100 m par les conducteurs qui arrivent : avant le virage ou le sommet de côte s'il y en a un.
+@ protéger : triangle | 2
+
+? Sur autoroute, après une panne ou un accident, dois-je aller poser mon triangle sur la chaussée ?
+- Oui, toujours
++ Non, si cela met ma vie en danger : je me mets d'abord à l'abri
+! Le triangle n'est pas posé si cela met la vie du conducteur en danger, ce qui est le cas sur autoroute. La priorité : gilet, feux de détresse, tout le monde derrière la glissière, puis l'alerte.
+@ protéger : autoroute | 2
+
+? Quel est le numéro d'urgence valable dans toute l'Union européenne ?
+- Le 15
+- Le 18
++ Le 112
+- Le 115
+! Le 112 est le numéro d'urgence européen, gratuit, accessible depuis un téléphone fixe ou mobile. En France, on peut aussi appeler le 15 (SAMU), le 17 (police, gendarmerie) et le 18 (pompiers).
+@ alerter : numéros | 1
+
+? Une personne sourde ou malentendante peut alerter les secours :
+- uniquement en demandant à un passant
++ par SMS ou par l'application dédiée, au 114
+- par courrier électronique
+! Le 114 est le numéro d'urgence pour les personnes sourdes, malentendantes ou qui ne peuvent pas parler : il est accessible par SMS, par visiophonie, par tchat et par fax.
+@ alerter : 114 | 2
+
+? Quand j'appelle les secours, quelles informations dois-je donner ?
++ Le lieu précis de l'accident
++ Le nombre de victimes et leur état apparent
++ La nature de l'accident et les risques particuliers (incendie, produits dangereux)
+- Le nom de mon assureur
+! Je précise le lieu (route, sens de circulation, repère kilométrique), ce qui s'est passé, le nombre et l'état des victimes, les dangers. Je réponds aux questions et je ne raccroche que lorsqu'on me le dit.
+@ alerter : message | 1
+
+? À la fin de mon appel aux secours, je raccroche :
+- dès que j'ai donné le lieu de l'accident
++ quand mon interlocuteur me dit de le faire
+- après trente secondes
+! Le régulateur peut avoir besoin de précisions ou me donner des consignes de premiers secours. Je garde mon téléphone disponible après l'appel.
+@ alerter : fin de l'appel | 1
+
+? Sur autoroute, par rapport à mon téléphone portable, une borne d'appel d'urgence a l'avantage :
++ de localiser automatiquement et précisément l'endroit où je me trouve
+- d'être plus rapide à atteindre
+- de prévenir mon assureur
+! La borne d'appel met directement en relation avec le centre de sécurité de l'autoroute et indique d'elle-même ma position et mon sens de circulation.
+@ alerter : bornes d'appel | 2 | CE2a
+
+? Le système eCall, qui équipe les voitures neuves depuis 2018 :
++ appelle automatiquement les secours en cas de choc violent
++ transmet la position du véhicule
+- empêche le véhicule de démarrer après un accident
+! L'appel d'urgence automatique eCall se déclenche lors d'un accident grave (déclenchement des airbags) ou manuellement grâce à un bouton. Il transmet la localisation et établit une liaison vocale avec les secours.
+@ alerter : eCall | 2
+
+? Un accident vient d'avoir lieu et des véhicules sont immobilisés sur la chaussée. Le danger immédiat le plus fréquent est :
++ le sur-accident, causé par les véhicules qui arrivent
+- la panne de batterie
+- le bruit
+! Les usagers qui arrivent peuvent percuter les véhicules accidentés, les victimes ou les témoins. D'où l'importance de la protection : feux de détresse, gilet, triangle, personnes à l'abri.
+@ sur-accident | 1
+
+? Je suis témoin d'un accident corporel et je passe sans m'arrêter ni prévenir les secours, alors que je pouvais le faire sans risque. Je commets :
+- aucune infraction
++ un délit de non-assistance à personne en danger
+- une simple contravention de 35 €
+! Toute personne doit porter assistance à une personne en péril, par son action ou en provoquant les secours, dès lors que c'est sans risque pour elle ou pour les tiers. S'abstenir est un délit puni de prison et d'amende.
+@ obligation de porter secours | 2

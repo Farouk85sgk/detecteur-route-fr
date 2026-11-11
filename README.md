@@ -1,25 +1,29 @@
 # Détecteur de panneaux et marquages au sol — code de la route français (YOLOv5, temps réel)
 
 Application de détection **en direct** des panneaux de signalisation et des marquages au sol français, construite
-sur le code de [YOLOv5](https://github.com/ultralytics/yolov5) (dossier `yolov5/`).
+sur le code de [YOLOv5](https://github.com/ultralytics/yolov5) (dossier `yolov5/`) et **entraînée sur de vraies
+photos de routes françaises**.
 
 **Version téléphone « Repère », sans installation : https://farouk85sgk.github.io/detecteur-route-fr/** :
-détection en direct avec feux, piétons et cyclistes, trajets en photos, album, quiz, examens blancs, quête et
-profils (voir « Version téléphone » plus bas).
+détection en direct avec feux, piétons et cyclistes, trajets en photos, album, **529 questions de code en 44 séries**,
+examens blancs, quiz sur de vraies photos, quête et profils (voir « Version téléphone » plus bas).
 
-- **87 classes** : 67 panneaux (danger, priorité, interdiction, obligation, fin, zones, agglomération, indication)
-  et 20 marquages au sol (lignes continue / discontinue / mixte, ligne STOP, ligne cédez-le-passage, passage piétons,
-  flèches, zébras, damier, vélo, BUS, zigzag, dents de requin...). Liste complète dans `route_fr/classes.py`.
-- **Temps réel** : lecture de la caméra dans un fil séparé (on traite toujours l'image la plus récente), modèle
-  YOLOv5n léger, export ONNX / OpenVINO / TensorRT possible. Mesuré : **40 ms par image (≈ 25 images/s)** pour une
-  vidéo 1280 × 720 sur un processeur 4 cœurs, sans carte graphique (détection + classifieur + affichage).
+- **Un catalogue de 308 éléments** (`route_fr/classes.py`) : 285 panneaux, panonceaux et balises, désignés par leur
+  code officiel, et 23 marquages au sol. La caméra en reconnaît **233** : 210 panneaux (dangers, priorités,
+  interdictions, limitations de 5 à 130 km/h, stationnement et zones, obligations, fins, indications, services,
+  signalisation temporaire, balises, panonceaux) et les 23 marquages (lignes continue, discontinue, mixte, de
+  dissuasion, de rive, d'effet des feux, STOP, cédez-le-passage, passage piétons, flèches, zébras, damier, vélo, BUS,
+  zigzag, dents de requin...). Les 75 autres panneaux, trop rares sur les photos pour être appris, ont leur fiche.
+- **Deux étages** : YOLOv5n repère les marquages et tous les panneaux (une seule classe « panneau »), puis un
+  classifieur YOLOv5n-cls dit de quel panneau il s'agit. Il regarde le panneau **et ce qui se trouve dessous** : il
+  distingue ainsi un sens interdit d'un « sens interdit sauf vélos », un stationnement interdit d'une place réservée
+  aux personnes handicapées, un cédez-le-passage de son annonce à 150 m. Il écarte les fausses détections et les
+  panneaux hors catalogue (directions, publicités, dos de panneaux).
+- **Temps réel** : lecture de la caméra dans un fil séparé (on traite toujours l'image la plus récente), modèles
+  légers, export ONNX / OpenVINO / TensorRT possible.
 - **Affichage pédagogique** : cadre et nom de chaque élément, **vitesse maximale en cours** (mémorisée à partir des
-  panneaux B14, entrée/sortie d'agglomération, zone 30, autoroute...), historique des derniers panneaux avec le
-  **rappel du code de la route**, annonces vocales en option.
-- **Deux étages** : YOLOv5n repère panneaux et marquages, puis un classifieur YOLOv5n-cls relit chaque panneau
-  détecté (vignette 64 × 64) pour fixer sa classe exacte (chiffre de la limitation, sens des flèches...). Il écarte
-  aussi les leurres (dos de panneaux, panneaux de direction, publicités) et les panneaux hors liste (limitations de
-  poids ou de hauteur, vitesse minimale...), qui ne sont donc jamais pris pour une limitation de vitesse.
+  panneaux B14, entrée/sortie d'agglomération, zones 30 et de rencontre, autoroute...), historique des derniers
+  panneaux avec le **rappel du code de la route**, annonces vocales en option.
 - **Stabilisation** : un objet n'est affiché qu'après 2 détections consécutives (moins de fausses alertes), les
   cadres sont lissés et la classe est votée sur plusieurs images (pas de clignotement 50 ↔ 30).
 
@@ -87,35 +91,58 @@ Web : carte graphique WebGPU si disponible, sinon processeur) et **rien n'est en
 photos, trajets et progression restent sur le téléphone. Sur Android ou iPhone, menu du navigateur →
 « Ajouter à l'écran d'accueil » pour l'installer comme une appli.
 
-- **Détection en direct** (caméra ou vidéo) : les 87 panneaux et marquages, plus **feux tricolores** (couleur lue,
+- **Détection en direct** (caméra ou vidéo) : 210 panneaux et 23 marquages, plus **feux tricolores** (couleur lue,
   annonce du passage au vert), **piétons, cyclistes et deux-roues** avec leur distance approximative. Carte du
   dernier élément avec son explication, historique en pastilles, vitesse maximale en cours, lignes à gauche et à
   droite, annonces vocales (« Limitation à 50 », règle expliquée à voix haute), vibration. Pause : pincer pour
   zoomer, toucher un cadre pour ouvrir sa fiche. Mode paysage : la route à gauche, le panneau à droite.
 - **Mes trajets** : une photo de la route à chaque élément repéré (cadres incrustés), avec l'heure, le moment de la
   vidéo et la position GPS (lien vers la carte) ; vidéo du trajet à enregistrer ou partager ; quiz du trajet.
-- **Album** : les 93 éléments rangés en 10 familles, en couleur une fois repérés sur la route, avec leur fiche
-  (sens, bon réflexe, comment le reconnaître, ta photo).
-- **Quiz** : dernier trajet, album, tout le code, par famille, erreurs à revoir, **examen blanc** (40 questions de
-  20 s, 35 pour réussir), **séries de code importées** de l'auto-école (voir ci-dessous).
+- **Album** : 314 éléments rangés en 14 familles, avec les schémas officiels des panneaux ; en couleur une fois
+  repérés sur la route, avec leur fiche (sens, bon réflexe, comment le reconnaître, ta photo).
+- **Code de la route** : **529 questions originales en 44 séries**, classées selon les dix thèmes de l'examen
+  (circulation, conducteur, route, autres usagers, notions diverses, premiers secours, prendre et quitter son
+  véhicule, mécanique, sécurité, environnement), chacune avec son explication ; progression par thème, erreurs à
+  revoir, et **examens blancs** de 40 questions réparties comme à l'épreuve (35 bonnes réponses pour réussir).
+  Les **séries de l'auto-école** peuvent être importées (voir ci-dessous).
+- **Quiz de signalisation** : dernier trajet, album, par famille, erreurs à revoir, examen des panneaux, et
+  **« En situation réelle »** : de vraies photos de routes françaises où il faut reconnaître le panneau encadré.
 - **La quête** : une carte avec une région par famille ; repérer 4 éléments de la famille sur la route ouvre le
   donjon de son gardien (10 questions, 3 cœurs, loupe et potion) ; chaque gardien vaincu donne un éclat du Panneau
-  d'Or. Quêtes du jour, panneau mystère, coffre, flamme des jours de suite, pépites, échoppe (objets et titres),
-  niveaux, 16 badges, **classement** en 8 catégories entre les profils du téléphone et des amis ajoutés par code.
+  d'Or (14 régions). Quêtes du jour, panneau mystère, coffre, flamme des jours de suite, pépites, échoppe (objets et
+  titres), niveaux, 19 badges, **classement** en 8 catégories entre les profils du téléphone et des amis ajoutés par code.
 - **Profils** : plusieurs élèves sur un même téléphone, chacun avec ses réglages, sa couleur de fond (Auto, Blanc,
   Crème, Sauge, Bleu nuit), son album, ses trajets et sa progression.
 - **Mes panneaux** : un panneau que l'appli ne connaît pas, ou qu'elle confond ? On le prend en photo, on dit ce
   que c'est, et l'appli le reconnaît ensuite (modèle d'empreintes `empreinte.onnx`).
 - **Réglages** : ce qu'il faut détecter (famille par famille ou élément par élément), qualité d'analyse (Rapide,
-  Équilibrée, Fine), photos, GPS, vidéo, paysage, sons, et un diagnostic. **Sans réseau** : bouton « Tout préparer
-  pour rouler sans réseau » (environ 50 Mo), puis l'appli fonctionne hors connexion.
+  Équilibrée, Fine), photos, GPS, vidéo, paysage, sons, calcul sur plusieurs cœurs, et un diagnostic. **Sans réseau** :
+  bouton « Tout préparer pour rouler sans réseau » (environ 55 Mo), puis l'appli fonctionne hors connexion.
+- **Vitesse** : sans carte graphique utilisable, le calcul se répartit sur plusieurs cœurs du téléphone à partir
+  de la deuxième ouverture de l'appli (le service worker fournit l'isolation de page nécessaire).
 
 Mise en ligne (une seule fois) : sur la page GitHub du dépôt, **Settings** → **Pages** → Source « Deploy from a
 branch », branche `main`, dossier `/docs` → **Save**. Le site se met ensuite à jour à chaque envoi sur GitHub.
 Sur l'ordinateur : `python -m http.server --directory docs 8000` puis http://localhost:8000 (paramètre d'adresse
 `?backend=wasm` si la carte graphique pose problème). Après un réentraînement : `python tools/export_web.py`.
 
-**Séries de code de l'auto-école** (« Code et examens » sur l'accueil) : un fichier JSON importé depuis le
+**Banque de questions intégrée.** Les questions sont écrites dans des fichiers texte faciles à relire et à
+corriger, un par série (`data/series/questions/L01.txt`...), la lettre donnant le thème de l'examen :
+
+```
+# Titre de la série
+? Texte de la question
+- mauvaise réponse
++ bonne réponse (plusieurs lignes « + » si plusieurs bonnes réponses)
+! Explication affichée après la réponse
+@ sous-thème | difficulté de 1 à 3 | code d'un panneau à afficher (facultatif)
+```
+
+`python tools/construire_series.py` vérifie chaque question et produit `docs/series/banque.json`. Ces questions sont
+originales ; elles ont été rédigées d'après le code de la route en vigueur en 2026 et relues, mais elles ne
+remplacent pas les séries officielles : signalez ou corrigez toute erreur dans le fichier concerné.
+
+**Séries de code de l'auto-école** (page « Code de la route ») : un fichier JSON importé depuis le
 téléphone ou par un lien `https://` (le serveur doit autoriser CORS). Une question a 2 à 6 choix ; `bonnes` donne la
 ou les bonnes réponses (à partir de 0) ; l'image est soit un panneau de l'appli (`panneau`, code de
 `route_fr/classes.py`), soit une adresse `https://` ou une image `data:` ; `type` vaut `serie` ou `examen`

@@ -1,0 +1,88 @@
+# Chargement, passagers et remorques
+
+? Le chargement de mon véhicule dépasse de plus d'un mètre à l'arrière. Je dois :
++ le signaler, de jour par un dispositif réfléchissant, de nuit en plus par un feu rouge
+- le laisser tel quel s'il est bien attaché
+- rouler avec les feux de détresse
+! Un chargement qui dépasse de plus d'un mètre à l'arrière doit être signalé par un dispositif réfléchissant, complété la nuit par un feu rouge. Il ne peut pas dépasser de plus de 3 m à l'arrière, et jamais à l'avant.
+@ chargement : dépassement arrière | 3
+
+? Avant de partir avec un chargement sur le toit, je vérifie :
++ qu'il est solidement arrimé
++ qu'il ne dépasse pas la charge autorisée sur le toit
++ qu'il ne masque ni mes feux ni ma plaque d'immatriculation
+- qu'il est de couleur claire
+! Le chargement doit être arrimé pour ne pas bouger ni tomber, ne pas gêner la visibilité ni cacher les feux et la plaque. Une galerie chargée élève le centre de gravité et rend la voiture plus sensible au vent.
+@ chargement : arrimage | 1
+
+? Ma voiture est homologuée pour cinq places. Je peux transporter :
+- six personnes si deux sont des enfants
++ cinq personnes au maximum, conducteur compris
+- autant de personnes que de ceintures, plus une
+! Le nombre de personnes transportées ne peut pas dépasser le nombre de places indiqué sur le certificat d'immatriculation : une personne par place, chacune avec sa ceinture ou son dispositif de retenue.
+@ nombre de passagers | 1
+
+? Lourdement chargée pour les vacances, ma voiture :
++ freine sur une plus grande distance
++ tient moins bien la route dans les virages
+- consomme moins de carburant
++ nécessite d'ajuster la pression des pneus et le réglage des phares
+! Une voiture chargée est plus longue à freiner et à relancer, plus sensible en virage, et ses phares pointent plus haut. Je règle la hauteur des feux, j'adapte la pression des pneus et j'augmente mes distances.
+@ véhicule chargé | 2
+
+? Avec une remorque, sur autoroute, un ensemble dont le poids total roulant autorisé dépasse 3,5 tonnes est limité à :
++ 90 km/h
+- 110 km/h
+- 130 km/h
+! Au-delà de 3,5 tonnes de poids total roulant autorisé, l'ensemble voiture + remorque est limité à 90 km/h sur autoroute et à 80 km/h sur les autres routes, et il doit porter les disques de limitation à l'arrière.
+@ remorque : vitesse | 3
+
+? À bord de ma voiture, je dois obligatoirement avoir :
++ un gilet de haute visibilité
++ un triangle de présignalisation
+- une trousse de secours
+- un extincteur
+! Le gilet de haute visibilité, à portée de main dans l'habitacle, et le triangle de présignalisation sont obligatoires. Leur absence est punie d'une amende de 135 €. La trousse de secours et l'extincteur sont seulement conseillés.
+@ équipements obligatoires | 1
+
+? Le gilet de haute visibilité doit être rangé :
+- dans le coffre, avec la roue de secours
++ à portée de main, dans l'habitacle
+- sous le capot
+! Je dois pouvoir enfiler le gilet avant de sortir du véhicule : il se range dans l'habitacle (boîte à gants, vide-poche de portière), pas dans le coffre.
+@ gilet de haute visibilité | 1
+
+? Ma voiture tombe en panne sur autoroute. Qui peut la remorquer ?
+- Un ami avec une sangle
+- N'importe quel dépanneur que j'appelle moi-même
++ Uniquement le dépanneur agréé envoyé par les secours de l'autoroute
+! Sur autoroute et route express, seul un dépanneur agréé, appelé depuis une borne d'appel d'urgence ou par le 112, peut intervenir. Le remorquage entre particuliers y est interdit.
+@ panne sur autoroute : dépannage | 2
+
+? Mon chien voyage avec moi en voiture. Pour la sécurité de tous, il est :
++ attaché, dans une caisse de transport ou derrière une grille ou un filet de séparation
+- libre sur la banquette arrière
+- sur mes genoux
+! Un animal libre peut gêner le conducteur et devient un projectile en cas de choc. Le conducteur doit rester en état d'exécuter toutes les manœuvres : l'animal est retenu ou séparé.
+@ transport d'animaux | 1
+
+? Sur la plage arrière de ma voiture, je pose un parapluie, un ordinateur et une bouteille d'eau. En cas de freinage violent :
++ ces objets sont projetés vers l'avant et peuvent blesser gravement
+- ils restent en place grâce à leur poids
+- rien ne se passe en dessous de 90 km/h
+! Lors d'un choc à 50 km/h, un objet est projeté avec une force équivalente à plusieurs dizaines de fois son poids. Je range tout dans le coffre ou au sol.
+@ objets dans l'habitacle | 2
+
+? Un enfant de 8 ans voyage à l'arrière. Il doit être installé :
+- avec la seule ceinture de sécurité, comme un adulte
++ dans un dispositif de retenue adapté à sa taille et à son poids, comme un rehausseur
+- sur les genoux d'un adulte attaché
+! Jusqu'à 10 ans (ou jusqu'à ce que sa taille permette d'utiliser correctement la ceinture), un enfant voyage dans un dispositif de retenue homologué et adapté : siège, puis rehausseur.
+@ transport d'enfants | 1
+
+? Je tracte une remorque large qui me cache la vue vers l'arrière dans mes rétroviseurs. Je dois :
++ installer des rétroviseurs additionnels
+- rouler avec les feux de détresse
+- me contenter du rétroviseur intérieur
+! Si la remorque ou la caravane masque la vision vers l'arrière, des rétroviseurs supplémentaires, débordant de chaque côté, sont obligatoires.
+@ remorque : rétroviseurs | 2

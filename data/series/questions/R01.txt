@@ -1,0 +1,89 @@
+# Éclairage et conduite de nuit
+
+? De nuit, sur une route non éclairée, sans aucun véhicule devant moi ni en face, j'utilise :
+- les feux de position seuls
+- les feux de croisement
++ les feux de route
+! Les feux de route (pleins phares) éclairent à au moins 100 m. Je les utilise de nuit dès que je ne risque d'éblouir personne, hors agglomération comme sur une route non éclairée.
+@ feux de route | 1
+
+? Les feux de croisement éclairent efficacement la route sur au moins :
++ 30 m
+- 100 m
+- 200 m
+! Les feux de croisement (codes) éclairent à 30 m au moins sans éblouir. Les feux de route portent à 100 m au moins. De nuit en feux de croisement, j'adapte ma vitesse à cette faible portée.
+@ feux de croisement : portée | 2
+
+? De nuit, en feux de route, je dois repasser en feux de croisement :
++ quand je croise un autre usager
++ quand je suis un véhicule à faible distance
++ dans une agglomération éclairée
+- seulement si l'autre conducteur me fait un appel de phares
+! Je repasse en feux de croisement dès que je risque d'éblouir quelqu'un : usager croisé (y compris cycliste ou piéton), véhicule que je suis (par ses rétroviseurs), et en agglomération éclairée.
+@ passage en feux de croisement | 1
+
+? De jour, il pleut fortement. J'allume :
++ les feux de croisement
+- les feux de position seulement
+- aucun feu : il fait jour
+! De jour, dès que la visibilité est réduite (pluie, neige, brouillard), les feux de croisement sont obligatoires : ils servent autant à être vu qu'à voir. Les feux de jour ne suffisent pas, car ils n'éclairent pas l'arrière.
+@ feux de croisement de jour | 1
+
+? Je peux allumer le ou les feux de brouillard arrière :
++ par temps de brouillard
++ quand il neige
+- sous une forte pluie
+- la nuit, par temps clair, pour être mieux vu
+! Les feux de brouillard arrière, très puissants, ne s'utilisent que par brouillard ou chute de neige. Sous la pluie, ils éblouissent les conducteurs qui suivent à cause des reflets sur la chaussée mouillée : ils sont alors interdits.
+@ feux de brouillard arrière | 2
+
+? Les feux de brouillard avant peuvent être utilisés :
++ par temps de brouillard
++ quand il neige
++ sous une forte pluie
+- par temps clair, en ville
+! Les feux de brouillard avant complètent ou remplacent les feux de croisement en cas de brouillard, de chute de neige ou de forte pluie. Ils peuvent aussi compléter les feux de route sur une route étroite et sinueuse, hors agglomération.
+@ feux de brouillard avant | 2
+
+? De nuit, un véhicule arrive en face avec ses feux de route et m'éblouit. Je :
+- allume mes feux de route pour le lui signaler
++ ralentis et dirige mon regard vers le bord droit de la chaussée
+- ferme les yeux un instant
+! Ébloui, je ne réponds pas par mes propres pleins phares : je ralentis, je regarde vers la droite pour garder un repère (ligne de rive, bord de la route) et je m'arrête si je ne vois plus rien.
+@ éblouissement | 1
+
+? Je roule de nuit en feux de croisement, à 90 km/h, sur une route sèche. Un obstacle non éclairé apparaît à la limite de mon faisceau. Je :
+- peux m'arrêter largement avant
++ ne peux probablement pas m'arrêter à temps
+- ne risque rien si j'ai de bons freins
+! Les feux de croisement éclairent à une trentaine de mètres, alors qu'il faut environ 80 m pour s'arrêter à 90 km/h. De nuit, je réduis ma vitesse pour pouvoir m'arrêter dans la zone éclairée.
+@ vitesse et portée des feux | 3
+
+? Les feux de détresse servent à :
++ signaler un danger, comme un ralentissement brutal
++ signaler que mon véhicule est immobilisé sur la chaussée
+- stationner en double file le temps d'une course
+! Les feux de détresse signalent un danger : panne, accident, dernier véhicule d'un bouchon, allure très réduite. Ils n'autorisent jamais un arrêt ou un stationnement interdit.
+@ feux de détresse | 1
+
+? Dans une agglomération bien éclairée, de nuit, je roule au minimum avec :
+- aucun feu
++ les feux de position, mais les feux de croisement sont conseillés
+- les feux de route
+! En agglomération suffisamment éclairée, les feux de position sont le minimum légal. Les feux de croisement restent préférables : ils me rendent bien plus visible.
+@ feux de position | 3
+
+? La nuit, la conduite est plus dangereuse parce que :
++ je vois moins loin et moins bien les contrastes
++ la fatigue est plus présente
++ j'apprécie moins bien les distances et les vitesses
+- les autres usagers sont plus prudents
+! La nuit, la vision est limitée à la portée des feux, les reliefs et les couleurs s'effacent, et la fatigue s'ajoute. Environ quatre tués sur dix le sont de nuit, alors que la circulation y est bien plus faible.
+@ conduite de nuit : risques | 2
+
+? Un de mes feux de croisement ne fonctionne plus. Je :
+- peux rouler ainsi tant que l'autre fonctionne
++ dois le faire réparer : l'infraction est verbalisable
+- dois rouler en feux de route
+! Rouler avec un feu défectueux est une infraction, et de nuit ma voiture peut être prise pour une moto. Je vérifie régulièrement mes feux et je garde si possible des ampoules de rechange.
+@ feux défectueux | 1

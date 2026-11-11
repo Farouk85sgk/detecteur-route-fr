@@ -1,0 +1,86 @@
+# Véhicules prioritaires et partage de la route
+
+? Une ambulance arrive derrière moi, sirène et gyrophare en marche. Je :
++ facilite son passage en me rangeant dès que possible
+- accélère pour ne pas la gêner
+- continue sans rien changer : elle me dépassera
+! Je dois céder le passage aux véhicules d'intérêt général prioritaires en intervention : je serre à droite, je ralentis ou je m'arrête. Ne pas le faire coûte 135 € et 4 points.
+@ véhicules prioritaires | 1
+
+? Sur une route à chaussées séparées, un véhicule de dépannage est arrêté sur la bande d'arrêt d'urgence, gyrophares allumés. En approchant, je :
++ ralentis
++ change de voie si c'est possible, ou je m'écarte au maximum dans ma voie
+- garde ma vitesse en restant sur la voie de droite
+! C'est le « corridor de sécurité » : à l'approche d'un véhicule d'intervention, de dépannage ou d'entretien arrêté avec ses feux spéciaux ou ses feux de détresse, je ralentis et je m'écarte, en changeant de voie si je le peux.
+@ corridor de sécurité | 2
+
+? Un conducteur arrivant en face me fait un appel de phares en plein jour. Le plus souvent, cela signifie :
++ qu'il veut m'avertir d'un danger ou d'un problème sur mon véhicule
+- qu'il me cède la priorité à coup sûr
+- qu'il me salue
+! L'appel de phares sert à avertir. Il n'a aucune valeur de priorité : je vérifie mes feux, je ralentis et je reste attentif à ce qui peut m'attendre plus loin.
+@ communication : appels de phares | 2
+
+? Mes feux stop s'allument quand :
++ j'appuie sur la pédale de frein
+- je lâche l'accélérateur
+- je rétrograde
+! Les feux stop ne s'allument qu'au freinage. Si je ralentis fortement au frein moteur, ceux qui me suivent ne sont pas avertis : un léger appui sur le frein les prévient.
+@ communication : feux stop | 2
+
+? J'utilise mon clignotant :
++ avant de changer de voie ou de direction
++ avant de quitter un stationnement
++ pour sortir d'un giratoire
+- uniquement s'il y a un véhicule derrière moi
+! Le clignotant prévient tous les usagers, y compris ceux que je n'ai pas vus : piétons, cyclistes, véhicules dans l'angle mort. Je le mets systématiquement et suffisamment tôt.
+@ communication : clignotants | 1
+
+? Dans un embouteillage, un automobiliste attend pour s'insérer depuis une rue secondaire. Lui laisser la place :
++ est un geste de courtoisie qui fluidifie la circulation
+- est interdit
+- est obligatoire dans tous les cas
+! La courtoisie n'est pas une règle de priorité, mais elle apaise et fluidifie le trafic. Je reste attentif en faisant signe : je ne peux pas garantir à l'autre que la voie est libre.
+@ courtoisie | 1
+
+? Le feu est vert, mais des véhicules sont arrêtés sur le carrefour que je dois traverser. Si je m'engage et reste bloqué au milieu :
++ je commets une infraction et je gêne la circulation transversale
+- je ne risque rien, puisque mon feu était vert
+- je deviens prioritaire
+! Tout conducteur doit s'assurer qu'il pourra dégager l'intersection avant de s'y engager, même au feu vert. S'immobiliser sur un carrefour est sanctionné.
+@ intersection encombrée | 2
+
+? Hors agglomération, je rattrape des cavaliers qui circulent au bord de la route. Je :
++ ralentis et les dépasse lentement, avec un large écart
+- klaxonne pour les prévenir
+- les frôle rapidement pour gêner moins longtemps
+! Un cheval peut prendre peur et faire un écart : pas de klaxon, pas de coup d'accélérateur. Je dépasse au ralenti en laissant au moins 1,50 m hors agglomération.
+@ cavaliers | 1 | A15c
+
+? Un troupeau occupe toute la largeur de la route. Je :
++ m'arrête ou avance au pas, en suivant les indications du berger
+- me fraie un passage en klaxonnant
+- fais des appels de phares pour disperser les animaux
+! Les animaux sont imprévisibles et le bruit les affole. Je patiente, j'avance au pas si le berger m'y invite, sans klaxon ni accélération brusque.
+@ troupeaux | 1 | A15a1
+
+? En ville, une voiture de police banalisée me dépasse avec un gyrophare bleu et une sirène, puis ralentit devant moi en affichant « Suivez-nous ». Je :
++ la suis et m'arrête où elle me l'indique
+- continue ma route
+- accélère pour vérifier s'il s'agit bien de policiers
+! Je dois obéir aux injonctions des forces de l'ordre. Refuser d'obtempérer à une sommation de s'arrêter est un délit, puni notamment d'un retrait de 6 points.
+@ injonctions des forces de l'ordre | 2
+
+? Sur une route étroite, un camion de collecte des déchets est arrêté, feux allumés, et des agents travaillent autour. Je :
++ ralentis fortement et passe au pas, en m'écartant
+- passe à vitesse normale : ils ont l'habitude
+- klaxonne pour qu'ils se rangent
+! Agents de collecte, de voirie ou de chantier travaillent à pied sur la chaussée. Je passe très lentement, avec le plus grand écart possible, ou j'attends si la place manque.
+@ agents sur la chaussée | 1
+
+? Partager la route, c'est d'abord :
++ accepter que chaque usager a ses contraintes et ses fragilités
+- faire respecter soi-même le code aux autres
+- s'imposer pour ne pas perdre de temps
+! Piétons, cyclistes, motards, conducteurs de poids lourds : chacun a ses difficultés. Les plus protégés doivent redoubler de prudence envers les plus vulnérables.
+@ partage de la route | 1

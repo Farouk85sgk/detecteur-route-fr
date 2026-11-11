@@ -1,0 +1,87 @@
+# Voyants, niveaux et freins
+
+? Au tableau de bord, un voyant rouge s'allume en roulant. Cela signifie en général :
++ un problème grave : je m'arrête dès que possible, en sécurité
+- une simple information
+- un entretien à prévoir dans le mois
+! Rouge : danger ou anomalie grave, arrêt dès que possible. Orange : anomalie ou alerte, à faire contrôler rapidement. Vert ou bleu : simple information sur un équipement en service.
+@ voyants : couleurs | 1
+
+? Le voyant rouge de pression d'huile (burette) s'allume en roulant. Je :
++ m'arrête et coupe le moteur dès que possible
+- continue jusqu'au prochain garage
+- accélère pour refroidir le moteur
+! Sans pression d'huile, le moteur n'est plus lubrifié et peut être détruit en quelques instants. Je m'arrête en sécurité, je coupe le moteur et je vérifie le niveau ; si le voyant persiste, je fais dépanner.
+@ voyant de pression d'huile | 1
+
+? Le voyant rouge de température du liquide de refroidissement s'allume. Je :
++ m'arrête et laisse refroidir le moteur
+- ouvre immédiatement le bouchon du vase d'expansion
+- continue en roulant plus vite pour ventiler
+! Le moteur surchauffe : je m'arrête et je le laisse refroidir. Je n'ouvre jamais le bouchon à chaud : le liquide sous pression peut jaillir et brûler gravement.
+@ voyant de température | 1
+
+? Le voyant rouge de la batterie reste allumé moteur en marche. Il signale :
++ un défaut du circuit de charge
+- que la batterie est pleine
+- un manque de carburant
+! L'alternateur ne recharge plus la batterie : la voiture roule sur sa réserve électrique et finira par s'arrêter. Je coupe les consommateurs inutiles et je rejoins rapidement un garage.
+@ voyant de charge | 2
+
+? Le voyant rouge de freins reste allumé alors que le frein de stationnement est desserré. Cela peut signaler :
++ un niveau de liquide de frein insuffisant
+- des pneus sous-gonflés
+- des feux stop grillés
+! Ce voyant indique un frein de stationnement serré, un niveau de liquide de frein trop bas ou un défaut du circuit. Si le frein à main est bien desserré, je m'arrête : le freinage peut être défaillant.
+@ voyant de freins | 2
+
+? Le niveau d'huile moteur se contrôle :
++ moteur arrêté, véhicule sur un sol plat
+- moteur en marche, à plein régime
+- uniquement chez un garagiste
+! Je contrôle le niveau d'huile moteur arrêté depuis quelques minutes, sur sol horizontal, avec la jauge : il doit se situer entre les repères mini et maxi. Trop peu ou trop d'huile abîme le moteur.
+@ niveau d'huile | 1
+
+? Quels niveaux puis-je contrôler moi-même sous le capot ?
++ L'huile moteur
++ Le liquide de refroidissement
++ Le liquide de lave-glace
+- Le gaz de la climatisation
+! L'huile (à la jauge), le liquide de refroidissement, le lave-glace et le liquide de frein (repères mini et maxi sur les bocaux) se contrôlent visuellement, moteur froid. Une baisse du liquide de frein doit faire vérifier le circuit sans attendre. La climatisation, elle, se contrôle chez un professionnel.
+@ niveaux | 1
+
+? La pédale de frein s'enfonce anormalement et devient « molle ». Cela peut indiquer :
++ une fuite ou la présence d'air dans le circuit de freinage
+- des pneus trop gonflés
+- un manque d'huile moteur
+! Une pédale spongieuse ou à la course allongée signale un défaut du circuit hydraulique. Je fais contrôler la voiture sans attendre : le freinage peut céder.
+@ freins : pédale molle | 2
+
+? Au freinage, j'entends un bruit métallique de frottement. La cause probable est :
++ des plaquettes de frein usées
+- un manque de lave-glace
+- une batterie faible
+! Un crissement ou un bruit de métal au freinage indique des plaquettes à remplacer. Usées jusqu'au métal, elles abîment les disques et allongent fortement la distance de freinage.
+@ freins : usure | 1
+
+? Au freinage, ma voiture tire nettement d'un côté. Cela peut venir :
++ d'un défaut de freinage sur une roue
++ d'une pression des pneus inégale
+- d'un essuie-glace usé
+! Une voiture qui tire au freinage a un freinage déséquilibré ou des pneus inégalement gonflés ou usés. C'est dangereux en freinage d'urgence : contrôle rapide indispensable.
+@ freins : déséquilibre | 2
+
+? Des amortisseurs usés :
++ allongent la distance de freinage
++ dégradent la tenue de route en virage
++ augmentent le risque d'aquaplanage
+- améliorent le confort
+! Les amortisseurs maintiennent les roues au contact du sol. Usés, ils laissent rebondir les roues : freinage plus long, virages moins sûrs, aquaplanage plus précoce, usure irrégulière des pneus.
+@ amortisseurs | 2
+
+? En roulant, la direction devient soudain très dure à tourner. Cela peut signaler :
++ une panne de la direction assistée
+- un excès de liquide de lave-glace
+- une ampoule grillée
+! Sans assistance, la direction fonctionne encore mais demande beaucoup d'efforts. Je ralentis, je m'arrête en sécurité et je fais contrôler le véhicule.
+@ direction | 2

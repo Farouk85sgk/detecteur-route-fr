@@ -1,0 +1,89 @@
+# Alcool
+
+? Hors période probatoire, conduire devient une infraction dès que mon taux d'alcool atteint :
++ 0,5 g par litre de sang
+- 0,8 g par litre de sang
++ 0,25 mg par litre d'air expiré
+- 0,5 mg par litre d'air expiré
+! La limite est de 0,5 g d'alcool par litre de sang, soit 0,25 mg par litre d'air expiré : c'est le même seuil, exprimé selon la mesure utilisée (analyse de sang ou souffle). Le seuil de 0,8 g/l de sang (0,40 mg/l d'air expiré) est celui du délit.
+@ alcool : taux autorisé | 2
+
+? Je suis en période probatoire. Un seul verre d'alcool peut-il suffire à me mettre en infraction au volant ?
++ Oui
+- Non
+! En période probatoire, je suis en infraction dès 0,2 g d'alcool par litre de sang (0,10 mg par litre d'air expiré). Un verre fait monter le taux d'environ 0,20 à 0,25 g/l : la limite peut être atteinte dès le premier verre. En pratique, c'est zéro alcool avant de conduire.
+@ alcool : période probatoire | 1
+
+? L'alcool agit sur le cerveau et dégrade la conduite. Sous son effet :
++ mon champ visuel se rétrécit
++ mon temps de réaction s'allonge
+- je suis moins sensible à l'éblouissement
++ je sous-estime les risques
+! L'alcool rétrécit le champ visuel, allonge le temps de réaction et fausse l'appréciation des distances. Il rend aussi plus sensible à l'éblouissement, et non l'inverse. Enfin, il désinhibe : je sous-estime les risques et je surestime mes capacités.
+@ alcool : effets sur la conduite | 2
+
+? J'ai bu de l'alcool pendant une soirée. Qu'est-ce qui fait réellement baisser mon taux d'alcool dans le sang ?
+- Un café fort
+- Une douche froide
+- Un grand verre d'eau
++ Seulement le temps
+! Aucune astuce n'accélère l'élimination de l'alcool : ni le café, ni l'eau, ni une douche froide, ni l'air frais, ni le sport. Le café peut donner une impression de forme, mais le taux reste le même. Seul le temps fait baisser l'alcoolémie.
+@ alcool : idées reçues | 1
+
+? En moyenne, de combien le taux d'alcool dans le sang baisse-t-il en une heure ?
++ De 0,10 à 0,15 g/l
+- De 0,40 à 0,50 g/l
+- De 0,80 à 1 g/l
+! L'organisme élimine en moyenne 0,10 à 0,15 g d'alcool par litre de sang et par heure, et rien ne permet d'aller plus vite. Après plusieurs verres, il faut donc attendre de nombreuses heures avant de pouvoir reprendre le volant.
+@ alcool : élimination | 2
+
+? Après une soirée, je me couche à 2 heures du matin avec un taux d'alcool d'environ 1,5 g/l de sang. À mon réveil, à 6 heures :
+- je n'ai plus d'alcool dans le sang
+- mon taux est repassé sous 0,5 g/l
++ mon taux dépasse encore 0,5 g/l
+! Dormir n'accélère pas l'élimination : le taux baisse seulement de 0,10 à 0,15 g/l par heure. En 4 heures, il diminue de 0,4 à 0,6 g/l : il reste donc environ 1 g/l, et conduire serait encore un délit. Le lendemain d'une soirée, je peux rester au-dessus de la limite une bonne partie de la matinée.
+@ alcool : élimination et sommeil | 3
+
+? Je suis contrôlé au volant avec un taux d'alcool de 0,6 g/l de sang. Combien de points sont retirés de mon permis ?
+- 2 points
+- 3 points
+- 4 points
++ 6 points
+! Entre 0,5 et 0,8 g/l de sang, conduire est une contravention de 4e classe : retrait de 6 points, amende forfaitaire de 135 € et suspension possible du permis jusqu'à 3 ans. La moitié des 12 points d'un permis disparaît en une seule infraction.
+@ alcool : sanctions (contravention) | 2
+
+? Lors d'un contrôle routier, l'éthylomètre indique 0,50 mg d'alcool par litre d'air expiré. Je commets :
+- aucune infraction
+- une contravention
++ un délit
+! L'éthylomètre mesure l'alcool dans l'air expiré : 0,50 mg/l correspond à 1 g par litre de sang. À partir de 0,40 mg/l d'air expiré (0,8 g/l de sang), ce n'est plus une contravention mais un délit, qui relève du tribunal correctionnel : retrait de 6 points, suspension ou annulation du permis, prison possible.
+@ alcool : sanctions (délit) | 3
+
+? Lors d'un contrôle routier, je souffle dans un éthylotest et le dépistage est positif. Mon taux d'alcool est ensuite établi :
+- par le seul résultat de cet éthylotest
++ par un éthylomètre ou une analyse de sang
+- par un second éthylotest de confirmation
+! L'éthylotest sert au dépistage : positif, il permet seulement de présumer que la limite est dépassée. Le taux qui a une valeur légale est ensuite mesuré par un éthylomètre (air expiré) ou, à défaut, par une analyse de sang. Refuser cette vérification est un délit.
+@ alcool : dépistage et mesure | 3
+
+? Un éthylotest antidémarrage (EAD) peut équiper un véhicule. Cet appareil :
++ empêche le moteur de démarrer si le conducteur a trop bu
+- coupe le moteur en marche si de l'alcool est détecté
++ peut être imposé au conducteur après une infraction liée à l'alcool
+- est installé aux frais de l'État
+! Avant de démarrer, le conducteur souffle dans l'EAD : si le taux mesuré dépasse le seuil autorisé, le moteur ne démarre pas, mais l'appareil n'arrête jamais un moteur en marche. Après une infraction liée à l'alcool, le préfet ou le juge peuvent imposer de ne conduire qu'un véhicule équipé d'un EAD, aux frais du conducteur.
+@ alcool : éthylotest antidémarrage | 3
+
+? Nous partons à quatre en voiture pour une soirée où l'on servira de l'alcool. Pour rentrer en sécurité, nous choisissons le conducteur du retour :
+- à la fin de la soirée, en prenant celui qui a le moins bu
++ avant la soirée, et il s'engage à ne pas boire d'alcool
+- à la fin de la soirée, en prenant celui qui se sent le plus en forme
+! Le conducteur désigné est choisi avant la soirée et ne boit pas d'alcool : « celui qui conduit, c'est celui qui ne boit pas ». Avoir moins bu que les autres ou se sentir en forme ne garantit rien, car l'alcool fausse le jugement que l'on porte sur son propre état.
+@ alcool : conducteur désigné | 1
+
+? L'ami qui doit me raccompagner en voiture a visiblement trop bu. Dans cette situation, je :
+- monte avec lui en lui demandant de rouler lentement
+- lui fais boire un café, puis je le laisse conduire
++ l'empêche de conduire et cherche une autre solution pour rentrer
+! Rouler lentement ou boire un café ne change rien à son taux d'alcool. Passager, j'ai un rôle à jouer : je le retiens et je propose une autre solution (conducteur qui n'a pas bu, taxi, transports, dormir sur place). Confier sciemment le volant à une personne ivre peut même engager ma responsabilité pénale.
+@ alcool : rôle du passager | 1

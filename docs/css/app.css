@@ -216,6 +216,8 @@ img { display: block; }
 .case.inconnue img { filter: grayscale(1) brightness(1.55) contrast(.35); opacity: .45; }
 .case.inconnue span { color: var(--texte-doux); }
 .case.inconnue::after { content: "?"; position: absolute; top: 18%; left: 50%; transform: translateX(-50%); font: 800 1.9rem var(--titres); color: #44504a; }
+.case.fiche { border-style: dashed; }
+.case.fiche img { opacity: .9; }
 .case .photo-mini { position: absolute; right: 6px; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: var(--vert); }
 
 /* ---------- fiche ---------- */
@@ -240,6 +242,8 @@ img { display: block; }
 .q-image img { width: 100%; height: 100%; object-fit: contain; }
 .q-image.photo { padding: 0; overflow: hidden; }
 .q-image.photo img { object-fit: cover; }
+.q-image.scene { width: min(94vw, 540px); aspect-ratio: 4 / 3; border-radius: 22px; margin-top: 16px; }
+.credit-photo { font-size: .72rem; color: var(--texte-doux); text-align: center; margin: 0 12px 4px; }
 .q-question { text-align: center; font-size: 1.75rem; padding: 10px 24px 18px; }
 .q-choix { display: flex; flex-direction: column; gap: 14px; padding: 0 20px; }
 .q-choix button { min-height: 72px; border-radius: 24px; border: 3px solid var(--bord); background: var(--carte); text-align: left; padding: 14px 22px; font-size: 1.15rem;

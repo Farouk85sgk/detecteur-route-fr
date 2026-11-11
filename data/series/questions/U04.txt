@@ -1,0 +1,87 @@
+# Poids lourds, bus et véhicules lents
+
+? Autour d'un poids lourd, les angles morts se situent :
++ juste devant la cabine
++ le long de ses flancs, surtout à droite
++ derrière la remorque
+- nulle part : ses rétroviseurs couvrent tout
+! Le conducteur d'un poids lourd ne voit pas ce qui se trouve juste devant sa cabine, sur les côtés (surtout à droite) et à l'arrière. Si je ne vois pas ses rétroviseurs, il ne me voit pas.
+@ poids lourds : angles morts | 1
+
+? À une intersection en ville, un camion devant moi se déporte à gauche avant de tourner à droite. Je :
+- profite de l'espace à sa droite pour passer
++ reste derrière lui et le laisse manœuvrer
+- klaxonne pour qu'il se rabatte
+! Un véhicule long doit s'écarter pour tourner : sa remorque coupe le virage. Me glisser à sa droite me placerait dans son angle mort, sur la trajectoire de ses roues arrière.
+@ poids lourds : virage | 1
+
+? À vitesse égale, la distance de freinage d'un poids lourd chargé est, par rapport à celle d'une voiture :
++ plus longue
+- plus courte
+- identique
+! La masse d'un poids lourd allonge sa distance de freinage. Je ne me rabats donc jamais juste devant lui après un dépassement : j'attends de voir tout son avant dans mon rétroviseur intérieur.
+@ poids lourds : freinage | 1
+
+? Sur autoroute, je dépasse un camion. Rester longtemps à sa hauteur est :
++ dangereux : je suis dans son angle mort et exposé à un écart
+- conseillé pour être bien vu
+- sans importance
+! Je dépasse franchement, sans traîner à côté du camion. Par vent latéral, je m'attends à un appel d'air au moment où je passe sa cabine.
+@ dépasser un camion | 2
+
+? Un autocar portant le pictogramme « transport d'enfants » est arrêté et ses feux de détresse clignotent. Je :
+- le dépasse normalement
++ ralentis fortement, prêt à m'arrêter : des enfants peuvent traverser
+- klaxonne avant de passer
+! Les feux de détresse d'un car scolaire signalent la montée ou la descente des enfants. Ils peuvent traverser en courant, masqués par le car : je passe au pas, prêt à m'arrêter.
+@ transport d'enfants | 1
+
+? Un véhicule avec gyrophares orange et un panneau « convoi exceptionnel » arrive en face. Je :
++ ralentis, serre à droite et m'arrête si nécessaire
+- garde ma trajectoire et ma vitesse
+- fais des appels de phares
+! La voiture pilote annonce un convoi qui peut occuper une grande partie de la chaussée. Je ralentis, je me range et je suis les indications des accompagnateurs ou des motards.
+@ convois exceptionnels | 2
+
+? Sur une route sinueuse, un véhicule lent circule devant moi et de nombreuses voitures le suivent. Le conducteur de ce véhicule lent doit :
++ serrer à droite et, si nécessaire, se ranger pour faciliter le dépassement
+- accélérer au-delà de la limite
+- rouler au milieu pour empêcher les dépassements dangereux
+! Les conducteurs de véhicules lents ou encombrants doivent faciliter le dépassement : réduire leur vitesse et se ranger dès que possible quand une file se forme derrière eux.
+@ véhicules lents | 2
+
+? Je tracte une caravane. Par rapport à ma conduite habituelle :
++ mes distances de freinage sont plus longues
++ mes dépassements demandent plus de distance
++ je suis plus sensible au vent latéral
+- je peux rouler plus vite dans les descentes
+! Un attelage est plus lourd, plus long et plus sensible au vent. J'allonge mes distances, je réduis ma vitesse et j'anticipe davantage, surtout en descente et sur les ponts.
+@ caravanes et remorques | 1
+
+? Un camping-car roule devant moi sur une route étroite. Je tiens compte :
++ de sa largeur et de sa hauteur, qui masquent ma visibilité
++ de ses accélérations plus faibles que celles d'une voiture
+- du fait qu'il freine plus court qu'une voiture
+! Haut et large, un camping-car cache la route et la signalisation. Je recule pour élargir mon champ de vision et je ne dépasse que si je vois loin.
+@ camping-cars | 2
+
+? Un panneau « angles morts » est collé à l'arrière et sur les côtés d'un camion. Il me rappelle :
++ de ne pas rester dans les zones où le conducteur ne peut pas me voir
+- que ce camion transporte des matières dangereuses
+- que le dépassement de ce camion est interdit
+! Depuis 2021, les véhicules lourds de plus de 3,5 tonnes portent cette signalisation pour rappeler aux usagers, surtout aux cyclistes et aux piétons, de ne pas se placer dans leurs angles morts.
+@ signalisation des angles morts | 2
+
+? Un bus de ville circule dans sa voie réservée, à ma droite. Je veux tourner à droite. Je :
++ vérifie qu'aucun bus, taxi ou vélo n'arrive dans cette voie avant de la traverser
+- tourne sans contrôler : je suis prioritaire
+- emprunte la voie de bus sur 100 m avant de tourner
+! En traversant une voie réservée pour tourner, je cède le passage à ceux qui y circulent : bus, et souvent taxis et vélos. Un contrôle dans le rétroviseur droit et l'angle mort s'impose.
+@ voie de bus à traverser | 2
+
+? Un camion me précède en montée et roule très lentement. Une voie supplémentaire pour véhicules lents apparaît à droite. Elle est destinée :
++ au camion, pour libérer la voie normale
+- à mon dépassement par la droite
+- au stationnement
+! La voie pour véhicules lents accueille les véhicules qui ne peuvent pas maintenir une vitesse suffisante en côte. Je reste sur ma voie et je les dépasse normalement, par la gauche.
+@ voie pour véhicules lents | 2

@@ -1,0 +1,86 @@
+# Fatigue et somnolence
+
+? Lesquels de ces signes annoncent la somnolence au volant ?
++ Des bâillements répétés
++ Les paupières lourdes, les yeux qui piquent
++ Une difficulté à garder ma trajectoire
+- Une envie soudaine d'accélérer
+! Bâillements, paupières lourdes, picotements des yeux, nuque raide, besoin de changer de position, écarts de trajectoire : dès les premiers signes, le risque d'endormissement est réel. Je m'arrête sans attendre.
+@ somnolence : signes | 1
+
+? Sur un long trajet, je prévois une pause :
+- seulement quand je me sens fatigué
++ au moins toutes les deux heures
+- toutes les quatre heures
+! Une pause d'au moins 15 à 20 minutes toutes les deux heures permet de récupérer avant que la fatigue s'installe. Si la somnolence arrive plus tôt, je m'arrête immédiatement.
+@ pauses | 1
+
+? Je ressens les premiers signes de somnolence sur autoroute. La seule solution efficace est de :
+- ouvrir la fenêtre
+- monter le son de la radio
++ m'arrêter sur une aire pour dormir quelques minutes
+- boire un café tout en continuant à rouler
+! Ouvrir la vitre, écouter de la musique forte ou mâcher un chewing-gum ne font que masquer la somnolence quelques minutes. Seul le sommeil est efficace : une sieste de 15 à 20 minutes sur une aire.
+@ somnolence : idées reçues | 1
+
+? À quels moments le risque de somnolence est-il le plus élevé ?
++ Entre 2 h et 5 h du matin
++ En début d'après-midi, entre 13 h et 15 h
+- En fin de matinée
+! L'horloge biologique impose deux creux de vigilance : en seconde partie de nuit (2 h - 5 h) et en début d'après-midi (13 h - 15 h), même sans repas copieux. J'évite si possible de conduire à ces heures.
+@ heures à risque | 2
+
+? La somnolence au volant est :
+- une cause d'accident négligeable
++ la première cause de mortalité sur autoroute
+- un risque réservé aux conducteurs âgés
+! La somnolence est impliquée dans environ un accident mortel sur trois sur autoroute. Elle touche tous les conducteurs, en particulier ceux qui manquent de sommeil.
+@ somnolence : accidents | 2
+
+? Fatigue et somnolence, est-ce la même chose ?
+- Oui
++ Non
+! La fatigue est une lassitude qui vient avec la durée de la conduite : elle se corrige par une pause. La somnolence est une difficulté à rester éveillé : elle ne se corrige que par le sommeil.
+@ fatigue et somnolence | 2
+
+? Je dois partir tôt demain pour un long trajet. La veille, je :
++ me couche tôt pour avoir une nuit complète
+- travaille tard pour avancer mes dossiers
+- prends un somnifère pour dormir plus vite
+! La dette de sommeil est le premier facteur de somnolence. Dormir moins de cinq heures multiplie fortement le risque d'accident. Un somnifère pris la veille peut encore agir le lendemain matin.
+@ préparation d'un long trajet | 1
+
+? Sur autoroute, la monotonie du trajet favorise l'hypovigilance. Pour la limiter, je :
++ fais des pauses régulières et je m'hydrate
++ varie légèrement ma vitesse et déplace souvent mon regard
+- active le régulateur et je me détends complètement
+! Un paysage uniforme, une vitesse stable et peu d'actions à faire endorment l'attention. Je reste actif : je balaie la route et les rétroviseurs du regard, je bois de l'eau, je m'arrête régulièrement.
+@ hypovigilance | 2
+
+? Avant de reprendre la route après le déjeuner, il vaut mieux avoir pris :
++ un repas léger
+- un repas copieux, pour tenir longtemps
+- un repas arrosé de vin
+! Un repas lourd et gras rend la digestion difficile et favorise la somnolence, déjà naturelle en début d'après-midi. Je mange léger, je bois de l'eau, et jamais d'alcool.
+@ repas et vigilance | 1
+
+? En été, la température monte dans la voiture. La chaleur :
++ diminue ma vigilance et allonge mon temps de réaction
+- n'a aucun effet sur la conduite
+- améliore mes réflexes
+! Au-delà de 25 à 30 °C dans l'habitacle, la vigilance baisse et les erreurs augmentent. J'aère ou je règle la climatisation sans excès (quelques degrés de moins que dehors) et je bois régulièrement.
+@ chaleur dans l'habitacle | 2
+
+? Pour un trajet de 600 km, quelle organisation est la plus sûre ?
+- Partir après ma journée de travail et rouler toute la nuit
++ Partir reposé le matin, avec des pauses toutes les deux heures
+- Rouler d'une traite pour arriver plus vite
+! Je pars reposé, je prévois des pauses et, si possible, un second conducteur pour me relayer. Partir après une journée de travail et rouler la nuit cumule fatigue, dette de sommeil et heures à risque.
+@ organisation d'un long trajet | 1
+
+? Pendant une fraction de seconde, mes yeux se ferment sans que je m'en rende compte. À 130 km/h, pendant un micro-sommeil de 3 secondes, ma voiture parcourt environ :
+- 30 m
+- 60 m
++ 110 m
+! À 130 km/h, je parcours environ 36 m par seconde, soit près de 110 m en 3 secondes, sans rien voir ni contrôler. C'est plus que la longueur d'un terrain de football.
+@ micro-sommeil | 3

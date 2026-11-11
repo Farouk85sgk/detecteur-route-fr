@@ -1,0 +1,86 @@
+# Téléphone, distractions et temps de réaction
+
+? Tenir son téléphone en main en conduisant est sanctionné par :
+- 35 € d'amende, sans retrait de points
++ 135 € d'amende et un retrait de 3 points
+- 90 € d'amende et un retrait d'un point
+! L'usage d'un téléphone tenu en main en circulation coûte 135 € et 3 points. Si une autre infraction est commise en même temps (clignotant oublié, feu rouge...), le permis peut être retenu sur-le-champ.
+@ téléphone tenu en main | 1
+
+? Arrêté à un feu rouge, moteur en marche, puis-je consulter mon téléphone en le tenant en main ?
+- Oui
++ Non
+! Arrêté à un feu ou dans un embouteillage, je suis toujours en circulation : l'interdiction s'applique. Pour utiliser mon téléphone, je dois être garé sur un emplacement de stationnement, moteur arrêté.
+@ téléphone à l'arrêt en circulation | 2
+
+? En conduisant, je peux écouter de la musique ou téléphoner avec :
+- des écouteurs
+- une oreillette Bluetooth
+- un casque audio
++ le système mains libres intégré au véhicule
+! Tout dispositif porté à l'oreille (écouteurs, oreillette, casque) est interdit en conduisant : 135 € et 3 points. Seuls les systèmes intégrés au véhicule sont permis, mais la conversation elle-même reste une source de distraction.
+@ oreillettes et écouteurs | 1
+
+? Téléphoner en conduisant avec un kit mains libres intégré :
+- ne présente aucun risque, puisque c'est autorisé
++ détourne une partie de mon attention de la route
+- améliore ma vigilance
+! Ce n'est pas la main occupée qui est dangereuse, c'est l'esprit : une conversation téléphonique mobilise l'attention, rétrécit le champ visuel utile et allonge le temps de réaction, même en mains libres.
+@ distraction cognitive | 2
+
+? Lire un message sur son téléphone détourne les yeux de la route pendant environ 5 secondes. À 50 km/h, je parcours pendant ce temps environ :
+- 15 m
+- 35 m
++ 70 m
+! À 50 km/h, je parcours environ 14 m par seconde, soit 70 m en 5 secondes : la longueur de sept bus, sans regarder la route. Écrire un message en conduisant multiplie le risque d'accident par plus de vingt.
+@ SMS au volant | 2
+
+? Je veux entrer une adresse dans le GPS. Je le fais :
+- en roulant, sur une ligne droite
++ à l'arrêt, avant de partir
+- au ralenti, dans un embouteillage
+! Programmer un GPS, chercher une station de radio ou un objet tombé détournent le regard et l'attention. Je règle tout avant de partir, ou je m'arrête dans un endroit sûr.
+@ réglages en roulant | 1
+
+? Le temps de réaction d'un conducteur attentif et en bonne forme est d'environ :
+- un dixième de seconde
++ une seconde
+- trois secondes
+! Entre le moment où je vois le danger et celui où je commence à freiner, il s'écoule en moyenne une seconde. Pendant ce temps, la voiture continue à la même vitesse.
+@ temps de réaction | 1
+
+? Qu'est-ce qui allonge le temps de réaction ?
++ La fatigue
++ L'alcool, les drogues et certains médicaments
++ L'usage du téléphone
+- Une vitesse plus faible
+! Fatigue, alcool, stupéfiants, médicaments, téléphone et distractions allongent le temps de réaction. La vitesse ne le change pas, mais plus je roule vite, plus je parcours de distance pendant ce temps.
+@ temps de réaction : facteurs | 1
+
+? À 90 km/h, pendant une seconde de temps de réaction, je parcours environ :
+- 9 m
++ 27 m
+- 45 m
+- 90 m
+! Pour estimer la distance parcourue en une seconde, je multiplie le chiffre des dizaines par 3 : à 90 km/h, 9 x 3 = 27 m. À 130 km/h : 13 x 3 = 39 m.
+@ distance de réaction | 2
+
+? Quand ma vitesse augmente, mon champ visuel :
+- s'élargit
++ se rétrécit
+- ne change pas
+! Plus je roule vite, plus mon regard se porte loin et plus mon champ de vision utile se resserre : à 130 km/h, il n'est plus que d'environ 30°. Je perçois moins bien ce qui se passe sur les côtés.
+@ champ visuel et vitesse | 2
+
+? Avant de changer de voie, les rétroviseurs suffisent-ils pour être sûr que la voie est libre ?
+- Oui
++ Non
+! Les rétroviseurs laissent des angles morts de chaque côté du véhicule, où une moto ou un vélo peuvent disparaître. Je complète toujours par un contrôle direct, en tournant brièvement la tête.
+@ rétroviseurs et angles morts | 1
+
+? En conduisant, mon regard doit se porter :
+- juste devant le capot
+- uniquement sur le véhicule qui me précède
++ au loin, en balayant aussi les côtés et les rétroviseurs
+! Regarder loin permet d'anticiper ; balayer du regard l'avant, les côtés et les rétroviseurs permet de détecter les indices utiles. Fixer un seul point fait manquer le reste.
+@ balayage du regard | 1

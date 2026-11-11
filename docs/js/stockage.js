@@ -10,17 +10,34 @@ function profilVide(nom, couleur) {
     id: "p" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), nom, couleur, cree: Date.now(), fond: "sauge",
     reglages: {
       voix: true, vibration: true, lireLimitations: true, expliquer: false, photos: true, gps: true, video: false, paysage: false, sons: true,
-      qualite: "auto", debug: false, familles: {}, exclus: [], reseau: "avec",
+      qualite: "auto", debug: false, familles: {}, exclus: [], reseau: "avec", multicoeur: true,
     },
     xp: 0, pepites: 0, coeurs: 3, coeursMaj: Date.now(), objets: { loupe: 1, potion: 1, bouclier: 0 }, titres: [], titre: null,
     album: {}, trajets: [], examens: [], gardiens: {}, badges: {}, amis: [], aRevoir: {},
     stats: { series: 0, reponses: 0, justes: 0, parfaits: 0, donjons: 0, minutes: 0, photos: 0, familles: 0, mysteres: 0 },
     flamme: { jours: 0, record: 0, dernier: null }, jour: null,
+    code: { q: {}, lots: {} },  // séries de code : dernière réponse à chaque question (1 juste, 0 faux), meilleur score par série
+    v: 3,
   };
+}
+
+// Version 3 : les panneaux portent leur code officiel. Quatre directions obligatoires avaient des codes croisés.
+export const CODES_V3 = { B21d1: "B21c1", B21d2: "B21c2", B21c1: "B21d1", B21c2: "B21d2" };
+const renommerCles = o => Object.fromEntries(Object.entries(o || {}).map(([k, v]) => [CODES_V3[k] || k, v]));
+function migrerV3(p) {
+  p.album = renommerCles(p.album);
+  p.aRevoir = renommerCles(p.aRevoir);
+  if (p.reglages?.exclus) p.reglages.exclus = p.reglages.exclus.map(c => CODES_V3[c] || c);
+  for (const t of p.trajets || []) {
+    t.elements = renommerCles(t.elements);
+    if (t.nouveaux) t.nouveaux = t.nouveaux.map(c => CODES_V3[c] || c);
+    for (const e of t.evenements || []) e.code = CODES_V3[e.code] || e.code;
+  }
 }
 
 // complète un profil enregistré par une version plus ancienne de l'appli
 function completer(p) {
+  if (p.v === undefined) migrerV3(p);
   const v = profilVide(p.nom, p.couleur);
   for (const k of Object.keys(v)) {
     if (p[k] === undefined) p[k] = v[k];

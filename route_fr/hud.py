@@ -107,7 +107,7 @@ class Hud:
             marking = c.categorie == "marquage"
             cv2.rectangle(img, (x1, y1), (x2, y2), color, 1 if marking else 2, cv2.LINE_AA)
             label = c.nom if marking else f"{c.nom}  {t.conf:.0%}"  # étiquettes compactes pour les marquages
-            text_color = (20, 20, 20) if c.categorie in ("zone", "priorite", "marquage") else (255, 255, 255)
+            text_color = (20, 20, 20) if c.categorie in ("zone", "priorite", "marquage", "temporaire", "panonceau") else (255, 255, 255)
             t_img = _text_image(label, 12 if marking else 15, text_color, True)
             ty = y1 - t_img.shape[0] - 6 if y1 - t_img.shape[0] - 6 > 0 else y2 + 4
             cv2.rectangle(img, (x1, ty - 2), (x1 + t_img.shape[1] + 6, ty + t_img.shape[0] + 3), color, -1)

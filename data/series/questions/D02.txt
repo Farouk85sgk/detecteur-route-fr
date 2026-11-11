@@ -1,0 +1,86 @@
+# Documents, assurance et contrôle technique
+
+? Lors d'un contrôle routier, je dois pouvoir présenter :
++ mon permis de conduire
++ le certificat d'immatriculation du véhicule
+- ma dernière facture d'entretien
+- mon avis d'imposition
+! Je dois présenter mon permis de conduire et le certificat d'immatriculation (la « carte grise »). L'assurance, elle, est vérifiée par les forces de l'ordre dans un fichier national.
+@ documents obligatoires | 1
+
+? Depuis le 1er avril 2024, la vignette verte d'assurance sur le pare-brise :
++ n'est plus obligatoire
+- doit toujours être apposée
+- est remplacée par une vignette bleue
+! La carte verte et la vignette d'assurance ont été supprimées : les forces de l'ordre consultent le fichier des véhicules assurés. L'assurance, elle, reste bien obligatoire.
+@ assurance : fin de la vignette verte | 2
+
+? L'assurance obligatoire pour circuler est :
++ la responsabilité civile, qui couvre les dommages causés aux autres
+- l'assurance « tous risques »
+- l'assurance contre le vol
+! Tout véhicule à moteur doit être assuré au moins en responsabilité civile (« au tiers ») : elle indemnise les victimes des dommages que je cause. Conduire sans assurance est un délit.
+@ assurance obligatoire | 1
+
+? Après un accident matériel, j'envoie le constat amiable à mon assureur dans un délai de :
+- 24 heures
++ 5 jours ouvrés
+- 1 mois
+! Le constat amiable doit parvenir à l'assureur dans les 5 jours ouvrés. Il décrit les circonstances de l'accident ; une fois signé par les deux conducteurs, son recto ne peut plus être modifié.
+@ constat amiable | 2
+
+? Le premier contrôle technique d'une voiture particulière neuve doit être effectué :
+- au bout de 2 ans
++ dans les six mois qui précèdent son quatrième anniversaire
+- au bout de 5 ans
+! Le premier contrôle technique a lieu dans les six mois avant le quatrième anniversaire de la première mise en circulation. Il est ensuite renouvelé tous les deux ans.
+@ contrôle technique : première visite | 2
+
+? Après le premier contrôle, le contrôle technique d'une voiture particulière est obligatoire tous les :
+- ans
++ 2 ans
+- 4 ans
+! Le contrôle technique périodique a lieu tous les deux ans. Circuler sans contrôle technique valide est puni d'une amende de 135 € et peut entraîner l'immobilisation du véhicule.
+@ contrôle technique : périodicité | 1
+
+? Le contrôle technique relève une défaillance majeure. Je dispose, pour faire réparer et passer la contre-visite, d'un délai de :
+- 24 heures
++ 2 mois
+- 6 mois
+! En cas de défaillance majeure, la contre-visite doit avoir lieu dans les deux mois. En cas de défaillance critique, le véhicule ne peut plus circuler après minuit le jour du contrôle.
+@ contrôle technique : contre-visite | 3
+
+? Je déménage. Je dois faire modifier l'adresse de mon certificat d'immatriculation dans un délai de :
+- 15 jours
++ 1 mois
+- 1 an
+! Le changement d'adresse doit être déclaré dans le mois qui suit le déménagement. La démarche se fait en ligne et elle est gratuite ; ne pas la faire expose à une amende.
+@ certificat d'immatriculation : adresse | 2
+
+? Je vends ma voiture, qui a plus de quatre ans, à un particulier. Je lui remets un procès-verbal de contrôle technique datant de moins de :
+- 1 mois
++ 6 mois
+- 2 ans
+! Pour vendre à un particulier une voiture de plus de quatre ans, le contrôle technique doit dater de moins de 6 mois (2 mois si une contre-visite a été prescrite).
+@ vente d'un véhicule | 3
+
+? Mes plaques d'immatriculation doivent être :
++ lisibles et propres
++ fixées de façon inamovible
+- remplaçables par un autocollant du même numéro
+! Les plaques doivent être homologuées, lisibles, non masquées et fixées de manière inamovible. Une plaque illisible ou non conforme est punie d'une amende de 135 €.
+@ plaques d'immatriculation | 1
+
+? Je prête ma voiture à un ami. S'il est flashé par un radar :
++ l'avis de contravention m'est adressé, en tant que titulaire du certificat d'immatriculation
+- personne ne reçoit rien
+- l'avis est envoyé directement à mon ami
+! L'avis de contravention est adressé au titulaire de la carte grise. Je peux désigner le conducteur réel, qui recevra alors l'amende et le retrait de points.
+@ titulaire du certificat et infractions | 2
+
+? Le permis de conduire au format « carte de crédit » doit être renouvelé tous les :
+- 5 ans
++ 15 ans
+- 30 ans
+! Le titre au format carte bancaire est valable 15 ans pour le permis B : il s'agit d'un simple renouvellement administratif, sans nouvel examen ni visite médicale.
+@ validité du titre | 3

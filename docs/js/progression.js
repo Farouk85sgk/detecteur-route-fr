@@ -1,7 +1,7 @@
 // Progression du joueur : XP et niveaux, pépites, cœurs, album, quêtes du jour, panneau mystère, flamme (jours de
 // suite), gardiens de la carte, badges et statistiques du classement.
 import { BADGES, FAMILLES, NOMS_NIVEAUX, QUETE, QUETES_DU_JOUR } from "./contenu.js";
-import { D, itemsFamille, officiels } from "./donnees.js";
+import { D, detectables, itemsFamille, officiels } from "./donnees.js";
 import { profil, profils, sauver } from "./stockage.js";
 import { graine, jourCle, melanger, son, toast, vibrer } from "./ui.js";
 
@@ -36,6 +36,8 @@ export const minutesProchainCoeur = p => Math.max(1, Math.ceil((p.coeursMaj + QU
 // ---------- album ----------
 export const nbAlbum = p => Object.keys(p.album).filter(c => D.parCode[c] && D.parCode[c].index < D.nbOfficiels).length;
 export const vuFamille = (p, id) => itemsFamille(id).filter(it => p.album[it.code]).length;
+// famille complète : tous ses éléments reconnaissables par la caméra sont dans l'album
+export const familleComplete = (p, id) => { const d = detectables(id); return d.length > 0 && d.every(it => p.album[it.code]); };
 export function noterAlbum(p, code, quand = Date.now()) {
   const neuf = !p.album[code];
   const a = p.album[code] ??= { premier: quand, vu: 0 };
@@ -44,7 +46,7 @@ export function noterAlbum(p, code, quand = Date.now()) {
   if (neuf && D.parCode[code]?.index < D.nbOfficiels) {
     gagner(p, { xp: 20, pepites: 10 });
     const f = FAMILLES.find(f => f.codes.includes(code));
-    if (f && vuFamille(p, f.id) === f.codes.length) dire(`Famille complète : ${f.nom}`, "+50 💎"), gagner(p, { pepites: 50 });
+    if (f && D.parCode[code].detecte && familleComplete(p, f.id)) dire(`Famille complète : ${f.nom}`, "+50 💎"), gagner(p, { pepites: 50 });
   } else gagner(p, { xp: 2 });
   return neuf;
 }
@@ -59,9 +61,10 @@ export function assurerJour(p) {
   const choix = [route[0], quiz[0], melanger([...route.slice(1), ...quiz.slice(1)], r)[0]];
   // panneau mystère : de préférence un élément encore absent de l'album, dans une famille déjà ouverte sur la carte
   const ouvertes = new Set(FAMILLES.filter((f, i) => etatRegion(p, i).etat !== "bloquee").map(f => f.id));
-  let pool = officiels().filter(it => !p.album[it.code] && ouvertes.has(it.famille));
-  if (!pool.length) pool = officiels().filter(it => !p.album[it.code]);
-  if (!pool.length) pool = officiels();
+  const visibles = officiels().filter(it => it.detecte);
+  let pool = visibles.filter(it => !p.album[it.code] && ouvertes.has(it.famille));
+  if (!pool.length) pool = visibles.filter(it => !p.album[it.code]);
+  if (!pool.length) pool = visibles;
   const mystere = pool[Math.floor(r() * pool.length)];
   p.jour = { date: jour, quetes: choix.map(q => ({ id: q.id, avance: 0 })), coffre: false, mystere: mystere.code, trouve: false };
   sauver();
@@ -134,7 +137,7 @@ export function verifierMystere(p, code) {
 // ---------- carte de la quête : une région par famille ----------
 export function etatRegion(p, i) {
   const f = FAMILLES[i];
-  const besoin = Math.min(QUETE.reperages, f.codes.length);
+  const besoin = Math.min(QUETE.reperages, detectables(f.id).length);
   const vus = vuFamille(p, f.id);
   if (p.gardiens[f.id]) return { etat: "vaincue", vus, besoin };
   if (i > 0 && !p.gardiens[FAMILLES[i - 1].id]) return { etat: "bloquee", vus, besoin };
@@ -147,8 +150,9 @@ export const nbEclats = p => FAMILLES.filter(f => p.gardiens[f.id]).length;
 // ---------- badges ----------
 const CONDITIONS = {
   trajet1: p => p.trajets.length > 0,
-  album10: p => nbAlbum(p) >= 10, album25: p => nbAlbum(p) >= 25, album50: p => nbAlbum(p) >= 50,
-  famille: p => FAMILLES.some(f => vuFamille(p, f.id) === f.codes.length),
+  album10: p => nbAlbum(p) >= 10, album25: p => nbAlbum(p) >= 25, album50: p => nbAlbum(p) >= 50, album100: p => nbAlbum(p) >= 100,
+  famille: p => FAMILLES.some(f => familleComplete(p, f.id)),
+  code100: p => Object.values(p.code.q).filter(v => v === 1).length >= 100, theme: p => (p.stats.themes || 0) > 0,
   serie1: p => p.stats.series > 0, parfait: p => p.stats.parfaits > 0, justes100: p => p.stats.justes >= 100,
   gardien1: p => nbEclats(p) >= 1, gardien5: p => nbEclats(p) >= 5,
   examen: p => p.examens.some(e => e.score >= 35),

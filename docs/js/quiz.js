@@ -1,17 +1,19 @@
-// Quiz : séries de 10 questions (tout le code, une famille, le dernier trajet, l'album, les erreurs à revoir),
-// donjons des gardiens (cœurs et objets), examen blanc (40 questions, 35 pour réussir), séries importées.
+// Quiz : séries de 10 questions sur la signalisation (tout, une famille, le dernier trajet, l'album, les erreurs à
+// revoir), donjons des gardiens (cœurs et objets), examens blancs (40 questions, 35 pour réussir), séries du code de
+// la route (banque intégrée, voir series.js) et séries importées.
 import { FAMILLES, QUETE, VITESSE_APRES } from "./contenu.js";
 import { D, famille, icone, itemsFamille, officiels } from "./donnees.js";
 import { aller } from "./nav.js";
 import { evenement, gagner, majCoeurs, minutesProchainCoeur, verifierBadges } from "./progression.js";
-import { listerPacks } from "./series.js";
+import { banque, listerPacks, partieCode, photosQuiz, themesMaitrises } from "./series.js";
 import { profil, sauver } from "./stockage.js";
 import { $, ICONES, esc, ilYa, melanger, son, toast } from "./ui.js";
 
 let Q = null;  // partie en cours
+let BANQUE_CHARGEE = null;  // banque du code, une fois chargée (pour le badge « thème maîtrisé »)
 
 // ---------- génération des questions ----------
-const VITESSES = [30, 50, 70, 80, 90, 110, 130];
+const VITESSES = [20, 30, 50, 70, 80, 90, 110, 130];
 const titreGroupe = it => it.groupe === "m" ? "ce marquage" : it.groupe === "f" ? "ce feu" : "ce panneau";
 function distracteurs(it, n, cle = x => x.nom) {
   const vus = new Set([cle(it)]), out = [];
@@ -63,10 +65,12 @@ export function pageQuiz(racine) {
     <div class="contenu"><div class="choix-menu">
       ${nbDernier ? `<button class="vedette" data-q="#/quiz/trajet/${dernier.id}"><b>Quiz du dernier trajet</b><span>${nbDernier} élément${nbDernier > 1 ? "s" : ""} repéré${nbDernier > 1 ? "s" : ""} ${ilYa(dernier.fin || dernier.debut)}</span></button>` : ""}
       ${nAlbum ? `<button data-q="#/quiz/album"><b>Mon album</b><span>Sur les ${nAlbum} élément${nAlbum > 1 ? "s" : ""} déjà repéré${nAlbum > 1 ? "s" : ""}</span></button>` : ""}
-      <button data-q="#/quiz/tout"><b>Tout le code</b><span>10 questions au hasard</span></button>
+      <button data-q="#/quiz/photos"><b>En situation réelle</b><span>De vraies photos de routes françaises : que signifie le panneau encadré ?</span></button>
+      <button data-q="#/quiz/tout"><b>Toute la signalisation</b><span>10 questions au hasard sur les panneaux, feux et marquages</span></button>
       ${nRevoir ? `<button data-q="#/quiz/revoir"><b>À revoir</b><span>${nRevoir} élément${nRevoir > 1 ? "s" : ""} où tu t'es trompé</span></button>` : ""}
-      <button data-q="#/quiz/examen"><b>Examen blanc</b><span>40 questions, 20 secondes chacune, 35 bonnes réponses pour réussir</span></button>
-      <button data-q="#/codes"><b>Séries de code</b><span>Démo et séries importées de ton auto-école</span></button></div>
+      <button data-q="#/codes"><b>Code de la route</b><span>Les dix thèmes de l'examen, en séries de 12 questions expliquées</span></button>
+      <button data-q="#/quiz/code/examen"><b>Examen blanc du code</b><span>40 questions comme à l'examen, 35 bonnes réponses pour réussir</span></button>
+      <button data-q="#/quiz/examen"><b>Examen des panneaux</b><span>40 questions sur la signalisation, 20 secondes chacune</span></button></div>
       <h3 class="doux" style="font-family:var(--corps);font-size:1.1rem;margin-top:8px">Par famille</h3>
       <div class="grille-familles">${FAMILLES.map(f => `<button data-q="#/quiz/famille/${f.id}"><img src="${esc(icone(D.parCode[f.icone]))}" alt="">${esc(f.nom)}</button>`).join("")}</div>
     </div></div>`;
@@ -77,7 +81,26 @@ export function pageQuiz(racine) {
 export async function lancer(racine, mode, arg, arg2) {
   const p = profil();
   let questions = [], titre = "Quiz", options = {};
-  if (mode === "tout") { titre = "Tout le code"; questions = genererQuestions(officiels().map(it => it.code), 10); }
+  if (mode === "tout") { titre = "Toute la signalisation"; questions = genererQuestions(officiels().map(it => it.code), 10); }
+  if (mode === "photos") {
+    const d = await photosQuiz();
+    titre = "En situation réelle";
+    questions = melanger(d.photos.filter(ph => D.parCode[ph.code])).slice(0, 10).map(ph => {
+      const q = question(D.parCode[ph.code], ["sens", "sens", "regle"]);
+      q.texte = q.type === "sens" ? "Que signifie le panneau encadré\u00a0?" : "Devant le panneau encadré, que dois-tu faire\u00a0?";
+      q.image = `series/photos/${ph.f}`; q.photo = true;
+      q.credit = `Photo : ${ph.auteur}, Panoramax (IGN)${ph.date ? `, ${ph.date.slice(0, 4)}` : ""}. Licence Ouverte 2.0.`;
+      return q;
+    });
+    if (!questions.length) { toast("Les photos ne sont pas disponibles hors ligne pour l'instant"); return aller("#/quiz"); }
+  }
+  if (mode === "code") {
+    const partie = await partieCode(arg, arg2);
+    if (!partie) return aller("#/codes");
+    BANQUE_CHARGEE = await banque();
+    ({ titre, questions, options } = partie);
+    if (!questions.length) { toast("Aucune erreur à revoir : bravo !"); return aller("#/codes"); }
+  }
   if (mode === "famille") { const f = famille(arg); titre = f?.nom || "Famille"; questions = genererQuestions(f?.codes || [], 10); options.famille = arg; }
   if (mode === "album") { titre = "Mon album"; questions = genererQuestions(Object.keys(p.album).filter(c => D.parCode[c]), 10); }
   if (mode === "revoir") { titre = "À revoir"; questions = genererQuestions(Object.keys(p.aRevoir), 10); }
@@ -92,7 +115,7 @@ export async function lancer(racine, mode, arg, arg2) {
     options = { donjon: true, famille: arg };
   }
   if (mode === "examen") {
-    titre = "Examen blanc";
+    titre = "Examen des panneaux";
     const codes = melanger(officiels().map(it => it.code));
     questions = genererQuestions(codes, 40, ["sens", "regle", "regle", "image", "vitesse"]);
     options = { examen: true, chrono: 20 };
@@ -106,7 +129,7 @@ export async function lancer(racine, mode, arg, arg2) {
     if (serie.type !== "examen") questions = questions.slice(0, 40);
   }
   if (!questions.length) { toast("Rien à réviser ici pour l'instant"); return aller("#/quiz"); }
-  Q = { mode, titre, questions, i: 0, score: 0, resultats: [], retour: mode === "donjon" ? "#/quete" : mode === "pack" ? "#/codes" : "#/quiz", ...options, reponse: null, ecartes: [] };
+  Q = { mode, titre, questions, i: 0, score: 0, resultats: [], retour: mode === "donjon" ? "#/quete" : mode === "pack" || mode === "code" ? "#/codes" : "#/quiz", ...options, reponse: null, ecartes: [] };
   afficher(racine);
 }
 
@@ -123,7 +146,8 @@ function afficher(racine) {
     ${Q.chrono ? `<div class="q-chrono"><i style="width:100%"></i></div>` : ""}
     ${Q.donjon ? `<div class="q-objets"><button data-x="loupe" ${p.objets.loupe ? "" : "disabled"}>${ICONES.loupe} Loupe × ${p.objets.loupe}</button>
       <button data-x="potion" ${p.objets.potion && p.coeurs < QUETE.coeursMax ? "" : "disabled"} style="color:inherit">${ICONES.potion.replace('stroke="#fff"', 'stroke="currentColor"')} Potion × ${p.objets.potion}</button></div>` : ""}
-    ${q.image ? `<div class="q-image ${q.importee && !q.image.startsWith("icones/") ? "photo" : ""}"><img src="${esc(q.image)}" alt="" referrerpolicy="no-referrer"></div>` : '<div style="height:24px"></div>'}
+    ${q.image ? `<div class="q-image ${q.photo ? "photo scene" : q.importee && !q.image.startsWith("icones/") ? "photo" : ""}"><img src="${esc(q.image)}" alt="" referrerpolicy="no-referrer"${self.crossOriginIsolated && /^https:/.test(q.image) ? ' crossorigin="anonymous"' : ""}></div>
+      ${q.credit ? `<p class="credit-photo">${esc(q.credit)}</p>` : ""}` : '<div style="height:24px"></div>'}
     <h2 class="q-question">${esc(q.texte)}</h2>
     <div class="q-choix ${q.choix.some(c => c.img) ? "images" : ""}">${q.choix.map((c, k) => `<button data-c="${k}" ${Q.ecartes.includes(k) ? "disabled class=\"ecarte\"" : ""}>${c.img ? `<img src="${esc(c.img)}" alt="${esc(c.label)}">` : esc(c.label)}</button>`).join("")}</div>
     ${multi ? `<p class="doux centre" style="margin-top:10px">Plusieurs bonnes réponses possibles</p>` : ""}
@@ -171,6 +195,7 @@ function repondre(racine, ks) {
     if (juste) { if (p.aRevoir[q.code] && --p.aRevoir[q.code] <= 0) delete p.aRevoir[q.code]; }
     else p.aRevoir[q.code] = (p.aRevoir[q.code] || 0) + 1;
   }
+  if (q.qid) p.code.q[q.qid] = juste ? 1 : 0;  // séries de code : dernière réponse à cette question
   if (Q.examen) { Q.reponse = null; Q.ecartes = []; return suivante(racine, true); }
   son(juste ? "juste" : "faux", p.reglages.sons);
   if (Q.donjon && !juste) { p.coeurs = Math.max(0, p.coeurs - 1); p.coeursMaj = p.coeurs < QUETE.coeursMax && p.coeurs === QUETE.coeursMax - 1 ? Date.now() : p.coeursMaj; }
@@ -220,7 +245,7 @@ function resultat(racine) {
   } else if (Q.examen) {
     const reussi = k >= 35 && n === 40;
     titre = reussi ? "Examen réussi !" : "Examen non réussi"; message = `${k} bonnes réponses sur ${n}. Il en faut 35 sur 40.`;
-    if (!Q.pack || n === 40) p.examens.push({ date: Date.now(), score: k, total: n });
+    if (!Q.pack || n === 40) p.examens.push({ date: Date.now(), score: k, total: n, ...(Q.code ? { code: true } : {}) });
     gains.xp = 5 * k; gains.pepites = reussi ? 30 : 5;
     son(reussi ? "victoire" : "defaite", p.reglages.sons);
     const erreurs = Q.questions.filter((q, i) => !Q.resultats[i]);
@@ -237,8 +262,10 @@ function resultat(racine) {
     evenement("serie");
     if (parfait) evenement("sansfaute");
     if (Q.famille) { p.stats.familles++; evenement("famille"); }
+    if (Q.lot && (!p.code.lots[Q.lot] || k > p.code.lots[Q.lot].s)) p.code.lots[Q.lot] = { s: k, n, d: Date.now() };
     son(parfait ? "victoire" : "juste", p.reglages.sons);
   }
+  if (Q.code && BANQUE_CHARGEE) p.stats.themes = themesMaitrises(p, BANQUE_CHARGEE);
   if (k) evenement("juste", k);
   gagner(p, gains);
   verifierBadges(p);

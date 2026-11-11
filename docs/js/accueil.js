@@ -1,11 +1,11 @@
 // Accueil : héros (caméra, vidéo), carte de la quête, niveau et badges, code et examens, trajets, Mes panneaux,
 // réseau, ce que l'appli détecte, diagnostic, ce que l'appli reconnaît.
 import { APP, BADGES, FAMILLES, QUETE } from "./contenu.js";
-import { D, icone, itemsFamille } from "./donnees.js";
+import { D, detectables, icone } from "./donnees.js";
 import { assurerJour, etatRegion, majCoeurs, nbAlbum, nbBadges, nbEclats, nbQuetesFaites, niveau, regionCourante, statsClassement } from "./progression.js";
 import { miniCarte } from "./quete.js";
-import { EVENEMENTS, ouvrirProfils, ouvrirReglages } from "./reglages.js";
-import { brancherCodes, carteCodes } from "./series.js";
+import { EVENEMENTS, nbActifs, ouvrirProfils, ouvrirReglages } from "./reglages.js";
+import { carteCodes } from "./series.js";
 import { profil, sauver } from "./stockage.js";
 import { sousTitreTrajet } from "./trajets.js";
 import { $, ICONES, LOGO, avatar, bascule, dateLongue, esc, ilYa, ouvrirFeuille, toast } from "./ui.js";
@@ -44,7 +44,7 @@ export async function pageAccueil(racine, { moteur, appris, lancerCamera }) {
       <section class="carte carte-niveau"><div class="niveau-tete"><span class="losange"><b>${nv.n}</b></span><div><h2>${esc(nv.nom)}</h2>
           <div class="jauge-xp"><i style="width:${(100 * (p.xp - nv.debut) / (nv.fin - nv.debut)).toFixed(1)}%"></i></div>
           <p class="doux">Niveau ${nv.n}. Encore ${nv.reste} XP pour le niveau ${nv.n + 1}</p></div></div>
-        <div class="tuiles"><button class="tuile" data-nav="#/album"><b>${nbAlbum(p)}<small>/${D.nbOfficiels}</small></b><span>Album</span></button>
+        <div class="tuiles"><button class="tuile" data-nav="#/album"><b>${nbAlbum(p)}<small>/${D.nbDetectables}</small></b><span>Album</span></button>
           <button class="tuile" data-nav="#/quiz"><b>${stats.erudit ? `${stats.erudit}<small>%</small>` : "?"}</b><span>Quiz</span></button>
           <button class="tuile" data-a="badges"><b>${nbBadges(p)}<small>/${BADGES.length}</small></b><span>Badges</span></button></div>
         ${nDernier ? `<button class="barre-trajet" data-nav="#/quiz/trajet/${dernier.id}"><span>Dernier trajet : <b>${nDernier} élément${nDernier > 1 ? "s" : ""}</b>, ${ilYa(dernier.fin || dernier.debut)}</span><b>Quiz du trajet ▸</b></button>` : ""}
@@ -64,14 +64,15 @@ export async function pageAccueil(racine, { moteur, appris, lancerCamera }) {
         <p class="doux texte-reseau">${p.reglages.reseau === "sans" ? "L'appli n'utilise plus le réseau : tout fonctionne avec ce qui est déjà sur le téléphone." : "L'appli vérifie les mises à jour à chaque ouverture."} <span class="taille-hors-ligne"></span></p>
         <button class="btn" data-a="horsligne">Tout préparer pour rouler sans réseau</button></section>
 
-      <details class="carte repli"><summary><div><h2>Ce que je veux détecter</h2><span class="doux gras">${D.items.filter(it => (it.famille === "perso" || p.reglages.familles[it.famille] !== false) && !p.reglages.exclus.includes(it.code)).length} sur ${D.items.length}</span></div>${ICONES.chevron.replace("<svg", '<svg class="chevron"')}</summary>
+      <details class="carte repli"><summary><div><h2>Ce que je veux détecter</h2><span class="doux gras">${nbActifs(p)} sur ${D.items.filter(it => it.detecte).length}</span></div>${ICONES.chevron.replace("<svg", '<svg class="chevron"')}</summary>
         <div class="repli-corps"><p class="doux">Coupe une famille entière ou un seul élément : ce qui est coupé n'est ni encadré ni annoncé.</p><button class="btn btn-plein" data-a="reglages">Choisir dans les réglages</button></div></details>
 
       <details class="carte repli"><summary><h2>Diagnostic</h2>${ICONES.chevron.replace("<svg", '<svg class="chevron"')}</summary><div class="repli-corps diagnostic"></div></details>
 
       <section class="carte"><h2>Ce que ${esc(APP.nom)} reconnaît</h2>
-        <p class="doux">${D.nbOfficiels} panneaux, feux, marquages au sol et usagers de la route, plus tes panneaux appris. Les limitations sont lues de 30 à 130 km/h.</p>
-        <div class="table-reconnait">${FAMILLES.map(f => `<div><span>${esc(f.nom)}</span><span>${itemsFamille(f.id).length}</span></div>`).join("")}
+        <p class="doux">${D.nbDetectables} panneaux, feux, marquages au sol et usagers de la route reconnus par la caméra, plus tes panneaux appris ; ${D.nbOfficiels - D.nbDetectables} autres panneaux
+          ont leur fiche dans l'album. Les limitations sont lues de 5 à 130 km/h. Le détecteur a appris sur de vraies photos de routes françaises.</p>
+        <div class="table-reconnait">${FAMILLES.map(f => `<div><span>${esc(f.nom)}</span><span>${detectables(f.id).length}</span></div>`).join("")}
           ${appris.length ? `<div><span>Mes panneaux</span><span>${appris.length}</span></div>` : ""}</div></section>
 
       <p class="credits centre">Outil d'aide pédagogique : il ne remplace ni ton attention ni la signalisation réelle. En voiture, le téléphone est fixé sur un support et le conducteur ne le manipule pas.
@@ -80,7 +81,6 @@ export async function pageAccueil(racine, { moteur, appris, lancerCamera }) {
 
   const codes = $(".zone-codes", racine);
   codes.innerHTML = await carteCodes();
-  brancherCodes(codes, () => pageAccueil(racine, { moteur, appris, lancerCamera }));
   const { carteMesPanneaux, brancherMesPanneaux } = await import("./mespanneaux.js");
   const za = $(".zone-appris", racine);
   za.innerHTML = carteMesPanneaux(appris);

@@ -1,0 +1,87 @@
+# Vitesses
+
+? Sauf indication contraire, la vitesse maximale en agglomération est de :
+- 30 km/h
++ 50 km/h
+- 70 km/h
+! En agglomération, la vitesse est limitée à 50 km/h, sauf signalisation différente : zone 30, zone de rencontre à 20 km/h, ou section à 70 km/h.
+@ vitesses : agglomération | 1
+
+? Par temps sec, la vitesse maximale sur une autoroute est de :
+- 110 km/h
+- 120 km/h
++ 130 km/h
+! Sur autoroute, la limite est de 130 km/h par temps sec et de 110 km/h par temps de pluie, sauf panneau imposant une vitesse plus basse.
+@ vitesses : autoroute | 1
+
+? Il pleut. Sur autoroute, ma vitesse ne doit pas dépasser :
+- 130 km/h
++ 110 km/h
+- 90 km/h
+! Par temps de pluie ou d'autres précipitations, les limites baissent : 110 km/h sur autoroute, 100 km/h sur route à deux chaussées séparées par un terre-plein central, 80 km/h sur les autres routes.
+@ vitesses : pluie | 1
+
+? Sur une route à deux chaussées séparées par un terre-plein central, hors agglomération, la vitesse maximale par temps sec est de :
+- 90 km/h
++ 110 km/h
+- 130 km/h
+! Sur les routes à deux chaussées séparées par un terre-plein central, la limite est de 110 km/h par temps sec et de 100 km/h par temps de pluie.
+@ vitesses : chaussées séparées | 2
+
+? Sur une route à double sens sans séparateur central, hors agglomération et sans panneau particulier, la vitesse maximale est de :
++ 80 km/h
+- 90 km/h
+- 100 km/h
+! La limite générale est de 80 km/h sur les routes à double sens sans séparateur central. Certains départements l'ont relevée à 90 km/h sur une partie de leur réseau : des panneaux l'indiquent alors.
+@ vitesses : route à double sens | 1
+
+? Le brouillard est très dense : je ne vois pas à plus de 50 m. Sur autoroute, ma vitesse maximale est alors de :
++ 50 km/h
+- 70 km/h
+- 90 km/h
+- 110 km/h
+! Quand la visibilité est inférieure à 50 m, la vitesse est limitée à 50 km/h sur toutes les routes, autoroutes comprises.
+@ vitesses : visibilité inférieure à 50 m | 2
+
+? Je suis titulaire du permis depuis un an (période probatoire). Sur autoroute, par temps sec, je ne dois pas dépasser :
+- 90 km/h
+- 100 km/h
++ 110 km/h
+- 130 km/h
+! En période probatoire, les vitesses maximales sont réduites : 110 km/h sur autoroute, 100 km/h sur route à chaussées séparées, 80 km/h sur les autres routes.
+@ vitesses : période probatoire | 2
+
+? La vitesse est limitée à 80 km/h. Il fait nuit, la route est mouillée et sinueuse. Rouler à 80 km/h :
+- est toujours permis, puisque c'est la limite
++ peut être sanctionné si cette vitesse est inadaptée aux circonstances
+- est obligatoire pour ne pas gêner
+! La limitation est un maximum, pas une vitesse à atteindre. Je dois rester constamment maître de ma vitesse et la réduire selon la visibilité, l'état de la route, la météo et la circulation.
+@ vitesse adaptée | 2
+
+? Sur une autoroute à trois voies, par bonnes conditions, je ne peux pas rouler sur la voie la plus à gauche à moins de :
+- 60 km/h
++ 80 km/h
+- 100 km/h
+! Sur autoroute, quand la circulation est fluide et que les conditions sont bonnes, il est interdit de circuler à moins de 80 km/h sur la voie la plus à gauche.
+@ vitesse minimale à gauche sur autoroute | 3
+
+? Rouler sans raison à une vitesse anormalement basse :
+- n'est jamais sanctionné
++ est interdit, car cela gêne les autres usagers
+- est obligatoire en période probatoire
+! Aucun conducteur ne doit gêner la marche normale des autres véhicules en circulant sans raison valable à une vitesse anormalement réduite. C'est une contravention.
+@ vitesse trop réduite | 2
+
+? Ce panneau carré à fond bleu indique :
+- une vitesse minimale obligatoire
+- une limitation de vitesse
++ une vitesse conseillée
+! Le chiffre blanc sur un carré bleu est une vitesse conseillée : celle qui convient dans de bonnes conditions. La limitation en vigueur, elle, ne change pas. La vitesse minimale obligatoire figure sur un disque bleu.
+@ vitesse conseillée | 2 | C4a
+
+? Je dépasse la vitesse autorisée de moins de 5 km/h (vitesse retenue). Cet excès :
+- n'est pas une infraction
++ est puni d'une amende, sans retrait de point
+- entraîne le retrait d'un point
+! Depuis le 1er janvier 2024, les excès de vitesse inférieurs à 5 km/h n'entraînent plus de retrait de point. Ils restent une infraction, punie d'une amende.
+@ petits excès de vitesse | 3

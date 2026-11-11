@@ -1,0 +1,86 @@
+# S'installer et démarrer
+
+? Je m'installe au volant. Dans quel ordre est-ce que je fais mes réglages ?
++ Siège, puis rétroviseurs, puis ceinture
+- Rétroviseurs, puis siège, puis ceinture
+- Ceinture, puis rétroviseurs, puis siège
+! Je règle d'abord le siège et le volant, car ils déterminent la position de mes yeux ; puis les rétroviseurs, réglés pour cette position ; enfin j'attache ma ceinture.
+@ installation : ordre des réglages | 1
+
+? Mon siège est bien réglé en distance quand :
++ pédale d'embrayage enfoncée à fond, ma jambe reste légèrement fléchie
+- ma jambe est tendue quand j'enfonce l'embrayage
+- mes genoux touchent le volant
+! Jambes légèrement fléchies pédales enfoncées, bras légèrement fléchis mains sur le volant : cette position permet de freiner fort et de tourner le volant sans décoller le dos du siège.
+@ installation : siège | 1
+
+? L'appuie-tête est correctement réglé lorsque son sommet arrive :
+- au niveau de ma nuque
++ au niveau du haut de ma tête
+- au niveau de mes épaules
+! Le haut de l'appuie-tête doit être à la hauteur du sommet du crâne, et l'appuie-tête proche de l'arrière de la tête. Trop bas, il aggrave le « coup du lapin » au lieu de l'empêcher.
+@ installation : appuie-tête | 2
+
+? Le rétroviseur extérieur est bien réglé quand je vois :
++ une petite partie du flanc de ma voiture et, surtout, la route derrière et sur le côté
+- uniquement le flanc de ma voiture
+- le ciel
+! Dans les rétroviseurs extérieurs, le flanc du véhicule n'occupe qu'une petite partie de l'image ; l'essentiel montre la route. L'horizon se place à peu près au milieu du miroir.
+@ installation : rétroviseurs | 2
+
+? Même avec des rétroviseurs bien réglés, il reste autour de la voiture :
++ des angles morts, que je contrôle en tournant la tête
+- aucune zone invisible
+- une zone invisible uniquement à l'arrière
+! Les rétroviseurs ne couvrent pas tout : de chaque côté, une zone échappe à la vue. Avant de démarrer, de changer de voie ou de tourner, je la contrôle par un coup d'œil direct.
+@ angles morts | 1
+
+? Avant de démarrer, je vérifie que mes passagers :
++ ont tous attaché leur ceinture
++ sont installés dans un dispositif adapté s'il s'agit d'enfants
+- ont éteint leur téléphone
+! Le conducteur s'assure que chacun est attaché avant de partir. Il est responsable, y compris pénalement, de la ceinture et de l'installation des passagers de moins de 18 ans.
+@ ceinture des passagers | 1
+
+? Un matin d'hiver, mon pare-brise est couvert de givre. Avant de partir, je :
+- gratte un petit carré devant mes yeux
++ dégivre entièrement le pare-brise, les vitres et les rétroviseurs
+- pars en comptant sur le chauffage pour finir le travail
+! Je dois avoir un champ de vision suffisant dans toutes les directions avant de rouler : toutes les vitres et les rétroviseurs sont dégagés, les feux et les plaques nettoyés. Rouler en « meurtrière » est verbalisable.
+@ visibilité avant le départ | 1
+
+? Avant un long trajet, autour du véhicule, je contrôle :
++ l'état et la pression des pneus
++ le fonctionnement et la propreté des feux
++ les niveaux (huile, lave-glace, liquide de refroidissement)
+- la couleur de la carrosserie
+! Un tour du véhicule avant un long trajet permet de repérer un pneu dégonflé, un feu en panne, une fuite ou un chargement mal arrimé, avant qu'ils ne provoquent une panne ou un accident.
+@ vérifications avant le départ | 1
+
+? Je quitte une place de stationnement le long du trottoir. Les véhicules qui circulent déjà sur la chaussée :
++ sont prioritaires : je leur cède le passage
+- doivent me laisser sortir, puisque j'ai mis mon clignotant
+- doivent s'arrêter
+! Celui qui quitte un stationnement ou repart après un arrêt doit céder le passage à tous les usagers qui circulent. Je contrôle rétroviseurs et angle mort, je mets mon clignotant, puis je m'insère sans gêner.
+@ quitter un stationnement | 1
+
+? Pour conduire, quelles chaussures sont à éviter ?
++ Des tongs ou des claquettes
++ Des chaussures à talons très hauts
+- Des baskets
+! Des chaussures qui tiennent mal au pied ou des talons hauts peuvent glisser, se coincer sous une pédale ou empêcher de doser le freinage. Le conducteur doit rester en mesure d'exécuter toutes les manœuvres.
+@ chaussures | 1
+
+? Une bouteille d'eau roule sur le plancher, du côté du conducteur. Le risque est :
++ qu'elle se coince sous la pédale de frein
+- qu'elle se réchauffe
+- aucun
+! Un objet libre aux pieds du conducteur peut bloquer une pédale au pire moment. Rien ne doit traîner au plancher côté conducteur, et le tapis doit être bien fixé.
+@ objets sous les pédales | 1
+
+? Je porte un gros manteau d'hiver. Pour conduire, il vaut mieux :
++ l'enlever, pour que la ceinture soit bien plaquée contre mon corps
+- le garder : il protège en cas de choc
+- desserrer la ceinture pour être à l'aise
+! Un vêtement épais crée du jeu entre le corps et la ceinture, qui retient alors plus tard et moins bien. Il gêne aussi les mouvements. La même règle vaut pour un enfant dans son siège.
+@ vêtements et ceinture | 2

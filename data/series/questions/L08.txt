@@ -1,0 +1,86 @@
+# Arrêt et stationnement
+
+? Je m'immobilise le temps de laisser descendre un passager, en restant au volant. Il s'agit :
++ d'un arrêt
+- d'un stationnement
+- d'une manœuvre interdite
+! L'arrêt est une immobilisation momentanée, le temps de faire monter ou descendre quelqu'un ou de charger, le conducteur restant au volant ou à proximité pour pouvoir déplacer le véhicule. Tout le reste est du stationnement.
+@ arrêt et stationnement : définitions | 1
+
+? Ma voiture est garée sur un trottoir. Ce stationnement est :
+- toléré si je laisse un passage
+- gênant : amende de 35 €
++ très gênant : amende de 135 €
+! Se garer sur un trottoir, un passage pour piétons, une piste cyclable ou une voie verte est un stationnement très gênant : 135 € d'amende et mise en fourrière possible.
+@ stationnement très gênant | 2
+
+? Sur la voie publique, un véhicule devient en stationnement abusif s'il reste au même endroit plus de :
+- 24 heures
+- 3 jours
++ 7 jours
+- 30 jours
+! Le stationnement ininterrompu au même endroit de la voie publique pendant plus de 7 jours est abusif (la commune peut fixer une durée plus courte). Le véhicule peut être mis en fourrière.
+@ stationnement abusif | 2
+
+? Je me gare juste après le sommet d'une côte, hors agglomération, là où ma voiture reste cachée aux autres conducteurs. Ce stationnement est :
+- gênant
++ dangereux, avec retrait de points
+- autorisé si je mets mes feux de détresse
+! S'arrêter ou stationner là où la visibilité est insuffisante (sommet de côte, virage, intersection, passage à niveau) est dangereux : 135 € d'amende, 3 points en moins et suspension possible du permis.
+@ stationnement dangereux | 3
+
+? Je peux m'arrêter quelques instants sur une place réservée aux personnes handicapées si :
+- je reste au volant
+- je n'en ai que pour deux minutes
++ je transporte le titulaire de la carte de stationnement
+! Ces places sont réservées aux titulaires de la carte « mobilité inclusion » stationnement (ou de l'ancienne carte européenne). Sans elle, même un arrêt bref est très gênant : 135 € et fourrière possible.
+@ places réservées aux personnes handicapées | 1 | B6d_M6h
+
+? En agglomération, dans une rue à double sens, je stationne :
++ à droite, dans le sens de la circulation
+- à gauche si une place est libre
+- indifféremment à droite ou à gauche
+! Dans une rue à double sens, je me gare sur le côté droit, dans le sens de la marche. Dans une rue à sens unique, je peux me garer à droite ou à gauche, si rien ne l'interdit.
+@ sens du stationnement | 2
+
+? Hors agglomération, pour m'arrêter ou stationner, je place ma voiture :
+- sur la chaussée, bien visible
++ en dehors de la chaussée, sur l'accotement, si c'est possible
+- à gauche de la route
+! Hors agglomération, tout véhicule à l'arrêt ou en stationnement doit être placé autant que possible hors de la chaussée, sur un accotement praticable.
+@ stationnement hors agglomération | 2
+
+? Dans une zone bleue, je dois :
++ placer mon disque de stationnement derrière le pare-brise
++ respecter la durée maximale indiquée
+- payer à l'horodateur
+! En zone bleue, le stationnement est gratuit mais limité dans le temps. Le disque, réglé sur mon heure d'arrivée, doit être bien visible derrière le pare-brise. Sans disque ou durée dépassée : 35 € d'amende.
+@ zone bleue | 1 | B6b3
+
+? Dans une rue à stationnement unilatéral alterné, le 20 du mois, je me gare du côté des numéros :
+- impairs
++ pairs
+- au choix
+! Du 1er au 15, on stationne du côté des numéros impairs ; du 16 à la fin du mois, du côté des numéros pairs. Le changement de côté se fait le dernier jour de chaque période, entre 20 h 30 et 21 h.
+@ stationnement alterné | 2 | B6a3
+
+? Je stationne devant l'entrée carrossable (le « bateau ») de mon propre garage. Ce stationnement est :
+- autorisé, puisque c'est chez moi
++ gênant : je peux être verbalisé
+- autorisé la nuit seulement
+! Le stationnement devant une entrée carrossable est gênant, y compris devant la sienne : les agents ne peuvent pas savoir à qui appartient la voiture, et l'accès doit rester libre.
+@ stationnement devant une entrée | 2
+
+? Une ligne jaune continue est peinte sur la bordure du trottoir. Elle signifie :
+- stationnement payant
+- stationnement interdit, arrêt autorisé
++ arrêt et stationnement interdits
+! Ligne jaune continue : ni arrêt ni stationnement. Ligne jaune discontinue : stationnement interdit, mais arrêt autorisé.
+@ marquage jaune sur la bordure | 2
+
+? De nuit, hors agglomération, je suis contraint de stationner sur la chaussée d'une route non éclairée. Pour signaler ma voiture, j'allume :
+- les feux de route
++ les feux de position ou de stationnement
+- aucun feu, pour ne pas vider la batterie
+! De nuit ou par visibilité insuffisante, un véhicule arrêté ou stationné sur une chaussée non éclairée doit être signalé par ses feux de position (ou de stationnement), et par ses feux de détresse s'il constitue un danger.
+@ stationnement de nuit | 3
