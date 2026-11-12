@@ -14,11 +14,11 @@
 ! Dans une zone de rencontre, l'arrêt et le stationnement ne sont autorisés que sur les emplacements aménagés à cet effet. Partout ailleurs, la chaussée et ses abords restent libres pour les piétons et les cyclistes.
 @ zone de rencontre : stationnement | 3
 
-? À 30 km/h, sur route sèche, la distance nécessaire pour m'arrêter est d'environ 13 mètres. À 50 km/h, elle est d'environ :
-- 15 mètres
-- 20 mètres
-+ 28 mètres
-! Entre 30 et 50 km/h, la distance d'arrêt fait plus que doubler : pendant la seconde de réaction, je parcours déjà 14 mètres à 50 km/h, avant même de freiner. Voilà pourquoi la vitesse est limitée à 30 km/h là où piétons, enfants et cyclistes sont nombreux.
+? À 50 km/h, par rapport à 30 km/h, la distance nécessaire pour m'arrêter devant un enfant qui surgit est :
+- À peu près la même
+- Plus longue d'un quart environ
++ Environ deux fois plus longue
+! Il faut à peu près 13 mètres pour s'arrêter à 30 km/h et le double à 50 km/h : pendant la seule seconde de réaction, je parcours déjà 14 mètres à 50 km/h. Voilà pourquoi la vitesse est limitée à 30 km/h là où piétons, enfants et cyclistes sont nombreux.
 @ zone 30 : distance d'arrêt | 2
 
 ? Je m'arrête « juste deux minutes » sur une bande cyclable pour déposer un colis. Cet arrêt est :
@@ -28,12 +28,12 @@
 ! L'arrêt et le stationnement sur une bande ou une piste cyclable sont classés « très gênants » (amende forfaitaire de 135 €, mise en fourrière possible). Même bref, mon arrêt oblige les cyclistes à se déporter au milieu des voitures.
 @ arrêt sur bande cyclable | 2
 
-? Faute de place, je gare ma voiture à cheval sur le trottoir, en laissant un passage d'un mètre. Ce stationnement est :
-+ Interdit et très gênant, sauf si un marquage l'autorise à cet endroit
-- Autorisé, puisqu'un piéton peut encore passer
-- Autorisé pour moins d'une heure
-! Le trottoir est réservé aux piétons. Y stationner une voiture, même partiellement, est un stationnement très gênant (amende forfaitaire de 135 €) : une poussette ou un fauteuil roulant ne passent plus et doivent descendre sur la chaussée. Seul un emplacement matérialisé sur le trottoir permet de s'y garer.
-@ stationnement sur trottoir | 2
+? Faute de place, je m'arrête en double file devant une boulangerie, feux de détresse allumés. Cet arrêt :
+- Est autorisé s'il dure moins de cinq minutes
++ Est interdit : il gêne la circulation et masque les piétons et les cyclistes
+- Est autorisé partout sauf devant une école
+! L'arrêt et le stationnement en double file sont gênants et verbalisables, même brefs et même avec les feux de détresse. Ma voiture oblige les autres à se déporter, cache les piétons qui traversent et force les cyclistes à s'écarter au milieu de la circulation.
+@ arrêt en double file | 2
 
 ? Je roule sur une route sans ligne centrale, dont les deux bords sont marqués par de larges accotements bordés d'une ligne discontinue. Une voiture arrive en face. Pour la croiser, je :
 - Garde le milieu de la chaussée : c'est à elle de s'écarter

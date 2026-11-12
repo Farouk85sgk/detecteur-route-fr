@@ -70,12 +70,12 @@
 ! Un signe de la main n'engage que celui qui le fait : il ne voit pas forcément le deux-roues qui le dépasse ou le véhicule qui arrive sur l'autre voie. Je remercie, mais je contrôle moi-même avant d'avancer.
 @ signe d'un autre conducteur | 2
 
-? Une voiture me suit de beaucoup trop près. Je :
-- Freine brusquement pour lui donner une leçon
-- Accélère pour la semer
-+ Augmente la distance avec le véhicule qui me précède et la laisse me dépasser dès que possible
-! Je ne peux pas agir sur la distance derrière moi, mais je peux agrandir celle de devant : si un ralentissement survient, je freinerai plus doucement et le conducteur qui me colle aura le temps de réagir. Freiner sec ou accélérer ne ferait qu'augmenter le danger.
-@ véhicule qui me suit de trop près | 2
+? Sur une route de campagne, la voiture qui me précède freine nettement, sans raison visible pour moi. Je :
+- La dépasse aussitôt : son conducteur est distrait
++ Ralentis moi aussi : son conducteur a peut-être vu un danger que je ne vois pas encore
+- Klaxonne pour qu'elle reprenne sa vitesse
+! Le conducteur qui me précède voit plus loin que moi : un animal, un cycliste, un obstacle ou un véhicule arrêté peuvent expliquer son freinage. Je ralentis et je cherche à comprendre avant de décider quoi que ce soit ; je ne dépasse pas à l'aveugle.
+@ freinage inexpliqué du véhicule précédent | 2
 
 ? Je suis une voiture d'auto-école, signalée par un panneau sur le toit. Je :
 + Garde mes distances et reste patient : elle peut caler, freiner ou hésiter
