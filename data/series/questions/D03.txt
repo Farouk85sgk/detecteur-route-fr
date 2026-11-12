@@ -80,7 +80,7 @@
 ! Il existe des radars de vitesse (fixes, embarqués, tronçon, de chantier, urbains), des radars de feu rouge et des radars de passage à niveau. D'autres contrôles automatisés se développent.
 @ radars : types | 2
 
-? Refuser de se soumettre à un dépistage d'alcoolémie lors d'un contrôle est :
+? Lors d'un contrôle, refuser de se soumettre aux vérifications de son alcoolémie (éthylomètre ou prise de sang) est :
 - un droit
 + un délit, puni comme la conduite sous l'emprise de l'alcool
 - une contravention de 35 €
