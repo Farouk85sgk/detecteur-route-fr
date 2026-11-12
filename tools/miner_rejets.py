@@ -2,7 +2,9 @@
 
 Le détecteur est passé sur les images réelles d'entraînement (tools/panoramax_dataset.py). Chaque boîte « panneau »
 qu'il propose est comparée aux annotations de la vue :
-- elle ne recouvre aucune annotation : fausse détection -> vignette ajoutée à la classe « fond » ;
+- elle ne recouvre aucune annotation et le classifieur actuel n'y reconnaît aucun panneau du catalogue : fausse
+  détection -> vignette ajoutée à la classe « fond » (s'il y reconnaît un panneau, c'est le plus souvent un vrai panneau
+  oublié par les annotations : on ne s'en sert pas) ;
 - elle recouvre un objet non identifié (« yes ») que le classifieur actuel ne reconnaît pas non plus -> classe « autre ».
 Les vignettes sont découpées dans la vue d'origine, à pleine définition, comme les autres (dossier <out>/train/...).
 
@@ -86,17 +88,12 @@ def main():
                 if max(b[2] - b[0], b[3] - b[1]) * T / S < 10:
                     continue  # trop petit pour être affiché par l'appli
                 part, j = recouvre(b, annots)
-                if part >= 0.3 and natures[j] != "inconnu":
-                    continue  # vrai panneau annoté
-                if part >= 0.3:  # objet non identifié : « autre » si le classifieur ne le reconnaît pas non plus
-                    g, p = cls(vue, b[None])
-                    if g[0] >= 0 and p[0] >= 0.5:
-                        continue
-                    classe = "autre"
-                elif part > 0.05:
-                    continue  # chevauche un panneau : ambigu
-                else:
-                    classe = "fond"
+                if (part >= 0.3 and natures[j] != "inconnu") or 0.05 < part < 0.3:
+                    continue  # vrai panneau annoté, ou boîte qui en chevauche un (ambigu)
+                g, p = cls(vue, b[None])
+                if g[0] >= 0 and p[0] >= 0.5:
+                    continue  # le classifieur y voit un panneau du catalogue : sans doute un panneau oublié par les annotations
+                classe = "autre" if part >= 0.3 else "fond"  # objet non identifié, ou rien d'annoté à cet endroit
                 r = vignette(vue, b)
                 if r is not None:
                     cv2.imwrite(str(out / classe / f"rejet_{nom}_{k}_{r[1]}.jpg"), r[0], [cv2.IMWRITE_JPEG_QUALITY, 92])

@@ -25,7 +25,9 @@ sys.path.insert(0, str(ROOT))
 
 from route_fr.panoramax import code_catalogue  # noqa: E402
 
-L, H = 640, 480  # taille des photos du quiz
+L, H = 560, 420  # taille des photos du quiz
+# Panneaux dont la photo retenue a été jugée fausse ou trop peu lisible à la relecture : pas de question sur eux.
+SAUF = "A16,A23,A24,A3b,AK30,B14_100,B13,B16,B17,B1j,B2b,B41,B57,C1a_M4c,C4a,CE14,CE23,CE28,CE52,J13,M6h"
 
 
 def candidats(vues):
@@ -68,11 +70,13 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--vues", default=str(ROOT / "datasets_src" / "panoramax"))
     ap.add_argument("--out", default=str(ROOT / "docs" / "series"))
-    ap.add_argument("--par-code", type=int, default=2)
+    ap.add_argument("--par-code", type=int, default=1)
     ap.add_argument("--classifieur", default="", help="poids du classifieur : ne garder que les panneaux qu'il reconnaît aussi")
+    ap.add_argument("--sauf", default=SAUF, help="codes à laisser de côté, séparés par des virgules")
     ap.add_argument("--graine", type=int, default=3)
     a = ap.parse_args()
     rng = random.Random(a.graine)
+    sauf = set(a.sauf.split(","))
     cls = None
     if a.classifieur:
         import torch
@@ -104,11 +108,14 @@ def main():
                 k, p = cls(img, np.array([m["annots"][i]["box"]], np.float32))
                 if k[0] != BY_CODE[code] or p[0] < 0.9:
                     continue
-            nom = f"{len(photos) + 1:03d}.jpg"
-            cv2.imwrite(str(out / "photos" / nom), cadrer(m, img, i, rng), [cv2.IMWRITE_JPEG_QUALITY, 76])
-            photos.append({"f": nom, "code": code, "auteur": m["producteur"], "date": m["date"], "source": m["source"]})
+            scene = cadrer(m, img, i, rng)  # toujours calculée : le tirage reste le même quels que soient les codes écartés
             sequences.add(seq)
             pris += 1
+            if code in sauf:
+                continue
+            nom = f"{len(photos) + 1:03d}.jpg"
+            cv2.imwrite(str(out / "photos" / nom), scene, [cv2.IMWRITE_JPEG_QUALITY, 72])
+            photos.append({"f": nom, "code": code, "auteur": m["producteur"], "date": m["date"], "source": m["source"]})
     (out / "photos.json").write_text(json.dumps({"licence": "Licence Ouverte 2.0 (Etalab)", "origine": "Panoramax, instance IGN", "photos": photos}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     taille = sum(f.stat().st_size for f in (out / "photos").glob("*.jpg")) // 1024
     print(f"{len(photos)} photos de {len({p['code'] for p in photos})} panneaux différents ({taille} Ko) -> {out / 'photos'}")
