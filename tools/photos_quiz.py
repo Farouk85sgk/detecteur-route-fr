@@ -47,8 +47,9 @@ def candidats(vues):
     return out
 
 
-def cadrer(m, img, i, rng):
-    """Scène 4:3 autour du panneau i (il occupe 12 à 20 % de la largeur), panneau entouré de jaune."""
+def cadrer(m, img, i, rng, panonceau=False):
+    """Scène 4:3 autour du panneau i (il occupe 12 à 20 % de la largeur), panneau entouré de jaune
+    (avec son panonceau, juste dessous, quand la question porte sur l'ensemble)."""
     x1, y1, x2, y2 = m["annots"][i]["box"]
     c = max(x2 - x1, y2 - y1)
     w = min(c * rng.uniform(5.0, 7.5), m["w"], m["h"] * 4 / 3)
@@ -60,7 +61,7 @@ def cadrer(m, img, i, rng):
     out = cv2.resize(img[Y : Y + int(h), X : X + int(w)], (L, H), interpolation=cv2.INTER_AREA)
     marge = 0.12 * c
     p1 = (int((x1 - marge - X) * e), int((y1 - marge - Y) * e))
-    p2 = (int((x2 + marge - X) * e), int((y2 + marge - Y) * e))
+    p2 = (int((x2 + marge - X) * e), int((y2 + marge + (0.6 * c if panonceau else 0) - Y) * e))
     cv2.rectangle(out, p1, p2, (20, 20, 20), 5, cv2.LINE_AA)
     cv2.rectangle(out, p1, p2, (30, 198, 255), 3, cv2.LINE_AA)
     return out
@@ -108,14 +109,15 @@ def main():
                 k, p = cls(img, np.array([m["annots"][i]["box"]], np.float32))
                 if k[0] != BY_CODE[code] or p[0] < 0.9:
                     continue
-            scene = cadrer(m, img, i, rng)  # toujours calculée : le tirage reste le même quels que soient les codes écartés
+            scene = cadrer(m, img, i, rng, "_M" in code)  # toujours calculée : le tirage reste le même quels que soient les codes écartés
             sequences.add(seq)
             pris += 1
             if code in sauf:
                 continue
             nom = f"{len(photos) + 1:03d}.jpg"
             cv2.imwrite(str(out / "photos" / nom), scene, [cv2.IMWRITE_JPEG_QUALITY, 72])
-            photos.append({"f": nom, "code": code, "auteur": m["producteur"], "date": m["date"], "source": m["source"]})
+            auteur = m["producteur"].split("@")[-1]  # un nom de compte en forme d'adresse électronique : on ne garde que l'organisme
+            photos.append({"f": nom, "code": code, "auteur": auteur, "date": m["date"], "source": m["source"]})
     (out / "photos.json").write_text(json.dumps({"licence": "Licence Ouverte 2.0 (Etalab)", "origine": "Panoramax, instance IGN", "photos": photos}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     taille = sum(f.stat().st_size for f in (out / "photos").glob("*.jpg")) // 1024
     print(f"{len(photos)} photos de {len({p['code'] for p in photos})} panneaux différents ({taille} Ko) -> {out / 'photos'}")
