@@ -7,6 +7,9 @@ pour chaque panneau annoté, a-t-il été trouvé, et avec le bon type ?
 - annonce là où il n'y a aucun panneau annoté : fausse annonce. Les annonces qui tombent sur un objet que les
   annotations n'identifient pas (zone ignorée, panneau de type inconnu) sont comptées à part : on ne peut pas les juger.
 
+Un tableau donne ensuite les mêmes nombres pour d'autres seuils de confiance, pour choisir le réglage de l'appli
+(seuil des panneaux = sign_factor x conf dans route_fr/detector.py, SEUIL_PANNEAU dans docs/js/moteur.js).
+
     python tools/evaluer_chaine.py --poids weights/route_fr_yolov5n.pt --classifieur weights/panneaux_cls.pt
 """
 
@@ -50,15 +53,19 @@ def main():
     ap.add_argument("--taille", type=int, default=416)
     ap.add_argument("--conf", type=float, default=0.35)
     ap.add_argument("--facteur", type=float, default=None, help="seuil des panneaux = facteur x conf (défaut : celui du détecteur)")
+    ap.add_argument("--max", type=int, default=0, help="nombre d'images (0 : toutes)")
     a = ap.parse_args()
     det = Detector(a.poids, a.taille, a.conf, classifier=a.classifieur)
     if a.facteur is not None:
         det.sign_factor = a.facteur
+    seuil = det.sign_factor * det.conf  # seuil de l'appli ; on récolte les annonces plus bas pour le tableau des seuils
+    det.sign_factor = min(det.sign_factor, 0.2 / det.conf)
     dossier = Path(a.images)
     total = collections.Counter()
     tailles = collections.defaultdict(lambda: [0, 0])
     confusions, par_classe = collections.Counter(), collections.defaultdict(lambda: [0, 0])
-    for f in sorted(dossier.glob("*.jpg")):
+    annonces = []  # (score, nature, vrai type, type annoncé, tranche de taille)
+    for f in sorted(dossier.glob("*.jpg"))[: a.max or None]:
         img = cv2.imread(str(f))
         H, W = img.shape[:2]
         gt = boites(Path(str(f).replace("/images/", "/codes/")).with_suffix(".txt"), W, H)
@@ -67,9 +74,9 @@ def main():
         d = d[[CLASSES[int(c)].categorie != "marquage" for c in d[:, 5]]] if len(d) else d
         G = np.array([b for _, b in gt], np.float32).reshape(-1, 4)
         pris = np.zeros(len(gt), bool)
-        for x1, y1, x2, y2, _, c in d[np.argsort(-d[:, 4])] if len(d) else []:
+        for x1, y1, x2, y2, score, c in d[np.argsort(-d[:, 4])] if len(d) else []:
             code, b = CLASSES[int(c)].code, np.array([x1, y1, x2, y2])
-            j = -1
+            j, vrai, t = -1, None, None
             if len(G):
                 ious, _ = iou_1n(b, G)
                 ious[pris] = 0
@@ -79,19 +86,12 @@ def main():
                 vrai = gt[j][0]
                 cote = max(G[j][2] - G[j][0], G[j][3] - G[j][1])
                 t = "moins de 12 px" if cote < 12 else "12 à 24 px" if cote < 24 else "plus de 24 px"
-                if vrai == "?":
-                    total["sur un panneau de type inconnu"] += 1
-                elif vrai == code:
-                    total["bonnes réponses"] += 1
-                    tailles[t][1] += 1
-                    par_classe[vrai][1] += 1
-                else:
-                    total["confusions"] += 1
-                    confusions[(vrai, code)] += 1
+                nature = "sur un panneau de type inconnu" if vrai == "?" else "bonnes réponses" if vrai == code else "confusions"
             elif len(ign) and iou_1n(b, ign)[1].max() >= 0.4 * (x2 - x1) * (y2 - y1):
-                total["sur un objet non identifié"] += 1
+                nature = "sur un objet non identifié"
             else:
-                total["fausses annonces"] += 1
+                nature = "fausses annonces"
+            annonces.append((float(score), nature, vrai, code, t))
         for (vrai, b) in gt:
             if vrai not in ("?", "autre"):
                 cote = max(b[2] - b[0], b[3] - b[1])
@@ -99,6 +99,15 @@ def main():
                 par_classe[vrai][0] += 1
                 total["panneaux du catalogue"] += 1
         total["images"] += 1
+    for score, nature, vrai, code, t in annonces:  # bilan au seuil de l'appli
+        if score < seuil:
+            continue
+        total[nature] += 1
+        if nature == "bonnes réponses":
+            tailles[t][1] += 1
+            par_classe[vrai][1] += 1
+        elif nature == "confusions":
+            confusions[(vrai, code)] += 1
     n, ok = total["panneaux du catalogue"], total["bonnes réponses"]
     annonces = ok + total["confusions"] + total["fausses annonces"]
     print(f"{total['images']} images, {n} panneaux du catalogue annotés")
@@ -109,6 +118,12 @@ def main():
     faibles = sorted(((c, v[1] / v[0], v[0]) for c, v in par_classe.items() if v[0] >= 4), key=lambda t: t[1])[:20]
     print("panneaux les moins bien reconnus : " + ", ".join(f"{c} {r:.0%} ({k})" for c, r, k in faibles))
     print("confusions les plus fréquentes : " + ", ".join(f"{a}→{b} ×{k}" for (a, b), k in confusions.most_common(15)))
+    print(f"\nselon le seuil des panneaux (celui de l'appli : {seuil:.3f})")
+    print(f"{'seuil':>6s} {'bien nommés':>12s} {'confusions':>11s} {'fausses annonces':>17s} {'exactitude':>11s}")
+    for s in sorted({0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60, 0.70, round(seuil, 3)}):
+        c = collections.Counter(nature for score, nature, *_ in annonces if score >= s)
+        bon, conf, faux = c["bonnes réponses"], c["confusions"], c["fausses annonces"]
+        print(f"{s:6.3f} {bon / max(n, 1):12.1%} {conf:11d} {faux:17d} {bon / max(bon + conf + faux, 1):11.1%}")
 
 
 if __name__ == "__main__":
