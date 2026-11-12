@@ -42,7 +42,13 @@ export class Moteur {
   }
 
   async charger({ backend = null, progression = () => {} } = {}) {
-    this.fournisseurs = backend ? [backend] : ("gpu" in navigator) ? ["webgpu", "wasm"] : ["wasm"];
+    // carte graphique seulement si le navigateur en fournit vraiment une (sinon ONNX Runtime se replierait sans le dire
+    // sur le processeur, et l'appli choisirait une qualité d'analyse trop lourde pour lui)
+    let gpu = false;
+    if (!backend && "gpu" in navigator) {
+      try { gpu = !!(await Promise.race([navigator.gpu.requestAdapter(), new Promise(r => setTimeout(() => r(null), 4000))])); } catch { gpu = false; }
+    }
+    this.fournisseurs = backend ? [backend] : gpu ? ["webgpu", "wasm"] : ["wasm"];
     // plusieurs fils de calcul seulement si la page est isolée (voir sw.js) ; sinon ONNX Runtime n'en utilise qu'un
     let monofil = false;
     try { monofil = localStorage.getItem("repere.monofil") === "1"; } catch { /* stockage indisponible */ }

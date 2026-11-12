@@ -46,11 +46,15 @@ LISEZ_MOI = """REPÈRE : mettre l'appli sur votre site, puis sur votre télépho
 
    L'appli est alors à l'adresse :  https://VOTRE-DOMAINE/{dossier}/
    Le reste de votre site n'est pas modifié.
+   (L'adresse suit les dossiers : si, après l'extraction, l'appli se trouve dans
+   public_html/{dossier}/{dossier}, l'adresse devient https://VOTRE-DOMAINE/{dossier}/{dossier}/ .)
 
 2) Sur le téléphone (Android, par exemple Xiaomi)
    - Ouvrez cette adresse avec Chrome.
    - Touchez le menu (les trois points en haut à droite), puis « Ajouter à l'écran d'accueil »
      ou « Installer l'application ». L'icône « Repère » apparaît avec vos autres applis.
+   - Sur un Xiaomi, si l'icône n'apparaît pas : Paramètres > Applications > Gérer les applications
+     > Chrome > Autres autorisations, puis activez « Raccourcis sur l'écran d'accueil » et recommencez.
    - Au premier lancement de la caméra, acceptez l'autorisation « Caméra »
      (et « Position » si vous voulez la carte de vos trajets).
 
@@ -83,7 +87,7 @@ def main():
             deja_compresse = f.suffix in (".png", ".jpg", ".woff2")
             z.write(f, f"{a.dossier}/{f.relative_to(web).as_posix()}", zipfile.ZIP_STORED if deja_compresse else zipfile.ZIP_DEFLATED)
         z.writestr(f"{a.dossier}/.htaccess", HTACCESS)
-        z.writestr(f"{a.dossier}/LISEZ-MOI.txt", LISEZ_MOI.format(dossier=a.dossier))
+        z.writestr(f"{a.dossier}/LISEZ-MOI.txt", "\ufeff" + LISEZ_MOI.format(dossier=a.dossier))  # marque UTF-8 : accents corrects dans le Bloc-notes
     taille = Path(a.sortie).stat().st_size / 1e6
     print(f"{a.sortie} : {len(fichiers) + 2} fichiers, {taille:.1f} Mo (dossier « {a.dossier} », cache {cache})")
 
