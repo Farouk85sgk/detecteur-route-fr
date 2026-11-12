@@ -1,0 +1,85 @@
+# Marche arrière, créneau et manœuvres
+
+? Ma voiture est équipée d'une caméra de recul. Avant de reculer :
+- L'écran me suffit : il montre tout ce qui se trouve derrière moi
++ Je regarde aussi directement autour de moi et dans mes rétroviseurs
+- Je recule vite pour gêner le moins longtemps possible
+! La caméra de recul ne montre qu'une partie de l'espace, juste derrière le pare-chocs : elle ne voit ni les côtés ni ce qui arrive de loin. Je contrôle les rétroviseurs, je me retourne pour regarder directement, puis je recule au pas en surveillant aussi l'écran.
+@ marche arrière : caméra de recul | 1
+
+? De quelle couleur sont les feux de recul d'une voiture ?
++ Blancs
+- Rouges
+- Orange
+! Les feux de recul sont blancs et s'allument dès que la marche arrière est engagée. Quand je vois ces feux blancs s'allumer à l'arrière d'un véhicule, je sais qu'il va reculer : je ne passe pas juste derrière lui.
+@ feux de recul | 1
+
+? Sur un parking, je choisis de me garer en bataille en entrant en marche arrière dans la place. L'intérêt principal est que :
+- Mon coffre reste plus facile à charger
++ Je repartirai en marche avant, avec une bien meilleure visibilité
+- Je gagne du temps en arrivant
+! En entrant en marche arrière, je manœuvre au moment où je vois bien la place et l'allée. Pour repartir, je sors en marche avant : je vois arriver les piétons et les voitures, alors qu'en reculant entre deux véhicules je ne verrais presque rien.
+@ stationnement en bataille | 2
+
+? Je veux faire un créneau dans une rue passante. Une voiture me suit de près. Je :
+- Passe la marche arrière sans attendre : c'est à elle de s'arrêter
++ Mets mon clignotant, ralentis tôt et la laisse passer si elle ne peut pas attendre derrière
+- Renonce toujours à la place
+! J'annonce ma manœuvre à l'avance avec le clignotant et en ralentissant progressivement. Si le conducteur qui me suit s'est arrêté trop près, je lui fais signe de passer ou j'attends qu'il me contourne : je ne recule que lorsque l'espace derrière moi est libre.
+@ créneau : prévenir les autres | 2
+
+? Je quitte en marche arrière une place en épi. Un fourgon garé à côté me cache toute la circulation. Je :
+- Recule franchement pour dégager l'allée au plus vite
++ Recule très lentement, prêt à m'arrêter, et me fais guider si quelqu'un peut m'aider
+- Klaxonne longuement puis recule sans m'arrêter
+! Celui qui recule n'a pas la priorité et doit pouvoir s'arrêter à tout instant. Je recule au pas, par petites étapes, pour laisser aux autres le temps de me voir, et je m'arrête dès que quelqu'un approche. Un passager descendu pour me guider est la meilleure aide.
+@ marche arrière sans visibilité | 2
+
+? Des enfants jouent près de ma voiture, garée dans l'allée de la maison. Avant de partir en marche arrière :
+- Je regarde dans mes trois rétroviseurs, cela suffit
++ Je fais le tour de la voiture, puis je recule au pas, vitre baissée
+- Je donne un coup d'accélérateur pour les avertir
+! Un petit enfant accroupi derrière une voiture est invisible dans les rétroviseurs comme par la lunette arrière. Je fais le tour du véhicule avant de monter, je m'assure de savoir où se trouve chaque enfant, puis je recule très lentement, vitre baissée pour entendre.
+@ marche arrière : enfants | 1
+
+? Mes radars de recul restent silencieux pendant que je recule. Cela veut-il dire qu'il n'y a aucun obstacle ?
+- Oui, ils détectent tout ce qui se trouve derrière la voiture
++ Non, un obstacle bas, fin ou placé sur le côté peut leur échapper
+- Oui, à condition de reculer lentement
+! Les capteurs du pare-chocs détectent mal un poteau fin, une bordure basse, une barre d'attelage ou un obstacle situé à l'angle de la voiture. Ce sont des aides : je continue à regarder moi-même et je recule lentement.
+@ aides au stationnement : limites | 2
+
+? Je conduis une voiture à boîte automatique. Avant de la quitter, je :
++ Place le sélecteur sur « P » et serre le frein de stationnement
+- Laisse le sélecteur sur « D », le moteur étant arrêté
+- Place le sélecteur sur « N » sans serrer le frein de stationnement
+! La position « P » (parking) bloque la transmission, et le frein de stationnement immobilise les roues : j'utilise les deux, surtout en pente. Sur « N » (point mort), plus rien ne retient la voiture si le frein n'est pas serré.
+@ boîte automatique : quitter le véhicule | 1
+
+? À quoi sert la « sécurité enfants » des portes arrière ?
+- À verrouiller les quatre portes quand la voiture roule
++ À empêcher l'ouverture des portes arrière depuis l'intérieur
+- À bloquer les vitres arrière
+! Un petit levier ou un bouton empêche d'ouvrir les portes arrière de l'intérieur : elles ne s'ouvrent plus que de l'extérieur. L'enfant ne peut plus ouvrir en roulant, ni descendre seul côté circulation à l'arrêt : c'est moi qui lui ouvre, côté trottoir.
+@ sécurité enfants des portes | 1
+
+? Je sors de mon garage et je dois traverser le trottoir pour rejoindre la rue. Je cède le passage :
+- Uniquement aux véhicules qui viennent de la droite
+- Uniquement aux piétons du trottoir
++ Aux piétons du trottoir et à tous les véhicules qui circulent dans la rue
+! Le conducteur qui débouche sur une route en franchissant un trottoir, ou depuis un accès non ouvert à la circulation publique, ne s'engage qu'après s'être assuré qu'il peut le faire sans danger : il laisse passer les piétons, puis les véhicules venant des deux côtés (article R415-9 du Code de la route).
+@ sortie de garage : priorités | 2
+
+? J'entre dans un parking souterrain en plein jour. Je :
+- Garde la même allure que dans la rue
++ Allume mes feux de croisement et roule au pas
+- Allume mes feux de route pour mieux voir
+! Dans un parking couvert, la visibilité est réduite, les allées sont étroites et des piétons circulent entre les voitures. J'allume mes feux de croisement pour voir et être vu, et je roule au pas en surveillant les véhicules qui reculent. Les feux de route éblouiraient les autres.
+@ parking souterrain | 1
+
+? Ma voiture est garée dans une rue à double sens, le long du trottoir de droite. Pour rejoindre ma portière, côté chaussée, il est conseillé :
+- De contourner la voiture par l'arrière, dos à la circulation
++ De contourner la voiture par l'avant, face aux véhicules qui arrivent
+- De monter par la portière du passager dans tous les cas
+! En passant par l'avant de la voiture, je marche face aux véhicules qui arrivent sur ma voie : je les vois venir et je choisis le bon moment pour ouvrir ma portière. En passant par l'arrière, je leur tournerais le dos. Si la rue est très passante, monter côté trottoir reste possible.
+@ monter dans le véhicule côté circulation | 2

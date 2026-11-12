@@ -1,0 +1,85 @@
+# Après un accident : constat et assurance
+
+? Après un accrochage sans blessé, l'autre conducteur et moi remplissons un constat amiable. En le signant :
+- Je reconnais que je suis responsable de l'accident
++ J'atteste seulement des faits et des circonstances qui y sont décrits
+- Je renonce à être indemnisé
+! Le constat amiable décrit ce qui s'est passé : identité des conducteurs, assurances, circonstances, croquis, points de choc. Ce n'est pas un aveu : ce sont les assureurs qui déterminent ensuite les responsabilités à partir de ce document. D'où l'importance de le remplir avec soin.
+@ constat amiable : valeur | 1
+
+? Deux voitures se sont accrochées. Combien de constats amiables faut-il remplir ?
++ Un seul, rempli ensemble, dont chaque conducteur garde un exemplaire
+- Deux, chacun remplissant le sien de son côté
+- Aucun si les dégâts sont légers
+! Les deux conducteurs remplissent ensemble le même constat, chacun dans sa colonne, et le signent tous les deux. Le formulaire est en double : chacun repart avec un exemplaire identique, qu'il transmet à son propre assureur.
+@ constat amiable : un seul formulaire | 1
+
+? Le constat est signé et chacun est reparti avec son exemplaire. Chez moi, je m'aperçois que j'ai oublié de cocher une case au recto. Je :
+- La coche sur mon exemplaire avant de l'envoyer
++ Ne modifie plus le recto : je le signale à mon assureur, par exemple au verso
+- Demande à un ami de signer à la place de l'autre conducteur
+! Une fois signé par les deux conducteurs, le recto ne doit plus être modifié : les deux exemplaires ne seraient plus identiques et le constat perdrait sa valeur. Les précisions se donnent au verso, que chacun remplit seul, ou directement à l'assureur.
+@ constat amiable : recto signé | 2
+
+? Sur le constat, je ne suis pas d'accord avec la version de l'autre conducteur. Je :
+- Refuse de remplir le constat et je m'en vais
++ Écris mon désaccord dans la rubrique « observations » de ma colonne avant de signer
+- Signe sans rien ajouter pour gagner du temps
+! La rubrique « mes observations » me permet de préciser ma version ou de contester celle de l'autre conducteur. Signer sans réserve un constat que je crois inexact m'engagerait : les assureurs s'appuieraient sur ce qui est écrit.
+@ constat amiable : désaccord | 2
+
+? Après l'accrochage, l'autre conducteur refuse de remplir un constat. Je :
++ Note son immatriculation et les coordonnées des témoins, puis je déclare l'accident à mon assureur
+- Considère que l'accident n'a pas eu lieu
+- Le retiens de force jusqu'à l'arrivée de la police
+! Sans constat signé par les deux, je rassemble les preuves : numéro d'immatriculation, marque et modèle du véhicule, photos des dégâts et des lieux, noms et coordonnées des témoins. Je remplis ma partie du constat et je déclare l'accident à mon assureur dans les cinq jours ouvrés.
+@ refus de constat | 2
+
+? Dans l'accident, le passager de l'autre voiture se plaint d'une douleur au cou. Dans ce cas :
+- Le constat amiable suffit : on ne dérange pas les secours pour si peu
++ J'alerte les secours : les forces de l'ordre pourront établir un procès-verbal
+- Chacun rentre chez soi sans aucune formalité
+! Dès qu'il y a un blessé, même léger, j'alerte les secours (112, 15 ou 18). La police ou la gendarmerie peut se déplacer et rédiger un procès-verbal. Sur le constat, je coche la case « blessés, même légers » : une douleur qui paraît bénigne peut révéler une lésion.
+@ accident avec blessé léger | 1
+
+? Dans un ralentissement, la voiture qui me suit me percute et me projette contre celle qui me précède. Combien de constats est-ce que je remplis ?
+- Un seul pour les trois véhicules
++ Deux : un avec le conducteur de devant, un avec celui de derrière
+- Aucun : c'est aux assureurs de se débrouiller
+! Dans un accident en chaîne, chaque conducteur remplit un constat avec chacun des véhicules avec lesquels il y a eu un choc. Je précise sur chaque constat qu'il s'agit d'un carambolage et que j'ai été projeté par le véhicule qui me suivait.
+@ accident en chaîne | 3
+
+? L'application officielle « e-constat auto » de mon téléphone :
++ A la même valeur que le constat papier pour un accident matériel
+- Remplace le permis de conduire lors d'un contrôle
+- Ne peut servir que si l'autre conducteur a le même assureur que moi
+! L'e-constat permet de déclarer sur téléphone un accident sans blessé impliquant un ou deux véhicules immatriculés et assurés en France : photos, croquis, signature sur l'écran, envoi immédiat aux assureurs. En cas de blessé ou de véhicule étranger, j'utilise le constat papier.
+@ e-constat | 2
+
+? En manœuvrant sur un parking, je raye une voiture en stationnement. Son propriétaire est absent. Je :
+- Pars rapidement : personne ne m'a vu
++ Laisse mes coordonnées sur son pare-brise ou je préviens l'accueil du parking
+- Attends cinq minutes, puis je repars sans rien laisser
+! Quitter les lieux sans permettre de m'identifier après avoir causé un dommage est un délit de fuite, sévèrement puni. Je laisse mon nom, mon numéro de téléphone et mon immatriculation, je photographie les dégâts et je préviens mon assureur.
+@ dommage à un véhicule en stationnement | 1
+
+? Je suis déclaré entièrement responsable d'un accident. Sur ma prochaine cotisation d'assurance, mon coefficient de bonus-malus :
+- Diminue de 5 %
+- Reste inchangé
++ Augmente de 25 %
+! Chaque accident dont je suis entièrement responsable augmente mon coefficient de 25 % (12,5 % si la responsabilité est partagée). À l'inverse, chaque année sans accident responsable le fait baisser de 5 %. Ce coefficient s'applique au prix de mon assurance.
+@ bonus-malus | 3
+
+? Je suis assuré « au tiers » et je suis responsable d'un accident. Qui paie les réparations de ma propre voiture ?
+- Mon assureur, dans tous les cas
+- L'assureur de l'autre conducteur
++ Moi-même
+! L'assurance « au tiers » ne couvre que la responsabilité civile, c'est-à-dire les dommages que je cause aux autres. Mes propres dégâts restent à ma charge si je suis responsable, sauf si j'ai souscrit une garantie plus étendue (dommages tous accidents, par exemple).
+@ assurance au tiers | 2
+
+? Je suis blessé par une voiture dont le conducteur n'est pas assuré. Serai-je indemnisé ?
+- Non, il n'existe aucun recours
++ Oui, par le Fonds de garantie des assurances obligatoires (FGAO)
+- Oui, mais seulement si je connais personnellement le conducteur
+! Quand le responsable d'un accident n'est pas assuré ou a pris la fuite sans être identifié, le Fonds de garantie des assurances obligatoires de dommages indemnise les victimes, puis se retourne contre le responsable s'il est connu. Conduire sans assurance est un délit.
+@ fonds de garantie | 3

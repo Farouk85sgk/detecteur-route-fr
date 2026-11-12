@@ -1,0 +1,85 @@
+# Équipements de sécurité récents
+
+? Ma voiture récente est équipée du système d'appel d'urgence « eCall ». Lors d'un choc violent :
++ Elle appelle automatiquement les secours et leur transmet sa position
+- Elle verrouille toutes les portes
+- Elle coupe définitivement le téléphone des occupants
+! Obligatoire sur les nouveaux modèles de voitures depuis 2018, l'eCall appelle automatiquement le 112 quand les airbags se déclenchent et envoie la position du véhicule, même si les occupants sont inconscients. Les secours gagnent de précieuses minutes.
+@ eCall : appel automatique | 1
+
+? Je suis témoin d'un accident grave et je n'ai pas de téléphone. Ma voiture possède un bouton « SOS ». Puis-je l'utiliser ?
++ Oui, il me met en relation avec les secours et indique où je me trouve
+- Non, il est réservé aux accidents de mon propre véhicule
+- Non, il ne fonctionne que moteur arrêté
+! Le bouton SOS déclenche manuellement l'appel d'urgence : je suis mis en relation avec un opérateur qui reçoit ma position. Il sert aussi bien pour moi que pour d'autres usagers en détresse. Je ne l'utilise que pour une véritable urgence.
+@ eCall : appel manuel | 2
+
+? Le système de surveillance de la pression des pneus, présent sur les voitures récentes :
+- Regonfle les pneus tout seul en roulant
++ M'alerte par un voyant quand un pneu perd de la pression
+- Me dispense de contrôler mes pneus
+! Ce système, obligatoire sur les voitures neuves depuis 2014, signale une perte de pression par un voyant au tableau de bord : je m'arrête dès que possible pour contrôler. Il ne remplace pas le contrôle mensuel à froid ni l'examen de l'état des pneus.
+@ surveillance de la pression des pneus | 2
+
+? Les fixations ISOFIX servent à :
+- Attacher les bagages dans le coffre
++ Fixer solidement un siège enfant à la structure de la voiture
+- Régler la hauteur de la ceinture de sécurité
+! Les ancrages ISOFIX, situés entre le dossier et l'assise, relient directement le siège enfant à la carrosserie, sans passer par la ceinture de la voiture. Le siège se fixe par simple enclenchement : on évite ainsi les erreurs d'installation, très fréquentes avec la ceinture.
+@ ISOFIX | 1
+
+? Les feux de jour, qui s'allument seuls au démarrage sur les voitures récentes :
++ Servent à être mieux vu des autres usagers en plein jour
+- Remplacent les feux de croisement la nuit
+- Éclairent la route aussi loin que les feux de route
+! Les feux de jour me rendent plus visible mais n'éclairent pas la route, et sur beaucoup de voitures les feux arrière restent éteints. La nuit, dans un tunnel, sous la pluie ou dans le brouillard, j'allume moi-même mes feux de croisement.
+@ feux de jour | 2
+
+? Un signal sonore insistant retentit au tableau de bord, accompagné d'un voyant rouge représentant un passager attaché. Il m'indique que :
+- Un airbag va se déclencher
++ Un occupant n'a pas bouclé sa ceinture de sécurité
+- Une portière est restée ouverte
+! L'alerte de non-bouclage détecte un siège occupé dont la ceinture n'est pas attachée. Je m'arrête ou je fais attacher le passager avant de continuer : à l'arrière aussi, un occupant non attaché met sa vie en danger et celle des personnes assises devant lui.
+@ alerte de ceinture non bouclée | 1
+
+? La voiture qui me précède freine très fort : ses feux stop se mettent à clignoter rapidement. Cela signifie :
+- Que ses feux sont en panne
++ Qu'elle effectue un freinage d'urgence : je freine immédiatement
+- Qu'elle va tourner à gauche puis à droite
+! Sur de nombreuses voitures récentes, un freinage d'urgence fait clignoter les feux stop ou allume automatiquement les feux de détresse. C'est un signal d'alerte pour ceux qui suivent : je freine sans attendre et je surveille mon rétroviseur.
+@ signal de freinage d'urgence | 2
+
+? Lors d'un choc frontal, l'avant de la voiture s'écrase fortement. Cette déformation :
+- Prouve que la voiture est de mauvaise qualité
++ Absorbe une partie de l'énergie du choc et protège les occupants
+- Est sans rapport avec la sécurité
+! Les voitures sont conçues avec des zones qui se déforment à l'avant et à l'arrière pour absorber l'énergie du choc, autour d'un habitacle rigide qui préserve l'espace de survie. La ceinture et les airbags complètent cette protection : ils ne sont efficaces que si je suis attaché.
+@ zones de déformation et habitacle | 2
+
+? Au tableau de bord, un symbole en forme de tasse de café s'affiche avec un message. Le système m'indique que :
+- Le niveau d'huile est trop bas
++ Ma conduite montre des signes de fatigue : je dois faire une pause
+- Une aire de service se trouve à moins d'un kilomètre
+! Le détecteur de fatigue analyse mes mouvements de volant, la durée du trajet ou mon regard. Quand il affiche la tasse de café, je m'arrête dès que possible pour me reposer. Il peut aussi ne rien signaler alors que je suis fatigué : je reste seul juge de mon état.
+@ détecteur de fatigue | 1
+
+? Je démarre dans une forte montée avec une voiture équipée de l'aide au démarrage en côte. Ce système :
++ Maintient la voiture immobile deux secondes environ quand je relâche le frein
+- Accélère à ma place jusqu'au sommet
+- Empêche le moteur de caler dans toutes les situations
+! L'aide au démarrage en côte garde les freins serrés un court instant après le relâchement de la pédale : j'ai le temps d'accélérer sans que la voiture recule. Passé ce délai, elle n'est plus retenue : je ne compte pas sur ce système pour stationner.
+@ aide au démarrage en côte | 2
+
+? Mes feux sont réglés sur le mode automatique. En plein jour, je traverse un banc de brouillard épais. Je :
+- Ne touche à rien : les feux s'allument toujours seuls quand il le faut
++ Vérifie qu'ils sont allumés et les allume moi-même si nécessaire
+- Allume uniquement mes feux de détresse
+! Le capteur de l'allumage automatique mesure la luminosité : dans un brouillard clair ou sous une forte pluie en journée, il peut laisser les feux éteints. Je reste responsable de mon éclairage : j'allume mes feux de croisement et, si besoin, mes feux de brouillard.
+@ allumage automatique des feux : limites | 2
+
+? Les sièges avant de ma voiture contiennent des airbags latéraux. Je veux poser des housses de siège. Je choisis :
+- N'importe quelles housses, pourvu qu'elles soient bien tendues
++ Uniquement des housses prévues pour les sièges équipés d'airbags latéraux
+- Des housses épaisses qui recouvrent tout le siège
+! Un airbag latéral se déploie à travers le flanc du dossier. Une housse inadaptée peut l'empêcher de sortir ou le dévier. Les housses compatibles comportent une couture qui cède au déclenchement. Pour la même raison, je ne suspends rien devant un airbag.
+@ airbags latéraux et housses | 3

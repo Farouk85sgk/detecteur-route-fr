@@ -1,0 +1,85 @@
+# Conduire et entretenir sans polluer
+
+? Dans une longue descente, pour consommer le moins possible, je :
+- Passe au point mort et laisse rouler la voiture
++ Reste sur un rapport engagé, pied levé de l'accélérateur
+- Coupe le contact pour descendre en roue libre
+! Pied levé avec un rapport engagé, l'injection de carburant est coupée : la consommation tombe à zéro et le frein moteur retient la voiture. Au point mort, le moteur consomme pour tourner au ralenti et je perds le frein moteur ; contact coupé, je n'aurais plus d'assistance au freinage ni à la direction.
+@ frein moteur et consommation | 2
+
+? Ma voiture est équipée du « Stop & Start ». Ce système :
++ Arrête le moteur quand la voiture est immobilisée, puis le relance pour repartir
+- Empêche de dépasser la vitesse autorisée
+- Coupe la climatisation au-dessus de 90 km/h
+! À l'arrêt, au feu rouge ou dans un embouteillage, le moteur se coupe automatiquement et redémarre dès que je veux repartir. En ville, où les arrêts sont nombreux, la consommation, la pollution et le bruit diminuent.
+@ Stop & Start | 1
+
+? En roulant, un passager jette son mégot de cigarette par la fenêtre. Ce geste :
+- Est toléré hors agglomération
++ Est interdit, pollue et peut provoquer un incendie
+- N'est interdit qu'en forêt
+! Jeter un déchet sur la voie publique est puni d'une amende forfaitaire de 135 €. Un mégot met des années à se dégrader et pollue l'eau et les sols ; par temps sec, il suffit à déclencher un feu de talus ou de forêt. Je garde mes déchets à bord jusqu'à la prochaine poubelle.
+@ déchets jetés du véhicule | 1
+
+? Où est-il préférable de laver ma voiture ?
+- Dans la rue, devant chez moi
+- Au bord d'une rivière, pour ne pas gaspiller l'eau du robinet
++ Dans une station de lavage
+! L'eau de lavage emporte des hydrocarbures, des poussières de frein et des détergents. Dans la rue, elle part souvent sans traitement vers les cours d'eau ; de nombreux règlements locaux l'interdisent. Une station de lavage récupère et traite ses eaux usées, et consomme moins d'eau qu'un tuyau d'arrosage.
+@ lavage du véhicule | 2
+
+? Le pot catalytique d'une voiture à moteur thermique :
+- Réduit le bruit du moteur, rien de plus
++ Transforme une partie des gaz polluants en gaz moins nocifs
+- Supprime totalement le dioxyde de carbone (CO2)
+! Le catalyseur traite le monoxyde de carbone, les hydrocarbures imbrûlés et les oxydes d'azote, mais seulement lorsqu'il est chaud : sur un trajet très court, il n'a pas le temps d'agir. Il ne supprime pas le CO2, qui dépend de la quantité de carburant consommée.
+@ pot catalytique | 2
+
+? L'autopartage consiste à :
+- Prendre des passagers sur son trajet contre une participation aux frais
++ Utiliser, quand on en a besoin, une voiture mise à la disposition de plusieurs personnes
+- Prêter son permis de conduire à un proche
+! Dans l'autopartage, une même voiture sert successivement à plusieurs utilisateurs, à l'heure ou à la journée. Chacun évite d'acheter et de garer un véhicule qui resterait immobile la plupart du temps. Le covoiturage, lui, consiste à partager un trajet.
+@ autopartage | 2
+
+? Sur autoroute, je roule toutes vitres ouvertes pour avoir de l'air. Par rapport à des vitres fermées :
+- Je consomme moins de carburant
++ Je consomme davantage : les vitres ouvertes freinent la voiture
+- Cela ne change rien à la consommation
+! À vitesse élevée, des vitres ouvertes perturbent l'écoulement de l'air autour de la voiture : la résistance augmente, et la consommation avec elle. Sur route rapide, mieux vaut utiliser la ventilation ou une climatisation réglée avec modération.
+@ aérodynamique : vitres ouvertes | 2
+
+? Je transporte en permanence dans mon coffre des objets lourds dont je n'ai pas besoin. Conséquence :
++ Ma voiture consomme davantage
+- Ma voiture freine sur une distance plus courte
+- Mes pneus s'usent moins vite
+! Chaque kilo supplémentaire demande plus d'énergie à chaque accélération : la consommation et les émissions de CO2 augmentent, le freinage s'allonge et les pneus travaillent plus. Je ne garde à bord que ce qui est utile.
+@ poids inutile | 1
+
+? Un matin d'hiver, je démarre ma voiture à moteur thermique. La meilleure façon de faire est de :
+- Laisser tourner le moteur dix minutes à l'arrêt avant de partir
++ Partir sans attendre et rouler doucement les premiers kilomètres
+- Monter haut dans les tours pour le réchauffer plus vite
+! Un moteur chauffe bien plus vite en roulant qu'à l'arrêt. Le faire tourner sur place consomme et pollue inutilement, et c'est interdit en stationnement. Je pars dès que mes vitres sont dégagées, sans forte accélération tant que le moteur est froid.
+@ démarrage à froid | 2
+
+? Ma vieille voiture est irréparable. Pour m'en débarrasser, je :
+- La laisse sur un parking public en retirant les plaques
++ La remets à un centre agréé pour les véhicules hors d'usage
+- La revends en pièces détachées à n'importe qui, sans formalité
+! Un véhicule hors d'usage contient des huiles, des liquides, une batterie et des métaux polluants. Seul un centre agréé peut le dépolluer et le recycler ; la reprise est gratuite si le véhicule est complet, et le centre me remet un certificat de destruction. L'abandonner est une infraction.
+@ véhicule hors d'usage | 2
+
+? Je fais remplacer mes quatre pneus chez un professionnel. Les pneus usagés :
+- Doivent être rapportés chez moi et jetés avec les ordures ménagères
++ Sont repris par le professionnel pour être recyclés
+- Peuvent être brûlés dans mon jardin
+! Le vendeur de pneus neufs a l'obligation de reprendre gratuitement les pneus usagés. Ils sont ensuite rechapés, broyés pour faire des sols sportifs ou des revêtements, ou valorisés comme combustible dans l'industrie. Les brûler ou les abandonner dans la nature est interdit.
+@ pneus usagés | 1
+
+? Sur l'étiquette affichée près d'une voiture neuve en vente, les lettres de A à G renseignent sur :
+- Le niveau de confort
++ Les émissions de CO2 du véhicule
+- La durée de la garantie
+! L'étiquette énergie classe les voitures neuves de A (vert, faibles émissions de CO2) à G (rouge, fortes émissions) et indique la consommation. Elle aide à comparer les modèles : une voiture qui émet moins de CO2 consomme aussi moins de carburant.
+@ étiquette énergie des voitures | 2

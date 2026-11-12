@@ -1,0 +1,85 @@
+# Soleil, véhicule inconnu et situations particulières
+
+? En fin de journée, le soleil est bas, juste en face de moi, et m'éblouit. Je :
++ Ralentis et j'augmente la distance qui me sépare du véhicule de devant
++ Abaisse le pare-soleil et je garde un pare-brise propre
+- Garde ma vitesse pour quitter plus vite la zone
+! Ébloui, je vois mal les feux stop, les piétons et les cyclistes. Je réduis ma vitesse, j'allonge mes distances, j'abaisse le pare-soleil et je porte des lunettes de soleil adaptées. Un pare-brise sale, à l'intérieur comme à l'extérieur, aggrave fortement l'éblouissement.
+@ soleil de face | 1
+
+? Je veux conduire avec des lunettes de soleil très foncées, de catégorie 4. Ces lunettes :
+- Sont les plus sûres pour conduire en été
++ Ne conviennent pas à la conduite
+- Sont obligatoires en montagne
+! Les verres de catégorie 4, prévus pour la haute montagne ou la mer, filtrent trop de lumière : ils sont interdits pour la conduite, et un pictogramme de voiture barrée le rappelle sur la notice. Pour conduire, je choisis au maximum la catégorie 3, et je retire mes lunettes à l'entrée d'un tunnel.
+@ lunettes de soleil et conduite | 3
+
+? Le soleil est bas, juste derrière moi. Le risque particulier est que :
+- Je sois ébloui par mon propre tableau de bord
++ Les conducteurs qui arrivent en face me voient mal
+- Mes pneus chauffent davantage
+! Quand j'ai le soleil dans le dos, ce sont les usagers venant en face qui sont éblouis : ils peuvent ne pas me voir, ni voir mon clignotant, et me couper la route en tournant. J'allume mes feux de croisement et je me méfie aux intersections.
+@ soleil dans le dos | 2
+
+? Je roule à 130 km/h sur autoroute et j'éternue : mes yeux se ferment pendant une seconde. Pendant ce temps, je parcours environ :
+- 13 mètres
++ 36 mètres
+- 130 mètres
+! À 130 km/h, la voiture parcourt 36 mètres chaque seconde. Une crise d'éternuements, c'est donc plusieurs dizaines de mètres sans voir la route. En cas de rhume ou d'allergie, j'augmente mes distances et je vérifie que mes médicaments ne provoquent pas de somnolence.
+@ éternuements et rhume | 2
+
+? Un ami me prête sa voiture, que je n'ai jamais conduite. Avant de démarrer, je :
++ Règle le siège et les rétroviseurs et je repère les commandes
+- Pars tout de suite : toutes les voitures se conduisent de la même façon
+- Demande à mon passager d'actionner les commandes à ma place
+! Feux, essuie-glaces, frein de stationnement, marche arrière, dégivrage : leur emplacement change d'un modèle à l'autre. Je les repère à l'arrêt pour ne pas avoir à les chercher en roulant, et je fais les premiers kilomètres avec prudence, le temps de sentir le freinage et le gabarit.
+@ véhicule inconnu | 1
+
+? Avec mon permis B, je loue une camionnette de déménagement. Avant de partir, je relève en priorité :
+- La couleur du véhicule
++ Sa hauteur, sa largeur et sa longueur
+- La marque de l'autoradio
+! Une camionnette est bien plus haute, large et longue qu'une voiture : un pont bas, l'entrée d'un parking ou un auvent de station-service peuvent être infranchissables. Chargée, elle freine sur une distance plus longue, et sans rétroviseur intérieur je dois me fier aux rétroviseurs extérieurs.
+@ véhicule utilitaire de location | 2
+
+? Nous partons à trois voitures entre amis et je suis la dernière. À un feu, les deux premières passent et le feu devient rouge. Je :
+- Passe quand même pour ne pas perdre le groupe
++ M'arrête : je les rejoindrai au point de rendez-vous convenu
+- Accélère ensuite très fort pour les rattraper
+! Vouloir « coller » au groupe pousse à prendre des risques : feu grillé, distances trop courtes, vitesse excessive. Avant le départ, chacun note l'adresse et convient d'un point de rendez-vous : chaque conducteur peut alors rouler à son rythme en respectant les règles.
+@ rouler en convoi entre amis | 2
+
+? Je me déplace souvent en voiture pour mon travail. Sur la route, les accidents liés au travail sont :
+- Très rares
++ La première cause de mortalité au travail
+- Toujours sans gravité
+! Les accidents de la route, pendant les missions ou sur le trajet entre le domicile et le travail, sont la première cause de décès liés au travail. Le retard, les appels professionnels et la fatigue en sont les grands responsables : j'organise mes rendez-vous pour ne pas avoir à rattraper le temps sur la route.
+@ risque routier professionnel | 3
+
+? Le feu vient de passer au vert. Le conducteur derrière moi klaxonne aussitôt. Je :
+- Démarre le plus vite possible pour ne pas le faire attendre
++ Démarre normalement, après avoir vérifié que l'intersection est dégagée
+- Reste arrêté pour lui donner une leçon
+! Je ne laisse pas l'impatience des autres décider à ma place : avant de repartir, je vérifie qu'aucun piéton ne termine sa traversée et qu'aucun véhicule ne franchit le carrefour en retard. Répondre par la provocation ne ferait qu'envenimer la situation.
+@ pression des autres conducteurs | 1
+
+? Je n'ai pas conduit depuis plusieurs années. Pour reprendre le volant, il est conseillé de :
++ Recommencer par des trajets simples, aux heures calmes
++ Prendre une ou deux leçons de remise à niveau si je ne me sens pas à l'aise
+- Partir directement pour un long trajet de nuit sur autoroute
+! Les automatismes se perdent et les règles évoluent. Je reprends progressivement, sur des parcours connus et peu chargés, je relis les règles qui ont changé et, si besoin, je fais quelques heures avec un enseignant de la conduite.
+@ reprise de la conduite | 2
+
+? Pour ne pas être tenté par mon téléphone en conduisant, la solution la plus efficace est de :
+- Le poser sur mes genoux, écran visible
++ Activer le mode « conduite » ou « ne pas déranger » avant de démarrer
+- Répondre seulement aux messages les plus courts
+! Chaque sonnerie ou notification attire le regard et l'attention, même si je ne réponds pas. Activé avant le départ, le mode « conduite » coupe les alertes et peut prévenir automatiquement mes correspondants. Je lirai mes messages à la prochaine pause.
+@ téléphone : mode conduite | 1
+
+? Pendant que je roule, je veux changer un réglage dans les menus de l'écran tactile de ma voiture. Je :
+- Le fais tout de suite, en regardant l'écran le temps nécessaire
++ Attends d'être arrêté, ou je demande à mon passager de le faire
+- Lâche le volant quelques secondes pour aller plus vite
+! Naviguer dans les menus d'un écran tactile détourne les yeux de la route plusieurs secondes, comme un téléphone. Les réglages se font à l'arrêt, avant de partir ; en roulant, j'utilise les commandes au volant, la commande vocale, ou je confie la manœuvre à mon passager.
+@ écran tactile du véhicule | 2

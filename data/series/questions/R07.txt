@@ -1,0 +1,85 @@
+# Routes de campagne et imprévus
+
+? En forêt, à quels moments le risque de voir un animal sauvage traverser la route est-il le plus élevé ?
+- En plein midi
++ À l'aube et à la tombée de la nuit
+- Uniquement en hiver
+! Chevreuils, sangliers et cerfs se déplacent surtout au lever du jour et au crépuscule, et davantage encore à l'automne et au printemps. Dans les zones boisées ou signalées par un panneau, je réduis ma vitesse à ces heures et je surveille les bas-côtés.
+@ animaux sauvages : moments à risque | 1
+
+? Un chevreuil traverse la route loin devant moi et disparaît dans le bois. Je :
+- Reprends aussitôt ma vitesse : le danger est passé
++ Reste à vitesse réduite : d'autres animaux peuvent le suivre
+- Fais des appels de phares en accélérant
+! Les chevreuils, les biches et les sangliers se déplacent souvent à plusieurs : derrière le premier, un deuxième ou toute une harde peut surgir. Je garde une allure réduite et le pied prêt à freiner tant que je n'ai pas dépassé l'endroit.
+@ animaux sauvages : en groupe | 2
+
+? De nuit, je n'ai pas pu éviter un sanglier. Ma voiture est endommagée et l'animal gît sur la chaussée. Je :
+- Repars sans rien dire à personne
+- Tire l'animal blessé sur le bas-côté à mains nues
++ Me mets en sécurité, signale l'obstacle et préviens la gendarmerie ou la police
+! Un animal sur la chaussée est un danger pour les conducteurs suivants : feux de détresse, gilet, triangle si je peux le poser sans risque, puis appel au 17. Je n'approche pas d'un animal blessé, qui peut charger. Le signalement me servira aussi pour ma déclaration à l'assurance.
+@ collision avec un animal sauvage | 2
+
+? En période de récoltes, la chaussée est couverte de terre à la sortie d'un champ. Je :
++ Ralentis avant la zone et la franchis sans freiner ni braquer brusquement
+- Accélère pour la traverser plus vite
+- Freine fort une fois dessus
+! La boue laissée par les engins agricoles rend la route aussi glissante que du verglas, surtout s'il a plu. Je réduis ma vitesse avant d'y arriver, puis je passe en douceur, sans coup de frein ni coup de volant, en gardant mes distances.
+@ boue sur la chaussée | 2
+
+? Sur une route fraîchement gravillonnée, je :
+- Roule vite pour stabiliser la voiture
++ Réduis ma vitesse et j'augmente la distance avec le véhicule qui me précède
+- Suis de près la voiture de devant pour profiter de sa trace
+! Les gravillons roulent sous les pneus : l'adhérence chute et la distance de freinage s'allonge. Ils sont aussi projetés par les roues : en restant loin du véhicule qui me précède et en croisant les autres à faible allure, j'évite un pare-brise fêlé.
+@ gravillons | 1
+
+? Sur une route étroite, mes roues de droite mordent sur l'accotement en herbe. Pour revenir sur la chaussée, je :
+- Donne un coup de volant franc vers la gauche
+- Freine le plus fort possible
++ Lève le pied, tiens fermement le volant et reviens progressivement
+! Entre l'accotement et le bitume, l'adhérence n'est pas la même et il existe souvent une marche. Un coup de volant ou un freinage brutal ferait pivoter la voiture, parfois jusqu'à la voie d'en face. Je décélère, je garde le cap, puis je remonte doucement quand la vitesse a baissé.
+@ accotement non stabilisé | 3
+
+? Ce panneau m'annonce :
+- Une côte très raide
++ Un cassis ou un dos-d'âne : je ralentis avant de l'aborder
+- Une route en travaux
+! Ce panneau de danger signale une déformation de la chaussée, en creux (cassis) ou en bosse (dos-d'âne). Abordée trop vite, elle peut faire décoller les roues, déséquilibrer la voiture ou abîmer la suspension : je ralentis avant, pas dessus.
+@ cassis et dos-d'âne | 1 | A2a
+
+? Sur une petite route, un large engin agricole arrive en face. La route est trop étroite pour se croiser facilement. Je :
+- Continue à la même allure en serrant à peine à droite
++ Ralentis, serre à droite et m'arrête si nécessaire pour le laisser passer
+- Fais des appels de phares pour qu'il recule
+! Un tracteur avec son outil ou une moissonneuse occupe parfois plus que sa moitié de chaussée et manœuvre difficilement. Je facilite le croisement : vitesse réduite, position bien à droite, arrêt à l'endroit le plus large si besoin, en me méfiant de l'accotement.
+@ croisement avec un engin agricole | 2
+
+? J'approche du sommet d'une côte, sur une route étroite sans marquage. Je :
++ Serre bien à droite et réduis ma vitesse
+- Me place au milieu pour mieux voir de l'autre côté
+- Accélère pour franchir le sommet plus vite
+! Derrière un sommet de côte, je ne vois rien : un véhicule peut arriver en face au milieu de la route, un tracteur ou un cycliste peut se trouver juste après. Je tiens ma droite et j'adapte ma vitesse à la distance sur laquelle je vois.
+@ sommet de côte | 2
+
+? Après de fortes pluies, la route est recouverte d'eau sur plusieurs dizaines de mètres. Je ne connais pas la profondeur. Je :
+- M'engage lentement : une voiture flotte bien
++ Ne m'engage pas et je fais demi-tour
+- Passe à vive allure pour ne pas caler
+! Trente centimètres d'eau suffisent à soulever et emporter une voiture, et l'eau cache l'état de la chaussée. Beaucoup de victimes des inondations sont des automobilistes surpris dans leur véhicule. Devant une route inondée, je renonce et je cherche un autre itinéraire.
+@ route inondée | 2
+
+? Je roule sur une route de montagne où ce panneau est implanté. Dans cette zone :
+- Je peux m'arrêter pour admirer le paysage
++ Je surveille la chaussée et j'évite de m'arrêter
+- Je roule au milieu de la route
+! Ce panneau annonce un risque de chute de pierres : des blocs peuvent tomber ou se trouver déjà sur la chaussée, surtout après la pluie ou le gel. Je regarde loin devant moi, prêt à m'arrêter devant un obstacle, et je ne stationne pas sous la paroi.
+@ chute de pierres | 2 | A19
+
+? En été, à un carrefour de campagne, un champ de maïs très haut me cache la route que je vais croiser. Je suis prioritaire. Je :
+- Passe sans ralentir, puisque j'ai la priorité
++ Ralentis à l'approche, prêt à freiner
+- Klaxonne longuement en traversant
+! Si je ne vois pas les autres, ils ne me voient pas non plus : un conducteur peut s'avancer sur ma route pour chercher la visibilité, ou ne pas respecter la priorité. Avoir la priorité ne protège pas d'un choc : j'aborde le carrefour à une vitesse qui me permettrait de m'arrêter.
+@ intersection masquée par les cultures | 3

@@ -1,0 +1,85 @@
+# Zones apaisées et partage de la rue
+
+? Après ce panneau, à quelle vitesse maximale puis-je rouler ?
++ 20 km/h
+- 30 km/h
+- 50 km/h
+! Ce panneau marque l'entrée d'une zone de rencontre : la vitesse y est limitée à 20 km/h et les piétons peuvent marcher sur toute la chaussée, où ils ont la priorité sur les véhicules. Je roule lentement, prêt à m'arrêter.
+@ zone de rencontre : vitesse | 1 | B52
+
+? Dans une zone de rencontre, où ai-je le droit de stationner ?
+- Partout où je ne gêne pas les piétons
++ Uniquement sur les emplacements aménagés pour le stationnement
+- Nulle part : l'arrêt et le stationnement y sont toujours interdits
+! Dans une zone de rencontre, l'arrêt et le stationnement ne sont autorisés que sur les emplacements aménagés à cet effet. Partout ailleurs, la chaussée et ses abords restent libres pour les piétons et les cyclistes.
+@ zone de rencontre : stationnement | 3
+
+? À 30 km/h, sur route sèche, la distance nécessaire pour m'arrêter est d'environ 13 mètres. À 50 km/h, elle est d'environ :
+- 15 mètres
+- 20 mètres
++ 28 mètres
+! Entre 30 et 50 km/h, la distance d'arrêt fait plus que doubler : pendant la seconde de réaction, je parcours déjà 14 mètres à 50 km/h, avant même de freiner. Voilà pourquoi la vitesse est limitée à 30 km/h là où piétons, enfants et cyclistes sont nombreux.
+@ zone 30 : distance d'arrêt | 2
+
+? Je m'arrête « juste deux minutes » sur une bande cyclable pour déposer un colis. Cet arrêt est :
+- Toléré si je laisse mes feux de détresse allumés
++ Interdit : c'est un arrêt très gênant, puni d'une amende de 135 €
+- Autorisé en dehors des heures de pointe
+! L'arrêt et le stationnement sur une bande ou une piste cyclable sont classés « très gênants » (amende forfaitaire de 135 €, mise en fourrière possible). Même bref, mon arrêt oblige les cyclistes à se déporter au milieu des voitures.
+@ arrêt sur bande cyclable | 2
+
+? Faute de place, je gare ma voiture à cheval sur le trottoir, en laissant un passage d'un mètre. Ce stationnement est :
++ Interdit et très gênant, sauf si un marquage l'autorise à cet endroit
+- Autorisé, puisqu'un piéton peut encore passer
+- Autorisé pour moins d'une heure
+! Le trottoir est réservé aux piétons. Y stationner une voiture, même partiellement, est un stationnement très gênant (amende forfaitaire de 135 €) : une poussette ou un fauteuil roulant ne passent plus et doivent descendre sur la chaussée. Seul un emplacement matérialisé sur le trottoir permet de s'y garer.
+@ stationnement sur trottoir | 2
+
+? Je roule sur une route sans ligne centrale, dont les deux bords sont marqués par de larges accotements bordés d'une ligne discontinue. Une voiture arrive en face. Pour la croiser, je :
+- Garde le milieu de la chaussée : c'est à elle de s'écarter
++ Me déporte sur l'accotement de droite après avoir vérifié qu'aucun cycliste ne s'y trouve
+- Accélère pour passer le premier
+! Sur une chaussée à voie centrale banalisée, les voitures roulent au centre, sur une seule voie, et les cyclistes sur les accotements. Pour se croiser, les voitures empiètent sur ces accotements, mais seulement s'ils sont libres : sinon, je ralentis et je reste derrière le cycliste.
+@ chaussée à voie centrale banalisée | 3
+
+? Ce panneau signale :
+- Une route réservée aux voitures et aux motos
++ Une voie réservée aux piétons et aux véhicules sans moteur
+- Un parking pour vélos
+! La voie verte est réservée aux déplacements non motorisés : piétons, cyclistes et, si la signalisation le prévoit, cavaliers. Je n'y circule pas en voiture et je n'y stationne pas.
+@ voie verte | 1 | C115
+
+? Ce panneau carré indique :
++ Une piste ou une bande cyclable conseillée, réservée aux cyclistes
+- Un parking à vélos surveillé
+- Une route interdite aux cyclistes
+! Le panneau carré à fond bleu signale un aménagement conseillé et réservé aux cycles : les cyclistes peuvent choisir de rester sur la chaussée, je dois donc m'attendre à en rencontrer sur ma voie. En voiture, je n'y circule pas et je ne m'y arrête pas.
+@ piste cyclable conseillée | 2 | C113
+
+? Ce panneau rond signifie que :
+- Les cyclistes ont interdiction de passer
++ Les cyclistes doivent emprunter la piste ou la bande cyclable
+- La route est réservée aux voitures
+! Le panneau rond à fond bleu est une obligation : les cyclistes doivent utiliser cet aménagement, qui leur est réservé. Les autres véhicules n'ont pas le droit d'y circuler ni de s'y arrêter.
+@ piste cyclable obligatoire | 1 | B22a
+
+? En sortant en voiture d'une cour, je vais traverser le trottoir. Un enfant de six ans peut-il légalement y arriver à vélo ?
++ Oui, les enfants de moins de huit ans peuvent rouler à vélo sur le trottoir
+- Non, le vélo est toujours interdit sur le trottoir
+- Oui, mais seulement s'il porte un gilet jaune
+! Les enfants de moins de huit ans sont autorisés à circuler à vélo sur les trottoirs, à l'allure du pas et sans gêner les piétons. En franchissant un trottoir, je m'attends donc à voir surgir un jeune cycliste : j'avance très lentement et je regarde des deux côtés.
+@ enfants à vélo sur le trottoir | 3
+
+? Une personne se déplace en rollers. Pour le Code de la route, elle est considérée comme :
+- Un cycliste
++ Un piéton
+- Le conducteur d'un engin motorisé
+! Les utilisateurs de rollers, de planches à roulettes et de trottinettes sans moteur sont assimilés à des piétons : ils circulent sur les trottoirs et traversent aux passages pour piétons. Ils vont pourtant bien plus vite qu'un marcheur : à l'approche d'un passage, j'anticipe leur arrivée rapide.
+@ rollers et trottinettes sans moteur | 2
+
+? Je sors d'une zone de rencontre et je passe devant ce panneau. Désormais :
+- La vitesse reste limitée à 20 km/h jusqu'à la sortie de la ville
++ Les règles habituelles de circulation s'appliquent de nouveau
+- Les piétons gardent la priorité sur toute la chaussée
+! Ce panneau marque la fin de la zone de rencontre. Je retrouve les règles générales : en agglomération, 50 km/h au maximum sauf indication contraire, et les piétons circulent de nouveau sur les trottoirs. Je reste attentif : les habitudes de la zone ne s'arrêtent pas net au panneau.
+@ fin de zone de rencontre | 2 | B53

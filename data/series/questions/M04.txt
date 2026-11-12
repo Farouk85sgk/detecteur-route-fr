@@ -1,0 +1,85 @@
+# Entretien courant et petites pannes
+
+? Ma batterie est à plat. Pour démarrer avec des câbles et la batterie d'une autre voiture, je relie :
++ La borne « + » d'une batterie à la borne « + » de l'autre
+- La borne « + » d'une batterie à la borne « - » de l'autre
+- Les deux pare-chocs entre eux
+! Le câble rouge relie les deux bornes positives. Le câble noir part de la borne négative de la batterie qui dépanne et se fixe sur une partie métallique du moteur de la voiture en panne (une masse), loin de la batterie. Inverser les polarités peut détruire l'électronique des deux véhicules.
+@ batterie : câbles de démarrage | 2
+
+? Le moteur vient de tourner longtemps et il est très chaud. Puis-je ouvrir le bouchon du circuit de refroidissement pour vérifier le niveau ?
+- Oui, c'est le meilleur moment pour un contrôle précis
++ Non, le liquide est sous pression et brûlant : j'attends que le moteur ait refroidi
+- Oui, à condition de laisser tourner le moteur
+! À chaud, le liquide de refroidissement dépasse 100 °C et il est sous pression : en ouvrant le bouchon, il peut jaillir et me brûler gravement. Le niveau se contrôle moteur froid, sur les repères mini et maxi du vase d'expansion.
+@ liquide de refroidissement | 1
+
+? L'hiver approche. Dans le réservoir du lave-glace, je mets :
+- De l'eau du robinet, elle suffit toute l'année
++ Un liquide lave-glace qui résiste au gel
+- De l'eau chaude additionnée de sel
+! L'eau gèle dans le réservoir et dans les gicleurs : je me retrouve sans lave-glace au moment où les projections de sel et de boue salissent le plus le pare-brise. Un liquide spécial hiver reste efficace bien en dessous de 0 °C. Le sel abîmerait le circuit et la carrosserie.
+@ lave-glace en hiver | 1
+
+? À partir d'une certaine vitesse, mon volant se met à vibrer. La cause la plus probable est :
+- Un manque de liquide lave-glace
++ Un mauvais équilibrage des roues avant
+- Un niveau d'huile moteur trop élevé
+! Une roue mal équilibrée (masse perdue, jante choquée) fait vibrer le volant à certaines vitesses. Ces vibrations fatiguent le conducteur et usent les pneus, la direction et la suspension : je fais contrôler l'équilibrage sans attendre.
+@ vibrations du volant | 2
+
+? Un de mes pneus avant est beaucoup plus usé sur un bord que sur l'autre. Cela vient probablement :
++ D'un mauvais réglage du train avant (géométrie, parallélisme)
+- D'un essuie-glace défectueux
+- D'un carburant de mauvaise qualité
+! Une usure d'un seul côté de la bande de roulement trahit un défaut de géométrie, souvent après un choc contre un trottoir ou un nid-de-poule. Je fais contrôler et régler le train avant : la tenue de route en dépend, et le pneu neuf s'userait de la même façon.
+@ usure anormale des pneus | 2
+
+? Par grand froid, ma batterie :
+- Se recharge toute seule pendant la nuit
++ Perd une partie de sa capacité et peut ne plus suffire pour démarrer
+- N'est jamais affectée
+! Le froid ralentit la réaction chimique de la batterie alors que le démarreur demande plus d'énergie pour lancer un moteur froid. Une batterie âgée lâche donc souvent en hiver. Un démarrage qui devient paresseux doit m'alerter : je la fais contrôler avant la panne.
+@ batterie et froid | 1
+
+? En été, après un trajet avec la climatisation, je découvre une petite flaque d'eau claire sous l'avant de ma voiture. C'est :
++ Normal : c'est l'eau de condensation de la climatisation
+- Une fuite d'huile moteur
+- Une fuite de liquide de frein
+! La climatisation assèche l'air de l'habitacle : l'eau récupérée s'écoule sous la voiture, claire et sans odeur. En revanche, une tache grasse, sombre ou colorée (huile, liquide de refroidissement, liquide de frein) doit me conduire rapidement chez un professionnel.
+@ taches sous le véhicule | 2
+
+? Le carnet d'entretien prévoit le remplacement de la courroie de distribution. Si j'attends qu'elle casse :
+- Rien de grave : le moteur s'arrête simplement
++ Le moteur peut être gravement endommagé, voire détruit
+- Seule la climatisation cesse de fonctionner
+! La courroie de distribution synchronise les soupapes et les pistons. Si elle casse en roulant, ils se heurtent : la réparation coûte souvent le prix d'un moteur. Elle se remplace donc à titre préventif, au kilométrage ou à l'âge indiqués par le constructeur.
+@ courroie de distribution | 3
+
+? L'ampoule d'un de mes feux stop est grillée. Je :
+- Peux attendre le prochain contrôle technique
++ La remplace au plus vite : ceux qui me suivent voient moins bien que je freine
+- Roule avec les feux de détresse en attendant
+! Un feu stop en panne retarde la réaction du conducteur qui me suit et augmente le risque d'être percuté par l'arrière. Rouler avec un feu défectueux est aussi une infraction. Je vérifie régulièrement mes feux, avec l'aide de quelqu'un ou du reflet dans une vitrine.
+@ feux : ampoule grillée | 1
+
+? Ma voiture diesel récente utilise de l'AdBlue. Si je laisse ce réservoir se vider complètement :
+- Rien ne change : ce produit ne sert qu'au confort
++ Le moteur ne pourra plus redémarrer une fois arrêté
+- Les freins deviennent moins efficaces
+! L'AdBlue est injecté dans l'échappement pour réduire les oxydes d'azote. Un message d'alerte s'affiche bien avant la fin du réservoir, avec le nombre de kilomètres restants. Si j'attends qu'il soit vide, la voiture refusera de redémarrer tant que je n'aurai pas refait le niveau.
+@ AdBlue | 3
+
+? Avec le temps, le liquide de frein :
+- Devient plus efficace à force de servir
++ Se charge d'humidité et perd de son efficacité
+- S'évapore complètement en quelques mois
+! Le liquide de frein absorbe peu à peu l'humidité de l'air. Lors de freinages répétés, il peut alors se mettre à bouillir : la pédale devient molle et le freinage s'effondre. Il se remplace donc régulièrement, en général tous les deux ans, selon le carnet d'entretien.
+@ liquide de frein | 3
+
+? Une épaisse fumée noire sort de l'échappement de ma voiture à chaque accélération. Je :
+- Ne m'inquiète pas : c'est le signe d'un moteur puissant
++ Fais contrôler le moteur : il brûle mal son carburant et pollue
+- Ajoute de l'huile dans le réservoir de carburant
+! Une fumée noire signale une mauvaise combustion : filtre à air encrassé, injection déréglée ou système antipollution défaillant. La voiture consomme et pollue davantage, et elle risque d'être refusée au contrôle technique. Un passage au garage s'impose.
+@ fumées d'échappement | 2
