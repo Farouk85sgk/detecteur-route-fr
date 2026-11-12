@@ -127,6 +127,13 @@ branch », branche `main`, dossier `/docs` → **Save**. Le site se met ensuite 
 Sur l'ordinateur : `python -m http.server --directory docs 8000` puis http://localhost:8000 (paramètre d'adresse
 `?backend=wasm` si la carte graphique pose problème). Après un réentraînement : `python tools/export_web.py`.
 
+**Sur son propre site (Hostinger, o2switch, OVH...)** : `python tools/zip_hebergement.py --sortie repere-hostinger.zip`
+fabrique un zip d'environ 32 Mo qui contient un seul dossier, `repere`. On l'importe dans le dossier `public_html`
+du site avec le gestionnaire de fichiers de l'hébergeur, on l'extrait, et l'appli répond à l'adresse
+`https://votre-domaine/repere/` sans toucher au reste du site (il faut une adresse en **https**, sinon le
+téléphone refuse la caméra). Le zip contient un fichier `LISEZ-MOI.txt` qui détaille la marche à suivre, et un
+`.htaccess` pour que les mises à jour arrivent tout de suite sur les téléphones.
+
 **Banque de questions intégrée.** Les questions sont écrites dans des fichiers texte faciles à relire et à
 corriger, un par série (`data/series/questions/L01.txt`...), la lettre donnant le thème de l'examen :
 
@@ -233,7 +240,60 @@ ambigu est retiré. Le troisième tour d'entraînement part de ces vignettes cor
 
 ### Résultats mesurés
 
-[[RESULTATS]]
+Toutes les mesures portent sur les **1 542 photos de validation** : de vraies routes françaises, dans des zones
+géographiques que les modèles n'ont jamais vues à l'entraînement.
+
+**Le détecteur** trouve-t-il les panneaux, quel que soit leur type ? (1 973 panneaux annotés, seuil 0,25,
+`tools/evaluer_detecteur.py`)
+
+| Détecteur | AP50 | Précision | Rappel | Rappel : moins de 10 px | 10 à 20 px | plus de 20 px |
+|---|---|---|---|---|---|---|
+| version précédente | 0,645 | 0,79 | 0,56 | 0,14 | 0,38 | 0,69 |
+| après la première phase d'entraînement | 0,841 | 0,70 | 0,83 | 0,22 | 0,72 | 0,95 |
+| **version livrée** | **0,902** | 0,77 | **0,88** | 0,39 | 0,81 | 0,97 |
+
+La version précédente manquait presque un panneau sur deux sur ces photos ; la version livrée en trouve près de
+neuf sur dix, et 97 % de ceux qui mesurent plus de 20 pixels.
+
+**Les marquages au sol** sont mesurés sur 800 images synthétiques de validation : AP50 moyenne de 0,83 pour les
+22 marquages, dont 18 au-dessus de 0,82 (passage piétons 0,92, flèches 0,86 à 0,97, lignes continues et
+discontinues 0,83 et 0,85, zébras 0,91, damier 0,86). Quatre restent en retrait : la ligne de rive (0,75), les
+dents de requin (0,73) et surtout les deux lignes fines en travers de la voie, **ligne d'arrêt STOP (0,32) et
+ligne de cédez-le-passage (0,34)**, encore peu fiables. Le mot « STOP » peint au sol (0,90) et le triangle de
+cédez-le-passage (0,95) sont, eux, bien reconnus.
+
+**Le classifieur** (troisième tour, vignettes corrigées) donne le bon type pour **93,3 % des vignettes en moyenne
+par panneau** (94,1 % toutes vignettes confondues) sur 2 330 vraies vignettes de validation ; le tour précédent
+était à 92,9 % sur les mêmes vignettes. Il rejette maintenant 57 % des panneaux hors catalogue, contre 22 %.
+
+**La chaîne complète**, comme dans l'appli (détecteur, puis classifieur, seuil des panneaux à 0,455 ;
+`tools/evaluer_chaine.py`), sur les 1 811 panneaux du catalogue annotés dans ces photos :
+
+| Modèles | Trouvés et bien nommés | Confusions | Fausses annonces | Annonces justes |
+|---|---|---|---|---|
+| détecteur de la première phase + classifieur du deuxième tour | 77,0 % | 95 | 150 | 85,1 % |
+| détecteur livré + classifieur du deuxième tour | 80,9 % | 105 | 145 | 85,4 % |
+| **détecteur livré + classifieur du troisième tour (version livrée)** | **80,8 %** | **88** | **137** | **86,7 %** |
+
+Selon la taille du panneau dans l'image : 91 % au-dessus de 24 px, 79 % entre 12 et 24 px, 41 % en dessous de
+12 px. Ces chiffres valent pour **une seule photo** ; en roulant, le panneau grossit d'image en image et l'appli
+attend de le voir plusieurs fois de suite avant de l'annoncer. Le seuil règle le compromis entre oublis et erreurs :
+
+| Seuil des panneaux | Trouvés et bien nommés | Confusions | Fausses annonces | Annonces justes |
+|---|---|---|---|---|
+| 0,35 | 82,6 % | 103 | 169 | 84,6 % |
+| **0,455 (appli)** | **80,8 %** | **88** | **137** | **86,7 %** |
+| 0,55 | 78,8 % | 64 | 107 | 89,3 % |
+| 0,70 | 72,9 % | 37 | 62 | 93,0 % |
+
+Les panneaux les moins bien reconnus (cinq à dix exemples chacun dans ces photos) sont la chaussée rétrécie A3, le
+panonceau M6h, la limitation de hauteur B12 et la balise J3 ; les confusions les plus fréquentes touchent des
+panneaux qui se ressemblent (AB3a / AB3b, B6a1 / B6a2, B50c / B50d).
+
+**Dans le navigateur**, sur une vidéo d'essai faite de dix vraies scènes, les dix panneaux attendus sont annoncés,
+ainsi que trois autres réellement présents dans les images (une balise J3, une limitation de hauteur, un 110 sur
+un panneau d'autoroute) ; aucune annonce de panneau n'est fausse. Sur un seul cœur de processeur, sans carte
+graphique, l'analyse y prend environ 130 ms par image (machine d'essai).
 
 ## 4. Améliorer les modèles avec vos propres vidéos
 
@@ -291,11 +351,16 @@ python tools/train_cpu_bf16.py --data data/route_fr.yaml --weights weights/route
 python tools/evaluer_detecteur.py --poids weights/route_fr_yolov5n.pt --images datasets/reel/images/val datasets/route_fr/images/val
 python tools/train_classifieur.py --data datasets/vignettes datasets/vignettes_synth
 python tools/miner_rejets.py && python tools/train_classifieur.py --data datasets/vignettes datasets/vignettes_synth --epochs 4 --lr 5e-4
+# étiquettes corrigées à l'œil, puis troisième tour du classifieur et mesure de la chaîne complète
+python tools/corriger_vignettes.py --data datasets/vignettes --corrections data/panoramax_corrections.txt --reel datasets/reel --vues datasets_src/panoramax
+python tools/train_classifieur.py --data datasets/vignettes datasets/vignettes_synth --depart weights/panneaux_cls.pt --epochs 6 --lr 8e-4
+python tools/evaluer_chaine.py --poids weights/route_fr_yolov5n.pt --classifieur weights/panneaux_cls.pt
 # --- appli ---
 python tools/make_icons.py --commons datasets_src/commons   # icônes (schémas officiels de Wikimedia Commons)
 python tools/construire_series.py                           # banque de questions du code
 python tools/photos_quiz.py --vues datasets_src/panoramax --classifieur weights/panneaux_cls.pt   # quiz « En situation réelle »
 python tools/export_web.py                                  # détecteur ONNX, catalogue, icônes et crédits de la version web
+python tools/zip_hebergement.py --sortie repere-hostinger.zip   # zip de l'appli pour un hébergeur (dossier « repere »)
 # « Mes panneaux » (version web) : panneaux-identités, puis modèle d'empreintes -> docs/empreinte.onnx
 python synth/generate_identites.py --fonds datasets_src/fonds --out datasets/empreintes
 python tools/train_empreinte.py --data datasets/empreintes
