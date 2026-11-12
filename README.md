@@ -9,11 +9,12 @@ détection en direct avec feux, piétons et cyclistes, trajets en photos, album,
 examens blancs, quiz sur de vraies photos, quête et profils (voir « Version téléphone » plus bas).
 
 - **Un catalogue de 308 éléments** (`route_fr/classes.py`) : 285 panneaux, panonceaux et balises, désignés par leur
-  code officiel, et 23 marquages au sol. La caméra en reconnaît **233** : 210 panneaux (dangers, priorités,
+  code officiel, et 23 marquages au sol. La caméra en reconnaît **231** : 209 panneaux (dangers, priorités,
   interdictions, limitations de 5 à 130 km/h, stationnement et zones, obligations, fins, indications, services,
-  signalisation temporaire, balises, panonceaux) et les 23 marquages (lignes continue, discontinue, mixte, de
-  dissuasion, de rive, d'effet des feux, STOP, cédez-le-passage, passage piétons, flèches, zébras, damier, vélo, BUS,
-  zigzag, dents de requin...). Les 75 autres panneaux, trop rares sur les photos pour être appris, ont leur fiche.
+  signalisation temporaire, balises, panonceaux) et 22 marquages (lignes continue, discontinue, mixte, de
+  dissuasion, de rive, STOP, cédez-le-passage, passage piétons, flèches, zébras, damier, vélo, BUS, zigzag, dents de
+  requin...). Les 76 autres panneaux, trop rares sur les photos pour être appris, et la ligne d'effet des feux ont
+  leur fiche dans l'album.
 - **Deux étages** : YOLOv5n repère les marquages et tous les panneaux (une seule classe « panneau »), puis un
   classifieur YOLOv5n-cls dit de quel panneau il s'agit. Il regarde le panneau **et ce qui se trouve dessous** : il
   distingue ainsi un sens interdit d'un « sens interdit sauf vélos », un stationnement interdit d'une place réservée
@@ -91,7 +92,7 @@ Web : carte graphique WebGPU si disponible, sinon processeur) et **rien n'est en
 photos, trajets et progression restent sur le téléphone. Sur Android ou iPhone, menu du navigateur →
 « Ajouter à l'écran d'accueil » pour l'installer comme une appli.
 
-- **Détection en direct** (caméra ou vidéo) : 210 panneaux et 23 marquages, plus **feux tricolores** (couleur lue,
+- **Détection en direct** (caméra ou vidéo) : 209 panneaux et 22 marquages, plus **feux tricolores** (couleur lue,
   annonce du passage au vert), **piétons, cyclistes et deux-roues** avec leur distance approximative. Carte du
   dernier élément avec son explication, historique en pastilles, vitesse maximale en cours, lignes à gauche et à
   droite, annonces vocales (« Limitation à 50 », règle expliquée à voix haute), vibration. Pause : pincer pour
@@ -215,11 +216,20 @@ porte le sens du panneau).
 
 ### Le classifieur de panneaux
 
-`tools/train_classifieur.py` entraîne un YOLOv5n-cls à 212 sorties : les 210 panneaux reconnus, « autre » (panneau
+`tools/train_classifieur.py` entraîne un YOLOv5n-cls à 211 sorties : les 209 panneaux reconnus, « autre » (panneau
 hors catalogue) et « fond » (fausse détection). Il voit un carré autour de la boîte détectée, prolongé vers le bas
 (64 x 96 px) pour lire le panonceau. À l'entraînement, le cadrage est décalé au hasard et l'image dégradée
 (panneau lointain de quelques pixels, flou, bruit, contre-jour, compression). Un second tour ajoute à « fond » et à
 « autre » ce que le détecteur propose à tort sur les photos d'entraînement (`tools/miner_rejets.py`).
+
+**Étiquettes contrôlées à l'œil.** Le modèle automatique qui a annoté les photos se trompe de façon répétée sur
+certains panneaux : il prend le logo d'une enseigne pour une limitation à 100, un schéma de giratoire pour un
+panonceau « sauf vélos », une fenêtre pour une station-service, un piéton portant un sac en bandoulière pour une
+fin d'interdiction... `tools/planche_classe.py` affiche toutes les vignettes d'une classe, numérotées ; les
+erreurs repérées sont notées dans `data/panoramax_corrections.txt` (**2 048 vignettes corrigées dans 45 classes**)
+et `tools/corriger_vignettes.py` les applique : un faux panneau devient un exemple de la classe « autre », un cas
+ambigu est retiré. Le troisième tour d'entraînement part de ces vignettes corrigées. Les photos du quiz
+« En situation réelle » (`tools/photos_quiz.py`) ont été vérifiées une à une de la même façon.
 
 ### Résultats mesurés
 

@@ -161,9 +161,17 @@ def main():
     ap.add_argument("--max-par-classe", type=int, default=1500)
     ap.add_argument("--sortie", default=str(ROOT / "weights" / "panneaux_cls.pt"))
     ap.add_argument("--sans-export", action="store_true")
+    ap.add_argument("--evaluer", action="store_true", help="mesurer seulement le classifieur --depart sur les vraies vignettes de validation")
     a = ap.parse_args()
     torch.manual_seed(0)
     random.seed(0)
+    if a.evaluer:
+        val = Vignettes(a.data[:1], "val", False)
+        model = torch.load(a.depart, map_location="cpu", weights_only=False)["model"].float()
+        moy, glob, par = bilan(predire(model, val), val.y)
+        rejets = ", ".join(f"{CLASSES[c]} {par[c]:.2f}" for c in (len(CLASSES) - 2, len(CLASSES) - 1) if c in par)
+        print(f"{a.depart} : {moy:.3f} par classe, {glob:.3f} global sur {len(val)} vraies vignettes ({rejets})")
+        return
     train = Vignettes(a.data, "train", True, a.max_par_classe)
     val = Vignettes(a.data[:1], "val", False)  # validation sur les vraies photos seulement
     n = np.bincount(train.y, minlength=len(CLASSES))

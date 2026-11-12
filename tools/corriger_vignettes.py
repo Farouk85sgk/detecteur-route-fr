@@ -12,11 +12,18 @@ la photo et numéro de l'annotation) et la décision :
 Deux panneaux symétriques et rares (voie de détresse à droite C26a, à gauche C26b) reçoivent ensuite chacun le miroir
 des vignettes d'entraînement de l'autre (fichiers miroir_*.jpg, refaits à chaque passage).
 
-À lancer après tools/panoramax_dataset.py ; sans effet sur les vignettes déjà corrigées.
+Avec --reel et --vues, les mêmes corrections sont reportées dans les types de panneaux qui servent à évaluer la chaîne
+complète (datasets/reel/codes/val, lus par tools/evaluer_chaine.py) : « autre » pour un faux panneau, « ? » (non jugé)
+pour un cas écarté.
+
+    python tools/corriger_vignettes.py --data datasets/vignettes --reel datasets/reel --vues datasets_src/panoramax
+
+À lancer après tools/panoramax_dataset.py ; sans effet sur ce qui est déjà corrigé.
 """
 
 import argparse
 import collections
+import json
 import shutil
 from pathlib import Path
 
@@ -43,13 +50,49 @@ def miroirs(data):
         print(f"{cible:10s} miroirs  {n}")
 
 
+def corriger_codes(reel, vues, corrections):
+    """Reporte les corrections dans reel/codes/val : la ligne d'un panneau corrigé y est retrouvée par sa position."""
+    par_photo = collections.defaultdict(list)
+    for classe, cle, decision in corrections:
+        photo, i = cle.rsplit("_", 1)
+        par_photo[photo].append((classe, int(i), "autre" if decision == "autre" else "?"))
+    n = 0
+    for ligne in (reel / "sources.jsonl").read_text(encoding="utf-8").split("\n"):
+        if not ligne.strip():
+            continue
+        src = json.loads(ligne)
+        if src["split"] != "val" or src["id"] not in par_photo:
+            continue
+        annots = json.loads((vues / "vues" / f"{src['id']}.json").read_text(encoding="utf-8"))["annots"]
+        for nom, (x0, y0, S) in src["fenetres"].items():
+            fichier = reel / "codes" / "val" / f"{nom}.txt"
+            if not fichier.exists():
+                continue
+            lignes = [l.split() for l in fichier.read_text().split("\n") if l.strip()]
+            for classe, i, nouveau in par_photo[src["id"]]:
+                bx1, by1, bx2, by2 = annots[i]["box"]
+                cx1, cy1, cx2, cy2 = max(bx1, x0), max(by1, y0), min(bx2, x0 + S), min(by2, y0 + S)
+                attendu = [((cx1 + cx2) / 2 - x0) / S, ((cy1 + cy2) / 2 - y0) / S, (cx2 - cx1) / S, (cy2 - cy1) / S]
+                for l in lignes:
+                    if l[0] == classe and max(abs(float(v) - w) for v, w in zip(l[1:], attendu)) < 2e-4:
+                        l[0] = nouveau
+                        n += 1
+            fichier.write_text("".join(" ".join(l) + "\n" for l in lignes))
+    print(f"{n} types de panneaux corrigés dans {reel / 'codes' / 'val'}")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--data", default=str(ROOT / "datasets" / "vignettes"))
     ap.add_argument("--corrections", default=str(ROOT / "data" / "panoramax_corrections.txt"))
+    ap.add_argument("--reel", default="", help="jeu de photos réelles (datasets/reel) : corrige aussi ses types de panneaux de validation")
+    ap.add_argument("--vues", default=str(ROOT / "datasets_src" / "panoramax"))
     a = ap.parse_args()
     data = Path(a.data)
     faits = collections.Counter()
+    toutes = [l.split() for l in Path(a.corrections).read_text(encoding="utf-8").split("\n") if l.strip() and not l.startswith("#")]
+    if a.reel:
+        corriger_codes(Path(a.reel), Path(a.vues), toutes)
     for ligne in Path(a.corrections).read_text(encoding="utf-8").split("\n"):
         if not ligne.strip() or ligne.startswith("#"):
             continue
