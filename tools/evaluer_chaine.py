@@ -109,11 +109,11 @@ def main():
         elif nature == "confusions":
             confusions[(vrai, code)] += 1
     n, ok = total["panneaux du catalogue"], total["bonnes réponses"]
-    annonces = ok + total["confusions"] + total["fausses annonces"]
+    nb_annonces = ok + total["confusions"] + total["fausses annonces"]
     print(f"{total['images']} images, {n} panneaux du catalogue annotés")
     print(f"trouvés et bien nommés : {ok} ({ok / max(n, 1):.1%})   confusions : {total['confusions']}   fausses annonces : {total['fausses annonces']}"
           f"   (sur un objet non identifié : {total['sur un objet non identifié']}, sur un panneau de type inconnu : {total['sur un panneau de type inconnu']})")
-    print(f"exactitude des annonces : {ok / max(annonces, 1):.1%}")
+    print(f"exactitude des annonces : {ok / max(nb_annonces, 1):.1%}")
     print("rappel par taille : " + ", ".join(f"{k} : {v[1] / max(v[0], 1):.0%} ({v[0]})" for k, v in sorted(tailles.items())))
     faibles = sorted(((c, v[1] / v[0], v[0]) for c, v in par_classe.items() if v[0] >= 4), key=lambda t: t[1])[:20]
     print("panneaux les moins bien reconnus : " + ", ".join(f"{c} {r:.0%} ({k})" for c, r, k in faibles))
