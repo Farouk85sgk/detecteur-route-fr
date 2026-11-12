@@ -14,7 +14,9 @@ Puis envoyer sur GitHub (la page se met à jour toute seule, voir README) ou tes
 
 import argparse
 import dataclasses
+import hashlib
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -92,6 +94,22 @@ def credits_html(md):
     )
 
 
+def version_cache(web):
+    """Donne au cache des fichiers lourds (modèles, icônes, photos du quiz), dans sw.js, un nom tiré de leur contenu :
+    dès que l'un d'eux change, les téléphones qui ont déjà l'appli téléchargent les nouveaux au lieu de garder les anciens."""
+    h = hashlib.sha1()
+    for f in sorted([*web.glob("*.onnx"), *web.glob("icones/*.png"), *web.glob("series/photos/*.jpg")]):
+        h.update(f.name.encode())
+        h.update(f.read_bytes())
+    nom = f"repere-lourds-{h.hexdigest()[:8]}"
+    sw = web / "sw.js"
+    js, n = re.subn(r'LOURDS = "repere-lourds-[^"]*"', f'LOURDS = "{nom}"', sw.read_text(encoding="utf-8"))
+    if n != 1:
+        raise SystemExit("sw.js : nom du cache des fichiers lourds introuvable")
+    sw.write_text(js, encoding="utf-8")
+    return nom
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--poids", default=str(ROOT / "weights" / "route_fr_yolov5n.pt"))
@@ -110,7 +128,7 @@ def main():
     (web / "credits.html").write_text(credits_html((ROOT / "route_fr" / "icones" / "CREDITS.md").read_text(encoding="utf-8")), encoding="utf-8")
     for ancien in ("modele.onnx", "classifieur.onnx", "classifieur.json", "classes.json"):  # fichiers des versions 1 et 2
         (web / ancien).unlink(missing_ok=True)
-    print(f"Version web prête dans {web}")
+    print(f"Version web prête dans {web} (cache des fichiers lourds : {version_cache(web)})")
 
 
 if __name__ == "__main__":
