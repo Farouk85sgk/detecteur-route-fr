@@ -1,0 +1,85 @@
+# Panneaux de danger : reconnaître et réagir
+
+? Ce panneau m'annonce :
+- Un seul virage à droite
++ Une succession de virages, dont le premier est à droite
+- Une route interdite aux véhicules longs
+! Ce panneau de danger annonce plusieurs virages qui se suivent, le premier vers la droite. Je ralentis avant d'entrer dans le premier, je reste bien à droite et je ne dépasse pas : la visibilité est réduite d'un virage à l'autre.
+@ succession de virages | 1 | A1c
+
+? Je rencontre ce panneau. Le premier virage que je vais aborder tourne :
+- À droite
++ À gauche
+- On ne peut pas le savoir
+! Le dessin se lit de bas en haut, comme la route : ici, le premier virage est à gauche. Dans un virage à gauche, je me place bien à droite de ma voie pour ne pas « couper » la trajectoire d'un véhicule venant en face.
+@ succession de virages : sens du premier | 2 | A1d
+
+? Ce panneau annonce :
++ Un ralentisseur de type dos-d'âne
+- Un pont suspendu
+- Une côte très raide
+! Ce panneau signale un ralentisseur : une bosse aménagée en travers de la chaussée pour obliger à rouler lentement. Il s'accompagne le plus souvent d'une limitation à 30 km/h. Je ralentis avant de le franchir, pas dessus.
+@ ralentisseur | 1 | A2b
+
+? Ce panneau m'indique que la chaussée va se rétrécir :
++ Par la droite
+- Par la gauche
+- Des deux côtés à la fois
+! Le dessin montre le bord droit de la route qui se rapproche : la chaussée se rétrécit par la droite. Je ralentis et je me prépare à me décaler vers la gauche, en vérifiant ce qui arrive en face et derrière moi.
+@ chaussée rétrécie par la droite | 2 | A3a
+
+? Ce panneau est implanté sur ma route. Il fait beau et la chaussée est sèche. Je :
+- N'en tiens pas compte : il ne vaut que par temps de pluie
++ Reste prudent : la chaussée peut être glissante à cet endroit même par temps sec
+- Accélère pour passer plus vite la zone
+! Ce panneau signale une chaussée particulièrement glissante : revêtement usé, feuilles, boue, gravillons, humidité qui persiste. Je réduis ma vitesse et j'évite les freinages et les coups de volant brusques, surtout à la première pluie.
+@ chaussée glissante | 2 | A4
+
+? Ce panneau annonce :
+- Une gare
+- Un passage à niveau muni de barrières
++ Un passage à niveau sans barrière
+! La locomotive signale un passage à niveau sans barrière ni demi-barrière : rien ne m'arrêtera physiquement si un train arrive. Je ralentis, je regarde des deux côtés et j'écoute. Le passage est souvent équipé d'un panneau STOP ou d'un feu rouge clignotant.
+@ passage à niveau sans barrière | 1 | A8
+
+? Ce panneau triangulaire :
++ Annonce un passage pour piétons situé plus loin
+- Est planté à l'endroit exact où les piétons traversent
+- Interdit la route aux piétons
+! Le triangle bordé de rouge est un panneau de danger : il annonce un passage pour piétons à l'avance, environ 150 m avant hors agglomération et 50 m avant en ville. À l'endroit même du passage, c'est un panneau carré à fond bleu qui est utilisé.
+@ passage pour piétons : annonce | 2 | A13b
+
+? Ce panneau m'avertit :
+- Qu'un feu tricolore est en panne
++ Que la circulation est réglée par des feux tricolores un peu plus loin
+- Que les feux de croisement sont obligatoires
+! Ce panneau annonce des feux tricolores, souvent placés à un endroit où on ne les attend pas : sortie de virage, route rapide, entrée d'agglomération. Je lève le pied et je me prépare à trouver une file de véhicules arrêtés.
+@ annonce de feux tricolores | 1 | A17
+
+? Je roule sur une route à sens unique et je rencontre ce panneau. Il m'annonce que :
++ La circulation va se faire dans les deux sens
+- Je vais devenir prioritaire
+- Le dépassement va devenir obligatoire
+! Ce panneau annonce une section à double sens après une route à sens unique ou à chaussées séparées. Des véhicules vont arriver en face : je serre à droite et je ne dépasse plus comme si toute la chaussée m'était réservée.
+@ circulation à double sens | 2 | A18
+
+? Ce panneau signale :
+- Une aire de lavage pour voitures
++ Un débouché sur un quai ou une berge
+- Un passage à gué
+! La route aboutit à un quai ou à une berge, sans protection : une erreur de trajectoire ou de freinage peut envoyer la voiture à l'eau. Je réduis fortement ma vitesse, surtout de nuit ou sur sol mouillé.
+@ débouché sur un quai ou une berge | 2 | A20
+
+? Après ce panneau, je dois m'attendre à :
++ Voir des cyclistes déboucher de la droite ou de la gauche
+- Rouler sur une piste réservée aux vélos
+- Trouver un garage à vélos
+! Ce panneau annonce un endroit où des cyclistes peuvent arriver sur la route, par exemple à la fin d'une piste cyclable ou d'une voie verte. Je ralentis et je surveille les deux côtés : un cycliste est étroit et peut être masqué par la végétation.
+@ débouché de cyclistes | 1 | A21
+
+? Ce panneau m'annonce :
+- Un aéroport avec parking
++ Un endroit où des avions volent à basse altitude
+- Une interdiction de s'arrêter
+! Ce panneau signale la traversée d'une aire de danger aérien, près d'une piste : un avion peut passer très bas au-dessus de la route, avec un bruit soudain et violent. Prévenu, je ne me laisse pas surprendre et je garde ma trajectoire.
+@ aire de danger aérien | 2 | A23

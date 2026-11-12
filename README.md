@@ -5,7 +5,7 @@ sur le code de [YOLOv5](https://github.com/ultralytics/yolov5) (dossier `yolov5/
 photos de routes françaises**.
 
 **Version téléphone « Repère », sans installation : https://farouk85sgk.github.io/detecteur-route-fr/** :
-détection en direct avec feux, piétons et cyclistes, trajets en photos, album, **625 questions de code en 52 séries**,
+détection en direct avec feux, piétons et cyclistes, trajets en photos, album, **685 questions de code en 57 séries**,
 examens blancs, quiz sur de vraies photos, quête et profils (voir « Version téléphone » plus bas).
 
 - **Un catalogue de 308 éléments** (`route_fr/classes.py`) : 285 panneaux, panonceaux et balises, désignés par leur
@@ -101,7 +101,7 @@ photos, trajets et progression restent sur le téléphone. Sur Android ou iPhone
   vidéo et la position GPS (lien vers la carte) ; vidéo du trajet à enregistrer ou partager ; quiz du trajet.
 - **Album** : 314 éléments rangés en 14 familles, avec les schémas officiels des panneaux ; en couleur une fois
   repérés sur la route, avec leur fiche (sens, bon réflexe, comment le reconnaître, ta photo).
-- **Code de la route** : **625 questions originales en 52 séries**, classées selon les dix thèmes de l'examen
+- **Code de la route** : **685 questions originales en 57 séries**, classées selon les dix thèmes de l'examen
   (circulation, conducteur, route, autres usagers, notions diverses, premiers secours, prendre et quitter son
   véhicule, mécanique, sécurité, environnement), chacune avec son explication ; progression par thème, erreurs à
   revoir, et **examens blancs** de 40 questions réparties comme à l'épreuve (35 bonnes réponses pour réussir).

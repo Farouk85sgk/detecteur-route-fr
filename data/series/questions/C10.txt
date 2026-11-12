@@ -1,0 +1,85 @@
+# Observer, prévoir, décider
+
+? En circulation normale, je regarde dans mes rétroviseurs :
+- Uniquement avant de dépasser
++ Régulièrement, et toujours avant de ralentir ou de changer de direction
+- Seulement quand j'entends un klaxon
+! Savoir en permanence ce qui se passe derrière moi me permet de choisir la bonne réaction : freiner fort ou non, me décaler, laisser passer. Un coup d'œil toutes les quelques secondes, et systématiquement avant de ralentir, de m'arrêter ou de changer de voie.
+@ rétroviseurs : contrôle régulier | 1
+
+? Arrêté à un STOP, je vois arriver par la gauche une voiture dont le clignotant droit est allumé. Je :
+- Démarre aussitôt : elle va tourner dans ma rue
++ Attends d'être sûr qu'elle ralentit et tourne réellement avant de m'engager
+- Lui fais un appel de phares pour qu'elle se dépêche
+! Un clignotant peut être resté allumé par oubli, ou annoncer un arrêt un peu plus loin. Tant que la voiture ne ralentit pas nettement et ne commence pas à tourner, je considère qu'elle peut continuer tout droit : je reste à l'arrêt.
+@ clignotant trompeur | 2
+
+? De nuit, à l'approche d'un sommet de côte, je vois une lueur grandir dans le ciel devant moi. J'en déduis :
++ Qu'un véhicule arrive en face : je repasse en feux de croisement et je serre à droite
+- Qu'un orage approche
+- Que je peux rester en feux de route sans gêner personne
+! La lueur des phares annonce un véhicule avant même qu'il apparaisse, au sommet d'une côte comme à la sortie d'un virage. J'anticipe : feux de croisement pour ne pas éblouir, position bien à droite, et regard porté vers le bord droit de la chaussée au moment du croisement.
+@ lueur de phares la nuit | 2
+
+? En ville, je longe une camionnette en stationnement. Sous son châssis, j'aperçois des pieds qui avancent vers la chaussée. Je :
+- Continue à la même allure : le piéton me verra
++ Ralentis et me tiens prêt à freiner : un piéton va déboucher
+- Klaxonne et accélère pour passer avant lui
+! Les indices comptent autant que ce que l'on voit directement : des pieds sous un véhicule, une ombre, une portière qui s'entrouvre, un ballon. Le piéton masqué par la camionnette ne me voit pas non plus : je ralentis et je m'écarte si je le peux.
+@ indices : piéton masqué | 2
+
+? Sur autoroute, loin devant moi, plusieurs véhicules allument leurs feux stop puis leurs feux de détresse. Je :
++ Lève le pied tout de suite et contrôle mon rétroviseur
+- Garde ma vitesse jusqu'à ce que le véhicule qui me précède freine
+- Me rabats sur la bande d'arrêt d'urgence pour passer
+! Regarder loin, au-delà du véhicule qui me précède, me donne plusieurs secondes d'avance. En ralentissant tôt et en douceur, j'alerte aussi ceux qui me suivent par mes feux stop, et j'évite le freinage d'urgence de dernière seconde.
+@ regarder loin : ralentissement | 1
+
+? Je suis une voiture qui roule lentement et dont le conducteur semble chercher sa route. Je :
+- Le serre de près pour qu'il accélère
++ Garde mes distances : il peut freiner ou tourner brusquement
+- Le dépasse immédiatement, même sans visibilité
+! Un conducteur qui hésite, ralentit à chaque rue ou regarde les panneaux peut freiner, s'arrêter ou changer de direction sans prévenir. Je reste patient, à bonne distance, et je ne dépasse que lorsque la manœuvre est sûre.
+@ conducteur hésitant | 1
+
+? J'approche d'une intersection. Le feu est vert depuis un long moment. Je :
+- Accélère pour être sûr de passer
++ M'attends à ce qu'il passe à l'orange et me tiens prêt à m'arrêter
+- Ne le regarde plus : il était vert
+! Un feu vert depuis longtemps va bientôt changer. Je garde une allure qui me permet de m'arrêter dans de bonnes conditions s'il passe à l'orange, et je jette un coup d'œil dans mon rétroviseur pour savoir qui me suit.
+@ feu vert depuis longtemps | 2
+
+? Je me prépare à dépasser un camion. J'hésite : la voiture qui arrive en face est-elle assez loin ? Je :
+- Tente le dépassement en accélérant à fond
++ Renonce et reste derrière le camion
+- M'engage, quitte à me rabattre au dernier moment
+! En cas de doute, je m'abstiens. La vitesse d'un véhicule qui arrive en face est très difficile à évaluer, et un dépassement engagé ne s'interrompt pas facilement. Attendre une meilleure occasion ne me fait perdre que quelques secondes.
+@ doute : renoncer au dépassement | 1
+
+? Mon GPS m'annonce « tournez à droite », mais la rue est signalée par un panneau de sens interdit. Je :
+- Suis le GPS : sa carte est plus récente que les panneaux
++ Respecte le panneau et continue : le GPS recalculera l'itinéraire
+- M'arrête au milieu de la chaussée pour vérifier sur l'écran
+! Le GPS est une aide à la navigation, jamais une autorité : sa carte peut être périmée ou imprécise. Seuls comptent la signalisation en place et ce que je vois. Je poursuis ma route, et l'appareil proposera un autre chemin.
+@ GPS et signalisation | 1
+
+? Je veux sortir d'un parking pour entrer dans une rue très fréquentée. Un conducteur prioritaire s'arrête et me fait signe de passer. Je :
+- M'engage aussitôt sans regarder : il m'a laissé la place
++ Vérifie moi-même que la voie est libre avant de m'engager
+- Refuse toujours de passer
+! Un signe de la main n'engage que celui qui le fait : il ne voit pas forcément le deux-roues qui le dépasse ou le véhicule qui arrive sur l'autre voie. Je remercie, mais je contrôle moi-même avant d'avancer.
+@ signe d'un autre conducteur | 2
+
+? Une voiture me suit de beaucoup trop près. Je :
+- Freine brusquement pour lui donner une leçon
+- Accélère pour la semer
++ Augmente la distance avec le véhicule qui me précède et la laisse me dépasser dès que possible
+! Je ne peux pas agir sur la distance derrière moi, mais je peux agrandir celle de devant : si un ralentissement survient, je freinerai plus doucement et le conducteur qui me colle aura le temps de réagir. Freiner sec ou accélérer ne ferait qu'augmenter le danger.
+@ véhicule qui me suit de trop près | 2
+
+? Je suis une voiture d'auto-école, signalée par un panneau sur le toit. Je :
++ Garde mes distances et reste patient : elle peut caler, freiner ou hésiter
+- La dépasse à tout prix, même à l'approche d'une intersection
+- Klaxonne pour inciter l'élève à accélérer
+! L'élève conducteur peut caler au démarrage, freiner tôt ou redémarrer lentement, et son enseignant peut intervenir sur les doubles commandes. Je lui laisse de l'espace et du temps : j'ai été à sa place.
+@ véhicule d'auto-école | 1

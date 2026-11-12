@@ -1,0 +1,85 @@
+# Indications, chantiers et balises
+
+? Ce panneau signale :
++ Une voie sans issue
+- Une obligation de tourner à droite ou à gauche
+- Un passage à niveau
+! Ce panneau indique une impasse : la rue ne débouche sur aucune autre. Je ne m'y engage que si je m'y rends, en pensant que je devrai y faire demi-tour.
+@ impasse | 1 | C13a
+
+? Ce panneau carré à fond bleu :
+- Annonce un passage pour piétons situé 150 m plus loin
++ Indique l'emplacement d'un passage pour piétons
+- Signale un chemin interdit aux véhicules
+! Ce panneau d'indication est placé à l'endroit même du passage pour piétons. Je cède le passage au piéton engagé ou qui manifeste clairement l'intention de traverser : ne pas le faire coûte 6 points et 135 € d'amende.
+@ passage pour piétons : position | 1 | C20a
+
+? Ce panneau m'indique :
++ Une surélévation de la chaussée à cet endroit
+- Le début d'une route de montagne
+- Un pont à forte pente
+! Ce panneau d'indication est placé au niveau d'un aménagement surélevé : ralentisseur, plateau ou passage piétons rehaussé. Je le franchis à faible vitesse, en restant attentif aux piétons qui y traversent souvent.
+@ surélévation de chaussée | 2 | C27
+
+? En passant devant ce panneau :
+- J'entre sur l'autoroute
++ Je quitte l'autoroute : ses règles particulières ne s'appliquent plus
+- J'arrive sur une aire de repos
+! Ce panneau marque la fin de l'autoroute. La limitation à 130 km/h ne vaut plus : je réduis ma vitesse selon la route sur laquelle j'arrive, d'autant qu'après un long trajet rapide j'ai l'impression de rouler lentement.
+@ fin d'autoroute | 1 | C208
+
+? Sur ce parking :
+- Le stationnement est payant
++ La durée du stationnement est limitée et se contrôle avec un disque
+- Le stationnement est réservé aux résidents
+! Le petit symbole de disque indique un stationnement gratuit mais à durée limitée. Je règle mon disque de stationnement sur mon heure d'arrivée et je le place derrière le pare-brise, bien visible. Sans disque, ou une fois la durée dépassée, je risque une amende.
+@ parking à durée limitée | 2 | C1b
+
+? Ce panneau signale :
+- Une pharmacie
++ Un poste de secours
+- Un cabinet vétérinaire
+! La croix rouge sur fond blanc indique un poste de secours, où l'on peut trouver de l'aide et donner l'alerte après un accident.
+@ poste de secours | 1 | CE1
+
+? Je rencontre ce panneau à fond jaune. Il m'annonce :
+- Un rétrécissement permanent de la chaussée
++ Un rétrécissement temporaire, dû par exemple à un chantier
+- La fin d'un chantier
+! Le fond jaune caractérise la signalisation temporaire : chantier, accident, danger momentané. Elle l'emporte sur les panneaux permanents et sur le marquage blanc. Je ralentis et je surveille le personnel et les engins.
+@ chaussée rétrécie temporaire | 1 | AK3
+
+? Sur une route rapide, je rencontre ce panneau. Je :
+- Accélère pour atteindre le bouchon avant les autres
++ Lève le pied et me prépare à m'arrêter derrière une file
+- Change de voie sans cesse pour gagner des places
+! Ce panneau temporaire annonce un bouchon. Je ralentis progressivement en surveillant mon rétroviseur ; en arrivant en fin de file, j'allume mes feux de détresse pour alerter ceux qui me suivent et je garde un espace devant moi.
+@ annonce de bouchon | 2 | AK30
+
+? Cette balise, placée à la pointe d'un îlot, m'indique :
+- Que je dois tourner à droite à la prochaine intersection
++ De quel côté contourner l'îlot
+- Que la route est à sens unique
+! La balise de tête d'îlot porte une flèche oblique qui montre le côté par lequel passer. Elle rend l'îlot visible de loin, surtout la nuit. Je ne la confonds pas avec le disque bleu d'obligation de tourner.
+@ balise de tête d'îlot | 2 | J5
+
+? Hors agglomération, cette balise blanche portant une bande rouge signale :
++ Une intersection
+- Une borne kilométrique
+- La limite d'une commune
+! Ces balises sont plantées aux abords des intersections de rase campagne pour les rendre visibles de loin, de jour comme de nuit. En les apercevant, je sais qu'une route débouche : je ralentis et j'identifie le régime de priorité.
+@ balise d'intersection | 3 | J3
+
+? Cette balise à bandes bleues et blanches signale :
+- Une zone de stationnement à disque
++ Un obstacle à contourner, comme un îlot ou un terre-plein
+- Un poste de police
+! La balise d'obstacle rend visible un îlot, un musoir ou un terre-plein placé sur la chaussée. Je repère de quel côté passer grâce au marquage et aux panneaux qui l'accompagnent.
+@ balise d'obstacle | 3 | J13
+
+? Sous un panneau de limitation de vitesse, ce panonceau signifie que :
+- La limitation est annulée
++ La limitation, déjà annoncée plus tôt, est toujours en vigueur
+- La limitation n'est qu'un conseil
+! Le panonceau « RAPPEL » ne crée pas une nouvelle règle : il rappelle une prescription déjà signalée, pour ceux qui auraient manqué le premier panneau ou qui viennent d'arriver sur la route.
+@ panonceau rappel | 1 | M9z

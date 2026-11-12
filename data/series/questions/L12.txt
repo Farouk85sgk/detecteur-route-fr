@@ -1,0 +1,85 @@
+# Interdictions particulières, obligations et fins
+
+? Ce panneau m'indique que :
+- Je dois tourner à gauche à la prochaine intersection
++ Il est interdit de tourner à gauche à la prochaine intersection
+- Un virage dangereux à gauche approche
+! Le disque blanc bordé de rouge, avec une flèche barrée, est une interdiction : à la prochaine intersection, je ne tourne pas à gauche. Je peux continuer tout droit ou tourner à droite, si rien d'autre ne s'y oppose.
+@ interdiction de tourner à gauche | 1 | B2a
+
+? L'accès signalé par ce panneau est interdit :
+- Uniquement aux voitures
+- Uniquement aux motos
++ À tous les véhicules à moteur
+! La voiture et la moto dessinées ensemble signifient que l'accès est interdit à tous les véhicules à moteur, cyclomoteurs compris. Les piétons et les cyclistes peuvent passer.
+@ accès interdit aux véhicules à moteur | 2 | B7b
+
+? Je conduis une voiture de tourisme et je rencontre ce panneau. Je :
++ Peux passer : l'interdiction vise les véhicules de transport de marchandises
+- Dois faire demi-tour
+- Ne peux passer que la nuit
+! Ce panneau interdit l'accès aux véhicules affectés au transport de marchandises. Quand un panonceau indique un tonnage, seuls ceux qui le dépassent sont concernés. Une voiture particulière peut continuer.
+@ accès interdit aux véhicules de marchandises | 2 | B8
+
+? Ce panneau interdit le passage aux véhicules :
+- Qui pèsent plus de 3,5 tonnes
+- Qui mesurent plus de 3,5 m de large
++ Dont la hauteur, chargement compris, dépasse 3,5 m
+! Les deux pointes au-dessus et au-dessous du nombre indiquent une limitation de hauteur. Elle concerne le véhicule avec son chargement : avant un pont bas ou un parking couvert, je pense au coffre de toit, aux vélos ou à la camionnette de location.
+@ hauteur limitée | 2 | B12
+
+? Après ce panneau :
++ Je n'utilise plus mon avertisseur sonore, sauf danger immédiat
+- Je dois couper mon autoradio
+- Je dois klaxonner avant chaque intersection
+! Ce panneau interdit les signaux sonores, par exemple près d'un hôpital. L'avertisseur reste permis pour éviter un accident imminent. Rappel : en agglomération, il n'est de toute façon autorisé qu'en cas de danger immédiat.
+@ signaux sonores interdits | 1 | B16
+
+? Ce panneau rond à fond bleu m'indique que :
+- Un virage à droite est conseillé
++ Je dois tourner à droite à la prochaine intersection
+- Il est interdit de tourner à droite
+! Un disque bleu est une obligation. La flèche coudée vers la droite m'impose de tourner à droite à la prochaine intersection : je ne peux ni continuer tout droit, ni tourner à gauche.
+@ direction obligatoire à droite | 1 | B21c1
+
+? À la prochaine intersection, ce panneau m'impose :
+- De continuer tout droit
++ De tourner à droite ou à gauche
+- De faire demi-tour
+! Les deux flèches indiquent les seules directions permises : à droite ou à gauche. Continuer tout droit est interdit, par exemple parce que la rue d'en face est en sens interdit ou réservée.
+@ directions obligatoires : droite ou gauche | 2 | B21e
+
+? Sur cette route, ce panneau rond à fond bleu signifie que :
+- Je ne dois pas dépasser 30 km/h
+- Il est conseillé de rouler à 30 km/h
++ Je dois rouler à 30 km/h au moins, si les conditions le permettent
+! Un nombre blanc sur un disque bleu indique une vitesse minimale obligatoire : un véhicule incapable de l'atteindre ne doit pas s'engager. La limitation de vitesse, elle, est un disque blanc bordé de rouge, et la vitesse conseillée un carré bleu.
+@ vitesse minimale obligatoire | 3 | B25
+
+? Je roule hors agglomération, sur une route à double sens sans séparateur central, et je passe devant ce panneau. Je peux désormais rouler au maximum à :
+- 50 km/h
++ 80 km/h, ou 90 km/h si un panneau l'indique sur cette route
+- La vitesse de mon choix
+! Ce panneau marque la fin de la limitation à 50 km/h : c'est la limite générale de la route qui s'applique de nouveau, ici 80 km/h (90 km/h sur les routes où le département l'a rétabli et signalé). La fin d'une limitation n'est jamais une autorisation de rouler sans limite.
+@ fin de limitation de vitesse | 2 | B33
+
+? Ce panneau m'indique :
+- Qu'il est interdit de dépasser
++ Que l'interdiction de dépasser prend fin
+- Que le dépassement est obligatoire
+! Le panneau gris barré marque la fin de l'interdiction de dépasser. Il ne me donne aucune priorité : je ne dépasse que si la visibilité est suffisante, la voie libre et le marquage au sol favorable.
+@ fin d'interdiction de dépasser | 1 | B34
+
+? Je rencontre ce panneau à l'entrée d'un tunnel. Je dois :
++ Allumer mes feux de croisement
+- Allumer mes feux de détresse
+- Éteindre tous mes feux pour ne pas éblouir
+! Un disque bleu portant une inscription impose ce qui est écrit : ici, allumer ses feux. Dans un tunnel, les feux de croisement sont obligatoires pour voir et être vu, même s'il est éclairé. Un panneau barré en annonce la fin à la sortie.
+@ autre obligation : allumez vos feux | 1 | B29
+
+? Je roule en ville et je passe devant ce panneau. Désormais :
+- La vitesse reste limitée à 30 km/h jusqu'à la sortie de la ville
++ Je quitte la zone 30 : la limite redevient 50 km/h, sauf indication contraire
+- Je peux rouler à 70 km/h
+! Ce panneau marque la fin de la zone 30. En agglomération, c'est la limite générale de 50 km/h qui s'applique de nouveau, sauf si un autre panneau en décide autrement. Je n'accélère pas brusquement : la rue reste une rue, avec ses piétons et ses cyclistes.
+@ fin de zone 30 | 1 | B51

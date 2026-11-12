@@ -1,0 +1,85 @@
+# Accidents : situations particulières
+
+? Une voiture électrique est accidentée. Des câbles de couleur orange sont visibles sous le véhicule déformé. Je :
+- Les débranche pour éviter un incendie
++ N'y touche pas et je signale aux secours qu'il s'agit d'un véhicule électrique
+- Les arrose avec de l'eau
+! Les câbles orange transportent la haute tension de la batterie de traction : les toucher expose à une électrocution. Je n'approche pas des éléments endommagés, je m'éloigne si la batterie fume ou siffle, et je précise aux secours que le véhicule est électrique ou hybride.
+@ accident d'un véhicule électrique | 2
+
+? Un camion accidenté porte à l'avant et à l'arrière une plaque rectangulaire orange avec des numéros. Cela signifie qu'il transporte :
+- Des denrées alimentaires
++ Des matières dangereuses
+- Un chargement exceptionnellement large
+! La plaque orange signale un transport de matières dangereuses ; ses numéros identifient le danger et le produit. Je me tiens à bonne distance, si possible dos au vent, je ne fume pas, et je communique ces numéros aux secours : ils adapteront leurs moyens.
+@ transport de matières dangereuses | 2
+
+? Sur autoroute, un accident vient de se produire sur la chaussée d'en face. Je :
+- Ralentis fortement pour regarder
++ Continue ma route en restant concentré sur ma voie
+- M'arrête sur la bande d'arrêt d'urgence pour filmer
+! Ralentir par curiosité provoque des bouchons et des collisions par l'arrière sur la chaussée qui n'était pas touchée. Les secours sont en général déjà prévenus ; si je pense qu'ils ne le sont pas, j'alerte depuis la prochaine aire ou borne d'appel.
+@ ralentissement de curiosité | 1
+
+? Sur autoroute, je suis arrêté sur la bande d'arrêt d'urgence. Un accident s'est produit sur l'autre chaussée. Pour aller aider, puis-je traverser les voies à pied ?
+- Oui, en courant
+- Oui, si la circulation est peu dense
++ Non, jamais
+! Traverser une autoroute à pied est mortel : les véhicules arrivent à plus de 35 mètres par seconde. Je donne l'alerte avec une borne d'appel ou mon téléphone, depuis l'arrière de la glissière de sécurité, et je laisse intervenir les secours.
+@ ne jamais traverser l'autoroute | 1
+
+? De nuit, un accident a eu lieu juste après un virage. Pour éviter un suraccident, il faut avant tout :
+- Rester groupés autour des véhicules accidentés
++ Prévenir les autres usagers bien avant le virage, de part et d'autre de l'accident
+- Éteindre tous les feux des véhicules pour ménager les batteries
+! Un conducteur qui découvre l'accident à la sortie du virage n'a plus le temps de s'arrêter. Feux de détresse, triangle placé avant le virage, personnes équipées d'un gilet et d'une lampe postées en amont dans chaque sens, sur le bas-côté : l'alerte doit être donnée avant l'obstacle.
+@ balisage avant un virage | 2
+
+? Pour joindre directement le SAMU, en cas d'urgence médicale, je compose le :
++ 15
+- 17
+- 18
+! Le 15 répond aux urgences médicales (SAMU), le 17 joint la police ou la gendarmerie, le 18 les sapeurs-pompiers. Le 112, numéro d'urgence européen, fonctionne partout dans l'Union. Les services étant reliés entre eux, l'essentiel est d'appeler l'un d'eux sans attendre.
+@ numéros d'urgence | 1
+
+? J'arrive sur un accident. Une victime crie et se plaint de sa jambe ; une autre, allongée, ne bouge pas et ne dit rien. De laquelle est-ce que je m'occupe en premier ?
+- De celle qui crie
++ De celle qui ne bouge pas et ne dit rien
+- D'aucune : j'attends les secours sans approcher
+! Une personne qui crie est consciente et respire. Celle qui reste silencieuse est peut-être inconsciente, voire en arrêt respiratoire : je vérifie d'abord si elle répond et si elle respire, et je transmets ces informations aux secours.
+@ plusieurs victimes : laquelle d'abord | 3
+
+? Je n'ai jamais suivi de formation aux premiers secours. Devant un accident, je :
+- Ne peux rien faire d'utile
++ Peux protéger les lieux, alerter et suivre les consignes données par les secours au téléphone
+- Dois repartir pour laisser la place à des personnes compétentes
+! Protéger et alerter sont à la portée de tous et sauvent des vies. Au téléphone, l'opérateur des secours guide les gestes à faire en attendant l'arrivée des équipes : je mets le haut-parleur et je fais ce qu'il me dit.
+@ témoin non formé | 1
+
+? Après un choc, un conducteur sort de sa voiture. Il semble indemne mais tient des propos confus et veut repartir à pied. Je :
+- Le laisse partir : il marche, donc il va bien
++ L'incite à s'asseoir à l'abri et je le garde près de moi jusqu'à l'arrivée des secours
+- Lui propose de reprendre le volant pour se calmer
+! Après un choc, une personne peut paraître indemne et souffrir pourtant d'une lésion interne ou d'un traumatisme crânien ; la confusion en est un signe. Je la fais asseoir en sécurité, je la couvre, je lui parle et je signale son état aux secours.
+@ victime confuse | 2
+
+? J'ai alerté les secours. En les attendant, l'état de la victime s'aggrave : elle ne répond plus. Je :
+- Attends sans rien faire : les secours sont déjà prévenus
++ Rappelle les secours pour les informer et je suis leurs consignes
+- Lui donne à boire pour la réveiller
+! Les secours adaptent leurs moyens et leurs conseils à l'état de la victime. Si elle perd connaissance, respire mal ou saigne davantage, je rappelle immédiatement : l'opérateur me dira quels gestes pratiquer en attendant l'arrivée des équipes.
+@ aggravation : rappeler les secours | 2
+
+? Une victime consciente, sortie seule de son véhicule, a du mal à respirer. En attendant les secours, la position qui la soulage le mieux est en général :
+- Allongée à plat ventre
++ Assise ou demi-assise
+- Allongée sur le dos, les jambes surélevées
+! Une personne consciente qui respire difficilement est plus à l'aise assise ou demi-assise, le dos appuyé. Je la laisse dans la position où elle se sent le mieux, je desserre ce qui la gêne (col, ceinture), je la rassure et je la surveille.
+@ gêne respiratoire | 3
+
+? Je suis seul, sans téléphone, auprès d'une victime inconsciente qui respire. Avant de partir chercher de l'aide, je :
+- La laisse allongée sur le dos
++ La place sur le côté, en position latérale de sécurité
+- L'assois contre un arbre
+! Sur le dos, une personne inconsciente peut s'étouffer avec sa langue ou ses vomissements. Tournée sur le côté, bouche vers le sol, ses voies respiratoires restent dégagées. Je pars ensuite alerter au plus vite et je reviens auprès d'elle.
+@ seul avec une victime inconsciente | 3
