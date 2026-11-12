@@ -118,7 +118,12 @@ if __name__ == "__main__":
     if not CLASSIFIER:
         import yaml
 
-        noms = yaml.safe_load(open(opt.data, errors="ignore"))["names"]
+        data = opt.data
+        if opt.resume:  # reprise d'un entraînement interrompu : le jeu de données est celui noté dans le dossier de l'entraînement
+            dernier = Path(opt.resume if isinstance(opt.resume, str) else train.get_latest_run())
+            if (dernier.parent.parent / "opt.yaml").is_file():
+                data = yaml.safe_load(open(dernier.parent.parent / "opt.yaml", errors="ignore"))["data"]
+        noms = yaml.safe_load(open(data, errors="ignore"))["names"]
         noms = list(noms.values()) if isinstance(noms, dict) else list(noms)
         ZONES = noms[-2:] == ["_ignorer", "_reel"]
         print(f"Zones d'entraînement (_ignorer, _reel) : {'actives' if ZONES else 'absentes de ce jeu de données'}")

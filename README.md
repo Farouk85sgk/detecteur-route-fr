@@ -139,8 +139,9 @@ corriger, un par série (`data/series/questions/L01.txt`...), la lettre donnant 
 ```
 
 `python tools/construire_series.py` vérifie chaque question et produit `docs/series/banque.json`. Ces questions sont
-originales ; elles ont été rédigées d'après le code de la route en vigueur en 2026 et relues, mais elles ne
-remplacent pas les séries officielles : signalez ou corrigez toute erreur dans le fichier concerné.
+originales, rédigées d'après le code de la route en vigueur en 2026 ; les règles récentes (inter-files, grand excès
+de vitesse, stupéfiants, trottinettes...) ont été vérifiées sur des sources officielles. Elles ne remplacent pas les
+séries officielles : faites-les relire par un enseignant, et corrigez toute erreur dans le fichier concerné.
 
 **Séries de code de l'auto-école** (page « Code de la route ») : un fichier JSON importé depuis le
 téléphone ou par un lien `https://` (le serveur doit autoriser CORS). Une question a 2 à 6 choix ; `bonnes` donne la
