@@ -8,7 +8,7 @@ const COEUR = `${VERSION}-coeur`, LOURDS = "repere-lourds-f50f3015";
 const ORT = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.20.1/dist/";
 const EXTRAS = ["F_rouge", "F_orange", "F_vert", "U_pieton", "U_cycliste", "U_deux_roues"];
 const FICHIERS = ["./", "index.html", "manifest.webmanifest", "favicon.svg", "icone-192.png", "icone-512.png", "css/app.css", "catalogue.json", "panneaux.json", "empreinte.json",
-  "series/banque.json", "series/photos.json", "credits.html",
+  "series/banque.json", "series/photos.json", "credits.html", "confidentialite.html",
   ...["accueil", "album", "app", "camera", "contenu", "donnees", "mespanneaux", "moteur", "nav", "progression", "quete", "quiz", "reglages", "series", "stockage", "trajets", "ui"].map(m => `js/${m}.js`),
   ...["bricolage-grotesque-latin-600", "bricolage-grotesque-latin-700", "bricolage-grotesque-latin-800", "overpass-latin-400", "overpass-latin-600", "overpass-latin-700"].map(f => `polices/${f}-normal.woff2`)];
 const MODELES = ["detecteur.onnx", "panneaux.onnx", "usagers.onnx", "empreinte.onnx", `${ORT}ort.webgpu.min.js`, `${ORT}ort-wasm-simd-threaded.jsep.mjs`, `${ORT}ort-wasm-simd-threaded.jsep.wasm`];

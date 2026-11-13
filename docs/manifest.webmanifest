@@ -10,8 +10,90 @@
   "background_color": "#ffc61e",
   "theme_color": "#ffc61e",
   "icons": [
-    { "src": "icone-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icone-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "icone-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "icone-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icone-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icone-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": [
+    "education"
+  ],
+  "dir": "ltr",
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "Quiz",
+      "short_name": "Quiz",
+      "description": "S'entraîner sur les panneaux",
+      "url": "./#/quiz",
+      "icons": [
+        {
+          "src": "icone-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Code de la route",
+      "short_name": "Code",
+      "description": "Séries par thème et examens blancs",
+      "url": "./#/codes",
+      "icons": [
+        {
+          "src": "icone-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "La quête",
+      "short_name": "Quête",
+      "description": "Carte, quêtes du jour, classement",
+      "url": "./#/quete",
+      "icons": [
+        {
+          "src": "icone-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "captures/detection.jpg",
+      "sizes": "1080x1920",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Les panneaux reconnus et expliqués en direct"
+    },
+    {
+      "src": "captures/quiz.jpg",
+      "sizes": "1080x1920",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Des quiz sur de vraies photos de routes françaises"
+    },
+    {
+      "src": "captures/quete.jpg",
+      "sizes": "1080x1920",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Une quête : quatorze régions, un gardien par famille de panneaux"
+    }
   ]
 }

@@ -1,0 +1,23 @@
+{
+  "packageId": "fr.tondomaine.repere",
+  "host": "TON-DOMAINE.fr",
+  "name": "Repère : code de la route",
+  "launcherName": "Repère",
+  "display": "standalone",
+  "orientation": "default",
+  "themeColor": "#FFC61E",
+  "navigationColor": "#12163A",
+  "backgroundColor": "#FFC61E",
+  "startUrl": "/repere/",
+  "iconUrl": "https://TON-DOMAINE.fr/repere/icone-512.png",
+  "maskableIconUrl": "https://TON-DOMAINE.fr/repere/icone-512-maskable.png",
+  "webManifestUrl": "https://TON-DOMAINE.fr/repere/manifest.webmanifest",
+  "appVersion": "3.1.0",
+  "appVersionCode": 1,
+  "fallbackType": "customtabs",
+  "enableNotifications": false,
+  "features": {},
+  "shortcuts": [],
+  "signingKey": { "path": "./android.keystore", "alias": "repere" },
+  "generatorApp": "bubblewrap-cli"
+}

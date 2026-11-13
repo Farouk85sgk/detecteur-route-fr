@@ -81,7 +81,7 @@ export async function pageAccueil(racine, { moteur, appris, lancerCamera }) {
       ${cachés ? `<button class="btn" data-a="blocs">${cachés} bloc${cachés > 1 ? "s masqués : les choisir" : " masqué : le réafficher"}</button>` : ""}
 
       <p class="credits centre">Outil d'aide pédagogique : il ne remplace ni ton attention ni la signalisation réelle. En voiture, le téléphone est fixé sur un support et le conducteur ne le manipule pas.
-        <br><a href="${APP.depot}" target="_blank" rel="noopener">Code source (licence AGPL-3.0)</a></p>
+        <br><a href="confidentialite.html" target="_blank" rel="noopener">Confidentialité</a> · <a href="${APP.depot}" target="_blank" rel="noopener">Code source (licence AGPL-3.0)</a></p>
     </div></div>`;
 
   const codes = $(".zone-codes", racine);

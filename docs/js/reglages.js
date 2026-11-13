@@ -120,7 +120,7 @@ function dessiner(corps, depuisCamera) {
       exécuté par ONNX Runtime Web © Microsoft, licence MIT. Photos d'entraînement : contributeurs de Panoramax (instance IGN), Licence Ouverte Etalab 2.0, et comma10k, licence MIT.
       Icônes des panneaux : schémas de Wikimedia Commons (Roulex 45 et autres auteurs, licences CC BY-SA, CC BY, CC0 ou domaine public), <a href="credits.html" target="_blank" rel="noopener">crédits détaillés</a>.
       Polices Bricolage Grotesque et Overpass, licence OFL.
-      <a href="${APP.depot}" target="_blank" rel="noopener">Code source (licence AGPL-3.0)</a>.
+      <a href="confidentialite.html" target="_blank" rel="noopener">Confidentialité</a> · <a href="${APP.depot}" target="_blank" rel="noopener">Code source (licence AGPL-3.0)</a>.
       Outil d'aide pédagogique : il ne remplace ni ton attention ni la signalisation réelle.${depuisCamera ? "" : ""}</p>`;
   majCompte(corps);
 }

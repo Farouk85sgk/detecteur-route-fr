@@ -1,0 +1,13 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "fr.tondomaine.repere",
+      "sha256_cert_fingerprints": [
+        "COLLE ICI L'EMPREINTE SHA-256 DE LA CLE DE SIGNATURE DE L'APPLI (console Google Play, Integrite de l'appli)",
+        "COLLE ICI L'EMPREINTE SHA-256 DE LA CLE D'IMPORTATION (donnee par PWABuilder)"
+      ]
+    }
+  }
+]
