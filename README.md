@@ -96,7 +96,9 @@ photos, trajets et progression restent sur le téléphone. Sur Android ou iPhone
   annonce du passage au vert), **piétons, cyclistes et deux-roues** avec leur distance approximative. Carte du
   dernier élément avec son explication, historique en pastilles, vitesse maximale en cours, lignes à gauche et à
   droite, annonces vocales (« Limitation à 50 », règle expliquée à voix haute), vibration. Pause : pincer pour
-  zoomer, toucher un cadre pour ouvrir sa fiche. Mode paysage : la route à gauche, le panneau à droite.
+  zoomer, toucher un cadre pour ouvrir sa fiche. Mode paysage : la route à gauche, le panneau à droite. Pendant la
+  lecture, les commandes (lecteur, boutons, historique) sont translucides pour laisser voir la route ; elles
+  redeviennent nettes en pause, ou quelques secondes quand on les touche.
 - **Mes trajets** : une photo de la route à chaque élément repéré (cadres incrustés), avec l'heure, le moment de la
   vidéo et la position GPS (lien vers la carte) ; vidéo du trajet à enregistrer ou partager ; quiz du trajet.
 - **Album** : 314 éléments rangés en 14 familles, avec les schémas officiels des panneaux ; en couleur une fois
