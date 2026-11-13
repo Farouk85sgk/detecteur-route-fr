@@ -423,6 +423,19 @@ img { display: block; }
 .camera.paysage .historique .defile button { width: 46px; height: 46px; }
 .camera.paysage .astuce-cam { top: auto; right: auto; left: 14px; bottom: calc(100px + var(--bas)); max-width: 50%; text-align: left; }
 .camera .calque-touche { position: absolute; inset: 0; z-index: 2; }
+/* Pendant la lecture (vidéo ou direct, classe « joue »), les commandes posées sur l'image sont translucides pour laisser voir
+   la route. Elles redeviennent nettes en pause, et quelques secondes quand on en touche une (classe « reveil »). */
+.camera .verre, .lecteur button, .historique .defile button { transition: background-color .25s ease, opacity .25s ease; }
+:is(.cam-btn, .statut, .lecteur) > * { transition: opacity .25s ease; }
+.camera.joue:not(.reveil) .verre:not(.puce-ligne) { background: rgba(30, 32, 48, .2); -webkit-backdrop-filter: none; backdrop-filter: none; }
+.camera.joue:not(.reveil) :is(.cam-btn, .statut, .lecteur) > * { opacity: .75; }
+.camera.joue:not(.reveil) :is(.cam-btn, .statut) > *, .camera.joue:not(.reveil) .lecteur button svg { filter: drop-shadow(0 0 2px rgba(0, 0, 0, .55)); }
+.camera.joue:not(.reveil) .lecteur span { text-shadow: 0 0 3px rgba(0, 0, 0, .6); }
+.camera.joue:not(.reveil) .lecteur button.jouer { background: rgba(255, 255, 255, .12); color: #fff; }
+.camera.joue:not(.reveil) .cam-btn.actif { background: rgba(224, 38, 43, .4); }
+.camera.joue:not(.reveil) .historique .defile button { opacity: .55; }
+.camera.joue .cam-toasts .toast { background: rgba(28, 32, 70, .62); box-shadow: none; }
+.camera.joue .puce-ligne { background: rgba(30, 32, 48, .4); -webkit-backdrop-filter: none; backdrop-filter: none; text-shadow: 0 0 3px rgba(0, 0, 0, .6); }
 .compte-rebours { position: absolute; inset: 0; display: grid; place-items: center; z-index: 4; pointer-events: none; font: 800 1.4rem var(--titres); }
 
 /* ---------- divers ---------- */

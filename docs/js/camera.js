@@ -56,6 +56,7 @@ export async function ouvrirCamera({ fichier = null, apresFermeture = () => {} }
   PROG.notifier = (texte, badge) => toast(texte, badge, $(".cam-toasts", racine));
   D.items.forEach(it => imageDe(icone(it)));  // icônes en mémoire : affichage immédiat pendant la détection
   racine.addEventListener("click", clic);
+  for (const ev of ["pointerdown", "input", "focusin"]) racine.addEventListener(ev, e => { if (e.target.closest?.(".cam-haut, .lecteur, .historique")) reveiller(); });
   brancherZoom();
   addEventListener("resize", disposer);
   document.addEventListener("visibilitychange", visibilite);
@@ -65,6 +66,8 @@ export async function ouvrirCamera({ fichier = null, apresFermeture = () => {} }
     window.__moteurGPU = moteur.fournisseurs[0] === "webgpu";
     configurerMoteur(p);
     await demarrerSource();
+    C.demarre = true;
+    majVoile();
   } catch (e) {
     console.error(e);
     statut("Erreur", "erreur");
@@ -386,6 +389,19 @@ function basculerPause(forcer = null) {
   $(".astuce-cam", C.racine).classList.toggle("cache", !C.pause);
   const bj = $("[data-a=lecture]", C.racine);
   if (bj) bj.innerHTML = C.pause ? ICONES.lecture : ICONES.pause;
+  majVoile();
+}
+
+// Pendant la lecture (vidéo ou direct), les commandes posées sur l'image deviennent translucides pour laisser voir la route
+// (classe « joue »). Elles redeviennent nettes en pause, et quelques secondes quand on en touche une (classe « reveil »).
+function majVoile() {
+  C.racine.classList.toggle("joue", !!C.demarre && !C.pause);
+}
+function reveiller() {
+  const { racine } = C;
+  racine.classList.add("reveil");
+  clearTimeout(C.tReveil);
+  C.tReveil = setTimeout(() => racine.classList.remove("reveil"), 2500);
 }
 
 function majLecteur() {
