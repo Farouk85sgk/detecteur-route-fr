@@ -103,7 +103,9 @@ function choisirZone(corps, cv, candidats, moteur, apres, depart = {}) {
     choisi = c ? { box: c.box, devine: depart.box ? null : c.devine } : { box: [Math.max(0, px - s / 2), Math.max(0, py - s / 2), Math.min(W, px + s / 2), Math.min(H, py + s / 2)], manuel: [px, py] };
   }
   const pct = b => `left:${100 * b[0] / W}%;top:${100 * b[1] / H}%;width:${100 * (b[2] - b[0]) / W}%;height:${100 * (b[3] - b[1]) / H}%`;
-  corps.innerHTML = `<p>${candidats.length ? "Touche le panneau à apprendre (cadre vert)." : "Aucun panneau trouvé automatiquement : touche le panneau sur la photo."}</p>
+  const consigne = depart.point || depart.box ? "Le cadre vert entoure l'endroit que tu as touché. S'il est mal placé, touche le panneau sur la photo."
+    : candidats.length ? "Touche le panneau à apprendre : son cadre devient vert. S'il n'a pas de cadre, touche-le quand même." : "Aucun panneau trouvé automatiquement : touche le panneau sur la photo.";
+  corps.innerHTML = `<p>${consigne}</p>
     <div class="choix-zone"><img src="${cv.toDataURL("image/jpeg", 0.85)}" alt="Photo">${candidats.map((c, i) => `<div class="boite" data-i="${i}" style="${pct(c.box)}"></div>`).join("")}<div class="boite manuelle cache"></div></div>
     <label class="doux reglage-taille ${candidats.length ? "cache" : ""}">Taille du cadre <input type="range" min="0.06" max="0.6" step="0.01" value="${taille}" style="width:100%"></label>
     <h3>Qu'est-ce que c'est ?</h3>

@@ -27,5 +27,7 @@ names:
   20: M_zigzag
   21: M_ligne_dissuasion
   22: M_ligne_rive
-  23: _ignorer
-  24: _reel
+  23: M_vitesse_sol
+  24: M_livraison
+  25: _ignorer
+  26: _reel
