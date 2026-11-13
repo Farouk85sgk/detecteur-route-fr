@@ -94,14 +94,17 @@ def credits_html(md):
     )
 
 
+LOURDS = (".onnx", ".wasm", ".mjs", ".png", ".jpg", ".woff2")  # mêmes fichiers que la fonction lourd() de docs/sw.js
+
+
 def version_cache(web):
-    """Donne au cache des fichiers lourds (modèles, icônes, photos du quiz), dans sw.js, un nom tiré de leur contenu :
-    dès que l'un d'eux change, les téléphones qui ont déjà l'appli téléchargent les nouveaux au lieu de garder les anciens."""
-    h = hashlib.sha1()
-    for f in sorted([*web.glob("*.onnx"), *web.glob("icones/*.png"), *web.glob("series/photos/*.jpg")]):
-        h.update(f.name.encode())
-        h.update(f.read_bytes())
-    nom = f"repere-lourds-{h.hexdigest()[:8]}"
+    """Donne au cache des fichiers lourds (modèles, icônes, photos du quiz, polices), dans sw.js, un nom tiré de leur
+    contenu : dès que l'un d'eux change, les téléphones qui ont déjà l'appli passent à un nouveau cache.
+    Écrit aussi docs/lourds.json, l'empreinte de chaque fichier : à la mise à jour, le service worker reprend de
+    l'ancien cache les fichiers inchangés et ne retélécharge que ceux qui ont changé."""
+    fichiers = {f.relative_to(web).as_posix(): hashlib.sha1(f.read_bytes()).hexdigest()[:16] for f in sorted(web.rglob("*")) if f.is_file() and f.suffix in LOURDS}
+    (web / "lourds.json").write_text(json.dumps({"fichiers": fichiers}, separators=(",", ":")), encoding="utf-8")
+    nom = f"repere-lourds-{hashlib.sha1(json.dumps(fichiers, sort_keys=True).encode()).hexdigest()[:8]}"
     sw = web / "sw.js"
     js, n = re.subn(r'LOURDS = "repere-lourds-[^"]*"', f'LOURDS = "{nom}"', sw.read_text(encoding="utf-8"))
     if n != 1:
