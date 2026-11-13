@@ -248,6 +248,32 @@ def bike_raster(rng, w_px, h_px, rider=True, officiel=False, plein=False):
     return cv2.resize(im, (max(4, int(w_px)), max(4, int(h_px))), interpolation=cv2.INTER_AREA)
 
 
+def vitesse_raster(word, rng, w_px, h_px, style):
+    """Vitesse peinte au sol telle qu'on la voit dans les rues : le plus souvent les chiffres dans une ellipse blanche
+    (anneau), parfois un disque blanc plein aux chiffres en réserve, parfois les chiffres seuls."""
+    W, H = 240, 300
+    im = np.zeros((H, W), np.uint8)
+    if style == "seul":
+        im = text_raster(word, rng, W, H)
+    else:
+        ep = int(rng.uniform(14, 24))
+        if style == "anneau":
+            cv2.ellipse(im, (W // 2, H // 2), (W // 2 - ep // 2 - 2, H // 2 - ep // 2 - 2), 0, 0, 360, 255, ep, cv2.LINE_AA)
+            tw, th = int(W * rng.uniform(0.5, 0.62)), int(H * rng.uniform(0.42, 0.56))
+            chiffres = text_raster(word, rng, tw, th)
+            x0, y0 = (W - tw) // 2, (H - th) // 2
+            im[y0:y0 + th, x0:x0 + tw] = np.maximum(im[y0:y0 + th, x0:x0 + tw], chiffres)
+        else:  # disque plein, chiffres en réserve (la chaussée se voit à travers)
+            cv2.ellipse(im, (W // 2, H // 2), (W // 2 - 3, H // 2 - 3), 0, 0, 360, 255, -1, cv2.LINE_AA)
+            tw, th = int(W * rng.uniform(0.55, 0.66)), int(H * rng.uniform(0.44, 0.58))
+            chiffres = text_raster(word, rng, tw, th)
+            x0, y0 = (W - tw) // 2, (H - th) // 2
+            im[y0:y0 + th, x0:x0 + tw] = np.minimum(im[y0:y0 + th, x0:x0 + tw], 255 - chiffres)
+            if rng.random() < 0.5:  # liseré intérieur, comme le panneau
+                cv2.ellipse(im, (W // 2, H // 2), (W // 2 - 3 - ep, H // 2 - 3 - ep), 0, 0, 360, 0, max(4, ep // 3), cv2.LINE_AA)
+    return cv2.resize(im, (max(4, int(w_px)), max(4, int(h_px))), interpolation=cv2.INTER_AREA)
+
+
 def raster_corners(xc, zc, wm, lm):
     return np.array([[xc - wm / 2, zc + lm / 2], [xc + wm / 2, zc + lm / 2], [xc + wm / 2, zc - lm / 2], [xc - wm / 2, zc - lm / 2]])
 
@@ -413,10 +439,24 @@ def make_local(code, xc, zc, lane_w, rng, cam):
             mk.polys.append(rect_xz(x, x + 0.5, zc, zc + ep))
             x += 1.0
     elif code in ("M_stop_sol", "M_bus", "M_vitesse_sol"):
+        # Un mot ou un nombre peint se lit dans le sens de la voie, mais on le voit aussi à l'envers quand il est écrit
+        # pour la voie d'en face (un quart des « BUS » et des « 30 » des vraies photos).
         word = {"M_stop_sol": "STOP", "M_bus": "BUS"}.get(code) or rng.choice(VITESSES_SOL)
-        wm = min(lane_w * rng.uniform(0.55, 0.8), 2.6) if code != "M_vitesse_sol" else min(lane_w * rng.uniform(0.35, 0.6), 2.0)
-        lm = rng.uniform(1.6, 3.2) if word == "STOP" else rng.uniform(1.5, 4.2)  # lettres de 1,5 m en ville, jusqu'à 4 m ailleurs
-        mk.rasters.append((text_raster(word, rng, *raster_size(cam, xc, zc, wm, lm)), raster_corners(xc, zc, wm, lm)))
+        envers = rng.random() < (0.08 if code == "M_stop_sol" else 0.25)
+        if code == "M_vitesse_sol":
+            style = rng.choice(["anneau"] * 13 + ["disque"] * 3 + ["seul"] * 2 + ["zone"] * 2)
+            if style == "zone":  # « ZONE 30 » en travers de la voie
+                wm, lm = min(lane_w * rng.uniform(0.7, 0.9), 3.0), rng.uniform(1.5, 3.0)
+                raster = text_raster("ZONE " + word, rng, *raster_size(cam, xc, zc, wm, lm))
+            else:
+                wm = min(lane_w * rng.uniform(0.45, 0.7), 2.4) if style != "seul" else min(lane_w * rng.uniform(0.35, 0.6), 2.0)
+                lm = wm * rng.uniform(1.3, 2.3) if style != "seul" else rng.uniform(1.5, 4.2)
+                raster = vitesse_raster(word, rng, *raster_size(cam, xc, zc, wm, lm), style)
+        else:
+            wm = min(lane_w * rng.uniform(0.55, 0.8), 2.6)
+            lm = rng.uniform(1.6, 3.2) if word == "STOP" else rng.uniform(1.5, 4.2)  # lettres de 1,5 m en ville, jusqu'à 4 m ailleurs
+            raster = text_raster(word, rng, *raster_size(cam, xc, zc, wm, lm))
+        mk.rasters.append((raster, np.roll(raster_corners(xc, zc, wm, lm), 2 if envers else 0, 0)))
     elif code == "_texte":  # autre inscription (TAXI, PAYANT...) : peinte, jamais annotée, pour ne pas la prendre pour BUS ou STOP
         word = rng.choice(LEURRES_TEXTE)
         if rng.random() < 0.5:
@@ -432,9 +472,12 @@ def make_local(code, xc, zc, lane_w, rng, cam):
         L, wb, ep = rng.uniform(7.0, 12.0), rng.uniform(1.9, 2.5), rng.uniform(0.08, 0.14)
         x0, x1, z0, z1 = xc - wb / 2, xc + wb / 2, zc - L / 2, zc + L / 2
         xi = x0 if cote > 0 else x1  # bord côté chaussée
-        for a, b in (((xi, z0), (xi, z1)), ((x0, z0), (x1, z0)), ((x0, z1), (x1, z1))):
-            mk.polys += tirets(a, b, ep)
-        croix = rng.choice([0, 1, 1, 2])
+        plein = rng.random() < 0.65  # sur les vraies photos, le contour est le plus souvent en trait plein
+        xe = x1 if cote > 0 else x0  # bord côté trottoir
+        cotes = [((xi, z0), (xi, z1)), ((x0, z0), (x1, z0)), ((x0, z1), (x1, z1))] + ([((xe, z0), (xe, z1))] if rng.random() < 0.5 else [])
+        for a, b in cotes:
+            mk.polys += [stroke([a, b], ep)] if plein else tirets(a, b, ep)
+        croix = rng.choice([0, 1, 1, 1, 2])
         avec_mot = croix == 0 or rng.random() < 0.85
         zones = np.linspace(z0, z1, croix + 1) if croix else []
         for za, zb in zip(zones[:-1], zones[1:]):
@@ -467,11 +510,16 @@ def make_local(code, xc, zc, lane_w, rng, cam):
                 z = zc + lm / 2 + 0.4 + 0.5 * k
                 mk.polys.append(place(stroke([[-0.35, -0.25], [0, 0.1], [0.35, -0.25]], 0.12), xc, z))
     elif code == "M_zigzag":
-        # ligne jaune en dents serrées, à 45° environ, le long du trottoir (avant : quelques grandes dents très étirées,
-        # qui ne ressemblaient pas aux arrêts d'autobus réels)
-        L = rng.uniform(8, 20)
-        amp = rng.uniform(0.35, 0.7)
-        pas = amp * rng.uniform(0.8, 1.4)
+        # Ligne jaune en zigzag d'un arrêt d'autobus. Sur les vraies photos (24 arrêts relevés dans six régions), les dents
+        # sont grandes : elles balaient toute la largeur de l'arrêt (2 m environ) et se suivent tous les 2 à 5 m. Les
+        # dents serrées le long du trottoir existent aussi, plus rarement.
+        L = rng.uniform(8, 22)
+        if rng.random() < 0.75:
+            amp = rng.uniform(1.5, 2.7)
+            pas = rng.uniform(2.0, 5.0)
+        else:
+            amp = rng.uniform(0.35, 0.7)
+            pas = amp * rng.uniform(0.8, 1.4)
         zs = np.arange(zc - L / 2, zc + L / 2 + pas / 2, pas)
         xs = np.where(np.arange(len(zs)) % 2 == 0, xc, xc - amp)
         for a, b in zip(zip(xs[:-1], zs[:-1]), zip(xs[1:], zs[1:])):
