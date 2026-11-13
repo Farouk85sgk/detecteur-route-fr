@@ -12,7 +12,7 @@ import { D } from "./donnees.js";
 
 const CONF = 0.35, CONF_SIGNS = 0.15, SIGN_FACTOR = 1.3, IOU = 0.45, MIN_HITS = 2, MAX_MISSES = 6;
 // lignes au sol : leur type se lit mal sur une seule image (une ligne discontinue vue de près ressemble à une continue)
-const LIGNES = /^M_ligne_(continue|discontinue|mixte|dissuasion|rive)$/;
+export const LIGNES = /^M_ligne_(continue|discontinue|mixte|dissuasion|rive)$/;
 const EMB = 64, MEAN = [0.485, 0.456, 0.406], STD = [0.229, 0.224, 0.225];  // EMB : côté des vignettes d'empreinte
 const SIGN = -2;
 const COCO = { personne: 0, velo: 1, moto: 2, feu: 3 };  // ordre des classes gardées dans usagers.onnx

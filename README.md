@@ -8,13 +8,13 @@ photos de routes françaises**.
 détection en direct avec feux, piétons et cyclistes, trajets en photos, album, **685 questions de code en 57 séries**,
 examens blancs, quiz sur de vraies photos, quête et profils (voir « Version téléphone » plus bas).
 
-- **Un catalogue de 308 éléments** (`route_fr/classes.py`) : 285 panneaux, panonceaux et balises, désignés par leur
-  code officiel, et 23 marquages au sol. La caméra en reconnaît **231** : 209 panneaux (dangers, priorités,
+- **Un catalogue de 310 éléments** (`route_fr/classes.py`) : 285 panneaux, panonceaux et balises, désignés par leur
+  code officiel, et 25 marquages au sol. La caméra en reconnaît **233** : 209 panneaux (dangers, priorités,
   interdictions, limitations de 5 à 130 km/h, stationnement et zones, obligations, fins, indications, services,
-  signalisation temporaire, balises, panonceaux) et 22 marquages (lignes continue, discontinue, mixte, de
-  dissuasion, de rive, STOP, cédez-le-passage, passage piétons, flèches, zébras, damier, vélo, BUS, zigzag, dents de
-  requin...). Les 76 autres panneaux, trop rares sur les photos pour être appris, et la ligne d'effet des feux ont
-  leur fiche dans l'album.
+  signalisation temporaire, balises, panonceaux) et 24 marquages (lignes continue, discontinue, mixte, de
+  dissuasion, de rive, STOP, cédez-le-passage, passage piétons, flèches, zébras, damier, vélo, BUS, zigzag d'arrêt
+  de bus, dents de requin, vitesse rappelée au sol, place de livraison...). Les 76 autres panneaux, trop rares sur
+  les photos pour être appris, et la ligne d'effet des feux ont leur fiche dans l'album.
 - **Deux étages** : YOLOv5n repère les marquages et tous les panneaux (une seule classe « panneau »), puis un
   classifieur YOLOv5n-cls dit de quel panneau il s'agit. Il regarde le panneau **et ce qui se trouve dessous** : il
   distingue ainsi un sens interdit d'un « sens interdit sauf vélos », un stationnement interdit d'une place réservée
@@ -26,7 +26,8 @@ examens blancs, quiz sur de vraies photos, quête et profils (voir « Version t�
   panneaux B14, entrée/sortie d'agglomération, zones 30 et de rencontre, autoroute...), historique des derniers
   panneaux avec le **rappel du code de la route**, annonces vocales en option.
 - **Stabilisation** : un objet n'est affiché qu'après 2 détections consécutives (moins de fausses alertes), les
-  cadres sont lissés et la classe est votée sur plusieurs images (pas de clignotement 50 ↔ 30).
+  cadres sont lissés et la classe est votée sur plusieurs images (pas de clignotement 50 ↔ 30). L'appli web va plus
+  loin : elle attend d'autant plus longtemps que le score est bas, et refait l'annonce si le nom change de près.
 
 > ⚠️ Outil d'aide pédagogique : il ne remplace ni l'attention du conducteur ni la signalisation réelle. En voiture,
 > le téléphone ou l'écran doit être fixé sur un support et ne doit pas être manipulé par le conducteur.
@@ -95,13 +96,24 @@ photos, trajets et progression restent sur le téléphone. Sur Android ou iPhone
 - **Détection en direct** (caméra ou vidéo) : 209 panneaux et 22 marquages, plus **feux tricolores** (couleur lue,
   annonce du passage au vert), **piétons, cyclistes et deux-roues** avec leur distance approximative. Carte du
   dernier élément avec son explication, historique en pastilles, vitesse maximale en cours, lignes à gauche et à
-  droite, annonces vocales (« Limitation à 50 », règle expliquée à voix haute), vibration. Pause : pincer pour
-  zoomer, toucher un cadre pour ouvrir sa fiche. Mode paysage : la route à gauche, le panneau à droite. Pendant la
-  lecture, les commandes (lecteur, boutons, historique) sont translucides pour laisser voir la route ; elles
-  redeviennent nettes en pause, ou quelques secondes quand on les touche.
+  droite, annonces vocales (« Limitation à 50 », règle expliquée à voix haute), vibration. Mode paysage : la route
+  à gauche, le panneau à droite. Pendant la lecture, les commandes (lecteur, boutons, historique) sont translucides
+  pour laisser voir la route ; elles redeviennent nettes en pause, ou quelques secondes quand on les touche.
+- **Pause, zoom et toucher** : en pause, l'image arrêtée est analysée de nouveau pour que les cadres tombent juste.
+  Boutons − et +, pince (le point visé reste sous les doigts), double toucher, jusqu'à 6 fois ; l'image agrandie
+  glisse jusqu'à sortir de sous les commandes. Toucher un panneau encadré ouvre sa fiche, avec « Ce n'est pas ce
+  panneau : le corriger » et un interrupteur pour ne plus l'annoncer ; toucher un endroit sans cadre propose
+  d'apprendre le panneau qui s'y trouve. En direct, les mêmes boutons règlent le zoom de l'objectif quand
+  l'appareil le permet (écrit d'après la norme et essayé avec une caméra simulée, pas sur un vrai téléphone).
+- **Des annonces plus sûres** : un panneau est annoncé tout de suite si son score atteint 0,85, après deux images
+  entre 0,65 et 0,85, après quatre images et un nom qui réunit 60 % des voix en dessous (sur les photos de
+  contrôle, une annonce au score de 0,46 à 0,65 n'est juste que 45 fois sur 100, contre 91 au-dessus de 0,85).
+  Si le nom change quand le panneau se lit mieux de près, l'annonce est refaite. Un objet fixe devant la caméra
+  (autocollant, reflet) pris pour un panneau n'est annoncé qu'une fois. Neuf panneaux souvent annoncés à tort
+  (balises, vidange pour camping-cars, parking...) ont un seuil plus sévère (`SEUILS` dans `route_fr/classes.py`).
 - **Mes trajets** : une photo de la route à chaque élément repéré (cadres incrustés), avec l'heure, le moment de la
   vidéo et la position GPS (lien vers la carte) ; vidéo du trajet à enregistrer ou partager ; quiz du trajet.
-- **Album** : 314 éléments rangés en 14 familles, avec les schémas officiels des panneaux ; en couleur une fois
+- **Album** : 316 éléments rangés en 14 familles, avec les schémas officiels des panneaux ; en couleur une fois
   repérés sur la route, avec leur fiche (sens, bon réflexe, comment le reconnaître, ta photo).
 - **Code de la route** : **685 questions originales en 57 séries**, classées selon les dix thèmes de l'examen
   (circulation, conducteur, route, autres usagers, notions diverses, premiers secours, prendre et quitter son
@@ -112,7 +124,8 @@ photos, trajets et progression restent sur le téléphone. Sur Android ou iPhone
   18 fiches corrigées).
 - **Quiz de signalisation** : dernier trajet, album, par famille, erreurs à revoir, examen des panneaux, et
   **« En situation réelle »** : de vraies photos de routes françaises où il faut reconnaître le panneau encadré.
-- **La quête** : une carte avec une région par famille ; repérer 4 éléments de la famille sur la route ouvre le
+- **La quête** : une carte avec une région par famille (ses cartes se retournent d'un toucher pour découvrir
+  l'élément, puis sa fiche) ; repérer 4 éléments de la famille sur la route ouvre le
   donjon de son gardien (10 questions, 3 cœurs, loupe et potion) ; chaque gardien vaincu donne un éclat du Panneau
   d'Or (14 régions). Quêtes du jour, panneau mystère, coffre, flamme des jours de suite, pépites, échoppe (objets et
   titres), niveaux, 19 badges, **classement** en 8 catégories entre les profils du téléphone et des amis ajoutés par code.
@@ -121,11 +134,19 @@ photos, trajets et progression restent sur le téléphone. Sur Android ou iPhone
 - **Mes panneaux** : un panneau que l'appli ne connaît pas, ou qu'elle confond ? On le prend en photo, on dit ce
   que c'est, et l'appli le reconnaît ensuite (modèle d'empreintes `empreinte.onnx`).
 - **Réglages** : ce qu'il faut détecter (famille par famille ou élément par élément), qualité d'analyse (Rapide,
-  Équilibrée, Fine), photos, GPS, vidéo, paysage, sons, calcul sur plusieurs cœurs, et un diagnostic. **Sans réseau** :
+  Équilibrée, Fine), photos, GPS, vidéo, paysage, sons, calcul sur plusieurs cœurs, et un diagnostic.
+  **Récompenses pendant la détection** : un interrupteur coupe les messages et les sons de jeu sur l'image (l'album
+  se remplit en silence). **Accueil à la carte** : chaque bloc facultatif (quête, niveau, code, trajets, Mes
+  panneaux, réseau, import de séries...) porte un lien « Masquer ce bloc » ; un réglage les réaffiche. **Sans réseau** :
   bouton « Tout préparer pour rouler sans réseau » (environ 55 Mo), puis l'appli fonctionne hors connexion. À chaque
   mise à jour, seuls les fichiers lourds qui ont changé sont retéléchargés (leurs empreintes sont dans `docs/lourds.json`).
 - **Vitesse** : sans carte graphique utilisable, le calcul se répartit sur plusieurs cœurs du téléphone à partir
   de la deuxième ouverture de l'appli (le service worker fournit l'isolation de page nécessaire).
+- **Petits écrans** : toutes les pages, les feuilles et l'écran de détection ont été contrôlés de 320 à 430 points
+  de large, téléphone debout et couché (rien ne dépasse sur le côté, aucune commande ne sort de l'écran).
+- **Boutiques d'applis** : le dossier `boutiques/` contient la marche à suivre pour Google Play et l'App Store,
+  les textes des fiches, les captures d'écran et les icônes ; l'appli a sa page « Confidentialité »
+  (`docs/confidentialite.html`). Voir `boutiques/LISEZ-MOI.md`.
 
 Mise en ligne (une seule fois) : sur la page GitHub du dépôt, **Settings** → **Pages** → Source « Deploy from a
 branch », branche `main`, dossier `/docs` → **Save**. Le site se met ensuite à jour à chaque envoi sur GitHub.

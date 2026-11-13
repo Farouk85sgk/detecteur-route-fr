@@ -2,7 +2,7 @@
 // avec zoom et toucher d'un panneau, annonces vocales, photos incrustées, vidéo du trajet, GPS, résumé du trajet.
 import { APP, FAMILLES } from "./contenu.js";
 import { D, icone } from "./donnees.js";
-import { FINS_VITESSE, Moteur, TAILLES } from "./moteur.js";
+import { FINS_VITESSE, Moteur, TAILLES, LIGNES } from "./moteur.js";
 import { evenement, noterAlbum, verifierBadges, verifierMystere, PROG } from "./progression.js";
 import { aller } from "./nav.js";
 import { idbMettre, idbSupprimerPrefixe, profil, sauver } from "./stockage.js";
@@ -235,6 +235,9 @@ function annoncer(t, phrase = null) {
   }
   if (!phrase && maintenant - dernier < pause) return;
   C.dernier[it.code] = maintenant;
+  // Lignes au sol : elles bordent la voie en permanence et se confondent de loin. Elles s'affichent de chaque côté de
+  // l'image (vote sur les dernières images) ; sans le réglage « Annoncer les lignes au sol », ni grande carte ni voix.
+  if (LIGNES.test(it.code) && !r.lignesVoix) return;
   montrerCarte(it, t, false);
   ajouterHistorique(it);
   if (r.voix && "speechSynthesis" in window) {

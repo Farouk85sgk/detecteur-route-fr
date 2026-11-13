@@ -12,6 +12,7 @@ const OPTIONS = [
   ["vibration", "Vibration", ""],
   ["lireLimitations", "Lire les limitations", "Annonce « Limitation à 50 » au lieu du nom du panneau."],
   ["expliquer", "Expliquer la règle à voix haute", "Après le nom : ce qu'il faut faire."],
+  ["lignesVoix", "Annoncer les lignes au sol", "Coupé : les lignes (continue, discontinue, de rive...) restent affichées de chaque côté de l'image, sans grande carte ni voix. Elles changent sans cesse et se confondent de loin."],
   ["recompenses", "Récompenses pendant la détection", "Messages « Nouveau dans l'album », XP, badges et quêtes pendant un trajet. Coupé : plus aucun message ni son de jeu sur l'image ; l'album continue de se remplir en silence."],
   ["photos", "Photo de chaque élément repéré", "Une photo de la route à chaque annonce, rangée dans « Mes trajets » sur l'accueil. Reste sur le téléphone."],
   ["gps", "Position GPS des photos", "Pour retrouver l'endroit exact sur une carte (caméra seulement). Le téléphone demande l'autorisation."],
