@@ -107,7 +107,9 @@ photos, trajets et progression restent sur le téléphone. Sur Android ou iPhone
   (circulation, conducteur, route, autres usagers, notions diverses, premiers secours, prendre et quitter son
   véhicule, mécanique, sécurité, environnement), chacune avec son explication ; progression par thème, erreurs à
   revoir, et **examens blancs** de 40 questions réparties comme à l'épreuve (35 bonnes réponses pour réussir).
-  Les **séries de l'auto-école** peuvent être importées (voir ci-dessous).
+  Les **séries de l'auto-école** peuvent être importées (voir ci-dessous). Les 685 questions et les 308 fiches ont été
+  relues par des relecteurs indépendants, et chaque remarque a été contre-vérifiée avant correction (35 questions et
+  18 fiches corrigées).
 - **Quiz de signalisation** : dernier trajet, album, par famille, erreurs à revoir, examen des panneaux, et
   **« En situation réelle »** : de vraies photos de routes françaises où il faut reconnaître le panneau encadré.
 - **La quête** : une carte avec une région par famille ; repérer 4 éléments de la famille sur la route ouvre le
@@ -120,7 +122,8 @@ photos, trajets et progression restent sur le téléphone. Sur Android ou iPhone
   que c'est, et l'appli le reconnaît ensuite (modèle d'empreintes `empreinte.onnx`).
 - **Réglages** : ce qu'il faut détecter (famille par famille ou élément par élément), qualité d'analyse (Rapide,
   Équilibrée, Fine), photos, GPS, vidéo, paysage, sons, calcul sur plusieurs cœurs, et un diagnostic. **Sans réseau** :
-  bouton « Tout préparer pour rouler sans réseau » (environ 55 Mo), puis l'appli fonctionne hors connexion.
+  bouton « Tout préparer pour rouler sans réseau » (environ 55 Mo), puis l'appli fonctionne hors connexion. À chaque
+  mise à jour, seuls les fichiers lourds qui ont changé sont retéléchargés (leurs empreintes sont dans `docs/lourds.json`).
 - **Vitesse** : sans carte graphique utilisable, le calcul se répartit sur plusieurs cœurs du téléphone à partir
   de la deuxième ouverture de l'appli (le service worker fournit l'isolation de page nécessaire).
 
@@ -252,25 +255,30 @@ géographiques que les modèles n'ont jamais vues à l'entraînement.
 |---|---|---|---|---|---|---|
 | version précédente | 0,645 | 0,79 | 0,56 | 0,14 | 0,38 | 0,69 |
 | après la première phase d'entraînement | 0,841 | 0,70 | 0,83 | 0,22 | 0,72 | 0,95 |
-| **version livrée** | **0,902** | 0,77 | **0,88** | 0,39 | 0,81 | 0,97 |
+| après la deuxième phase | 0,902 | 0,77 | 0,88 | 0,39 | 0,81 | 0,97 |
+| **version livrée** (affinage : dents de requin redessinées) | **0,905** | 0,77 | **0,89** | 0,41 | 0,84 | 0,97 |
 
 La version précédente manquait presque un panneau sur deux sur ces photos ; la version livrée en trouve près de
 neuf sur dix, et 97 % de ceux qui mesurent plus de 20 pixels.
 
-**Les marquages au sol** sont mesurés sur 800 images synthétiques de validation : AP50 moyenne de 0,83 pour les
-22 marquages, dont 18 au-dessus de 0,82 (passage piétons 0,92, flèches 0,86 à 0,97, lignes continues et
-discontinues 0,83 et 0,85, zébras 0,91, damier 0,86). Quatre restent en retrait : la ligne de rive (0,75), les
-dents de requin (0,73) et surtout les deux lignes fines en travers de la voie, **ligne d'arrêt STOP (0,32) et
-ligne de cédez-le-passage (0,34)**, encore peu fiables. Le mot « STOP » peint au sol (0,90) et le triangle de
-cédez-le-passage (0,95) sont, eux, bien reconnus.
+**Les marquages au sol** sont mesurés sur 1 500 images synthétiques de validation : AP50 moyenne de 0,84 pour les
+22 marquages, dont 18 au-dessus de 0,83 (passage piétons 0,90, flèches 0,83 à 0,95, lignes continues et
+discontinues 0,84 et 0,86, zébras 0,92, damier 0,89, mot « BUS » 0,88). Quatre restent en retrait : la ligne de
+rive (0,74), les dents de requin (0,74), la **ligne d'arrêt STOP (0,62)** et surtout la **ligne de
+cédez-le-passage (0,37)**, encore peu fiable. Le mot « STOP » peint au sol (0,91) et le triangle de
+cédez-le-passage (0,95) sont, eux, bien reconnus. Ces images sont synthétiques : sur une vraie route, la
+reconnaissance des marquages n'a pas été mesurée.
 
-**Dents de requin : dessinées à l'envers pendant l'entraînement.** Une relecture a montré que ces triangles
-étaient dessinés pointe vers le conducteur, alors qu'en France ils sont peints sur la rampe du ralentisseur, pointe
-dans le sens de la marche. Mesuré sur 5 000 images synthétiques redessinées dans le bon sens : le détecteur
-entraîné avec l'ancien dessin n'y retrouve que **3 %** de ces marquages (72 % avec l'ancien dessin). Le
-générateur (`synth/markings.py`) et l'icône sont corrigés ; il faut réentraîner le détecteur avec les nouvelles
-images pour qu'il reconnaisse ce marquage sur une vraie route. Les panneaux de ralentisseur (A2b, C27) ne sont pas
-concernés.
+**Dents de requin : redessinées, puis réapprises.** Une relecture a montré que ces triangles étaient dessinés
+pointe vers le conducteur dans les images d'entraînement, alors qu'en France ils sont peints sur la rampe du
+ralentisseur, pointe dans le sens de la marche. Le détecteur de la deuxième phase ne retrouvait que 7 % des dents de
+requin dessinées dans le bon sens (AP50 0,25). Le générateur (`synth/markings.py`) et l'icône ont été corrigés, les
+images synthétiques régénérées (20 000 + 1 500) et le détecteur affiné sur ces images : deux époques, puis deux
+époques de consolidation à pas plus faible (`data/hyp_affinage.yaml`), les images qui contiennent ce marquage étant
+répétées (`tools/repeter_classe.py`). Il en retrouve maintenant **72 %** (AP50 0,74). Sur les mêmes 1 500 images,
+la moyenne des 22 marquages passe de 0,79 à 0,84 et la ligne d'arrêt STOP de 0,39 à 0,62 ; rien ne baisse sur les
+panneaux (tableau ci-dessus). Après le seul premier passage, le damier des voies de bus avait chuté (0,88 → 0,71)
+et la chaîne complète perdait 0,6 point : c'est la consolidation qui les a rétablis (damier 0,89).
 
 **Le classifieur** (troisième tour, vignettes corrigées) donne le bon type pour **93,3 % des vignettes en moyenne
 par panneau** (94,1 % toutes vignettes confondues) sur 2 330 vraies vignettes de validation ; le tour précédent
@@ -282,28 +290,31 @@ par panneau** (94,1 % toutes vignettes confondues) sur 2 330 vraies vignettes de
 | Modèles | Trouvés et bien nommés | Confusions | Fausses annonces | Annonces justes |
 |---|---|---|---|---|
 | détecteur de la première phase + classifieur du deuxième tour | 77,0 % | 95 | 150 | 85,1 % |
-| détecteur livré + classifieur du deuxième tour | 80,9 % | 105 | 145 | 85,4 % |
-| **détecteur livré + classifieur du troisième tour (version livrée)** | **80,8 %** | **88** | **137** | **86,7 %** |
+| détecteur de la deuxième phase + classifieur du deuxième tour | 80,9 % | 105 | 145 | 85,4 % |
+| détecteur de la deuxième phase + classifieur du troisième tour | 80,8 % | 88 | 137 | 86,7 % |
+| **détecteur affiné + classifieur du troisième tour (version livrée)** | **81,1 %** | **88** | **134** | **86,9 %** |
 
-Selon la taille du panneau dans l'image : 91 % au-dessus de 24 px, 79 % entre 12 et 24 px, 41 % en dessous de
+Selon la taille du panneau dans l'image : 90 % au-dessus de 24 px, 80 % entre 12 et 24 px, 44 % en dessous de
 12 px. Ces chiffres valent pour **une seule photo** ; en roulant, le panneau grossit d'image en image et l'appli
 attend de le voir plusieurs fois de suite avant de l'annoncer. Le seuil règle le compromis entre oublis et erreurs :
 
 | Seuil des panneaux | Trouvés et bien nommés | Confusions | Fausses annonces | Annonces justes |
 |---|---|---|---|---|
-| 0,35 | 82,6 % | 103 | 169 | 84,6 % |
-| **0,455 (appli)** | **80,8 %** | **88** | **137** | **86,7 %** |
-| 0,55 | 78,8 % | 64 | 107 | 89,3 % |
-| 0,70 | 72,9 % | 37 | 62 | 93,0 % |
+| 0,35 | 83,2 % | 99 | 184 | 84,2 % |
+| **0,455 (appli)** | **81,1 %** | **88** | **134** | **86,9 %** |
+| 0,55 | 78,1 % | 73 | 108 | 88,7 % |
+| 0,70 | 72,2 % | 35 | 60 | 93,2 % |
 
-Les panneaux les moins bien reconnus (cinq à dix exemples chacun dans ces photos) sont la chaussée rétrécie A3, le
-panonceau M6h, la limitation de hauteur B12 et la balise J3 ; les confusions les plus fréquentes touchent des
+Les panneaux les moins bien reconnus (cinq à dix exemples chacun dans ces photos) sont le panonceau M6h, la
+limitation de hauteur B12, la balise J3, la distance minimale B17 et la chaussée rétrécie A3 ; les confusions les plus fréquentes touchent des
 panneaux qui se ressemblent (AB3a / AB3b, B6a1 / B6a2, B50c / B50d).
 
-**Dans le navigateur**, sur une vidéo d'essai faite de dix vraies scènes, les dix panneaux attendus sont annoncés,
-ainsi que trois autres réellement présents dans les images (une balise J3, une limitation de hauteur, un 110 sur
-un panneau d'autoroute) ; aucune annonce de panneau n'est fausse. Sur un seul cœur de processeur, sans carte
-graphique, l'analyse y prend environ 130 ms par image (machine d'essai).
+**Dans le navigateur**, sur une vidéo d'essai faite de dix vraies scènes, les dix panneaux attendus sont annoncés à
+chaque passage, ainsi que trois autres réellement présents dans les images (une balise J3, une limitation de
+hauteur, un 110 sur un panneau d'autoroute). L'analyse ne tombe pas sur les mêmes images d'un passage à l'autre :
+environ une fois sur deux, un panneau est annoncé en trop, à la place d'un panneau voisin (un « dos-d'âne » A2b
+pour un « cassis ou dos-d'âne » A2a, ou un « débouché sur un quai » A20). Sur un seul cœur de processeur, sans
+carte graphique, l'analyse y prend environ 140 ms par image (machine d'essai) ; environ 100 ms sur deux cœurs.
 
 ## 4. Améliorer les modèles avec vos propres vidéos
 
@@ -354,11 +365,14 @@ python tools/panoramax_dataset.py --vues datasets_src/panoramax --out datasets -
 # --- images synthétiques : fonds comma10k (≈ 6,5 Go, https://github.com/commaai/comma10k, dossiers imgs/ et masks/) ---
 python synth/prepare_backgrounds.py --src <dossier comma10k converti> --out datasets_src/fonds
 python synth/find_real_stops.py --fonds datasets_src/fonds
-python synth/generate.py --fonds datasets_src/fonds --out datasets/route_fr --train 14000 --val 800
+python synth/generate.py --fonds datasets_src/fonds --out datasets/route_fr --train 20000 --val 1500 --seed 1
 python synth/generate_crops.py --fonds datasets_src/fonds --out datasets/vignettes_synth --par-classe 400
 # --- entraînements ---
 python tools/train_cpu_bf16.py --data data/route_fr.yaml --weights weights/route_fr_yolov5n.pt --hyp data/hyp_route_fr.yaml --img 416 --epochs 10 --batch 32
 python tools/evaluer_detecteur.py --poids weights/route_fr_yolov5n.pt --images datasets/reel/images/val datasets/route_fr/images/val
+# affinage après une correction du générateur (dents de requin) : images de ce marquage répétées, pas réduit, 2 + 2 époques
+python tools/repeter_classe.py --jeu datasets/route_fr --classe M_dents_requin --fois 5   # dossiers à ajouter à « train » dans data/route_fr.yaml
+python tools/train_cpu_bf16.py --data data/route_fr.yaml --weights weights/route_fr_yolov5n.pt --hyp data/hyp_affinage.yaml --img 416 --epochs 2 --batch 32 --cos-lr
 python tools/train_classifieur.py --data datasets/vignettes datasets/vignettes_synth
 python tools/miner_rejets.py && python tools/train_classifieur.py --data datasets/vignettes datasets/vignettes_synth --epochs 4 --lr 5e-4
 # étiquettes corrigées à l'œil, puis troisième tour du classifieur et mesure de la chaîne complète

@@ -7,7 +7,7 @@ export const APP = {
   slogan: "Le code de la route, en direct.",
   accroche: "Filme ta route : panneaux, feux, marquages, piétons et cyclistes sont reconnus et expliqués en direct.",
   depot: "https://github.com/Farouk85sgk/detecteur-route-fr",
-  version: "3.0.2",
+  version: "3.0.3",
 };
 
 // Éléments ajoutés à ceux du catalogue
