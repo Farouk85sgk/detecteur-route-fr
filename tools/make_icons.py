@@ -140,6 +140,30 @@ def marquage(code):
         t = bike_raster(rng, 200, 200)
         im[28:228, 28:228][t > 100] = blanc
         return Image.fromarray(im[..., [2, 1, 0, 3]])
+    elif code == "M_zigzag":  # ligne jaune en zigzag de l'arrêt de bus : dents serrées, grossies pour rester lisibles
+        pts = np.array([[S / 2 + (26 if k % 2 else -26), 30 + k * 196 / 14] for k in range(15)])
+        cv2.polylines(im, [np.round(pts * 16).astype(np.int32)], False, jaune, 9, cv2.LINE_AA, shift=4)
+        return Image.fromarray(im[..., [2, 1, 0, 3]])
+    elif code == "M_vitesse_sol":  # vitesse rappelée sur la chaussée : grands chiffres blancs allongés
+        t = text_raster("30", rng, 150, 190)
+        im[33:223, 53:203][t > 100] = blanc
+        return Image.fromarray(im[..., [2, 1, 0, 3]])
+    elif code == "M_livraison":  # emplacement de livraison : contour jaune en tirets, croix et mot LIVRAISON
+        a, b_, e = (34, 58), (222, 198), 7
+        for k in range(6):  # tirets des deux grands côtés
+            x0 = a[0] + k * 33
+            cv2.rectangle(im, (x0, a[1]), (min(x0 + 20, b_[0]), a[1] + e), jaune, -1)
+            cv2.rectangle(im, (x0, b_[1] - e), (min(x0 + 20, b_[0]), b_[1]), jaune, -1)
+        for k in range(4):  # tirets des deux petits côtés
+            y0 = a[1] + 8 + k * 33
+            cv2.rectangle(im, (a[0], y0), (a[0] + e, min(y0 + 20, b_[1])), jaune, -1)
+            cv2.rectangle(im, (b_[0] - e, y0), (b_[0], min(y0 + 20, b_[1])), jaune, -1)
+        cv2.line(im, (a[0] + 16, a[1] + 16), (b_[0] - 16, b_[1] - 16), jaune, 5, cv2.LINE_AA)
+        cv2.line(im, (a[0] + 16, b_[1] - 16), (b_[0] - 16, a[1] + 16), jaune, 5, cv2.LINE_AA)
+        t = text_raster("LIVRAISON", rng, 160, 30)
+        cv2.rectangle(im, (44, 110), (212, 146), (60, 60, 60, 255), -1)
+        im[113:143, 48:208][t > 100] = jaune
+        return Image.fromarray(im[..., [2, 1, 0, 3]])
     else:
         polys = make_local(code, 0.0, 0.0, 3.5, rng, None).polys
         if code == "M_passage_pietons":
