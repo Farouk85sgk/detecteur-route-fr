@@ -276,16 +276,17 @@ export class Moteur {
     };
     for (const [v, i, j] of pairs) { if (tUsed.has(i) || dUsed.has(j)) continue; tUsed.add(i); dUsed.add(j); toucher(this.pistes[i], dets[j], v); }
     // Seconde passe, panneaux et feux : avec peu d'images par seconde (ou un panneau tout proche), l'objet ne recouvre plus son
-    // cadre précédent. On le rattache à la piste de même groupe la plus proche (à moins de 2,5 fois sa taille, 1,5 si le nom
-    // diffère, tailles comparables) : la piste garde ses voix, au lieu d'une nouvelle piste jugée sur une seule image.
+    // cadre précédent. On le rattache à la piste la plus proche qui porte le même nom, vue il y a deux images au plus (à moins
+    // de 2,5 fois sa taille, tailles comparables) : la piste garde ses voix, au lieu d'une nouvelle piste jugée sur une seule
+    // image. Un panneau d'un autre nom n'est jamais rattaché ainsi : ce serait un autre panneau, qui doit avoir sa propre piste.
     const centre = b => [(b[0] + b[2]) / 2, (b[1] + b[3]) / 2], cote = b => Math.max(b[2] - b[0], b[3] - b[1]), loin = [];
     this.pistes.forEach((t, i) => {
-      if (tUsed.has(i) || !groupes.has(t.groupe) || (t.groupe !== "s" && t.groupe !== "f")) return;
+      if (tUsed.has(i) || !groupes.has(t.groupe) || (t.groupe !== "s" && t.groupe !== "f") || t.misses > 2) return;
       const [tx, ty] = centre(t.box), ct = cote(t.box), nom = this.classe(t);
       dets.forEach((d, j) => {
         if (dUsed.has(j) || groupeDe(d.cls) !== t.groupe) return;
         const [dx, dy] = centre(d.box), cd = cote(d.box), ecart = Math.hypot(dx - tx, dy - ty) / Math.max(ct, cd);
-        if (ecart <= (t.groupe === "f" || d.cls === nom ? 2.5 : 1.5) && cd < 2.2 * ct && ct < 2.2 * cd) loin.push([ecart, i, j]);
+        if ((t.groupe === "f" ? ecart <= 1.5 : d.cls === nom && ecart <= 2.5) && cd < 2.2 * ct && ct < 2.2 * cd) loin.push([ecart, i, j]);
       });
     });
     loin.sort((a, b) => a[0] - b[0]);
@@ -299,20 +300,40 @@ export class Moteur {
     this.pistes.forEach((t, i) => {
       if (!groupes.has(t.groupe)) return;
       if (!tUsed.has(i)) { t.misses++; for (const k in t.scores) t.scores[k] *= 0.9; }
-      else if (!t.ok && this.confirme(t, taille(t.box))) { t.ok = true; nouveaux.push(t); }
+      else if (!t.ok && this.confirme(t, taille(t.box))) { t.ok = true; t.annonce = this.classe(t); t.vuesAnnonce = t.hits; nouveaux.push(t); }
+      else if (t.ok && t.groupe === "s" && this.classe(t) !== t.annonce && t.hits - t.vuesAnnonce >= 3 && t.conf >= 0.65) {
+        // Le nom a changé depuis l'annonce : de près, le panneau se lit mieux (un 110 devient un 130). Quand le nouveau nom
+        // réunit 60 % des voix, l'annonce est refaite avec le bon nom.
+        const c = this.classe(t);
+        let total = 0;
+        for (const k in t.scores) total += t.scores[k];
+        if (t.scores[c] >= 0.6 * total) { t.annonce = c; t.vuesAnnonce = t.hits; t.corrige = true; nouveaux.push(t); }
+      }
     });
     this.pistes = this.pistes.filter(t => t.misses <= MAX_MISSES);
     return { nouveaux, changes };
   }
 
-  // un élément est annoncé quand il a été vu assez de fois. Marquages au sol : plus d'images, et un type qui domine nettement
-  // (5 images et 65 % des voix pour une ligne, 3 images et 55 % pour les autres marquages).
+  // Un élément est annoncé quand il a été vu assez de fois.
+  // Panneaux : plus le score est bas, plus on attend. Sur les photos de contrôle, une annonce au score de 0,46 à 0,65 n'est
+  // juste qu'une fois sur deux (45 %), contre 77 % de 0,75 à 0,85 et 91 % au-dessus. Un vrai panneau grossit en approchant
+  // et son score monte : attendre coûte une fraction de seconde, et les détections hésitantes qui clignotent ne passent plus.
+  // Marquages au sol : plus d'images, et un type qui domine nettement (5 images et 65 % des voix pour une ligne, 3 images
+  // et 55 % pour les autres marquages).
   confirme(t, cote) {
-    if (t.groupe !== "m") return (t.hits >= MIN_HITS || t.conf > 0.85) && cote >= 18;
-    const c = this.classe(t), ligne = LIGNES.test(D.items[c]?.code || "");
+    if (t.groupe !== "m" && t.groupe !== "s") return (t.hits >= MIN_HITS || t.conf > 0.85) && cote >= 18;
+    const c = this.classe(t);
     let total = 0;
     for (const k in t.scores) total += t.scores[k];
-    return t.hits >= (ligne ? 5 : 3) && t.scores[c] >= (ligne ? 0.65 : 0.55) * total;
+    const part = total ? t.scores[c] / total : 0;
+    if (t.groupe === "s") {
+      if (cote < 18) return false;
+      if (t.conf >= 0.85) return true;             // évident : tout de suite
+      if (t.conf >= 0.65) return t.hits >= 2;      // net : deux images
+      return t.hits >= 4 && part >= 0.6;           // hésitant : quatre images, et un nom qui domine
+    }
+    const ligne = LIGNES.test(D.items[c]?.code || "");
+    return t.hits >= (ligne ? 5 : 3) && part >= (ligne ? 0.65 : 0.55);
   }
 
   // ligne qui borde la voie, de chaque côté : vote sur les dernières images (la plus proche du milieu de l'image compte)

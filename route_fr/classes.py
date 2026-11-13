@@ -75,7 +75,11 @@ def _fam(ident):
 # Seuil d'annonce plus sévère pour les panneaux le plus souvent annoncés à tort sur les 1 542 vraies photos de validation
 # (score combiné détecteur x classifieur ; le seuil commun est 0,455). Au seuil commun : balise J13 14 annonces justes
 # pour 18 fausses, J5 2 pour 8, J3 4 pour 6, C5 2 pour 4, C13a 3 pour 4. Mesure : tools/evaluer_chaine.py --annonces.
-SEUILS = {"J13": 0.70, "J5": 0.80, "J3": 0.65, "C5": 0.75, "C13a": 0.70}
+# Ajoutés ensuite sur le même constat : CE24 (vidange pour camping-cars : les 8 annonces justes ont un score d'au moins 0,81,
+# les fausses de 0,61 et 0,63), C1a (parking, 14 justes pour 12 fausses), B6a1 (stationnement interdit, 10 pour 12) et
+# B13 (limitation de tonnage, 8 pour 13). Des seuils par panneau généralisés à toutes les classes n'apportent presque
+# rien sur des photos tenues à l'écart (une fausse annonce en moins pour une juste perdue) : on s'en tient à ces cas nets.
+SEUILS = {"J13": 0.70, "J5": 0.80, "J3": 0.65, "C5": 0.75, "C13a": 0.70, "CE24": 0.70, "C1a": 0.75, "B6a1": 0.65, "B13": 0.80}
 
 
 def _p(code, nom, explication, reflexe="", voix=None, vitesse=None, cat=None):

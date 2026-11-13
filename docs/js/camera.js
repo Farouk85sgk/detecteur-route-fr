@@ -153,14 +153,18 @@ function disposer() {
   }
   // Une image qui ne remplit pas l'écran (vidéo large sur téléphone debout) se place dans cette zone libre, pas sous les commandes.
   const dhBase = vh * base, cy = dhBase <= H - T - B ? T + (H - T - B) / 2 : Math.min(H / 2, T + dhBase / 2);
-  const dw = vw * s, dh = vh * s, ox = (W - dw) / 2 + zoom.x, oy = cy - dh / 2 + zoom.y;
+  // Téléphone couché : l'image dépasse de la zone vidéo des deux côtés, et le volet de droite en recouvrait le bord droit, là
+  // où passent la plupart des panneaux. On la décale vers la gauche : 5 % seulement restent sous le volet (le bord gauche,
+  // côté voie d'en face, sort un peu plus de l'écran).
+  const dwBase = vw * base, bx = paysage && dwBase > W ? -Math.max(0, (dwBase - W) / 2 - 0.05 * dwBase) : 0;
+  const dw = vw * s, dh = vh * s, ox = (W - dw) / 2 + bx + zoom.x, oy = cy - dh / 2 + zoom.y;
   Object.assign(video.style, { width: dw + "px", height: dh + "px", left: ox + "px", top: oy + "px" });
   // Le calque des cadres couvre l'écran, pas l'image agrandie : mêmes proportions en largeur et en hauteur à tout niveau de zoom
   // (un calque étiré avec l'image décalait les cadres dès qu'on zoomait), et des traits toujours nets.
   const dpr = devicePixelRatio || 1, cw = Math.round(innerWidth * dpr), ch = Math.round(H * dpr);
   Object.assign(calque.style, { width: innerWidth + "px", height: H + "px", left: "0px", top: "0px" });
   if (calque.width !== cw || calque.height !== ch) { calque.width = cw; calque.height = ch; }
-  C.s = s; C.ox = ox; C.oy = oy; C.vw = vw; C.vh = vh; C.sBase = base; C.W = W; C.H = H; C.cy = cy; C.T = T; C.B = B;
+  C.s = s; C.ox = ox; C.oy = oy; C.vw = vw; C.vh = vh; C.sBase = base; C.W = W; C.H = H; C.cy = cy; C.T = T; C.B = B; C.bx = bx;
   dessiner();
 }
 
@@ -178,6 +182,7 @@ async function boucle() {
       if (!C || C.fini) return;
       if (fige) C.aRevoir--;
       C.brutes = res.brutes;
+      majZones();
       for (const t of res.nouveaux) annoncer(t);
       for (const { t, avant } of res.changes) if (D.items[avant]?.code === "F_rouge" && D.items[moteur.classe(t)]?.code === "F_vert") annoncer(t, "Le feu passe au vert");
       dessiner();
@@ -208,7 +213,11 @@ function annoncer(t, phrase = null) {
   if (!it) return;
   const maintenant = Date.now(), dernier = C.dernier[it.code] || 0;
   const pause = it.groupe === "u" || it.groupe === "f" ? 20000 : 8000;
-  if (!phrase && it.groupe === "s" && dejaLa(t, it)) return;
+  // une annonce refaite parce que le nom a changé (t.corrige) passe toujours : l'endroit retenu prend simplement le nouveau nom
+  const correction = t.corrige;
+  t.corrige = false;
+  if (correction) { const z = C.zones.find(z => recouvrement(z.box, t.box) > 0.3); if (z) Object.assign(z, { code: it.code, box: t.box.slice(), vu: Date.now() }); }
+  else if (!phrase && it.groupe === "s" && dejaLa(t, it)) return;
   const fete = r.recompenses !== false;  // réglage « Récompenses pendant la détection »
   PROG.silence = !fete;
   // trajet, album, quêtes : chaque confirmation compte
@@ -240,18 +249,30 @@ function annoncer(t, phrase = null) {
 }
 const arrondiDistance = d => Math.max(5, Math.round(d / 5) * 5);
 
-// Un panneau « vu » plusieurs fois au même endroit de l'image n'est pas un panneau de la route : c'est un objet fixe devant
-// la caméra (autocollant du pare-brise, tableau de bord) ou le même panneau retrouvé après une coupure. On ne l'annonce
-// qu'une fois : même endroit dans les trois minutes -> ni carte, ni voix, ni point.
+// Objet fixe devant la caméra (autocollant du pare-brise, reflet, tableau de bord) pris pour un panneau : sa piste se perd et
+// renaît au même endroit, et il serait annoncé sans fin. On retient l'endroit de chaque annonce, et on note tant qu'un
+// panneau y est encore vu (majZones). Une nouvelle piste au même endroit n'est pas annoncée si l'endroit n'a pas été quitté :
+// le même panneau y était encore il y a moins de 20 s, ou un panneau quelconque il y a moins de 3 s. Un panneau de la
+// route, lui, traverse l'image et s'en va : l'endroit se libère, et le panneau suivant est annoncé normalement.
+const aireBoite = b => Math.max(0, b[2] - b[0]) * Math.max(0, b[3] - b[1]);
+const recouvrement = (a, b) => { const i = aireBoite([Math.max(a[0], b[0]), Math.max(a[1], b[1]), Math.min(a[2], b[2]), Math.min(a[3], b[3])]); return i / (aireBoite(a) + aireBoite(b) - i || 1); };
 function dejaLa(t, it) {
-  const maintenant = Date.now(), aire = b => Math.max(0, b[2] - b[0]) * Math.max(0, b[3] - b[1]);
-  const iou = (a, b) => { const i = aire([Math.max(a[0], b[0]), Math.max(a[1], b[1]), Math.min(a[2], b[2]), Math.min(a[3], b[3])]); return i / (aire(a) + aire(b) - i || 1); };
-  C.zones = C.zones.filter(z => maintenant - z.quand < 300000);
-  const z = C.zones.find(z => (z.code === it.code && iou(z.box, t.box) > 0.4) || iou(z.box, t.box) > 0.6);
-  if (!z) { C.zones.push({ code: it.code, box: t.box.slice(), quand: maintenant }); return false; }
-  const recent = maintenant - z.quand < 180000;
-  Object.assign(z, { code: it.code, box: t.box.slice(), quand: maintenant });
-  return recent;
+  const maintenant = Date.now();
+  C.zones = C.zones.filter(z => maintenant - z.vu < 60000);
+  const z = C.zones.find(z => (z.code === it.code && maintenant - z.vu < 20000 && recouvrement(z.box, t.box) > 0.4) || (maintenant - z.vu < 3000 && recouvrement(z.box, t.box) > 0.6));
+  if (z) { Object.assign(z, { code: it.code, box: t.box.slice(), vu: maintenant }); return true; }
+  C.zones.push({ code: it.code, box: t.box.slice(), vu: maintenant });
+  return false;
+}
+// après chaque image analysée : un endroit encore occupé par son panneau reste « vu »
+function majZones() {
+  if (!C.zones.length) return;
+  const maintenant = Date.now();
+  for (const t of moteur.pistes) {
+    if (!t.ok || t.misses || t.groupe !== "s") continue;
+    const code = D.items[moteur.classe(t)]?.code;
+    for (const z of C.zones) if (z.code === code && recouvrement(z.box, t.box) > 0.4) z.vu = maintenant;
+  }
 }
 const tempsTrajet = () => C.fichier ? +C.video.currentTime.toFixed(1) : Math.round((Date.now() - C.trajet.debut) / 1000);
 
@@ -511,7 +532,7 @@ function placer(k, u, sx, sy) {
   const s = C.sBase * k, dw = C.vw * s, dh = C.vh * s, mx = Math.max(0, (dw - C.W) / 2);
   const haut = C.T + dh / 2 - C.cy, bas = C.H - C.B - dh / 2 - C.cy;  // décalage vertical permis : de « bas » à « haut »
   C.zoom.k = k;
-  C.zoom.x = k <= 1.001 ? 0 : Math.min(mx, Math.max(-mx, sx - u.x * s - (C.W - dw) / 2));
+  C.zoom.x = k <= 1.001 ? 0 : Math.min(mx - C.bx, Math.max(-mx - C.bx, sx - u.x * s - (C.W - dw) / 2 - C.bx));
   C.zoom.y = k <= 1.001 || bas > haut ? 0 : Math.min(haut, Math.max(bas, sy - u.y * s - (C.cy - dh / 2)));
   $(".astuce-cam", C.racine).classList.add("cache");  // le geste est compris : l'astuce laisse voir l'image
   disposer(); majZoom();
