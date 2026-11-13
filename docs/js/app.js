@@ -44,7 +44,8 @@ NAV.rendre = rendre;
 
 function lancerCamera(fichier = null) {
   if (cameraOuverte()) return;
-  ouvrirCamera({ fichier, apresFermeture: () => { if (location.hash === dernier) rendre(); } });
+  // (la liste « Mes panneaux » est relue : un panneau a pu être appris depuis l'image en pause)
+  ouvrirCamera({ fichier, apresFermeture: async () => { appris = await chargerAppris(moteur); if (location.hash === dernier) rendre(); } });
 }
 
 // liens internes : <... data-nav="#/album">

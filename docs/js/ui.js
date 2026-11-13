@@ -59,7 +59,7 @@ let feuille = null;
 export function ouvrirFeuille(titre, corps, { onFerme, classe = "" } = {}) {
   fermerFeuille(true);
   const voile = el('<div class="voile"></div>');
-  const f = el(`<section class="feuille ${classe}" role="dialog" aria-modal="true" aria-label="${esc(titre)}"><div class="poignee" role="button" aria-label="Refermer"></div>
+  const f = el(`<section class="feuille ${classe}" role="dialog" aria-modal="true" aria-label="${esc(titre)}"><div class="poignee" role="button" tabindex="0" aria-label="Refermer"></div>
     <div class="feuille-tete"><h2>${esc(titre)}</h2><button class="btn-rond contour" data-fermer aria-label="Fermer">${ICONES.fermer}</button></div>
     <div class="feuille-corps"></div></section>`);
   const zone = f.querySelector(".feuille-corps");
@@ -70,21 +70,28 @@ export function ouvrirFeuille(titre, corps, { onFerme, classe = "" } = {}) {
   voile.onclick = () => fermerFeuille();
   f.querySelector("[data-fermer]").onclick = () => fermerFeuille();
   // la poignée et le titre se tirent vers le bas pour refermer la feuille ; un simple toucher sur la poignée la referme aussi
-  let y0 = null;
+  let y0 = null, glisse = 0;
   for (const z of f.querySelectorAll(".poignee, .feuille-tete")) {
-    z.addEventListener("pointerdown", e => { if (e.target.closest("button")) return; y0 = e.clientY; z.setPointerCapture?.(e.pointerId); });
-    z.addEventListener("pointermove", e => { if (y0 != null) f.style.transform = `translateY(${Math.max(0, e.clientY - y0)}px)`; });
+    z.addEventListener("pointerdown", e => { if (e.target.closest("button")) return; y0 = e.clientY; glisse = 0; z.setPointerCapture?.(e.pointerId); });
+    z.addEventListener("pointermove", e => { if (y0 == null) return; glisse = Math.max(glisse, Math.abs(e.clientY - y0)); f.style.transform = `translateY(${Math.max(0, e.clientY - y0)}px)`; });
     const fin = e => {
       if (y0 == null) return;
       const d = e.clientY - y0;
       y0 = null;
-      if (e.type === "pointerup" && (d > 90 || (Math.abs(d) < 6 && z.classList.contains("poignee")))) return fermerFeuille();
+      if (e.type === "pointerup" && d > 90) return fermerFeuille();
       f.style.transform = "";
     };
     z.addEventListener("pointerup", fin);
     z.addEventListener("pointercancel", fin);
   }
-  history.pushState({ feuille: true }, "");
+  // Le simple toucher de la poignée referme au « click », pas au lever du doigt : le clic est alors consommé par la poignée.
+  // Fermée dès le lever du doigt, la feuille n'était plus là quand le clic arrivait, et il actionnait ce qui se trouvait dessous.
+  const poignee = f.querySelector(".poignee");
+  poignee.onclick = () => { if (glisse < 6) fermerFeuille(); };
+  poignee.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); fermerFeuille(); } };
+  // une feuille qui en remplace une autre reprend son entrée d'historique : sinon chaque enchaînement de feuilles laissait une
+  // entrée morte, et le bouton retour du téléphone semblait ne plus rien faire
+  if (!history.state?.feuille) history.pushState({ feuille: true }, "");
   return zone;
 }
 export function fermerFeuille(remplacee = false) {

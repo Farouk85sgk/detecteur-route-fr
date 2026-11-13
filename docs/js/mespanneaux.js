@@ -106,7 +106,7 @@ function choisirZone(corps, cv, candidats, moteur, apres, depart = {}) {
   const consigne = depart.point || depart.box ? "Le cadre vert entoure l'endroit que tu as touché. S'il est mal placé, touche le panneau sur la photo."
     : candidats.length ? "Touche le panneau à apprendre : son cadre devient vert. S'il n'a pas de cadre, touche-le quand même." : "Aucun panneau trouvé automatiquement : touche le panneau sur la photo.";
   corps.innerHTML = `<p>${consigne}</p>
-    <div class="choix-zone"><img src="${cv.toDataURL("image/jpeg", 0.85)}" alt="Photo">${candidats.map((c, i) => `<div class="boite" data-i="${i}" style="${pct(c.box)}"></div>`).join("")}<div class="boite manuelle cache"></div></div>
+    <div class="choix-zone" style="max-width:calc(56vh * ${(W / H).toFixed(3)});margin:0 auto"><img src="${cv.toDataURL("image/jpeg", 0.85)}" alt="Photo">${candidats.map((c, i) => `<div class="boite" data-i="${i}" style="${pct(c.box)}"></div>`).join("")}<div class="boite manuelle cache"></div></div>
     <label class="doux reglage-taille ${candidats.length ? "cache" : ""}">Taille du cadre <input type="range" min="0.06" max="0.6" step="0.01" value="${taille}" style="width:100%"></label>
     <h3>Qu'est-ce que c'est ?</h3>
     <div class="recherche">${ICONES.recherche}<input class="champ" placeholder="Chercher un panneau connu…" data-q></div>

@@ -4,7 +4,7 @@ import { APP, BADGES, FAMILLES, QUETE } from "./contenu.js";
 import { D, detectables, icone } from "./donnees.js";
 import { assurerJour, etatRegion, majCoeurs, nbAlbum, nbBadges, nbEclats, nbQuetesFaites, niveau, regionCourante, statsClassement } from "./progression.js";
 import { miniCarte } from "./quete.js";
-import { EVENEMENTS, blocVisible, montrerBloc, nbActifs, nbBlocsMasques, ouvrirProfils, ouvrirReglages } from "./reglages.js";
+import { BLOCS, EVENEMENTS, blocVisible, montrerBloc, nbActifs, nbBlocsMasques, ouvrirProfils, ouvrirReglages } from "./reglages.js";
 import { carteCodes } from "./series.js";
 import { profil, sauver } from "./stockage.js";
 import { sousTitreTrajet } from "./trajets.js";
@@ -20,7 +20,7 @@ export async function pageAccueil(racine, { moteur, appris, lancerCamera }) {
     : ec.etat === "gardien" ? `${fc.region} : ${fc.gardien} t'attend au donjon.`
     : `${fc.region} : repère sur la route encore ${ec.besoin - ec.vus} élément${ec.besoin - ec.vus > 1 ? "s" : ""} de la famille « ${fc.nom} » pour affronter ${fc.gardien}.`;
   const mys = D.parCode[j.mystere];
-  const vu = id => blocVisible(id, p), masquer = id => `<button class="btn-lien masquer" data-masquer="${id}">Masquer ce bloc</button>`, cachés = nbBlocsMasques(p);
+  const vu = id => blocVisible(id, p), masquer = id => `<button class="btn-lien masquer" data-masquer="${id}" aria-label="Masquer le bloc : ${esc(BLOCS.find(b => b[0] === id)?.[1] || id)}">Masquer ce bloc</button>`, cachés = nbBlocsMasques(p);
   const etatRepli = `<span class="repli-etat"><span class="si-ferme">Ouvrir</span><span class="si-ouvert">Refermer</span>${ICONES.chevron.replace("<svg", '<svg class="chevron"')}</span>`;
   const piedRepli = id => `<div class="pied-repli"><button class="btn-lien" data-a="refermer">Refermer</button>${masquer(id)}</div>`;
   racine.innerHTML = `<div class="page">
@@ -51,7 +51,7 @@ export async function pageAccueil(racine, { moteur, appris, lancerCamera }) {
           <button class="tuile" data-nav="#/quiz"><b>${stats.erudit ? `${stats.erudit}<small>%</small>` : "?"}</b><span>Quiz</span></button>
           <button class="tuile" data-a="badges"><b>${nbBadges(p)}<small>/${BADGES.length}</small></b><span>Badges</span></button></div>
         ${nDernier ? `<button class="barre-trajet" data-nav="#/quiz/trajet/${dernier.id}"><span>Dernier trajet : <b>${nDernier} élément${nDernier > 1 ? "s" : ""}</b>, ${ilYa(dernier.fin || dernier.debut)}</span><b>Quiz du trajet ▸</b></button>` : ""}
-        <div class="reglage" style="padding-bottom:0"><div><h3>Expliquer la règle à voix haute</h3><p class="doux">Après le nom : ce qu'il faut faire.</p></div>${bascule("expliquer", p.reglages.expliquer)}</div>${masquer("niveau")}</section>` : ""}
+        <div class="reglage" style="padding-bottom:0"><div><h3>Expliquer la règle à voix haute</h3><p class="doux">Après le nom : ce qu'il faut faire.</p></div>${bascule("expliquer", p.reglages.expliquer, 'aria-label="Expliquer la règle à voix haute"')}</div>${masquer("niveau")}</section>` : ""}
 
       <div class="zone-codes"></div>
 

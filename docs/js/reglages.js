@@ -25,7 +25,7 @@ const QUALITES = [["rapide", "Rapide"], ["equilibree", "Équilibrée"], ["fine",
 // Blocs facultatifs de l'appli : chacun peut être masqué (bouton « Masquer ce bloc » sur place, ou ici dans les réglages)
 export const BLOCS = [
   ["quete", "La quête", "Carte, panneau mystère et quêtes du jour."],
-  ["niveau", "Niveau, album et badges", ""],
+  ["niveau", "Niveau, album, quiz et badges", "Tuiles Album, Quiz et Badges, quiz du dernier trajet."],
   ["codes", "Code de la route", "Séries par thème et examens blancs."],
   ["import", "Séries de l'auto-école", "Importer un fichier ou un lien, sur la page « Code de la route »."],
   ["trajets", "Mes trajets", ""],
@@ -59,6 +59,8 @@ export function ouvrirReglages({ depuisCamera = false, vers = null } = {}) {
   const corps = ouvrirFeuille("Réglages", "", { onFerme: () => EVENEMENTS.reglagesChanges() });
   dessiner(corps, depuisCamera);
   if (vers) requestAnimationFrame(() => corps.querySelector(`#${vers}`)?.scrollIntoView({ block: "start" }));
+  // liste refermée par son bandeau collé : on ramène sa famille à l'écran (« toggle » ne remonte pas, d'où l'écoute en capture)
+  corps.addEventListener("toggle", e => { const d = e.target; if (d.matches?.(".famille-filtre details") && !d.open) d.closest(".famille-filtre").scrollIntoView({ block: "nearest" }); }, true);
   corps.addEventListener("change", async e => {
     const p = profil(), r = p.reglages, cible = e.target;
     if (cible.dataset.reglage) { r[cible.dataset.reglage] = cible.checked; sauver(); if (cible.dataset.reglage === "voix" && cible.checked && "speechSynthesis" in window) speechSynthesis.speak(Object.assign(new SpeechSynthesisUtterance("Annonces activées"), { lang: "fr-FR" })); }
@@ -69,7 +71,7 @@ export function ouvrirReglages({ depuisCamera = false, vers = null } = {}) {
       sauver(); majCompte(corps); reconfigurer();
     }
     if (cible.dataset.reglage === "debug") reconfigurer();
-    if (cible.dataset.bloc) montrerBloc(cible.dataset.bloc, cible.checked, p);
+    if (cible.dataset.bloc) { montrerBloc(cible.dataset.bloc, cible.checked, p); $("[data-r=blocs]", corps)?.classList.toggle("cache", !nbBlocsMasques(p)); }
   });
   corps.addEventListener("click", async e => {
     const b = e.target.closest("[data-r]");
@@ -98,12 +100,12 @@ function dessiner(corps, depuisCamera) {
       <button class="btn" style="width:auto" data-r="profils">Changer</button></div>
     <div class="ligne-sep"><h3 style="font-family:var(--corps);font-size:1.18rem;margin-bottom:14px">Couleur du fond</h3>
       <div class="nuancier">${FONDS.map(f => `<button data-r="fond" data-v="${f.id}" aria-pressed="${p.fond === f.id}"><i style="background:${{ auto: "linear-gradient(135deg,#f3f4f6 50%,#12163a 50%)", blanc: "#fff", creme: "#f4ecda", sauge: "#e3eadf", nuit: "#12163a" }[f.id]}"></i>${f.nom}</button>`).join("")}</div></div>
-    ${OPTIONS.map(([id, titre, texte]) => `<div class="reglage"><div><h3>${titre}</h3>${texte ? `<p>${texte}</p>` : ""}</div>${bascule(id, r[id])}</div>`).join("")}
+    ${OPTIONS.map(([id, titre, texte]) => `<div class="reglage"><div><h3>${titre}</h3>${texte ? `<p>${texte}</p>` : ""}</div>${bascule(id, r[id], `aria-label="${esc(titre)}"`)}</div>`).join("")}
     <div class="ligne-sep" id="reglages-accueil"><h3 style="font-family:var(--corps);font-size:1.18rem">Accueil : ce qui s'affiche</h3>
       <p class="doux">Coupe ce dont tu ne te sers pas : le bloc disparaît de l'appli, rien n'est effacé.</p></div>
     ${BLOCS.map(([id, titre, texte]) => `<div class="reglage compact"><div><h3>${titre}</h3>${texte ? `<p>${texte}</p>` : ""}</div>
       <label class="bascule"><input type="checkbox" data-bloc="${id}" ${blocVisible(id, p) ? "checked" : ""} aria-label="Afficher : ${titre}"><span></span></label></div>`).join("")}
-    ${nbBlocsMasques(p) ? `<button class="btn" data-r="blocs">Tout réafficher</button>` : ""}
+    <button class="btn ${nbBlocsMasques(p) ? "" : "cache"}" data-r="blocs">Tout réafficher</button>
     <div class="ligne-sep"><div class="carte-titre"><div><h3 style="font-family:var(--corps);font-size:1.18rem">Ce que l'appli détecte</h3>
       <p class="doux">Coupe une famille entière, ou un seul élément avec « Choisir parmi… » ou la recherche. Ce qui est coupé n'est ni encadré ni annoncé.</p></div>
       <b class="compte-actifs" style="font-size:1.3rem;text-align:center;min-width:3.5em"></b></div></div>

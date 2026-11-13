@@ -42,6 +42,9 @@ export async function ouvrirFiche(code, { corriger = null } = {}) {
   if (!it) return;
   const p = profil(), a = p.album[code], f = famille(it.famille);
   const quoi = it.groupe === "m" ? "ce marquage" : it.groupe === "s" ? "ce panneau" : "cet élément";
+  // toute la famille peut être coupée dans les réglages : l'élément n'est alors pas annoncé, quel que soit son propre réglage
+  const familleCoupee = it.famille !== "perso" && p.reglages.familles[it.famille] === false;
+  const enDetection = !!document.querySelector(".camera");  // fiche ouverte par-dessus l'écran de détection
   const corps = ouvrirFeuille(it.nom, `
     <div class="fiche-tete"><img src="${esc(icone(it))}" alt=""><div><p class="doux">${esc(f?.nom || "Mes panneaux")}</p>
       <p style="margin:8px 0"><span class="code-badge">${esc(it.etiquette)}</span></p>
@@ -51,9 +54,10 @@ export async function ouvrirFiche(code, { corriger = null } = {}) {
     ${it.reflexe && it.reflexe !== it.explication ? `<div class="fiche-bloc"><h4>Bon réflexe</h4><p>${esc(it.reflexe)}</p></div>` : ""}
     ${f ? `<div class="fiche-bloc"><h4>Le reconnaître</h4><p>${esc(f.forme)}</p></div>` : ""}
     <div class="photo-fiche"></div>
-    ${it.detecte || it.famille === "perso" ? `<div class="reglage fiche-annonce"><div><h3>L'annoncer pendant la détection</h3><p>Coupé : ${quoi} n'est plus ni encadré ni annoncé. À couper s'il est annoncé à tort.</p></div>
-      <label class="bascule"><input type="checkbox" data-annoncer ${p.reglages.exclus.includes(code) ? "" : "checked"} aria-label="Annoncer ${esc(it.nom)}"><span></span></label></div>` : ""}
-    ${f ? `<button class="btn btn-plein" data-quiz="${f.id}">S'entraîner : ${esc(f.nom)}</button>` : ""}`);
+    ${it.detecte || it.famille === "perso" ? `<div class="reglage fiche-annonce"><div><h3>L'annoncer pendant la détection</h3>
+      <p>${familleCoupee ? `Toute la famille « ${esc(f?.nom || "")} » est coupée dans les Réglages : ${quoi} n'est pas annoncé.` : `Coupé : ${quoi} n'est plus ni encadré ni annoncé. À couper s'il est annoncé à tort.`}</p></div>
+      <label class="bascule"><input type="checkbox" data-annoncer ${p.reglages.exclus.includes(code) || familleCoupee ? "" : "checked"} ${familleCoupee ? "disabled" : ""} aria-label="Annoncer ${esc(it.nom)}"><span></span></label></div>` : ""}
+    ${f && !enDetection ? `<button class="btn btn-plein" data-quiz="${f.id}">S'entraîner : ${esc(f.nom)}</button>` : ""}`);
   corps.onclick = e => {
     const b = e.target.closest("[data-quiz]");
     if (b) aller(`#/quiz/famille/${b.dataset.quiz}`);

@@ -95,7 +95,7 @@ export async function pageCodes(zone, rendre) {
         <p class="doux">Importe le fichier de séries ou d'examens de ton auto-école, ou ajoute le lien de son catalogue.</p>
         <div class="liste-lignes">${packs.map(pk => `<button class="element-liste" data-pack="${esc(pk.id)}"><div><b>${esc(pk.titre)}</b><div class="doux">${esc([pk.auteur, resume(pk)].filter(Boolean).join(". "))}</div></div></button>`).join("")}</div>
         <div class="duo"><label class="btn btn-plein">Importer un fichier<input type="file" accept=".json,application/json" hidden data-importer></label><button class="btn" data-lien>Ajouter un lien</button></div>
-        <button class="btn-lien masquer" data-masquer="import">Masquer ce bloc</button></section>` : ""}
+        <button class="btn-lien masquer" data-masquer="import" aria-label="Masquer le bloc : Séries de l'auto-école">Masquer ce bloc</button></section>` : ""}
     </div></div>`;
   const z = zone.querySelector(".zone-codes");
   brancherCodes(z, rendre);

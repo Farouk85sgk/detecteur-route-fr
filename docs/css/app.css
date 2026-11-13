@@ -536,7 +536,7 @@ button.case { font: inherit; color: inherit; cursor: pointer; -webkit-tap-highli
 .mes-panneaux-liste button { background: var(--carte-2); border: 0; border-radius: 20px; padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 6px;
   font-weight: 700; font-size: .88rem; text-align: center; }
 .mes-panneaux-liste img { width: 64px; height: 64px; object-fit: cover; border-radius: 12px; }
-.choix-zone { position: relative; border-radius: 20px; overflow: hidden; background: #111; touch-action: none; }
+.choix-zone { position: relative; border-radius: 20px; overflow: hidden; background: #111; touch-action: pan-y; }  /* la feuille défile même quand le doigt part de la photo */
 .choix-zone img { width: 100%; display: block; }
 .choix-zone .boite { position: absolute; border: 3px solid var(--jaune); border-radius: 8px; background: rgba(255, 198, 30, .12); }
 .choix-zone .boite.choisie { border-color: var(--vert); background: rgba(31, 157, 85, .2); box-shadow: 0 0 0 3px #fff; }
