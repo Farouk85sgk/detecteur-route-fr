@@ -422,6 +422,18 @@ img { display: block; }
 .camera.paysage .lecteur { position: fixed; left: 14px; bottom: calc(14px + var(--bas)); width: calc(58% - 28px); }
 .camera.paysage .historique .defile button { width: 46px; height: 46px; }
 .camera.paysage .astuce-cam { top: auto; right: auto; left: 14px; bottom: calc(100px + var(--bas)); max-width: 50%; text-align: left; }
+/* téléphone couché (écran peu haut) : carte plus basse (dessin à gauche, texte à droite) et un seul message à la fois,
+   pour que ni la rangée des derniers panneaux ni les messages ne soient rognés */
+@media (max-height: 430px) {
+  .camera.paysage .cam-carte { grid-template-columns: 64px 1fr; text-align: left; justify-items: start; gap: 12px; padding: 10px 14px; }
+  .camera.paysage .cam-carte img { width: 64px; height: 64px; }
+  .camera.paysage .cam-carte h2 { font-size: 1.25rem; }
+  .camera.paysage .cam-carte p { font-size: .9rem; margin-top: 4px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden; }
+  .camera.paysage .cam-carte .meta { margin-top: 6px; }
+  .camera.paysage .cam-toasts .toast:not(:last-child) { display: none; }
+  .camera.paysage .cam-toasts .toast { font-size: .92rem; padding: 8px 12px 8px 16px; }
+}
+@media (max-height: 380px) { .camera.paysage .cam-toasts { display: none; } }  /* plus assez de place : pas de message coupé en deux */
 .camera .calque-touche { position: absolute; inset: 0; z-index: 2; }
 /* Pendant la lecture (vidéo ou direct, classe « joue »), les commandes posées sur l'image sont translucides pour laisser voir
    la route. Elles redeviennent nettes en pause, et quelques secondes quand on en touche une (classe « reveil »). */
