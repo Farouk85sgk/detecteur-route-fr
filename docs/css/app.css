@@ -220,7 +220,7 @@ details[open] > summary .si-ouvert { display: inline; }
 .section-album h2 small { font-size: 1.3rem; color: var(--texte-doux); }
 .jauge { height: 12px; border-radius: 8px; background: var(--bord); overflow: hidden; margin: 12px 0 16px; }
 .jauge i { display: block; height: 100%; background: var(--jaune); border-radius: 8px; }
-.grille-album { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.grille-album { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
 .case { background: var(--carte); border: 2px solid var(--bord); border-radius: 22px; padding: 10px 6px 8px; display: flex; flex-direction: column; align-items: center;
   gap: 6px; min-height: 108px; justify-content: center; position: relative; }
 .case img { width: 64%; aspect-ratio: 1; object-fit: contain; }
@@ -555,5 +555,45 @@ button.case { font: inherit; color: inherit; cursor: pointer; -webkit-tap-highli
 .badge-case.non i::before { background: var(--carte-2); border-color: var(--bord); }
 .badge-case.non { color: var(--texte-doux); }
 .vide { text-align: center; color: var(--texte-doux); padding: 18px 6px; }
+/* ---------- petits téléphones ---------- */
+/* Une colonne « 1fr » ne devient jamais plus étroite que son mot le plus long : sur un écran étroit, la grille dépassait sur le
+   côté et toute la page glissait. Avec minmax(0, 1fr), les colonnes tiennent dans l'écran et les textes se coupent proprement. */
+.grille-familles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grille-familles button { min-width: 0; overflow-wrap: anywhere; -webkit-hyphens: auto; hyphens: auto; }
+.famille-filtre { grid-template-columns: 56px minmax(0, 1fr) auto; }
+.element-filtre { grid-template-columns: 40px minmax(0, 1fr) auto; }
+.element-filtre span, .famille-filtre b { overflow-wrap: anywhere; }
+.quete-tete h1 { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.element-liste > .ligne, .element-liste > .ligne > div { min-width: 0; }
+.btn-lien { min-height: 44px; display: inline-flex; align-items: center; }  /* assez haut pour le doigt */
+.credits a { display: inline-block; padding: 11px 0; }  /* liens des mentions : assez hauts pour le doigt */
+@media (max-width: 460px) {  /* familles du quiz : dessin au-dessus du nom, deux colonnes */
+  .grille-familles button { flex-direction: column; justify-content: center; text-align: center; gap: 8px; padding: 12px 8px; min-height: 112px; }
+}
+@media (max-width: 400px) {
+  .quete-tete { gap: 6px; padding-left: 14px; padding-right: 10px; }
+  .quete-tete h1 { font-size: clamp(1.2rem, 6.4vw, 1.6rem); }
+  .quete-tete .btn-rond { width: 44px; height: 44px; }
+  .compteurs { font-size: 1.05rem; gap: 6px; }
+  .compteurs svg { width: 22px; height: 22px; }
+  .onglets { grid-template-columns: repeat(4, auto); justify-content: space-between; padding: 0 8px; }
+  .onglets button { font-size: .98rem; padding: 14px 2px 12px; }
+}
+@media (max-width: 360px) {
+  .grille-album { grid-template-columns: repeat(3, minmax(0, 1fr)); }  /* trois cases par rangée : les noms restent lisibles */
+  .anneau-ligne { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+  .mystere { grid-template-columns: 84px minmax(0, 1fr); gap: 12px; padding: 14px; }
+  .mystere .icone-mystere { width: 80px; height: 80px; }
+  .mystere .icone-mystere img { width: 56px; height: 56px; }
+  .mystere h3 { font-size: 1.3rem; }
+  .objet-ligne { grid-template-columns: 48px minmax(0, 1fr) auto; gap: 10px; }
+  .objet-ligne .ic { width: 48px; height: 48px; }
+  .objet-ligne .ic svg { width: 28px; height: 28px; }
+  .element-liste { flex-wrap: wrap; }  /* profils : le bouton passe sous le texte */
+  .famille-filtre { grid-template-columns: 44px minmax(0, 1fr) auto; gap: 8px 10px; }
+  .famille-filtre img { width: 42px; height: 42px; }
+  .feuille-tete h2 { font-size: 1.75rem; }
+  .feuille-tete, .feuille-corps { padding-left: 16px; padding-right: 16px; }
+}
 @media (min-width: 600px) { body { font-size: 18px; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
