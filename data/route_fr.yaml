@@ -1,5 +1,5 @@
 # Jeu de données du détecteur : images synthétiques (synth/generate.py) et vraies vues (tools/panoramax_dataset.py)
-path: ../datasets  # relatif au dossier yolov5/
+path: ../../datasets  # relatif au dossier yolov5/
 train: [reel/images/train, route_fr/images/train]
 val: [reel/images/val, route_fr/images/val]
 

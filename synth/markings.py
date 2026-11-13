@@ -195,7 +195,36 @@ def picto_velo():
     return _PICTO_VELO[0]
 
 
-def bike_raster(rng, w_px, h_px, rider=True, officiel=False):
+def cycliste_plein(rng):
+    """Pictogramme « cycliste » tel qu'il est peint dans les rues (bandes et pistes cyclables de Paris et de la plupart
+    des villes) : deux roues pleines, un cycliste en silhouette épaisse. Sur de vraies photos, le détecteur appris avec le
+    vélo aux traits fins du panneau B22a ratait ces pictogrammes, ou prenait leurs deux roues pour des chiffres."""
+    s = 200
+    im = np.zeros((s, s), np.uint8)
+    r = int(rng.uniform(34, 42))
+    y_r = s - r - int(rng.uniform(8, 20))
+    x1, x2 = 12 + r, s - 12 - r
+    plein = rng.random() < 0.75
+    for x in (x1, x2):
+        cv2.circle(im, (x, y_r), r, 255, -1 if plein else max(9, r // 3), cv2.LINE_AA)
+    e = int(rng.uniform(13, 21))  # épaisseur des membres
+    hanche = (int(x1 + rng.uniform(26, 40)), int(y_r - r - rng.uniform(4, 16)))
+    epaule = (int(hanche[0] + rng.uniform(26, 40)), int(hanche[1] - rng.uniform(36, 50)))
+    guidon = (int(x2 - rng.uniform(4, 16)), int(y_r - r - rng.uniform(0, 12)))
+    cv2.line(im, hanche, epaule, 255, e + 8, cv2.LINE_AA)                                  # buste
+    cv2.circle(im, (int(epaule[0] + rng.uniform(8, 18)), max(13, int(epaule[1] - rng.uniform(14, 22)))), int(rng.uniform(12, 16)), 255, -1, cv2.LINE_AA)  # tête
+    cv2.line(im, epaule, guidon, 255, e - 4, cv2.LINE_AA)                                  # bras
+    genou = (int(hanche[0] + rng.uniform(18, 30)), int(hanche[1] + rng.uniform(16, 28)))
+    cv2.polylines(im, [np.array([hanche, genou, (int((x1 + x2) / 2 + rng.uniform(-8, 8)), y_r)], np.int32)], False, 255, e, cv2.LINE_AA)  # jambe
+    if rng.random() < 0.6:  # cadre : selle - pédalier - roue avant
+        cv2.polylines(im, [np.array([(x1, y_r), hanche, (int((x1 + x2) / 2), y_r), (x1, y_r)], np.int32)], False, 255, max(6, e - 8), cv2.LINE_AA)
+        cv2.line(im, guidon, (x2, y_r), 255, max(6, e - 8), cv2.LINE_AA)
+    return im[:, ::-1].copy() if rng.random() < 0.5 else im
+
+
+def bike_raster(rng, w_px, h_px, rider=True, officiel=False, plein=False):
+    if plein:
+        return cv2.resize(cycliste_plein(rng), (max(4, int(w_px)), max(4, int(h_px))), interpolation=cv2.INTER_AREA)
     if officiel:
         return cv2.resize(picto_velo(), (max(4, int(w_px)), max(4, int(h_px))), interpolation=cv2.INTER_AREA)
     s = 200
@@ -414,10 +443,23 @@ def make_local(code, xc, zc, lane_w, rng, cam):
             mk.rasters.append(texte_couche("LIVRAISON", rng, cam, xc, zc, wb * rng.uniform(0.3, 0.55), min(L * rng.uniform(0.45, 0.75), 6.5), cote))
         mk.color = "yellow"
     elif code == "M_velo":
-        wm = rng.uniform(0.8, 1.4)
-        officiel = rng.random() < 0.7
-        lm = wm * (rng.uniform(1.0, 1.9) if officiel else rng.uniform(1.2, 2.2))
-        mk.rasters.append((bike_raster(rng, *raster_size(cam, xc, zc, wm, lm), rider=rng.random() < 0.6, officiel=officiel), raster_corners(xc, zc, wm, lm)))
+        # Trois dessins : le cycliste aux roues pleines des rues (le plus courant), le vélo aux traits fins du panneau, et
+        # un vélo schématique. Le pictogramme est le plus souvent lu dans le sens de la voie, mais on le voit aussi à
+        # l'envers (voie cyclable d'en face) ou de côté (traversée, carrefour).
+        wm = rng.uniform(0.9, 1.6)
+        style = rng.random()
+        plein, officiel = style < 0.6, 0.6 <= style < 0.85
+        lm = wm * (rng.uniform(0.9, 1.6) if plein else rng.uniform(1.0, 1.9) if officiel else rng.uniform(1.2, 2.2))
+        sens = rng.random()
+        quart = 0 if sens < 0.65 else 2 if sens < 0.9 else rng.choice([1, 3])
+        if quart % 2:  # de côté : l'emprise au sol tourne d'un quart de tour
+            coins = np.roll(raster_corners(xc, zc, lm, wm), quart, 0)
+            h_px, w_px = raster_size(cam, xc, zc, lm, wm)
+        else:
+            coins = np.roll(raster_corners(xc, zc, wm, lm), quart, 0)
+            w_px, h_px = raster_size(cam, xc, zc, wm, lm)
+        mk.rasters.append((bike_raster(rng, w_px, h_px, rider=rng.random() < 0.6, officiel=officiel, plein=plein), coins))
+        officiel = officiel and quart == 0
         if officiel and rng.random() < 0.35:  # flèche de sens, devant le pictogramme
             mk.polys += [place(p, xc, zc + lm / 2 + 1.6) for p in arrow_straight(rng.uniform(1.6, 2.4), rng.uniform(0.35, 0.5), rng.uniform(0.1, 0.14))]
         if rng.random() < 0.3:  # chevrons d'accompagnement
