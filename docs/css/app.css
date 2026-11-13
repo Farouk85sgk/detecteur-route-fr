@@ -418,17 +418,15 @@ button.case { font: inherit; color: inherit; cursor: pointer; -webkit-tap-highli
 .puce-ligne { border-radius: 18px; padding: 8px 16px; font-weight: 700; font-size: 1.02rem; }
 .vitesse-cam { width: 74px; height: 74px; border-radius: 50%; background: #fff; border: 9px solid var(--rouge); color: #111; display: grid; place-items: center; font: 800 1.75rem var(--titres);
   box-shadow: 0 2px 10px rgba(0, 0, 0, .4); }
-.astuce-cam { position: absolute; right: 14px; top: calc(84px + var(--haut)); background: #fff; color: var(--nuit); border-radius: 24px; padding: 12px 18px; font-weight: 700;
-  max-width: 56%; text-align: right; z-index: 3; }
 /* pause : boutons + et − sous la barre du haut, l'astuce juste dessous */
 .zoom-cam { position: absolute; right: 14px; top: calc(78px + var(--haut)); display: flex; gap: 10px; z-index: 3; }
 .zoom-cam { align-items: center; gap: 6px; }
 .zoom-cam .cam-btn { font: 800 1.9rem/1 var(--titres); padding-bottom: 3px; }
 .zoom-cam .cam-btn:disabled { opacity: .45; }
 .zoom-val { min-width: 3.1em; text-align: center; font-weight: 800; border-radius: 18px; padding: 8px 6px; }
-/* astuce de pause : une bande courte sous les boutons de zoom ; elle s'efface au premier geste */
-.astuce-cam { top: calc(140px + var(--haut)); left: 14px; right: 14px; max-width: none; text-align: center; font-size: .98rem; line-height: 1.3; padding: 10px 14px;
-  background: rgba(255, 255, 255, .93); border-radius: 18px; }
+/* astuce de pause : une bande courte posée juste au-dessus des commandes du bas (elle ne peut donc pas les chevaucher) ;
+   elle s'efface au premier geste */
+.astuce-cam { text-align: center; font-weight: 700; font-size: .98rem; line-height: 1.3; padding: 10px 14px; color: var(--nuit); background: rgba(255, 255, 255, .93); border-radius: 18px; }
 /* les zones vides entre les commandes laissent passer le doigt jusqu'à l'image (toucher un panneau, zoomer) */
 .cam-haut, .cam-bas, .cam-gauche, .astuce-cam, .camera .historique, .camera .historique .defile { pointer-events: none; }
 .cam-haut > *, .cam-bas > .lecteur, .cam-bas > .cam-carte, .camera .historique button { pointer-events: auto; }
@@ -459,7 +457,7 @@ button.case { font: inherit; color: inherit; cursor: pointer; -webkit-tap-highli
 .camera.paysage .cam-carte p { font-size: .95rem; }
 .camera.paysage .lecteur { position: fixed; left: 14px; bottom: calc(14px + var(--bas)); width: calc(58% - 28px); }
 .camera.paysage .historique .defile button { width: 46px; height: 46px; }
-.camera.paysage .astuce-cam { top: calc(76px + var(--haut)); right: auto; left: 14px; width: calc(58% - 28px); }
+.camera.paysage .astuce-cam { position: fixed; top: calc(76px + var(--haut)); left: 14px; width: calc(58% - 28px); z-index: 3; }
 .camera.paysage .zoom-cam { right: calc(42% + 14px); top: calc(14px + var(--haut)); }
 .camera .calque-touche { position: absolute; inset: 0; z-index: 2; }
 /* Pendant la lecture (vidéo ou direct, classe « joue »), les commandes posées sur l'image sont translucides pour laisser voir
@@ -569,6 +567,37 @@ button.case { font: inherit; color: inherit; cursor: pointer; -webkit-tap-highli
 .credits a { display: inline-block; padding: 11px 0; }  /* liens des mentions : assez hauts pour le doigt */
 @media (max-width: 460px) {  /* familles du quiz : dessin au-dessus du nom, deux colonnes */
   .grille-familles button { flex-direction: column; justify-content: center; text-align: center; gap: 8px; padding: 12px 8px; min-height: 112px; }
+}
+.statut { min-width: 0; }
+.statut span { overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 380px) {  /* écran de détection : la barre du haut (état et quatre boutons) tient dans 360 points */
+  .cam-haut { left: 10px; right: 10px; gap: 6px; }
+  .cam-boutons { gap: 6px; }
+  .cam-haut .cam-btn { width: 46px; height: 46px; }
+  .statut { padding: 10px 14px 10px 10px; font-size: 1rem; gap: 8px; }
+}
+@media (max-height: 700px) {  /* téléphone debout peu haut : carte et astuce plus basses, pour laisser de la place à l'image */
+  .camera:not(.paysage) .cam-carte { grid-template-columns: 76px 1fr; gap: 12px; padding: 12px 14px; border-radius: 24px; }
+  .camera:not(.paysage) .cam-carte img { width: 76px; height: 76px; }
+  .camera:not(.paysage) .cam-carte h2 { font-size: 1.35rem; }
+  .camera:not(.paysage) .cam-carte p { font-size: .95rem; margin-top: 4px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
+  .camera:not(.paysage) .cam-carte .meta { margin-top: 6px; }
+  .camera:not(.paysage) .astuce-cam { font-size: .88rem; padding: 8px 10px; }
+  .camera:not(.paysage) .cam-toasts .toast { font-size: .95rem; padding: 8px 10px 8px 16px; }
+  .camera:not(.paysage) .cam-toasts .toast > span:first-child { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
+}
+@media (max-height: 600px) { .camera:not(.paysage) .astuce-cam { display: none; } }  /* très petit écran : pas la place pour l'astuce */
+@media (max-width: 370px) {  /* lecteur de vidéo resserré : le curseur reste dans l'écran */
+  .lecteur { gap: 6px; padding: 6px 12px 6px 6px; }
+  .lecteur button { width: 44px; height: 44px; }
+  .lecteur button.jouer { width: 54px; height: 54px; }
+  .lecteur span { font-size: 1rem; min-width: 2.7em; }
+  .lecteur input[type=range] { min-width: 40px; }
+}
+@media (max-width: 340px) {
+  .cam-haut .cam-btn { width: 42px; height: 42px; }
+  .cam-haut .cam-btn svg { width: 24px; height: 24px; }
+  .statut { font-size: .92rem; padding: 9px 10px 9px 8px; gap: 6px; }
 }
 @media (max-width: 400px) {
   .quete-tete { gap: 6px; padding-left: 14px; padding-right: 10px; }

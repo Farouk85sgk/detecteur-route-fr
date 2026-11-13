@@ -38,9 +38,9 @@ export async function ouvrirCamera({ fichier = null, apresFermeture = () => {} }
         <button class="cam-btn verre" data-a="fermer" aria-label="Terminer le trajet">${ICONES.fermer}</button>
       </div></div>
     <div class="cam-gauche"><div class="vitesse-cam cache"></div><div class="lignes"></div></div>
-    <div class="astuce-cam cache">Zoom : pince ou double-touche. Touche un panneau pour lire sa fiche ; s'il n'est pas reconnu, touche-le pour dire ce que c'est.</div>
     <div class="zoom-cam cache"><button class="cam-btn verre" data-a="zoommoins" aria-label="Dézoomer" disabled>−</button><span class="zoom-val verre" aria-live="polite">1×</span><button class="cam-btn verre" data-a="zoomplus" aria-label="Zoomer">+</button></div>
-    <div class="cam-bas"><div class="cam-toasts" aria-live="polite"></div>
+    <div class="cam-bas"><div class="astuce-cam cache">Zoom : pince ou double-touche. Touche un panneau pour lire sa fiche ; s'il n'est pas reconnu, touche-le pour dire ce que c'est.</div>
+      <div class="cam-toasts" aria-live="polite"></div>
       <div class="lecteur verre cache"><button data-a="recul" aria-label="Reculer de 5 s">${ICONES.recul5}</button>
         <button class="jouer" data-a="lecture" aria-label="Lecture ou pause">${ICONES.pause}</button>
         <button data-a="avance" aria-label="Avancer de 5 s">${ICONES.avance5}</button><span class="temps">0:00</span><input type="range" min="0" max="1" step="0.1" value="0" aria-label="Position dans la vidéo"></div>
@@ -310,9 +310,10 @@ function dessiner() {
     const gene = (x, y) => boites.some((b, j) => j !== i && x < b[2] && x + tw > b[0] && y < b[3] && y + th > b[1]);
     if (gene(tx, ty)) {
       const droite = x2 + 4 * dpr, gauche = x1 - tw - 4 * dpr, my = (y1 + y2 - th) / 2;
-      if (droite + tw <= calque.width && !gene(droite, my)) { tx = droite; ty = my; }
+      if (droite + tw <= C.W * dpr && !gene(droite, my)) { tx = droite; ty = my; }
       else if (gauche >= 0 && !gene(gauche, my)) { tx = gauche; ty = my; }
     }
+    tx = Math.max(2 * dpr, Math.min(tx, C.W * dpr - tw - 2 * dpr));  // l'étiquette reste entière à l'écran (les panneaux sont souvent au bord droit)
     ctx.fillStyle = it.couleur;
     ctx.beginPath(); ctx.roundRect ? ctx.roundRect(tx, ty, tw, th, 8 * dpr) : ctx.rect(tx, ty, tw, th); ctx.fill();
     ctx.fillStyle = ["zone", "priorite", "marquage", "feu", "temporaire", "panonceau"].includes(it.categorie) ? "#111" : "#fff";
