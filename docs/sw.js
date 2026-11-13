@@ -3,7 +3,7 @@
 // « Sans réseau » : tout est servi depuis le téléphone, aucune requête.
 // Il ajoute aussi aux pages les en-têtes d'isolation (COOP / COEP) que l'hébergement ne fournit pas : le navigateur
 // autorise alors le calcul sur plusieurs cœurs (WebAssembly multi-fils), deux à trois fois plus rapide sans carte graphique.
-const VERSION = "repere-3.0.1";
+const VERSION = "repere-3.0.2";
 const COEUR = `${VERSION}-coeur`, LOURDS = "repere-lourds-a28f5ada";
 const ORT = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.20.1/dist/";
 const EXTRAS = ["F_rouge", "F_orange", "F_vert", "U_pieton", "U_cycliste", "U_deux_roues"];
@@ -14,7 +14,9 @@ const FICHIERS = ["./", "index.html", "manifest.webmanifest", "favicon.svg", "ic
 const MODELES = ["detecteur.onnx", "panneaux.onnx", "usagers.onnx", "empreinte.onnx", `${ORT}ort.webgpu.min.js`, `${ORT}ort-wasm-simd-threaded.jsep.mjs`, `${ORT}ort-wasm-simd-threaded.jsep.wasm`];
 let mode = null, coep = null;
 
-self.addEventListener("install", e => e.waitUntil(caches.open(COEUR).then(c => c.addAll(FICHIERS)).then(() => self.skipWaiting())));
+// « reload » : les fichiers d'une nouvelle version sont demandés au serveur, jamais repris du cache du navigateur
+// (sinon le nouveau cache pouvait être rempli avec les anciens fichiers, et l'appli restait sur l'ancienne version)
+self.addEventListener("install", e => e.waitUntil(caches.open(COEUR).then(c => c.addAll(FICHIERS.map(f => new Request(f, { cache: "reload" })))).then(() => self.skipWaiting())));
 self.addEventListener("activate", e => e.waitUntil((async () => {
   const garde = {};  // réglages mémorisés par la version précédente
   for (const k of await caches.keys()) if (k !== COEUR && k.endsWith("-coeur")) for (const cle of ["__mode", "__coep"]) garde[cle] ??= await (await caches.open(k)).match(cle);
@@ -70,6 +72,7 @@ self.addEventListener("fetch", e => {
     if (enCache && (mode === "sans" || lourd(url))) return rendre(enCache);
     try {
       const rep = await fetch(req);
+      if (!rep.ok && enCache) return rendre(enCache);  // serveur en erreur (dossier en cours de remplacement...) : la version du téléphone
       if (rep.ok && (rep.type === "basic" || rep.type === "cors")) cache.put(req, rep.clone());
       return rendre(rep);
     } catch (err) {

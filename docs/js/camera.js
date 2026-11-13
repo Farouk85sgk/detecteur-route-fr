@@ -51,12 +51,16 @@ export async function ouvrirCamera({ fichier = null, apresFermeture = () => {} }
   C = {
     racine, video, calque, ctx, fichier, apresFermeture, p, pause: false, cadres: true, fini: false, zoom: { k: 1, x: 0, y: 0 },
     trajet: { id: "t" + Date.now().toString(36), debut: Date.now(), source: fichier ? "video" : "camera", fichier: fichier?.name || null, elements: {}, nouveaux: [], photos: 0, evenements: [] },
-    dernier: {}, historique: [], derniereCarte: null, dernierePhoto: 0, nPhoto: 0, pos: null, fps: 0, tPrec: performance.now(), lignes: {}, enregistreur: null,
+    dernier: {}, historique: [], file: [], derniereCarte: null, dernierePhoto: 0, nPhoto: 0, pos: null, fps: 0, tPrec: performance.now(), lignes: {}, enregistreur: null,
   };
-  PROG.notifier = (texte, badge) => toast(texte, badge, $(".cam-toasts", racine));
+  PROG.notifier = message;
   D.items.forEach(it => imageDe(icone(it)));  // icônes en mémoire : affichage immédiat pendant la détection
   racine.addEventListener("click", clic);
-  for (const ev of ["pointerdown", "input", "focusin"]) racine.addEventListener(ev, e => { if (e.target.closest?.(".cam-haut, .lecteur, .historique")) reveiller(); });
+  // une commande touchée (doigt, souris ou clavier) redevient nette : tant que le doigt est posé, puis encore 2,5 s
+  const surCommande = e => e.target.closest?.(".cam-haut, .lecteur, .historique");
+  racine.addEventListener("pointerdown", e => { if (C && surCommande(e)) { C.doigt = true; reveiller(); } });
+  for (const ev of ["pointerup", "pointercancel"]) racine.addEventListener(ev, () => { if (C?.doigt) { C.doigt = false; reveiller(); } });
+  for (const ev of ["input", "focusin", "keydown", "click"]) racine.addEventListener(ev, e => { if (surCommande(e)) reveiller(); });
   brancherZoom();
   addEventListener("resize", disposer);
   document.addEventListener("visibilitychange", visibilite);
@@ -123,7 +127,7 @@ function disposer() {
   if (!C) return;
   const { video, calque, zoom } = C, vw = video.videoWidth, vh = video.videoHeight;
   if (!vw) return;
-  const paysage = innerWidth > innerHeight && innerWidth > 700;
+  const paysage = innerWidth > innerHeight && (innerWidth > 700 || innerHeight <= 540);  // écran large, ou téléphone couché
   C.racine.classList.toggle("paysage", paysage);
   const W = paysage ? innerWidth * 0.58 : innerWidth, H = innerHeight, couvre = Math.abs(Math.log((vw / vh) / (W / H))) < 0.35;
   const s = (couvre ? Math.max(W / vw, H / vh) : Math.min(W / vw, H / vh)) * zoom.k;
@@ -176,7 +180,7 @@ function annoncer(t, phrase = null) {
     const neuf = noterAlbum(p, it.code);
     if (neuf) {
       C.trajet.nouveaux.push(it.code);
-      toast(`Nouveau dans l'album : ${it.nom}`, "+20 XP", $(".cam-toasts", C.racine));
+      message(`Nouveau dans l'album : ${it.nom}`, "+20 XP");
       son("nouveau", r.sons);
       evenement("nouveau");
     }
@@ -344,7 +348,7 @@ function demarrerEnregistrement() {
     C.enregistreur = rec;
     $("[data-a=rec]", C.racine).classList.add("actif");
     $("[data-a=rec]", C.racine).innerHTML = ICONES.stop;
-    toast("Enregistrement de la vidéo", "●", $(".cam-toasts", C.racine));
+    message("Enregistrement de la vidéo", "●");
   } catch (e) { console.warn(e); toast("Enregistrement vidéo impossible sur cet appareil"); }
 }
 function arreterEnregistrement() {
@@ -372,7 +376,7 @@ async function clic(e) {
     else if ("speechSynthesis" in window) speechSynthesis.cancel();
   }
   if (a === "reglages") { const { ouvrirReglages } = await import("./reglages.js"); ouvrirReglages({ depuisCamera: true }); }
-  if (a === "rec") { if (C.enregistreur) { const blob = await arreterEnregistrement(); if (blob) C.videoBlob = blob; toast("Vidéo prête : elle sera proposée à la fin du trajet", "", $(".cam-toasts", C.racine)); } else demarrerEnregistrement(); }
+  if (a === "rec") { if (C.enregistreur) { const blob = await arreterEnregistrement(); if (blob) C.videoBlob = blob; message("Vidéo prête : elle sera proposée à la fin du trajet"); } else demarrerEnregistrement(); }
   if (a === "cadres") { C.cadres = !C.cadres; b.innerHTML = C.cadres ? ICONES.oeil : ICONES.oeilBarre; dessiner(); }
   if (a === "pause") basculerPause();
   if (a === "lecture") basculerPause();
@@ -383,6 +387,9 @@ async function clic(e) {
 }
 
 function basculerPause(forcer = null) {
+  // rien tant que la caméra ou la vidéo n'a pas démarré : un toucher pendant le chargement laissait l'écran en fausse
+  // pause (l'image défilait, mais plus rien n'était analysé)
+  if (!C.demarre) return;
   C.pause = forcer ?? !C.pause;
   const { video } = C;
   if (C.pause) video.pause(); else { if (C.fichier && video.ended) video.currentTime = 0; video.play().catch(() => {}); C.zoom = { k: 1, x: 0, y: 0 }; disposer(); }
@@ -399,10 +406,32 @@ function majVoile() {
   C.racine.classList.toggle("joue", !!C.demarre && !C.pause);
 }
 function reveiller() {
+  if (!C) return;
   const { racine } = C;
   racine.classList.add("reveil");
   clearTimeout(C.tReveil);
-  C.tReveil = setTimeout(() => racine.classList.remove("reveil"), 2500);
+  C.tReveil = setTimeout(() => racine.classList.remove("reveil"), C.doigt ? 15000 : 2500);
+}
+
+// Messages du trajet (« Nouveau dans l'album », badges, enregistrement). Téléphone couché : le volet de droite n'a la place
+// que pour un message. Ils passent alors l'un après l'autre, chacun au moins 1,6 s (sinon, de deux messages envoyés
+// ensemble, le premier ne serait jamais vu).
+function message(texte, badge = "") {
+  if (!C) return toast(texte, badge);
+  const zone = $(".cam-toasts", C.racine);
+  if (!(C.racine.classList.contains("paysage") && matchMedia("(max-height: 540px)").matches)) return toast(texte, badge, zone);
+  C.file.push([texte.replace(/^Nouveau dans l'album : /, "Nouveau : "), badge]);  // volet étroit : le nom d'abord
+  if (C.file.length > 4) C.file.shift();
+  if (!C.tFile) messageSuivant();
+}
+function messageSuivant() {
+  if (!C) return;
+  const m = C.file.shift();
+  if (!m) { C.tFile = null; return; }
+  const zone = $(".cam-toasts", C.racine);
+  zone.replaceChildren();
+  toast(m[0], m[1], zone);
+  C.tFile = setTimeout(messageSuivant, 1600);
 }
 
 function majLecteur() {
@@ -455,6 +484,7 @@ export async function terminer() {
   if (!C || C.fini) return;
   C.fini = true;
   clearTimeout(C.raf);
+  clearTimeout(C.tFile);
   const videoBlob = (await arreterEnregistrement()) || C.videoBlob;
   const { p, trajet, video } = C;
   video.srcObject?.getTracks().forEach(t => t.stop());

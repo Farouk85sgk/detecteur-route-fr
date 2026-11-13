@@ -422,32 +422,48 @@ img { display: block; }
 .camera.paysage .lecteur { position: fixed; left: 14px; bottom: calc(14px + var(--bas)); width: calc(58% - 28px); }
 .camera.paysage .historique .defile button { width: 46px; height: 46px; }
 .camera.paysage .astuce-cam { top: auto; right: auto; left: 14px; bottom: calc(100px + var(--bas)); max-width: 50%; text-align: left; }
-/* téléphone couché (écran peu haut) : carte plus basse (dessin à gauche, texte à droite) et un seul message à la fois,
-   pour que ni la rangée des derniers panneaux ni les messages ne soient rognés */
-@media (max-height: 430px) {
-  .camera.paysage .cam-carte { grid-template-columns: 64px 1fr; text-align: left; justify-items: start; gap: 12px; padding: 10px 14px; }
-  .camera.paysage .cam-carte img { width: 64px; height: 64px; }
-  .camera.paysage .cam-carte h2 { font-size: 1.25rem; }
-  .camera.paysage .cam-carte p { font-size: .9rem; margin-top: 4px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden; }
-  .camera.paysage .cam-carte .meta { margin-top: 6px; }
-  .camera.paysage .cam-toasts .toast:not(:last-child) { display: none; }
-  .camera.paysage .cam-toasts .toast { font-size: .92rem; padding: 8px 12px 8px 16px; }
-}
-@media (max-height: 380px) { .camera.paysage .cam-toasts { display: none; } }  /* plus assez de place : pas de message coupé en deux */
 .camera .calque-touche { position: absolute; inset: 0; z-index: 2; }
 /* Pendant la lecture (vidéo ou direct, classe « joue »), les commandes posées sur l'image sont translucides pour laisser voir
-   la route. Elles redeviennent nettes en pause, et quelques secondes quand on en touche une (classe « reveil »). */
+   la route. Elles redeviennent nettes en pause, et quelques secondes quand on en touche une (classe « reveil »).
+   Un contour sombre garde les traits blancs lisibles sur un ciel clair. */
 .camera .verre, .lecteur button, .historique .defile button { transition: background-color .25s ease, opacity .25s ease; }
 :is(.cam-btn, .statut, .lecteur) > * { transition: opacity .25s ease; }
 .camera.joue:not(.reveil) .verre:not(.puce-ligne) { background: rgba(30, 32, 48, .2); -webkit-backdrop-filter: none; backdrop-filter: none; }
-.camera.joue:not(.reveil) :is(.cam-btn, .statut, .lecteur) > * { opacity: .75; }
-.camera.joue:not(.reveil) :is(.cam-btn, .statut) > *, .camera.joue:not(.reveil) .lecteur button svg { filter: drop-shadow(0 0 2px rgba(0, 0, 0, .55)); }
-.camera.joue:not(.reveil) .lecteur span { text-shadow: 0 0 3px rgba(0, 0, 0, .6); }
+.camera.joue:not(.reveil) :is(.cam-btn, .statut, .lecteur) > * { opacity: .9; }
+.camera.joue:not(.reveil) :is(.cam-btn, .statut) > *, .camera.joue:not(.reveil) .lecteur button svg { filter: drop-shadow(0 0 1px rgba(0, 0, 0, .9)) drop-shadow(0 0 2px rgba(0, 0, 0, .6)); }
+.camera.joue:not(.reveil) .lecteur span { text-shadow: 0 0 1px rgba(0, 0, 0, .9), 0 0 3px rgba(0, 0, 0, .7); }
 .camera.joue:not(.reveil) .lecteur button.jouer { background: rgba(255, 255, 255, .12); color: #fff; }
 .camera.joue:not(.reveil) .cam-btn.actif { background: rgba(224, 38, 43, .4); }
 .camera.joue:not(.reveil) .historique .defile button { opacity: .55; }
 .camera.joue .cam-toasts .toast { background: rgba(28, 32, 70, .62); box-shadow: none; }
-.camera.joue .puce-ligne { background: rgba(30, 32, 48, .4); -webkit-backdrop-filter: none; backdrop-filter: none; text-shadow: 0 0 3px rgba(0, 0, 0, .6); }
+.camera.joue .puce-ligne { background: rgba(30, 32, 48, .4); -webkit-backdrop-filter: none; backdrop-filter: none; text-shadow: 0 0 1px rgba(0, 0, 0, .9), 0 0 3px rgba(0, 0, 0, .7); }
+/* Téléphone couché (écran peu haut) : carte plus basse (dessin à gauche, texte à droite), et un seul message à la fois,
+   posé en haut du volet de droite (par-dessus la rangée des derniers panneaux si la place manque). Rien n'est rogné. */
+@media (max-height: 540px) {
+  .camera.paysage .cam-carte { grid-template-columns: 64px 1fr; text-align: left; justify-items: start; gap: 12px; padding: 10px 14px; }
+  .camera.paysage .cam-carte img { width: 64px; height: 64px; }
+  .camera.paysage .cam-carte h2 { font-size: 1.25rem; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
+  .camera.paysage .cam-carte p { font-size: .9rem; margin-top: 4px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden; }
+  .camera.paysage .cam-carte .meta { margin-top: 6px; }
+  .camera.paysage .cam-toasts { position: absolute; top: 0; left: 14px; right: 14px; z-index: 1; }
+  .camera.paysage .cam-toasts .toast:not(:last-child) { display: none; }
+  .camera.paysage .cam-toasts .toast { font-size: .92rem; padding: 8px 12px 8px 16px; background: rgba(28, 32, 70, .94); }
+  .camera.paysage .cam-toasts .toast > span:first-child { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
+}
+@media (max-height: 330px) { .camera.paysage .cam-carte p { -webkit-line-clamp: 1; line-clamp: 1; } }
+@media (max-height: 300px) { .camera.paysage .cam-carte p { display: none; } }  /* onglet de navigateur sur petit téléphone : le nom et le code seulement */
+/* petit téléphone couché (moins de 700 points de large) : volet de droite étroit, tout est un peu plus petit */
+@media (max-height: 540px) and (max-width: 700px) {
+  .camera.paysage .cam-carte { grid-template-columns: 48px 1fr; gap: 10px; padding: 8px 12px; }
+  .camera.paysage .cam-carte img { width: 48px; height: 48px; }
+  .camera.paysage .cam-carte h2 { font-size: 1.1rem; }
+  .camera.paysage .cam-carte p { font-size: .85rem; -webkit-line-clamp: 2; line-clamp: 2; }
+  .camera.paysage .lecteur { gap: 8px; padding: 6px 14px 6px 6px; }
+  .camera.paysage .lecteur button { width: 44px; height: 44px; }
+  .camera.paysage .lecteur button.jouer { width: 54px; height: 54px; }
+  .camera.paysage .cam-toasts .toast { font-size: .88rem; gap: 8px; padding: 8px 10px 8px 14px; }
+  .camera.paysage .cam-toasts .toast > span:first-child { -webkit-line-clamp: 3; line-clamp: 3; }
+}
 .compte-rebours { position: absolute; inset: 0; display: grid; place-items: center; z-index: 4; pointer-events: none; font: 800 1.4rem var(--titres); }
 
 /* ---------- divers ---------- */
