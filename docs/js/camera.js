@@ -10,6 +10,7 @@ import { $, ICONES, duree, el, esc, heure, ouvrirFeuille, son, tempsVideo, toast
 
 export const moteur = new Moteur();
 let C = null;  // session caméra en cours
+let chargement = null;  // chargement des modèles en cours (un seul à la fois, même si l'écran est fermé puis rouvert)
 const imgs = {};
 const imageDe = url => { if (!imgs[url]) { imgs[url] = new Image(); imgs[url].src = url; } return imgs[url]; };
 
@@ -66,23 +67,30 @@ export async function ouvrirCamera({ fichier = null, apresFermeture = () => {} }
   addEventListener("resize", disposer);
   document.addEventListener("visibilitychange", visibilite);
 
+  // Après chaque attente, on vérifie que cette session est toujours la session en cours : l'écran a pu être fermé (ou fermé
+  // puis rouvert) pendant le chargement des modèles ou l'ouverture de la caméra.
+  const moi = C;
+  moteur.reinitialiser();
   try {
-    if (!moteur.pret) await moteur.charger({ backend: new URLSearchParams(location.search).get("backend"), progression: t => statut(t, "charge") });
+    if (!moteur.pret) await (chargement ??= moteur.charger({ backend: new URLSearchParams(location.search).get("backend"), progression: t => statut(t, "charge") }).finally(() => (chargement = null)));
+    if (C !== moi) return;
     window.__moteurGPU = moteur.fournisseurs[0] === "webgpu";
     configurerMoteur(p);
     await demarrerSource();
+    if (C !== moi) return;
     C.demarre = true;
     majVoile();
   } catch (e) {
     console.error(e);
+    if (C !== moi) return;
     statut("Erreur", "erreur");
     $(".cam-bas", racine).prepend(el(`<div class="cam-carte" style="grid-template-columns:1fr"><div><h2>Impossible de démarrer</h2><p>${esc(messageErreur(e))}</p></div></div>`));
     return;
   }
   if (r.paysage) paysage();
-  if ("wakeLock" in navigator) navigator.wakeLock.request("screen").then(w => (C.verrou = w)).catch(() => {});
+  if ("wakeLock" in navigator) navigator.wakeLock.request("screen").then(w => { if (C === moi) C.verrou = w; else w.release?.().catch(() => {}); }).catch(() => {});
   if (r.gps && !fichier && "geolocation" in navigator)
-    C.geo = navigator.geolocation.watchPosition(g => (C.pos = { lat: +g.coords.latitude.toFixed(6), lon: +g.coords.longitude.toFixed(6) }), () => {}, { enableHighAccuracy: true, maximumAge: 5000 });
+    C.geo = navigator.geolocation.watchPosition(g => { if (C === moi) C.pos = { lat: +g.coords.latitude.toFixed(6), lon: +g.coords.longitude.toFixed(6) }; }, () => {}, { enableHighAccuracy: true, maximumAge: 5000 });
   if (r.video) demarrerEnregistrement();
   boucle();
 }
@@ -96,38 +104,47 @@ function messageErreur(e) {
 }
 
 async function demarrerSource() {
-  const { video, fichier } = C;
+  const moi = C, { video, fichier } = C;
   if (fichier) {
     video.src = URL.createObjectURL(fichier);
     video.loop = false;
     await video.play();
+    if (C !== moi) return;
     $(".lecteur", C.racine).classList.remove("cache");
     const plage = $(".lecteur input", C.racine);
     video.addEventListener("loadedmetadata", () => (plage.max = video.duration || 1));
     plage.max = video.duration || 1;
     plage.oninput = () => { video.currentTime = +plage.value; };
-    video.addEventListener("seeked", () => { if (C?.pause) { moteur.reinitialiser(); C.aRevoir = 2; } });  // on se déplace en pause : la nouvelle image est analysée
+    // On se déplace dans la vidéo : le suivi repart de zéro (pistes, vitesse retenue, lignes) et « C.tour » change, pour qu'une
+    // analyse encore en cours sur l'ancienne image soit jetée. En pause, la nouvelle image est analysée six fois : il faut
+    // jusqu'à cinq vues pour confirmer une ligne, et les usagers ne sont cherchés qu'une image sur deux.
+    video.addEventListener("seeked", () => { if (C !== moi) return; C.tour = (C.tour || 0) + 1; moteur.reinitialiser(); if (C.pause) C.aRevoir = 6; });
     video.addEventListener("ended", () => basculerPause(true));
     statut("Vidéo", "");
   } else {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: { facingMode: { ideal: "environment" }, width: { ideal: 1280 }, height: { ideal: 720 }, zoom: true } });
+    const eteindre = () => stream.getTracks().forEach(t => t.stop());
+    if (C !== moi) return eteindre();  // écran fermé pendant l'ouverture de la caméra : on l'éteint, sinon son voyant reste allumé
     video.srcObject = stream;
     await video.play();
+    if (C !== moi) return eteindre();
     statut("Caméra", "");
     // zoom de l'objectif (la plupart des téléphones Android) : les panneaux lointains sont plus gros, donc mieux reconnus
     try {
       const piste = stream.getVideoTracks()[0], z = piste.getCapabilities?.().zoom;
-      if (z && z.max > z.min) {
+      if (z && z.min > 0 && z.max > z.min) {  // (une plage qui part de 0 ne se lit pas comme un grossissement : on s'en passe)
         C.objectif = { piste, min: z.min, max: Math.min(z.max, z.min * 8), v: piste.getSettings?.().zoom || z.min };
         const voulu = C.p.reglages.zoomCamera || 1;
         if (voulu > 1.01) await objectif(z.min * voulu, false); else majZoom();
       }
-    } catch (e) { console.warn("zoom de la caméra indisponible", e); C.objectif = null; }
+    } catch (e) { console.warn("zoom de la caméra indisponible", e); if (C === moi) C.objectif = null; }
+    if (C !== moi) return;
   }
   disposer();
 }
 
 function statut(texte, cls) {
+  if (!C) return;
   const s = $(".statut", C.racine);
   s.className = `statut verre ${cls || ""}`;
   $("span", s).textContent = texte;
@@ -157,7 +174,13 @@ function disposer() {
   // où passent la plupart des panneaux. On la décale vers la gauche : 5 % seulement restent sous le volet (le bord gauche,
   // côté voie d'en face, sort un peu plus de l'écran).
   const dwBase = vw * base, bx = paysage && dwBase > W ? -Math.max(0, (dwBase - W) / 2 - 0.05 * dwBase) : 0;
-  const dw = vw * s, dh = vh * s, ox = (W - dw) / 2 + bx + zoom.x, oy = cy - dh / 2 + zoom.y;
+  const dw = vw * s, dh = vh * s;
+  if (zoom.k > 1.001) {  // rotation ou redimensionnement pendant la pause : les décalages d'avant sont ramenés dans les nouvelles bornes
+    const mx = Math.max(0, (dw - W) / 2), haut = T + dh / 2 - cy, bas = H - B - dh / 2 - cy;
+    zoom.x = Math.min(mx - bx, Math.max(-mx - bx, zoom.x));
+    zoom.y = bas > haut ? 0 : Math.min(haut, Math.max(bas, zoom.y));
+  }
+  const ox = (W - dw) / 2 + bx + zoom.x, oy = cy - dh / 2 + zoom.y;
   Object.assign(video.style, { width: dw + "px", height: dh + "px", left: ox + "px", top: oy + "px" });
   // Le calque des cadres couvre l'écran, pas l'image agrandie : mêmes proportions en largeur et en hauteur à tout niveau de zoom
   // (un calque étiré avec l'image décalait les cadres dès qu'on zoomait), et des traits toujours nets.
@@ -169,8 +192,8 @@ function disposer() {
 }
 
 // ---------- boucle d'analyse ----------
-async function boucle() {
-  if (!C || C.fini) return;
+async function boucle(moi = C) {
+  if (!C || C !== moi || C.fini) return;  // (« moi » : la session qui a lancé cette boucle ; une autre a pu la remplacer)
   const { video } = C;
   // En pause, l'image arrêtée est analysée encore deux fois (C.aRevoir) : les cadres tombent juste sur ce qu'on voit, au lieu
   // de rester là où étaient les panneaux quelques images plus tôt.
@@ -178,12 +201,18 @@ async function boucle() {
   if ((!C.pause || fige) && !document.hidden && video.readyState >= 2 && video.videoWidth) {
     if (video.videoWidth !== C.vw || video.videoHeight !== C.vh) disposer();
     try {
+      const tour = C.tour;
       const res = await moteur.analyser(video, video.videoWidth, video.videoHeight, { debug: C.p.reglages.debug, net: fige });
-      if (!C || C.fini) return;
+      if (C !== moi || C.fini) return;
+      if (tour !== C.tour) {  // on s'est déplacé dans la vidéo pendant le calcul : ce résultat est celui d'une image qu'on ne voit plus
+        moteur.reinitialiser();
+        C.raf = setTimeout(() => requestAnimationFrame(() => boucle(moi)), 15);
+        return;
+      }
       if (fige) C.aRevoir--;
       C.brutes = res.brutes;
-      majZones();
       for (const t of res.nouveaux) annoncer(t);
+      majZones();  // après les annonces : une piste tout juste confirmée ne doit pas « rafraîchir » l'endroit d'un panneau plus ancien
       for (const { t, avant } of res.changes) if (D.items[avant]?.code === "F_rouge" && D.items[moteur.classe(t)]?.code === "F_vert") annoncer(t, "Le feu passe au vert");
       dessiner();
       if (C.enregistreur) composer(C.compoVideo, C.compoVideo.width);
@@ -194,7 +223,7 @@ async function boucle() {
       majLecteur();
     } catch (e) { console.error(e); }
   } else if (C.fichier) majLecteur();
-  C.raf = setTimeout(() => requestAnimationFrame(boucle), 15);
+  if (C === moi) C.raf = setTimeout(() => requestAnimationFrame(() => boucle(moi)), 15);
 }
 
 const visibilite = () => { if (C && !document.hidden) C.tPrec = performance.now(); };
@@ -220,20 +249,37 @@ function annoncer(t, phrase = null) {
   else if (!phrase && it.groupe === "s" && dejaLa(t, it)) return;
   const fete = r.recompenses !== false;  // réglage « Récompenses pendant la détection »
   PROG.silence = !fete;
-  // trajet, album, quêtes : chaque confirmation compte
+  // Correction : cette piste avait été comptée sous un autre nom. On retire ce qu'elle avait compté (trajet, événement, album
+  // si c'était sa seule vue) : un panneau lu 110 puis 130 n'est qu'un panneau, et le 110 n'a pas à rester dans le trajet.
+  if (correction && t.compte) {
+    const a = t.compte;
+    if (C.trajet.elements[a.code] > 1) C.trajet.elements[a.code]--; else delete C.trajet.elements[a.code];
+    const k = C.trajet.evenements.indexOf(a.evenement);
+    if (k >= 0) C.trajet.evenements.splice(k, 1);
+    if (a.neuf) { const j = C.trajet.nouveaux.lastIndexOf(a.code); if (j >= 0) C.trajet.nouveaux.splice(j, 1); }
+    const fiche = p.album[a.code];
+    if (fiche) { if (fiche.vu > 1) fiche.vu--; else if (a.neuf) delete p.album[a.code]; }
+  }
+  // Le même nom confirmé de nouveau dans les secondes qui suivent, c'est presque toujours le même panneau dont la piste s'est
+  // perdue puis retrouvée : on ne le recompte pas (le trajet affichait « vu 4 fois » pour un seul panneau). Une correction
+  // passe quand son nom n'est pas celui qui est affiché : sans cela la carte et la voix resteraient sur le mauvais panneau.
+  if (!phrase && maintenant - dernier < pause && !(correction && C.historique[0] !== it.code)) return;
+  // trajet, album, quêtes : chaque annonce compte
+  const ev = { code: it.code, t: tempsTrajet(), pos: C.pos };
+  let neuf = false;
   C.trajet.elements[it.code] = (C.trajet.elements[it.code] || 0) + 1;
-  if (C.trajet.evenements.length < 400) C.trajet.evenements.push({ code: it.code, t: tempsTrajet(), pos: C.pos });
+  if (C.trajet.evenements.length < 400) C.trajet.evenements.push(ev);
   if (it.index < D.nbOfficiels) {
-    const neuf = noterAlbum(p, it.code);
+    neuf = noterAlbum(p, it.code);
     if (neuf) {
       C.trajet.nouveaux.push(it.code);
       if (fete) { message(`Nouveau dans l'album : ${it.nom}`, "+20 XP"); son("nouveau", r.sons); }
       evenement("nouveau");
     }
-    evenement("repere");
+    if (!correction) evenement("repere");  // la quête « repérer » ne compte qu'une fois un panneau corrigé
     verifierMystere(p, it.code);
   }
-  if (!phrase && maintenant - dernier < pause) return;
+  if (!phrase) t.compte = { code: it.code, evenement: ev, neuf };
   C.dernier[it.code] = maintenant;
   // Lignes au sol : elles bordent la voie en permanence et se confondent de loin. Elles s'affichent de chaque côté de
   // l'image (vote sur les dernières images) ; sans le réglage « Annoncer les lignes au sol », ni grande carte ni voix.
@@ -321,7 +367,11 @@ function dessiner() {
     ctx.lineWidth = 1.5 * dpr; ctx.strokeStyle = "rgba(170,120,255,.9)";
     for (const d of C.brutes) ctx.strokeRect(d.box[0] * k + dx, d.box[1] * k + dy, (d.box[2] - d.box[0]) * k, (d.box[3] - d.box[1]) * k);
   }
-  const vues = C.cadres ? pistesVues() : [], boites = vues.map(t => t.box.map((v, i) => v * k + (i % 2 ? dy : dx)));
+  // largeur visible du calque : la zone vidéo, ou tout l'écran quand l'image agrandie passe sous le volet du mode couché
+  const LW = (C.zoom.k > 1.001 ? innerWidth : C.W) * dpr;
+  // (un cadre entièrement sorti de l'écran n'est pas dessiné : son étiquette, ramenée au bord, flotterait seule sur l'image)
+  const vues = (C.cadres ? pistesVues() : []).filter(t => t.box[2] * k + dx > 0 && t.box[0] * k + dx < LW && t.box[3] * k + dy > 0 && t.box[1] * k + dy < calque.height);
+  const boites = vues.map(t => t.box.map((v, i) => v * k + (i % 2 ? dy : dx)));
   for (const [i, t] of vues.entries()) {
     const it = D.items[moteur.classe(t)];
     const [x1, y1, x2, y2] = boites[i];
@@ -334,10 +384,10 @@ function dessiner() {
     const gene = (x, y) => boites.some((b, j) => j !== i && x < b[2] && x + tw > b[0] && y < b[3] && y + th > b[1]);
     if (gene(tx, ty)) {
       const droite = x2 + 4 * dpr, gauche = x1 - tw - 4 * dpr, my = (y1 + y2 - th) / 2;
-      if (droite + tw <= C.W * dpr && !gene(droite, my)) { tx = droite; ty = my; }
+      if (droite + tw <= LW && !gene(droite, my)) { tx = droite; ty = my; }
       else if (gauche >= 0 && !gene(gauche, my)) { tx = gauche; ty = my; }
     }
-    tx = Math.max(2 * dpr, Math.min(tx, C.W * dpr - tw - 2 * dpr));  // l'étiquette reste entière à l'écran (les panneaux sont souvent au bord droit)
+    tx = Math.max(2 * dpr, Math.min(tx, LW - tw - 2 * dpr));  // l'étiquette reste entière à l'écran (les panneaux sont souvent au bord droit)
     ctx.fillStyle = it.couleur;
     ctx.beginPath(); ctx.roundRect ? ctx.roundRect(tx, ty, tw, th, 8 * dpr) : ctx.rect(tx, ty, tw, th); ctx.fill();
     ctx.fillStyle = ["zone", "priorite", "marquage", "feu", "temporaire", "panonceau"].includes(it.categorie) ? "#111" : "#fff";
@@ -524,7 +574,14 @@ function majLecteur() {
 
 // Pause : pincer, double-toucher, molette ou boutons + et − pour zoomer (le point visé reste sous le doigt), glisser pour se
 // déplacer ; toucher un cadre ouvre sa fiche, toucher ailleurs propose d'apprendre le panneau qui s'y trouve.
-function zoomer(k, sx = C.W / 2, sy = C.H / 2) {
+// Sans point visé (boutons − et +), on agrandit autour du milieu de la partie d'image visible entre les commandes : une vidéo
+// large sur téléphone debout occupe le haut de l'écran, et zoomer autour du milieu de l'écran la faisait fuir vers le bas.
+function zoomer(k, sx = null, sy = null) {
+  if (sx == null) {
+    const x1 = Math.max(C.ox, 0), x2 = Math.min(C.ox + C.vw * C.s, C.W), y1 = Math.max(C.oy, C.T), y2 = Math.min(C.oy + C.vh * C.s, C.H - C.B);
+    sx = x2 > x1 ? (x1 + x2) / 2 : C.W / 2;
+    sy = y2 > y1 ? (y1 + y2) / 2 : C.cy;
+  }
   const u = { x: (sx - C.ox) / C.s, y: (sy - C.oy) / C.s };
   placer(Math.min(6, Math.max(1, k)), u, sx, sy);
 }
@@ -549,11 +606,17 @@ function majZoom() {
   $("[data-a=zoomplus]", C.racine).disabled = k >= max - 0.001;
 }
 async function objectif(v, memoriser = true) {
-  const o = C.objectif;
+  const moi = C, o = C.objectif, avant = o.v;
   o.v = Math.min(o.max, Math.max(o.min, v));
   majZoom();
-  try { await o.piste.applyConstraints({ advanced: [{ zoom: o.v }] }); } catch (e) { console.warn(e); }
-  if (memoriser && C) { C.p.reglages.zoomCamera = Math.round(100 * o.v / o.min) / 100; sauver(); }
+  try { await o.piste.applyConstraints({ advanced: [{ zoom: o.v }] }); }
+  catch (e) {  // la caméra a refusé : on affiche ce qu'elle fait vraiment, et on ne retient rien
+    console.warn(e);
+    o.v = o.piste.getSettings?.().zoom || avant;
+    if (C === moi) majZoom();
+    return;
+  }
+  if (memoriser && C === moi) { C.p.reglages.zoomCamera = Math.round(100 * o.v / o.min) / 100; sauver(); }
 }
 function brancherZoom() {
   const zone = $(".calque-touche", C.racine), doigts = new Map();
@@ -563,7 +626,14 @@ function brancherZoom() {
   const centre = () => { const p = pts(); return p.length ? { x: p.reduce((s, q) => s + q.x, 0) / p.length, y: p.reduce((s, q) => s + q.y, 0) / p.length } : { x: 0, y: 0 }; };
   const reperer = (t = 0, x0 = 0, y0 = 0) => { const c = centre(); depart = { k: C.zoom.k, d: ecart(), u: { x: (c.x - C.ox) / C.s, y: (c.y - C.oy) / C.s }, t, x0, y0, v: C.objectif?.v }; };
   let tObjectif = 0;
-  zone.addEventListener("pointerdown", e => { doigts.set(e.pointerId, { x: e.clientX, y: e.clientY }); reperer(Date.now(), e.clientX, e.clientY); });
+  zone.addEventListener("pointerdown", e => {
+    clearTimeout(attente);  // un doigt se pose : le toucher simple en attente n'aura pas lieu (double toucher, ou glissement qui commence)
+    zone.setPointerCapture?.(e.pointerId);  // souris : le relâchement revient à l'image même s'il a lieu ailleurs
+    doigts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    reperer(Date.now(), e.clientX, e.clientY);
+    // second toucher d'un double toucher : jugé à la pose du doigt, pas à son lever (un doigt un peu lent n'y change rien)
+    depart.suite = doigts.size === 1 && C.pause && depart.t - dernierTap.t < 320 && Math.hypot(e.clientX - dernierTap.x, e.clientY - dernierTap.y) < 40;
+  });
   zone.addEventListener("pointermove", e => {
     if (!doigts.has(e.pointerId) || !depart) return;
     doigts.set(e.pointerId, { x: e.clientX, y: e.clientY });
@@ -576,16 +646,20 @@ function brancherZoom() {
     placer(doigts.size === 2 && depart.d ? Math.min(6, Math.max(1, depart.k * ecart() / depart.d)) : C.zoom.k, depart.u, c.x, c.y);
   });
   const fin = e => {
-    const tap = depart && doigts.size === 1 && Date.now() - depart.t < 300 && Math.hypot(e.clientX - depart.x0, e.clientY - depart.y0) < 10;
+    if (!C) return;
+    const tap = depart && doigts.size === 1 && Date.now() - depart.t < 300 && Math.hypot(e.clientX - depart.x0, e.clientY - depart.y0) < 10, suite = depart?.suite;
     doigts.delete(e.pointerId);
     if (doigts.size) reperer();
     if (!tap) return;
-    const x = e.clientX, y = e.clientY, double = C.pause && Date.now() - dernierTap.t < 320 && Math.hypot(x - dernierTap.x, y - dernierTap.y) < 40;
+    const x = e.clientX, y = e.clientY, double = C.pause && suite;
     clearTimeout(attente);
     dernierTap = { t: double ? 0 : Date.now(), x, y };
     if (double) zoomer(C.zoom.k > 1.3 ? 1 : 2.5, x, y);  // double toucher : zoom sur ce point, ou retour à l'image entière
     else if (!C.pause) toucher(x, y);
-    else attente = setTimeout(() => C && toucher(x, y), 300);  // on attend de savoir si un second toucher suit
+    else {  // on attend de savoir si un second toucher suit ; le point est retenu dans l'image, qui peut bouger d'ici là
+      const moi = C, v = [(x - C.ox) / C.s, (y - C.oy) / C.s];
+      attente = setTimeout(() => { if (C === moi && C.pause) toucher(v[0] * C.s + C.ox, v[1] * C.s + C.oy); }, 300);
+    }
   };
   zone.addEventListener("pointerup", fin);
   zone.addEventListener("pointercancel", e => { doigts.delete(e.pointerId); if (doigts.size) reperer(); });
@@ -607,7 +681,8 @@ async function toucher(x, y) {
 // « Mes panneaux » depuis l'image en pause : l'utilisateur dit ce qu'est le panneau touché (ou corrige celui que l'appli a nommé)
 async function apprendreIci(box, point) {
   // on garde ce que l'écran montre (zoom compris) : le panneau visé y est assez grand pour être cherché et vérifié d'un coup d'œil
-  const x0 = Math.max(0, -C.ox / C.s), y0 = Math.max(0, -C.oy / C.s), x1 = Math.min(C.vw, (C.W - C.ox) / C.s), y1 = Math.min(C.vh, (C.H - C.oy) / C.s);
+  const x0 = Math.max(0, -C.ox / C.s), y0 = Math.max(0, -C.oy / C.s), x1 = Math.min(C.vw, (innerWidth - C.ox) / C.s), y1 = Math.min(C.vh, (C.H - C.oy) / C.s);
+  if (x1 - x0 < 8 || y1 - y0 < 8) return;
   const w = x1 - x0, h = y1 - y0, k = Math.min(1, 1600 / Math.max(w, h));
   const cv = Object.assign(document.createElement("canvas"), { width: Math.round(w * k), height: Math.round(h * k) });
   cv.getContext("2d").drawImage(C.video, x0, y0, w, h, 0, 0, cv.width, cv.height);

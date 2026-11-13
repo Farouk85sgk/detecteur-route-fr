@@ -107,7 +107,9 @@ export class Moteur {
     if (appris !== undefined) { this.appris = appris; if (appris.length) this.chargerEmpreinte(); }
     if (this.avecUsagers && this.pret) this.chargerUsagers();
   }
-  reinitialiser() { this.pistes = []; this.prochainId = 1; this.vitesse = { valeur: null, code: null, quand: 0 }; this.image = 0; this.lignes = { g: {}, d: {} }; }
+  // « generation » change à chaque remise à zéro : une analyse lancée avant (le calcul sur carte graphique rend la main à la page
+  // pendant qu'il tourne) reconnaît ainsi que ses détections sont celles d'une image dépassée, et ne repeuple pas le suivi.
+  reinitialiser() { this.pistes = []; this.prochainId = 1; this.vitesse = { valeur: null, code: null, quand: 0 }; this.image = 0; this.lignes = { g: {}, d: {} }; this.generation = (this.generation || 0) + 1; }
 
   // ---------- pré-traitement : image -> tenseur letterbox (multiple de 32) ----------
   tenseur(src, w, h, cote) {
@@ -275,18 +277,21 @@ export class Moteur {
       t.hits++; t.misses = 0; t.vu = performance.now();
     };
     for (const [v, i, j] of pairs) { if (tUsed.has(i) || dUsed.has(j)) continue; tUsed.add(i); dUsed.add(j); toucher(this.pistes[i], dets[j], v); }
-    // Seconde passe, panneaux et feux : avec peu d'images par seconde (ou un panneau tout proche), l'objet ne recouvre plus son
-    // cadre précédent. On le rattache à la piste la plus proche qui porte le même nom, vue il y a deux images au plus (à moins
-    // de 2,5 fois sa taille, tailles comparables) : la piste garde ses voix, au lieu d'une nouvelle piste jugée sur une seule
-    // image. Un panneau d'un autre nom n'est jamais rattaché ainsi : ce serait un autre panneau, qui doit avoir sa propre piste.
+    // Seconde passe, panneaux, feux et marquages hors lignes : avec peu d'images par seconde (ou un objet tout proche), l'objet
+    // ne recouvre plus son cadre précédent. On le rattache à la piste la plus proche qui porte le même nom (pour un feu : la
+    // même couleur), vue il y a deux images au plus (à moins de 2,5 fois sa taille, 1,5 pour un feu, tailles comparables) :
+    // la piste garde ses voix, au lieu d'une nouvelle piste jugée sur une seule image. Un objet d'un autre nom n'est jamais
+    // rattaché ainsi : ce serait un autre objet, qui doit avoir sa propre piste. Les lignes, très étendues, et les usagers
+    // ne se rattachent que par recouvrement.
     const centre = b => [(b[0] + b[2]) / 2, (b[1] + b[3]) / 2], cote = b => Math.max(b[2] - b[0], b[3] - b[1]), loin = [];
     this.pistes.forEach((t, i) => {
-      if (tUsed.has(i) || !groupes.has(t.groupe) || (t.groupe !== "s" && t.groupe !== "f") || t.misses > 2) return;
+      if (tUsed.has(i) || !groupes.has(t.groupe) || t.groupe === "u" || t.misses > 2) return;
       const [tx, ty] = centre(t.box), ct = cote(t.box), nom = this.classe(t);
+      if (t.groupe === "m" && LIGNES.test(D.items[nom]?.code || "")) return;
       dets.forEach((d, j) => {
         if (dUsed.has(j) || groupeDe(d.cls) !== t.groupe) return;
         const [dx, dy] = centre(d.box), cd = cote(d.box), ecart = Math.hypot(dx - tx, dy - ty) / Math.max(ct, cd);
-        if ((t.groupe === "f" ? ecart <= 1.5 : d.cls === nom && ecart <= 2.5) && cd < 2.2 * ct && ct < 2.2 * cd) loin.push([ecart, i, j]);
+        if ((t.groupe === "f" ? d.cls === t.feu && ecart <= 1.5 : d.cls === nom && ecart <= 2.5) && cd < 2.2 * ct && ct < 2.2 * cd) loin.push([ecart, i, j]);
       });
     });
     loin.sort((a, b) => a[0] - b[0]);
@@ -318,8 +323,9 @@ export class Moteur {
   // Panneaux : plus le score est bas, plus on attend. Sur les photos de contrôle, une annonce au score de 0,46 à 0,65 n'est
   // juste qu'une fois sur deux (45 %), contre 77 % de 0,75 à 0,85 et 91 % au-dessus. Un vrai panneau grossit en approchant
   // et son score monte : attendre coûte une fraction de seconde, et les détections hésitantes qui clignotent ne passent plus.
-  // Marquages au sol : plus d'images, et un type qui domine nettement (5 images et 65 % des voix pour une ligne, 3 images
-  // et 55 % pour les autres marquages).
+  // Marquages au sol : un type qui domine nettement, et plus d'images. Une ligne : 5 images et 65 % des voix. Les autres
+  // marquages : 3 images et 55 % des voix, ou 2 images quand le score atteint 0,85 (un passage piétons net file vite sous
+  // la voiture : à quelques images par seconde, il n'en laisse pas trois).
   confirme(t, cote) {
     if (t.groupe !== "m" && t.groupe !== "s") return (t.hits >= MIN_HITS || t.conf > 0.85) && cote >= 18;
     const c = this.classe(t);
@@ -332,8 +338,8 @@ export class Moteur {
       if (t.conf >= 0.65) return t.hits >= 2;      // net : deux images
       return t.hits >= 4 && part >= 0.6;           // hésitant : quatre images, et un nom qui domine
     }
-    const ligne = LIGNES.test(D.items[c]?.code || "");
-    return t.hits >= (ligne ? 5 : 3) && part >= (ligne ? 0.65 : 0.55);
+    if (LIGNES.test(D.items[c]?.code || "")) return t.hits >= 5 && part >= 0.65;
+    return (t.hits >= 3 || (t.hits >= 2 && t.conf >= 0.85)) && part >= 0.55;
   }
 
   // ligne qui borde la voie, de chaque côté : vote sur les dernières images (la plus proche du milieu de l'image compte)
@@ -381,7 +387,7 @@ export class Moteur {
   // ---------- analyse d'une image de la vidéo ----------
   // net : l'image est arrêtée (pause) ; les cadres suivis prennent exactement la place trouvée, sans lissage
   async analyser(src, w, h, { debug = false, net = false } = {}) {
-    const t0 = performance.now();
+    const t0 = performance.now(), generation = this.generation;
     this.net = net;
     this.image++;
     const prep = this.tenseur(src, w, h, this.cote);
@@ -398,6 +404,7 @@ export class Moteur {
       dets = dets.concat(usagers);
       groupes.add("u"); groupes.add("f");
     }
+    if (generation !== this.generation) return { nouveaux: [], changes: [], brutes: null };  // suivi remis à zéro pendant le calcul
     const brutes = debug ? dets.map(d => ({ ...d })) : null;
     if (this.actifs) dets = dets.filter(d => this.actifs.has(d.cls));
     this.majLignes(dets, w);
