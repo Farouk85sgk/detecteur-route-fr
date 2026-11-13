@@ -28,11 +28,11 @@
 ! Calcul approché sur route sèche : le chiffre des dizaines multiplié par lui-même. À 50 km/h : 5 x 5 = 25 m. À 90 km/h : 9 x 9 = 81 m. À 130 km/h : 13 x 13 = 169 m.
 @ distance d'arrêt : calcul | 2
 
-? Sur route sèche, à 130 km/h, il faut pour s'arrêter environ :
+? Sur route sèche, à 130 km/h, le calcul approché de la distance d'arrêt (le nombre de dizaines multiplié par lui-même) donne environ :
 - 80 m
 - 130 m
 + 170 m
-! 13 x 13 = 169 m sur route sèche, soit plus d'un terrain et demi de football. Sur route mouillée, cette distance augmente encore de moitié environ.
+! 13 x 13 = 169 m sur route sèche, soit plus d'un terrain et demi de football. Sur route mouillée, cette distance augmente encore de moitié environ. Ce calcul approché prend de la marge : avec une seconde de réaction, la Sécurité routière indique au moins 129 m.
 @ distance d'arrêt à 130 km/h | 2
 
 ? Si ma vitesse est multipliée par deux, ma distance de freinage est multipliée par :
@@ -50,18 +50,18 @@
 ! La distance de freinage dépend de la vitesse, de l'adhérence (chaussée, pneus), de l'état des freins, de la charge et de la pente. La fatigue du conducteur allonge le temps de réaction, donc la distance de réaction, pas le freinage lui-même.
 @ distance de freinage : facteurs | 3
 
-? Hors agglomération, un camion de plus de 3,5 tonnes qui suit un autre véhicule à la même vitesse doit laisser un intervalle d'au moins :
+? Hors agglomération, deux camions de plus de 3,5 tonnes se suivent à la même vitesse. Le second doit laisser un intervalle d'au moins :
 - 20 m
 + 50 m
 - 100 m
 ! Hors agglomération, les véhicules de plus de 3,5 tonnes ou de plus de 7 m de long qui se suivent à la même vitesse laissent au moins 50 m entre eux, pour permettre aux autres de se rabattre en dépassant.
 @ distance entre véhicules lourds | 3
 
-? Dans un tunnel, sauf indication différente, je laisse avec le véhicule qui me précède :
-- la même distance qu'ailleurs
-+ une distance plus grande, souvent matérialisée par des repères lumineux
+? À l'entrée d'un tunnel, je vois ce panneau. Je laisse avec le véhicule qui me précède :
+- une distance plus courte que celle indiquée, car la vitesse y est limitée
++ au moins la distance indiquée, souvent matérialisée par des repères lumineux
 - une longueur de voiture
-! En tunnel, un accident ou un incendie a des conséquences bien plus graves. La distance à respecter est souvent indiquée par un panneau et par des repères bleus sur les parois ; à l'arrêt, je laisse aussi un espace.
+! En tunnel, un accident ou un incendie a des conséquences bien plus graves. Une distance plus grande que les deux secondes habituelles peut donc être imposée : ce panneau l'indique, et des repères bleus sur les parois aident souvent à la respecter. Sans indication particulière, la règle des deux secondes s'applique comme ailleurs. À l'arrêt, je laisse aussi un espace.
 @ distance de sécurité en tunnel | 2 | B17
 
 ? Ne pas respecter la distance de sécurité est sanctionné par :

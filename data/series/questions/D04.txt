@@ -34,7 +34,7 @@
 + 90 km/h
 - 110 km/h
 - 130 km/h
-! Au-delà de 3,5 tonnes de poids total roulant autorisé, l'ensemble voiture + remorque est limité à 90 km/h sur autoroute et à 80 km/h sur les autres routes, et il doit porter les disques de limitation à l'arrière.
+! Au-delà de 3,5 tonnes de poids total roulant autorisé, l'ensemble voiture + remorque est limité à 90 km/h sur autoroute et sur les routes prioritaires à deux chaussées séparées par un terre-plein central, à 80 km/h sur les autres routes et à 50 km/h en agglomération. Il doit porter les disques de limitation à l'arrière.
 @ remorque : vitesse | 3
 
 ? À bord de ma voiture, je dois obligatoirement avoir :

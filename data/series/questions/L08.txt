@@ -80,7 +80,7 @@
 
 ? De nuit, hors agglomération, je suis contraint de stationner sur la chaussée d'une route non éclairée. Pour signaler ma voiture, j'allume :
 - les feux de route
-+ les feux de position ou de stationnement
++ les feux de position
 - aucun feu, pour ne pas vider la batterie
-! De nuit ou par visibilité insuffisante, un véhicule arrêté ou stationné sur une chaussée non éclairée doit être signalé par ses feux de position (ou de stationnement), et par ses feux de détresse s'il constitue un danger.
+! De nuit ou par visibilité insuffisante, un véhicule arrêté ou stationné sur une chaussée non éclairée doit être signalé par ses feux de position, et par ses feux de détresse s'il constitue un danger. Les feux de stationnement ne peuvent remplacer les feux de position qu'en agglomération.
 @ stationnement de nuit | 3

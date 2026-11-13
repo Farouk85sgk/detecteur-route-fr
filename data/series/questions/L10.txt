@@ -41,7 +41,7 @@
 - un trait de la bande d'arrêt d'urgence
 + deux traits de la bande d'arrêt d'urgence
 - une longueur de voiture
-! Les traits qui bordent la bande d'arrêt d'urgence servent de repère : à 130 km/h, laisser deux traits (environ 90 m) correspond aux deux secondes de sécurité. « Un trait, danger ; deux traits, sécurité. »
+! Les traits qui bordent la bande d'arrêt d'urgence servent de repère : à 130 km/h, je parcours un peu plus de 70 m en deux secondes, et laisser deux traits (environ 90 m) garantit cette distance avec une marge. « Un trait, danger ; deux traits, sécurité. »
 @ autoroute : distance de sécurité | 2
 
 ? Pour quitter l'autoroute, je ralentis :

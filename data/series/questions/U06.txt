@@ -11,7 +11,7 @@
 - Partout où je ne gêne pas les piétons
 + Uniquement sur les emplacements aménagés pour le stationnement
 - Nulle part : l'arrêt et le stationnement y sont toujours interdits
-! Dans une zone de rencontre, l'arrêt et le stationnement ne sont autorisés que sur les emplacements aménagés à cet effet. Partout ailleurs, la chaussée et ses abords restent libres pour les piétons et les cyclistes.
+! Dans une zone de rencontre, le stationnement n'est autorisé que sur les emplacements aménagés à cet effet. Partout ailleurs, la chaussée et ses abords restent libres pour les piétons et les cyclistes.
 @ zone de rencontre : stationnement | 3
 
 ? À 50 km/h, par rapport à 30 km/h, la distance nécessaire pour m'arrêter devant un enfant qui surgit est :
@@ -28,12 +28,12 @@
 ! L'arrêt et le stationnement sur une bande ou une piste cyclable sont classés « très gênants » (amende forfaitaire de 135 €, mise en fourrière possible). Même bref, mon arrêt oblige les cyclistes à se déporter au milieu des voitures.
 @ arrêt sur bande cyclable | 2
 
-? Faute de place, je m'arrête en double file devant une boulangerie, feux de détresse allumés. Cet arrêt :
+? Faute de place, je me gare en double file devant une boulangerie, le temps d'acheter du pain, feux de détresse allumés. Ce stationnement :
 - Est autorisé s'il dure moins de cinq minutes
 + Est interdit : il gêne la circulation et masque les piétons et les cyclistes
 - Est autorisé partout sauf devant une école
-! L'arrêt et le stationnement en double file sont gênants et verbalisables, même brefs et même avec les feux de détresse. Ma voiture oblige les autres à se déporter, cache les piétons qui traversent et force les cyclistes à s'écarter au milieu de la circulation.
-@ arrêt en double file | 2
+! Quitter ma voiture pour une course, même deux minutes, c'est stationner, pas m'arrêter. Le stationnement en double file est gênant et verbalisable (amende de 35 €), même bref et même avec les feux de détresse. Ma voiture oblige les autres à se déporter, cache les piétons qui traversent et force les cyclistes à s'écarter au milieu de la circulation.
+@ stationnement en double file | 2
 
 ? Je roule sur une route sans ligne centrale, dont les deux bords sont marqués par de larges accotements bordés d'une ligne discontinue. Une voiture arrive en face. Pour la croiser, je :
 - Garde le milieu de la chaussée : c'est à elle de s'écarter
@@ -46,7 +46,7 @@
 - Une route réservée aux voitures et aux motos
 + Une voie réservée aux piétons et aux véhicules sans moteur
 - Un parking pour vélos
-! La voie verte est réservée aux déplacements non motorisés : piétons, cyclistes et, si la signalisation le prévoit, cavaliers. Je n'y circule pas en voiture et je n'y stationne pas.
+! La voie verte est réservée aux piétons et aux véhicules sans moteur, comme les vélos. Les trottinettes électriques et les autres engins de déplacement personnel motorisés y sont aussi admis. Les cavaliers peuvent y circuler si la signalisation le prévoit. Je n'y circule pas en voiture et je n'y stationne pas.
 @ voie verte | 1 | C115
 
 ? Ce panneau carré indique :

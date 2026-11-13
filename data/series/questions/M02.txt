@@ -25,7 +25,7 @@
 + un défaut du circuit de charge
 - que la batterie est pleine
 - un manque de carburant
-! L'alternateur ne recharge plus la batterie : la voiture roule sur sa réserve électrique et finira par s'arrêter. Je coupe les consommateurs inutiles et je rejoins rapidement un garage.
+! L'alternateur ne recharge plus la batterie : la voiture roule sur sa réserve électrique et finira par s'arrêter. Je coupe les consommateurs inutiles et je m'arrête dès que possible, en sécurité, pour faire contrôler le circuit de charge.
 @ voyant de charge | 2
 
 ? Le voyant rouge de freins reste allumé alors que le frein de stationnement est desserré. Cela peut signaler :

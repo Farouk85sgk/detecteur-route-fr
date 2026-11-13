@@ -72,9 +72,9 @@
 
 ? Cette balise à bandes bleues et blanches signale :
 - Une zone de stationnement à disque
-+ Un obstacle à contourner, comme un îlot ou un terre-plein
++ Un obstacle tout proche du bord de la chaussée, comme un muret ou un petit pont
 - Un poste de police
-! La balise d'obstacle rend visible un îlot, un musoir ou un terre-plein placé sur la chaussée. Je repère de quel côté passer grâce au marquage et aux panneaux qui l'accompagnent.
+! La balise d'obstacle signale un petit ouvrage placé à moins d'un mètre du bord de la chaussée, sur une route étroite : un muret ou un petit pont, par exemple. On la trouve aussi près de certains passages à niveau. Je m'en écarte, et je ralentis si je dois croiser un autre véhicule. La tête d'un îlot est signalée, elle, par la balise à flèche blanche sur fond bleu.
 @ balise d'obstacle | 3 | J13
 
 ? Sous un panneau de limitation de vitesse, ce panonceau signifie que :

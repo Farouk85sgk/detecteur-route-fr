@@ -55,7 +55,7 @@
 + interdit et passible d'une amende
 - autorisé sans limite
 - obligatoire en hiver
-! Le moteur d'un véhicule à l'arrêt ou en stationnement doit être coupé, sauf nécessité : c'est une source de pollution et de bruit inutile, punie d'une amende de 135 €.
+! Le moteur d'un véhicule en stationnement doit être coupé, sauf nécessité : c'est une source de pollution et de bruit inutile, punie d'une amende de 135 €.
 @ moteur à l'arrêt | 3
 
 ? Sur un trajet très court, moteur froid, ma voiture :

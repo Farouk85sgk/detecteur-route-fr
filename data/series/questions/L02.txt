@@ -59,9 +59,9 @@
 
 ? Sous un panneau « sens interdit », un panonceau indique « SAUF » suivi d'un vélo. En voiture :
 - je peux m'engager en roulant au pas
-+ je ne peux pas m'engager, et des vélos peuvent sortir de cette rue face à moi
++ je ne peux pas m'engager, mais les cyclistes, eux, peuvent y entrer
 - je peux m'engager si aucun vélo n'arrive
-! La rue reste interdite aux voitures dans ce sens. Les cyclistes, eux, peuvent l'emprunter : c'est un double-sens cyclable. Je m'attends à croiser des vélos en sortie de rue.
+! La rue reste interdite aux voitures dans ce sens. Les cyclistes, eux, peuvent y entrer : c'est un double-sens cyclable. Quand je circule dans cette rue dans le sens autorisé, je m'attends donc à croiser des vélos qui arrivent en face.
 @ sens interdit sauf vélos | 1 | B1_M9v
 
 ? Ce panneau m'oblige à :

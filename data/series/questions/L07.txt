@@ -34,7 +34,7 @@
 - je dois attendre la fin de la ligne continue
 + je peux chevaucher la ligne si la visibilité est suffisante et que personne n'arrive en face
 - je peux le serrer de près pour rester dans ma voie
-! Le chevauchement d'une ligne continue est autorisé pour dépasser un cycliste, à condition que la manœuvre soit sans danger et que la distance latérale (1 m ou 1,50 m) soit respectée.
+! Le chevauchement d'une ligne continue est autorisé pour dépasser un cycliste (ou une trottinette électrique), à condition que la manœuvre soit sans danger et que la distance latérale (1 m ou 1,50 m) soit respectée.
 @ dépassement : cycliste et ligne continue | 2
 
 ? Un véhicule est en train de me dépasser. Je dois :

@@ -4,7 +4,7 @@
 - la franchir pour dépasser si la route est dégagée
 - la chevaucher sans la franchir
 + ni la franchir ni la chevaucher
-! La ligne continue ne se franchit pas et ne se chevauche pas. Une seule exception : pour dépasser un cycliste, je peux la chevaucher si la visibilité est suffisante et la manœuvre sans danger.
+! La ligne continue ne se franchit pas et ne se chevauche pas. Une seule exception : pour dépasser un cycliste, un engin de déplacement personnel motorisé (trottinette électrique, par exemple) ou un cyclomobile léger, je peux la chevaucher si la visibilité est suffisante et la manœuvre sans danger.
 @ ligne continue | 1 | M_ligne_continue
 
 ? Franchir une ligne continue pour dépasser une voiture est sanctionné par :
@@ -46,7 +46,7 @@
 - une ligne continue
 + une ligne discontinue aux traits très longs
 - une double ligne continue
-! La bande d'arrêt d'urgence est bordée d'une ligne discontinue aux traits très longs (39 m, espacés de 13 m). L'intervalle entre deux traits sert de repère de distance de sécurité : « un trait, danger ; deux traits, sécurité ».
+! La bande d'arrêt d'urgence est bordée d'une ligne discontinue aux traits très longs (39 m, espacés de 13 m). Ces traits servent de repère pour la distance de sécurité : je laisse au moins deux traits entre moi et le véhicule qui me précède (« un trait, danger ; deux traits, sécurité »).
 @ bande d'arrêt d'urgence | 3
 
 ? Au STOP, je dois arrêter mon véhicule :

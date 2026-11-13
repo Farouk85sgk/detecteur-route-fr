@@ -21,11 +21,11 @@
 ! L'appel de phares sert à avertir. Il n'a aucune valeur de priorité : je vérifie mes feux, je ralentis et je reste attentif à ce qui peut m'attendre plus loin.
 @ communication : appels de phares | 2
 
-? Mes feux stop s'allument quand :
+? Sur une voiture thermique, mes feux stop s'allument quand :
 + j'appuie sur la pédale de frein
 - je lâche l'accélérateur
 - je rétrograde
-! Les feux stop ne s'allument qu'au freinage. Si je ralentis fortement au frein moteur, ceux qui me suivent ne sont pas avertis : un léger appui sur le frein les prévient.
+! Les feux stop ne s'allument qu'au freinage. Si je ralentis fortement au frein moteur, ceux qui me suivent ne sont pas avertis : un léger appui sur le frein les prévient. Sur une voiture électrique, le freinage régénératif peut aussi les allumer quand je lève le pied et que la voiture ralentit fortement.
 @ communication : feux stop | 2
 
 ? J'utilise mon clignotant :

@@ -32,7 +32,7 @@
 - me mets au point mort
 + rétrograde pour utiliser le frein moteur
 - freine en continu, légèrement
-! En descente, j'engage un rapport inférieur : le frein moteur retient la voiture. Un freinage continu échauffe les freins, qui perdent leur efficacité. Le point mort est interdit et dangereux.
+! En descente, j'engage un rapport inférieur : le frein moteur retient la voiture. Un freinage continu échauffe les freins, qui perdent leur efficacité. Le point mort est dangereux : sans frein moteur, la voiture prend de la vitesse.
 @ descente : frein moteur | 1 | A16
 
 ? Sur une route de montagne en lacets, avant un virage serré sans visibilité, je peux :

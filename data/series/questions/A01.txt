@@ -64,7 +64,7 @@
 ! La borne d'appel met directement en relation avec le centre de sécurité de l'autoroute et indique d'elle-même ma position et mon sens de circulation.
 @ alerter : bornes d'appel | 2 | CE2a
 
-? Le système eCall, qui équipe les voitures neuves depuis 2018 :
+? Le système eCall, obligatoire sur les nouveaux modèles de voitures homologués depuis le 31 mars 2018 :
 + appelle automatiquement les secours en cas de choc violent
 + transmet la position du véhicule
 - empêche le véhicule de démarrer après un accident

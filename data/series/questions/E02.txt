@@ -11,7 +11,7 @@
 + sur le site officiel du certificat qualité de l'air, pour quelques euros
 - chez n'importe quel garagiste, pour 50 €
 - elle est envoyée automatiquement chaque année
-! La vignette se commande uniquement sur le site officiel de l'État, pour un prix modique. Elle est valable tant qu'elle reste lisible. Attention aux sites frauduleux qui la vendent bien plus cher.
+! La vignette se commande auprès du service officiel de l'État : en ligne sur le site certificat-air.gouv.fr, ou par courrier avec le formulaire officiel, pour un prix modique. Elle est valable tant qu'elle reste lisible. Attention aux sites frauduleux qui la vendent bien plus cher.
 @ Crit'Air : obtention | 2
 
 ? Lors d'un pic de pollution, le préfet peut décider :
@@ -29,16 +29,16 @@
 @ covoiturage | 1 | CE52
 
 ? Sur certaines voies rapides, un losange blanc affiché sur un panneau lumineux signale une voie réservée :
-+ aux véhicules transportant au moins deux personnes, aux taxis, aux transports en commun et aux véhicules à très faibles émissions
++ aux véhicules transportant au moins deux personnes, aux taxis, aux transports en commun et, selon la signalisation, aux véhicules à très faibles émissions
 - aux poids lourds
 - aux motos uniquement
-! Le losange blanc désigne une voie réservée au covoiturage (au moins deux occupants) et à certains véhicules : transports en commun, taxis, véhicules à très faibles émissions. Y circuler seul est sanctionné par une amende de 135 €.
+! Le losange blanc désigne une voie réservée au covoiturage (au moins deux occupants) et à certains véhicules : transports en commun, taxis et, selon la signalisation, véhicules à très faibles émissions. Y circuler sans y être autorisé est sanctionné par une amende de 135 €.
 @ voies réservées au covoiturage | 3
 
 ? En ville, à faible vitesse, une voiture électrique est :
 + très silencieuse : les piétons et les cyclistes peuvent ne pas l'entendre arriver
 - plus bruyante qu'une voiture thermique
-- interdite dans les zones piétonnes
+- autorisée à circuler sur les pistes cyclables
 ! À basse vitesse, un véhicule électrique ou hybride fait très peu de bruit, même si un avertisseur sonore de proximité est désormais obligatoire sur les modèles récents. Je redouble d'attention près des piétons.
 @ véhicules électriques : silence | 1
 

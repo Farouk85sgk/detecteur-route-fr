@@ -32,9 +32,9 @@
 
 ? La somnolence au volant est :
 - une cause d'accident négligeable
-+ la première cause de mortalité sur autoroute
++ l'une des principales causes de mortalité sur autoroute
 - un risque réservé aux conducteurs âgés
-! La somnolence est impliquée dans environ un accident mortel sur trois sur autoroute. Elle touche tous les conducteurs, en particulier ceux qui manquent de sommeil.
+! Sur autoroute, la Sécurité routière associe la somnolence à un accident mortel sur trois. Les bilans récents des sociétés d'autoroutes en comptent moins d'un sur cinq, ce qui reste l'une des principales causes. La somnolence touche tous les conducteurs, en particulier ceux qui manquent de sommeil.
 @ somnolence : accidents | 2
 
 ? Fatigue et somnolence, est-ce la même chose ?
@@ -78,7 +78,7 @@
 ! Je pars reposé, je prévois des pauses et, si possible, un second conducteur pour me relayer. Partir après une journée de travail et rouler la nuit cumule fatigue, dette de sommeil et heures à risque.
 @ organisation d'un long trajet | 1
 
-? Pendant une fraction de seconde, mes yeux se ferment sans que je m'en rende compte. À 130 km/h, pendant un micro-sommeil de 3 secondes, ma voiture parcourt environ :
+? Un micro-sommeil dure de 1 à 4 secondes : mes yeux se ferment sans que je m'en rende compte. À 130 km/h, pendant un micro-sommeil de 3 secondes, ma voiture parcourt environ :
 - 30 m
 - 60 m
 + 110 m

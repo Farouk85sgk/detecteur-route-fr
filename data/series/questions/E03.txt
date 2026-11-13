@@ -60,7 +60,7 @@
 - Laisser tourner le moteur dix minutes à l'arrêt avant de partir
 + Partir sans attendre et rouler doucement les premiers kilomètres
 - Monter haut dans les tours pour le réchauffer plus vite
-! Un moteur chauffe bien plus vite en roulant qu'à l'arrêt. Le faire tourner sur place consomme et pollue inutilement, et c'est interdit en stationnement. Je pars dès que mes vitres sont dégagées, sans forte accélération tant que le moteur est froid.
+! Un moteur chauffe bien plus vite en roulant qu'à l'arrêt. Le faire tourner sur place consomme et pollue inutilement ; en stationnement, sans nécessité, c'est même interdit. Je pars dès que mes vitres sont dégagées, sans forte accélération tant que le moteur est froid.
 @ démarrage à froid | 2
 
 ? Ma vieille voiture est irréparable. Pour m'en débarrasser, je :

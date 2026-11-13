@@ -4,7 +4,7 @@
 - 35 € d'amende, sans retrait de points
 + 135 € d'amende et un retrait de 3 points
 - 90 € d'amende et un retrait d'un point
-! L'usage d'un téléphone tenu en main en circulation coûte 135 € et 3 points. Si une autre infraction est commise en même temps (clignotant oublié, feu rouge...), le permis peut être retenu sur-le-champ.
+! L'usage d'un téléphone tenu en main en circulation coûte 135 € et 3 points. Si une autre infraction est commise en même temps (clignotant oublié, feu rouge...), le permis peut être retenu sur-le-champ. Depuis octobre 2026, partout en France, le préfet peut aussi suspendre le permis, jusqu'à 6 mois, pour le seul téléphone tenu en main.
 @ téléphone tenu en main | 1
 
 ? Arrêté à un feu rouge, moteur en marche, puis-je consulter mon téléphone en le tenant en main ?
@@ -32,7 +32,7 @@
 - 15 m
 - 35 m
 + 70 m
-! À 50 km/h, je parcours environ 14 m par seconde, soit 70 m en 5 secondes : la longueur de sept bus, sans regarder la route. Écrire un message en conduisant multiplie le risque d'accident par plus de vingt.
+! À 50 km/h, je parcours environ 14 m par seconde, soit 70 m en 5 secondes : la longueur de près de six bus, sans regarder la route. Écrire un message en conduisant multiplie le risque d'accident par plus de vingt.
 @ SMS au volant | 2
 
 ? Je veux entrer une adresse dans le GPS. Je le fais :

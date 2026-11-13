@@ -57,10 +57,10 @@
 @ avertisseur sonore | 1
 
 ? Lors du contrôle technique, une défaillance « critique » est relevée. Cela signifie que :
-+ le véhicule ne peut plus circuler à partir de minuit le jour même, sauf pour aller le faire réparer
++ le véhicule ne peut circuler que jusqu'à minuit le jour même, le temps de l'emmener là où il sera réparé
 - je dispose de deux mois pour réparer, en roulant normalement
 - le contrôle est validé avec une remarque
-! Une défaillance critique représente un danger direct et immédiat : le contrôle n'est valable que jusqu'à la fin de la journée. Une défaillance majeure laisse deux mois pour la contre-visite ; une mineure n'en impose pas.
+! Une défaillance critique représente un danger direct et immédiat : le contrôle n'est valable que jusqu'à la fin de la journée, ce qui laisse le temps de conduire le véhicule là où il sera réparé. Passé minuit, il n'a plus le droit de circuler ; il doit être réparé, puis présenté en contre-visite dans les deux mois. Une défaillance majeure laisse deux mois pour la contre-visite, sans interdiction de circuler ; une mineure n'en impose pas.
 @ contrôle technique : défaillances | 3
 
 ? Ma voiture tombe en panne sur une route ordinaire, hors agglomération. Je commence par :

@@ -39,7 +39,7 @@
 - pour dépasser un véhicule lent
 - en dehors des heures de pointe
 + jamais, sauf indication contraire, mais je peux la traverser pour tourner ou me garer
-! Une voie réservée aux bus est interdite aux autres véhicules, pour circuler comme pour s'arrêter. Je peux seulement la franchir pour changer de direction ou accéder à une propriété, en cédant le passage aux bus.
+! Une voie réservée aux bus est interdite aux autres véhicules, pour circuler comme pour s'arrêter. Là où sa ligne est discontinue, je peux seulement la franchir pour changer de direction, rejoindre une place de stationnement ou accéder à une propriété, en cédant le passage aux bus.
 @ voies réservées : bus | 2 | B27a
 
 ? À un feu rouge, un espace marqué d'un vélo est tracé entre la ligne d'arrêt des voitures et le passage pour piétons. Au feu rouge, je m'arrête :
@@ -49,7 +49,7 @@
 ! C'est un sas pour cyclistes : il leur permet de se placer devant les voitures pour être vus et démarrer en sécurité. Au feu rouge, une voiture qui s'y arrête commet une infraction.
 @ sas pour cyclistes | 2 | M_velo
 
-? Sur ma voie, un panneau annonce que la voie de droite disparaît 200 m plus loin et la circulation est dense. Les conducteurs de la voie supprimée :
+? Sur ma route, un panneau annonce que la voie de gauche disparaît 200 m plus loin et la circulation est dense. Les conducteurs de la voie supprimée :
 - doivent se rabattre immédiatement
 + peuvent rouler jusqu'au rétrécissement, puis s'insérer un véhicule sur deux
 - sont prioritaires

@@ -41,7 +41,7 @@
 - suspendu pendant un mois
 + invalidé : je ne peux plus conduire et je dois le repasser
 - maintenu si je paie une amende
-! Un solde nul entraîne l'invalidation du permis. Je dois le restituer et attendre en principe six mois avant de pouvoir le repasser, après un examen médical et psychotechnique.
+! Un solde nul entraîne l'invalidation du permis. Je dois le restituer et attendre en principe six mois avant de pouvoir obtenir un nouveau permis, après un examen médical et psychotechnique. Je peux me présenter aux épreuves pendant ce délai.
 @ invalidation du permis | 2
 
 ? Le permis B permet de conduire un véhicule dont le poids total autorisé en charge (PTAC) ne dépasse pas :

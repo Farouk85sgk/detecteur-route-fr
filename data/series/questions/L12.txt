@@ -11,7 +11,7 @@
 - Uniquement aux voitures
 - Uniquement aux motos
 + À tous les véhicules à moteur
-! La voiture et la moto dessinées ensemble signifient que l'accès est interdit à tous les véhicules à moteur, cyclomoteurs compris. Les piétons et les cyclistes peuvent passer.
+! La voiture, la moto et le cyclomoteur dessinés ensemble signifient que l'accès est interdit à tous les véhicules à moteur, cyclomoteurs compris. Quand le panneau ne montre que la voiture et la moto, les cyclomoteurs restent admis. Les piétons et les cyclistes peuvent passer.
 @ accès interdit aux véhicules à moteur | 2 | B7b
 
 ? Je conduis une voiture de tourisme et je rencontre ce panneau. Je :

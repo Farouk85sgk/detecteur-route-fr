@@ -44,10 +44,10 @@
 ! En agglomération, où l'on roule moins vite, les panneaux de danger sont placés à environ 50 m du danger, parfois même plus près.
 @ panneaux de danger : distance | 2
 
-? Sous un panneau de danger, un panonceau indique « 300 m ». Cela signifie que :
-+ le danger commence dans 300 m
-- le danger s'étend sur 300 m
-- le danger est passé depuis 300 m
+? Sous un panneau de danger, un panonceau indique « 50 m ». Cela signifie que :
++ le danger commence dans 50 m
+- le danger s'étend sur 50 m
+- le danger est passé depuis 50 m
 ! Un panonceau qui indique seulement une distance (panonceau de distance) précise à quelle distance commence le danger ou la règle annoncés par le panneau.
 @ panonceaux : distance | 1 | M1
 
@@ -65,11 +65,11 @@
 ! Un panonceau de catégorie limite la portée du panneau aux usagers représentés. En voiture, je ne suis pas concerné par cette interdiction.
 @ panonceaux : catégorie | 2 | M4g
 
-? Sur un chantier, un panneau à fond jaune limite la vitesse à 50 km/h alors que le panneau permanent indique 70 km/h. Je dois respecter :
-- le panneau permanent
-+ le panneau à fond jaune
+? Sur un chantier annoncé par ce panneau à fond jaune, une limitation provisoire à 50 km/h est posée alors que le panneau permanent indique 70 km/h. Je dois respecter :
+- la limitation permanente à 70 km/h
++ la limitation du chantier à 50 km/h
 - la limitation de mon choix
-! La signalisation temporaire, reconnaissable à son fond jaune, l'emporte sur la signalisation permanente : c'est elle qui décrit la situation du moment (chantier, déviation, accident).
+! La signalisation temporaire l'emporte sur la signalisation permanente : c'est elle qui décrit la situation du moment (chantier, déviation, accident). Les panneaux temporaires de danger et d'indication se reconnaissent à leur fond jaune. Les panneaux d'interdiction posés à leur suite (limitation de vitesse, interdiction de dépasser) gardent leur aspect habituel.
 @ signalisation temporaire | 1 | AK5
 
 ? En franchissant ce panneau, sauf indication contraire :
