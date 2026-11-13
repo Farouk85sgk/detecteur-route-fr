@@ -65,7 +65,9 @@ LISEZ_MOI = """REPÈRE : mettre l'appli sur votre site, puis sur votre télépho
 
 4) Mettre à jour plus tard
    - Supprimez le dossier « {dossier} » dans public_html, puis importez et extrayez le nouveau zip.
-   - Le téléphone prend la nouvelle version à l'ouverture suivante avec du réseau.
+   - Le téléphone prend la nouvelle version à l'ouverture suivante avec du réseau
+     (à la deuxième ouverture si l'appli est réglée sur « sans réseau »).
+     Le numéro de version est écrit en bas des Réglages de l'appli.
      Les profils et la progression restent sur le téléphone.
 
 Rien n'est envoyé sur Internet par l'appli : photos, trajets et profils restent sur le téléphone.
