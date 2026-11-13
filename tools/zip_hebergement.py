@@ -11,6 +11,7 @@ Deux fichiers sont ajoutés au contenu de docs/ :
 
 import argparse
 import sys
+import time
 import zipfile
 from pathlib import Path
 
@@ -82,12 +83,28 @@ def main():
     web = ROOT / "docs"
     cache = version_cache(web)  # le nom du cache suit le contenu des modèles, icônes et photos
     fichiers = sorted(f for f in web.rglob("*") if f.is_file())
+    maintenant = time.localtime()[:6]
+
+    # Droits écrits dans le zip : 644 pour les fichiers, 755 pour les dossiers. Certains hébergeurs les appliquent à
+    # l'extraction ; avec des droits plus stricts, le serveur web ne peut pas lire .htaccess et répond « 403 Forbidden ».
+    def fichier(z, nom, donnees, date, compression=zipfile.ZIP_DEFLATED):
+        info = zipfile.ZipInfo(nom, date_time=date)
+        info.external_attr = 0o100644 << 16
+        info.compress_type = compression
+        z.writestr(info, donnees, compresslevel=6)
+
     with zipfile.ZipFile(a.sortie, "w", zipfile.ZIP_DEFLATED, compresslevel=6) as z:
+        dossiers = {p.relative_to(web).as_posix() for f in fichiers for p in f.parents if web in p.parents}
+        for d in [a.dossier] + sorted(f"{a.dossier}/{d}" for d in dossiers):
+            info = zipfile.ZipInfo(d + "/", date_time=maintenant)
+            info.external_attr = (0o40755 << 16) | 0x10
+            z.writestr(info, b"")
         for f in fichiers:
             deja_compresse = f.suffix in (".png", ".jpg", ".woff2")
-            z.write(f, f"{a.dossier}/{f.relative_to(web).as_posix()}", zipfile.ZIP_STORED if deja_compresse else zipfile.ZIP_DEFLATED)
-        z.writestr(f"{a.dossier}/.htaccess", HTACCESS)
-        z.writestr(f"{a.dossier}/LISEZ-MOI.txt", "\ufeff" + LISEZ_MOI.format(dossier=a.dossier))  # marque UTF-8 : accents corrects dans le Bloc-notes
+            date = time.localtime(f.stat().st_mtime)[:6]
+            fichier(z, f"{a.dossier}/{f.relative_to(web).as_posix()}", f.read_bytes(), date, zipfile.ZIP_STORED if deja_compresse else zipfile.ZIP_DEFLATED)
+        fichier(z, f"{a.dossier}/.htaccess", HTACCESS, maintenant)
+        fichier(z, f"{a.dossier}/LISEZ-MOI.txt", "\ufeff" + LISEZ_MOI.format(dossier=a.dossier), maintenant)  # marque UTF-8 : accents corrects dans le Bloc-notes
     taille = Path(a.sortie).stat().st_size / 1e6
     print(f"{a.sortie} : {len(fichiers) + 2} fichiers, {taille:.1f} Mo (dossier « {a.dossier} », cache {cache})")
 
