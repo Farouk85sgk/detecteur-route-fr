@@ -38,7 +38,8 @@ export async function ouvrirCamera({ fichier = null, apresFermeture = () => {} }
         <button class="cam-btn verre" data-a="fermer" aria-label="Terminer le trajet">${ICONES.fermer}</button>
       </div></div>
     <div class="cam-gauche"><div class="vitesse-cam cache"></div><div class="lignes"></div></div>
-    <div class="astuce-cam cache">Pince pour zoomer, puis touche un panneau</div>
+    <div class="astuce-cam cache">Zoom : pince ou double-touche. Touche un panneau pour lire sa fiche ; s'il n'est pas reconnu, touche-le pour dire ce que c'est.</div>
+    <div class="zoom-cam cache"><button class="cam-btn verre" data-a="zoommoins" aria-label="Dézoomer" disabled>−</button><span class="zoom-val verre" aria-live="polite">1×</span><button class="cam-btn verre" data-a="zoomplus" aria-label="Zoomer">+</button></div>
     <div class="cam-bas"><div class="cam-toasts" aria-live="polite"></div>
       <div class="lecteur verre cache"><button data-a="recul" aria-label="Reculer de 5 s">${ICONES.recul5}</button>
         <button class="jouer" data-a="lecture" aria-label="Lecture ou pause">${ICONES.pause}</button>
@@ -51,13 +52,13 @@ export async function ouvrirCamera({ fichier = null, apresFermeture = () => {} }
   C = {
     racine, video, calque, ctx, fichier, apresFermeture, p, pause: false, cadres: true, fini: false, zoom: { k: 1, x: 0, y: 0 },
     trajet: { id: "t" + Date.now().toString(36), debut: Date.now(), source: fichier ? "video" : "camera", fichier: fichier?.name || null, elements: {}, nouveaux: [], photos: 0, evenements: [] },
-    dernier: {}, historique: [], file: [], derniereCarte: null, dernierePhoto: 0, nPhoto: 0, pos: null, fps: 0, tPrec: performance.now(), lignes: {}, enregistreur: null,
+    dernier: {}, historique: [], file: [], zones: [], derniereCarte: null, dernierePhoto: 0, nPhoto: 0, pos: null, fps: 0, tPrec: performance.now(), lignes: {}, enregistreur: null,
   };
   PROG.notifier = message;
   D.items.forEach(it => imageDe(icone(it)));  // icônes en mémoire : affichage immédiat pendant la détection
   racine.addEventListener("click", clic);
   // une commande touchée (doigt, souris ou clavier) redevient nette : tant que le doigt est posé, puis encore 2,5 s
-  const surCommande = e => e.target.closest?.(".cam-haut, .lecteur, .historique");
+  const surCommande = e => e.target.closest?.(".cam-haut, .lecteur, .historique, .zoom-cam");
   racine.addEventListener("pointerdown", e => { if (C && surCommande(e)) { C.doigt = true; reveiller(); } });
   for (const ev of ["pointerup", "pointercancel"]) racine.addEventListener(ev, () => { if (C?.doigt) { C.doigt = false; reveiller(); } });
   for (const ev of ["input", "focusin", "keydown", "click"]) racine.addEventListener(ev, e => { if (surCommande(e)) reveiller(); });
@@ -105,13 +106,23 @@ async function demarrerSource() {
     video.addEventListener("loadedmetadata", () => (plage.max = video.duration || 1));
     plage.max = video.duration || 1;
     plage.oninput = () => { video.currentTime = +plage.value; };
+    video.addEventListener("seeked", () => { if (C?.pause) { moteur.reinitialiser(); C.aRevoir = 2; } });  // on se déplace en pause : la nouvelle image est analysée
     video.addEventListener("ended", () => basculerPause(true));
     statut("Vidéo", "");
   } else {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: { facingMode: { ideal: "environment" }, width: { ideal: 1280 }, height: { ideal: 720 } } });
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: { facingMode: { ideal: "environment" }, width: { ideal: 1280 }, height: { ideal: 720 }, zoom: true } });
     video.srcObject = stream;
     await video.play();
     statut("Caméra", "");
+    // zoom de l'objectif (la plupart des téléphones Android) : les panneaux lointains sont plus gros, donc mieux reconnus
+    try {
+      const piste = stream.getVideoTracks()[0], z = piste.getCapabilities?.().zoom;
+      if (z && z.max > z.min) {
+        C.objectif = { piste, min: z.min, max: Math.min(z.max, z.min * 8), v: piste.getSettings?.().zoom || z.min };
+        const voulu = C.p.reglages.zoomCamera || 1;
+        if (voulu > 1.01) await objectif(z.min * voulu, false); else majZoom();
+      }
+    } catch (e) { console.warn("zoom de la caméra indisponible", e); C.objectif = null; }
   }
   disposer();
 }
@@ -130,24 +141,42 @@ function disposer() {
   const paysage = innerWidth > innerHeight && (innerWidth > 700 || innerHeight <= 540);  // écran large, ou téléphone couché
   C.racine.classList.toggle("paysage", paysage);
   const W = paysage ? innerWidth * 0.58 : innerWidth, H = innerHeight, couvre = Math.abs(Math.log((vw / vh) / (W / H))) < 0.35;
-  const s = (couvre ? Math.max(W / vw, H / vh) : Math.min(W / vw, H / vh)) * zoom.k;
-  const dw = vw * s, dh = vh * s, ox = (W - dw) / 2 + zoom.x, oy = (H - dh) / 2 + zoom.y;
-  for (const e of [video, calque]) Object.assign(e.style, { width: dw + "px", height: dh + "px", left: ox + "px", top: oy + "px" });
-  const dpr = devicePixelRatio || 1;
-  calque.width = Math.round(Math.min(dw, W * 2) * dpr); calque.height = Math.round(Math.min(dh, H * 2) * dpr);
-  calque.style.width = dw + "px"; calque.style.height = dh + "px";
-  C.s = s; C.ox = ox; C.oy = oy; C.vw = vw; C.vh = vh;
+  const base = couvre ? Math.max(W / vw, H / vh) : Math.min(W / vw, H / vh), s = base * zoom.k;
+  // Place laissée libre par les commandes : sous la barre du haut et au-dessus du bloc du bas (lecteur, derniers panneaux et
+  // carte, comptée pour 180 points même quand elle n'est pas encore là : l'image ne saute pas à la première annonce).
+  const T = $(".cam-haut", C.racine).getBoundingClientRect().bottom + 8, lecteur = $(".lecteur", C.racine), carte = $(".cam-carte", C.racine);
+  let B = 0;
+  if (paysage) B = lecteur.classList.contains("cache") ? 0 : H - lecteur.getBoundingClientRect().top + 8;
+  else {
+    const hauts = [lecteur, $(".historique", C.racine), carte].filter(e => !e.classList.contains("cache")).map(e => e.getBoundingClientRect().top);
+    B = H - Math.min(...hauts) + 8 + (carte.classList.contains("cache") ? 180 : Math.max(0, 170 - carte.offsetHeight));
+  }
+  // Une image qui ne remplit pas l'écran (vidéo large sur téléphone debout) se place dans cette zone libre, pas sous les commandes.
+  const dhBase = vh * base, cy = dhBase <= H - T - B ? T + (H - T - B) / 2 : Math.min(H / 2, T + dhBase / 2);
+  const dw = vw * s, dh = vh * s, ox = (W - dw) / 2 + zoom.x, oy = cy - dh / 2 + zoom.y;
+  Object.assign(video.style, { width: dw + "px", height: dh + "px", left: ox + "px", top: oy + "px" });
+  // Le calque des cadres couvre l'écran, pas l'image agrandie : mêmes proportions en largeur et en hauteur à tout niveau de zoom
+  // (un calque étiré avec l'image décalait les cadres dès qu'on zoomait), et des traits toujours nets.
+  const dpr = devicePixelRatio || 1, cw = Math.round(innerWidth * dpr), ch = Math.round(H * dpr);
+  Object.assign(calque.style, { width: innerWidth + "px", height: H + "px", left: "0px", top: "0px" });
+  if (calque.width !== cw || calque.height !== ch) { calque.width = cw; calque.height = ch; }
+  C.s = s; C.ox = ox; C.oy = oy; C.vw = vw; C.vh = vh; C.sBase = base; C.W = W; C.H = H; C.cy = cy; C.T = T; C.B = B;
+  dessiner();
 }
 
 // ---------- boucle d'analyse ----------
 async function boucle() {
   if (!C || C.fini) return;
   const { video } = C;
-  if (!C.pause && !document.hidden && video.readyState >= 2 && video.videoWidth) {
+  // En pause, l'image arrêtée est analysée encore deux fois (C.aRevoir) : les cadres tombent juste sur ce qu'on voit, au lieu
+  // de rester là où étaient les panneaux quelques images plus tôt.
+  const fige = C.pause && C.aRevoir > 0 && !video.seeking;
+  if ((!C.pause || fige) && !document.hidden && video.readyState >= 2 && video.videoWidth) {
     if (video.videoWidth !== C.vw || video.videoHeight !== C.vh) disposer();
     try {
-      const res = await moteur.analyser(video, video.videoWidth, video.videoHeight, { debug: C.p.reglages.debug });
+      const res = await moteur.analyser(video, video.videoWidth, video.videoHeight, { debug: C.p.reglages.debug, net: fige });
       if (!C || C.fini) return;
+      if (fige) C.aRevoir--;
       C.brutes = res.brutes;
       for (const t of res.nouveaux) annoncer(t);
       for (const { t, avant } of res.changes) if (D.items[avant]?.code === "F_rouge" && D.items[moteur.classe(t)]?.code === "F_vert") annoncer(t, "Le feu passe au vert");
@@ -167,12 +196,21 @@ const visibilite = () => { if (C && !document.hidden) C.tPrec = performance.now(
 const decrireMoteur = () => `Prêt (${moteur.fournisseurs[0] === "webgpu" ? "carte graphique" : `processeur, ${moteur.fils > 1 ? `${moteur.fils} fils de calcul` : "un seul fil de calcul"}`}, classifieur ${moteur.cls ? "actif" : "absent"}, `
   + `usagers ${moteur.usagers ? "actifs" : "inactifs"}${moteur.emp ? ", Mes panneaux actif" : ""}, ${Math.round(moteur.ms)} ms par image, ${C?.fps ? C.fps.toFixed(1) : "?"} images/s).`;
 
+// pistes encadrées à l'écran : confirmées et vues à l'instant (en pause, une fois l'image arrêtée analysée : celles qu'on y a retrouvées)
+function pistesVues() {
+  const max = C.pause && !C.aRevoir ? 1 : 2;
+  return moteur.pistes.filter(t => t.ok && t.misses <= max && D.items[moteur.classe(t)]);
+}
+
 // ---------- annonce d'un élément confirmé ----------
 function annoncer(t, phrase = null) {
   const { p } = C, r = p.reglages, cls = moteur.classe(t), it = D.items[cls];
   if (!it) return;
   const maintenant = Date.now(), dernier = C.dernier[it.code] || 0;
   const pause = it.groupe === "u" || it.groupe === "f" ? 20000 : 8000;
+  if (!phrase && it.groupe === "s" && dejaLa(t, it)) return;
+  const fete = r.recompenses !== false;  // réglage « Récompenses pendant la détection »
+  PROG.silence = !fete;
   // trajet, album, quêtes : chaque confirmation compte
   C.trajet.elements[it.code] = (C.trajet.elements[it.code] || 0) + 1;
   if (C.trajet.evenements.length < 400) C.trajet.evenements.push({ code: it.code, t: tempsTrajet(), pos: C.pos });
@@ -180,8 +218,7 @@ function annoncer(t, phrase = null) {
     const neuf = noterAlbum(p, it.code);
     if (neuf) {
       C.trajet.nouveaux.push(it.code);
-      message(`Nouveau dans l'album : ${it.nom}`, "+20 XP");
-      son("nouveau", r.sons);
+      if (fete) { message(`Nouveau dans l'album : ${it.nom}`, "+20 XP"); son("nouveau", r.sons); }
       evenement("nouveau");
     }
     evenement("repere");
@@ -202,6 +239,20 @@ function annoncer(t, phrase = null) {
   if (r.photos && maintenant - C.dernierePhoto > 1200 && C.trajet.photos < 80) prendrePhoto(t);
 }
 const arrondiDistance = d => Math.max(5, Math.round(d / 5) * 5);
+
+// Un panneau « vu » plusieurs fois au même endroit de l'image n'est pas un panneau de la route : c'est un objet fixe devant
+// la caméra (autocollant du pare-brise, tableau de bord) ou le même panneau retrouvé après une coupure. On ne l'annonce
+// qu'une fois : même endroit dans les trois minutes -> ni carte, ni voix, ni point.
+function dejaLa(t, it) {
+  const maintenant = Date.now(), aire = b => Math.max(0, b[2] - b[0]) * Math.max(0, b[3] - b[1]);
+  const iou = (a, b) => { const i = aire([Math.max(a[0], b[0]), Math.max(a[1], b[1]), Math.min(a[2], b[2]), Math.min(a[3], b[3])]); return i / (aire(a) + aire(b) - i || 1); };
+  C.zones = C.zones.filter(z => maintenant - z.quand < 300000);
+  const z = C.zones.find(z => (z.code === it.code && iou(z.box, t.box) > 0.4) || iou(z.box, t.box) > 0.6);
+  if (!z) { C.zones.push({ code: it.code, box: t.box.slice(), quand: maintenant }); return false; }
+  const recent = maintenant - z.quand < 180000;
+  Object.assign(z, { code: it.code, box: t.box.slice(), quand: maintenant });
+  return recent;
+}
 const tempsTrajet = () => C.fichier ? +C.video.currentTime.toFixed(1) : Math.round((Date.now() - C.trajet.debut) / 1000);
 
 function montrerCarte(it, t, forcer = true) {
@@ -239,36 +290,37 @@ function dessiner() {
   const { ctx, calque, s } = C, dpr = calque.width / Math.max(1, parseFloat(calque.style.width));
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, calque.width, calque.height);
-  const k = s * dpr;
+  const k = s * dpr, dx = C.ox * dpr, dy = C.oy * dpr;  // point (x, y) de la vidéo → point (x·k + dx, y·k + dy) du calque
   ctx.font = `700 ${Math.round(14 * dpr)}px Overpass, system-ui, sans-serif`;
   ctx.textBaseline = "middle";
   if (C.p.reglages.debug && C.brutes) {
     ctx.lineWidth = 1.5 * dpr; ctx.strokeStyle = "rgba(170,120,255,.9)";
-    for (const d of C.brutes) ctx.strokeRect(d.box[0] * k, d.box[1] * k, (d.box[2] - d.box[0]) * k, (d.box[3] - d.box[1]) * k);
+    for (const d of C.brutes) ctx.strokeRect(d.box[0] * k + dx, d.box[1] * k + dy, (d.box[2] - d.box[0]) * k, (d.box[3] - d.box[1]) * k);
   }
-  const lignes = {};
-  for (const t of moteur.pistes) {
-    if (!t.ok || t.misses > 2) continue;
+  const vues = C.cadres ? pistesVues() : [], boites = vues.map(t => t.box.map((v, i) => v * k + (i % 2 ? dy : dx)));
+  for (const [i, t] of vues.entries()) {
     const it = D.items[moteur.classe(t)];
-    if (!it) continue;
-    if (it.groupe === "m" && /^M_ligne_(continue|discontinue|mixte|dissuasion|rive)$/.test(it.code)) {
-      const cote = (t.box[0] + t.box[2]) / 2 < C.vw / 2 ? "g" : "d";
-      if (!lignes[cote] || t.conf > lignes[cote].conf) lignes[cote] = { nom: it.nom, conf: t.conf };
-    }
-    if (!C.cadres) continue;
-    const [x1, y1, x2, y2] = t.box.map(v => v * k);
+    const [x1, y1, x2, y2] = boites[i];
     ctx.lineWidth = (it.groupe === "m" ? 2 : 3) * dpr;
     ctx.strokeStyle = it.couleur;
     ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x1, y1, x2 - x1, y2 - y1, 6 * dpr) : ctx.rect(x1, y1, x2 - x1, y2 - y1); ctx.stroke();
     const txt = etiquette(it, t), tw = ctx.measureText(txt).width + 14 * dpr, th = 24 * dpr;
-    const ty = y1 - th - 3 * dpr > 0 ? y1 - th - 3 * dpr : y2 + 3 * dpr;
+    let tx = x1, ty = y1 - th - 3 * dpr > 0 ? y1 - th - 3 * dpr : y2 + 3 * dpr;
+    // panneaux empilés sur un même mât : l'étiquette du dessous couvrirait le panneau du dessus ; elle passe alors sur le côté
+    const gene = (x, y) => boites.some((b, j) => j !== i && x < b[2] && x + tw > b[0] && y < b[3] && y + th > b[1]);
+    if (gene(tx, ty)) {
+      const droite = x2 + 4 * dpr, gauche = x1 - tw - 4 * dpr, my = (y1 + y2 - th) / 2;
+      if (droite + tw <= calque.width && !gene(droite, my)) { tx = droite; ty = my; }
+      else if (gauche >= 0 && !gene(gauche, my)) { tx = gauche; ty = my; }
+    }
     ctx.fillStyle = it.couleur;
-    ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x1, ty, tw, th, 8 * dpr) : ctx.rect(x1, ty, tw, th); ctx.fill();
+    ctx.beginPath(); ctx.roundRect ? ctx.roundRect(tx, ty, tw, th, 8 * dpr) : ctx.rect(tx, ty, tw, th); ctx.fill();
     ctx.fillStyle = ["zone", "priorite", "marquage", "feu", "temporaire", "panonceau"].includes(it.categorie) ? "#111" : "#fff";
-    ctx.fillText(txt, x1 + 7 * dpr, ty + th / 2 + dpr);
+    ctx.fillText(txt, tx + 7 * dpr, ty + th / 2 + dpr);
   }
   // lignes de part et d'autre, vitesse en cours
-  const html = (lignes.g ? `<div class="puce-ligne verre">◂ ${esc(lignes.g.nom)}</div>` : "") + (lignes.d ? `<div class="puce-ligne verre">${esc(lignes.d.nom)} ▸</div>` : "");
+  const lg = D.parCode[moteur.ligne("g")], ld = D.parCode[moteur.ligne("d")];
+  const html = (lg ? `<div class="puce-ligne verre">◂ ${esc(lg.nom)}</div>` : "") + (ld ? `<div class="puce-ligne verre">${esc(ld.nom)} ▸</div>` : "");
   const zl = $(".lignes", C.racine);
   if (zl.dataset.html !== html) { zl.innerHTML = html; zl.dataset.html = html; zl.style.display = "flex"; zl.style.flexDirection = "column"; zl.style.gap = "10px"; }
   const v = moteur.vitesse, zv = $(".vitesse-cam", C.racine);
@@ -379,6 +431,10 @@ async function clic(e) {
   if (a === "rec") { if (C.enregistreur) { const blob = await arreterEnregistrement(); if (blob) C.videoBlob = blob; message("Vidéo prête : elle sera proposée à la fin du trajet"); } else demarrerEnregistrement(); }
   if (a === "cadres") { C.cadres = !C.cadres; b.innerHTML = C.cadres ? ICONES.oeil : ICONES.oeilBarre; dessiner(); }
   if (a === "pause") basculerPause();
+  if (a === "zoomplus" || a === "zoommoins") {
+    const f = a === "zoomplus" ? 1.6 : 1 / 1.6;
+    if (C.pause) zoomer(C.zoom.k * f); else if (C.objectif) objectif(C.objectif.v * (a === "zoomplus" ? 1.5 : 1 / 1.5));
+  }
   if (a === "lecture") basculerPause();
   if (a === "recul") { C.video.currentTime = Math.max(0, C.video.currentTime - 5); moteur.reinitialiser(); }
   if (a === "avance") { C.video.currentTime = Math.min(C.video.duration || 0, C.video.currentTime + 5); moteur.reinitialiser(); }
@@ -392,9 +448,10 @@ function basculerPause(forcer = null) {
   if (!C.demarre) return;
   C.pause = forcer ?? !C.pause;
   const { video } = C;
-  if (C.pause) video.pause(); else { if (C.fichier && video.ended) video.currentTime = 0; video.play().catch(() => {}); C.zoom = { k: 1, x: 0, y: 0 }; disposer(); }
+  if (C.pause) { video.pause(); C.aRevoir = 2; } else { if (C.fichier && video.ended) video.currentTime = 0; video.play().catch(() => {}); C.zoom = { k: 1, x: 0, y: 0 }; disposer(); }
   statut(C.pause ? "En pause" : C.fichier ? "Vidéo" : "Caméra", C.pause ? "pause" : "");
   $(".astuce-cam", C.racine).classList.toggle("cache", !C.pause);
+  majZoom();  // on entre en pause (ou on en sort) toujours à l'image entière
   const bj = $("[data-a=lecture]", C.racine);
   if (bj) bj.innerHTML = C.pause ? ICONES.lecture : ICONES.pause;
   majVoile();
@@ -413,14 +470,12 @@ function reveiller() {
   C.tReveil = setTimeout(() => racine.classList.remove("reveil"), C.doigt ? 15000 : 2500);
 }
 
-// Messages du trajet (« Nouveau dans l'album », badges, enregistrement). Téléphone couché : le volet de droite n'a la place
-// que pour un message. Ils passent alors l'un après l'autre, chacun au moins 1,6 s (sinon, de deux messages envoyés
-// ensemble, le premier ne serait jamais vu).
+// Messages du trajet (« Nouveau dans l'album », badges, enregistrement). Un seul à la fois, pour ne pas couvrir la route : ils
+// passent l'un après l'autre, chacun au moins 1,6 s (sinon, de deux messages envoyés ensemble, le premier ne serait jamais vu).
 function message(texte, badge = "") {
   if (!C) return toast(texte, badge);
-  const zone = $(".cam-toasts", C.racine);
-  if (!(C.racine.classList.contains("paysage") && matchMedia("(max-height: 540px)").matches)) return toast(texte, badge, zone);
-  C.file.push([texte.replace(/^Nouveau dans l'album : /, "Nouveau : "), badge]);  // volet étroit : le nom d'abord
+  const etroit = C.racine.classList.contains("paysage") && matchMedia("(max-height: 540px)").matches;
+  C.file.push([etroit ? texte.replace(/^Nouveau dans l'album : /, "Nouveau : ") : texte, badge]);  // volet étroit : le nom d'abord
   if (C.file.length > 4) C.file.shift();
   if (!C.tFile) messageSuivant();
 }
@@ -442,37 +497,98 @@ function majLecteur() {
   if (document.activeElement !== plage) { plage.max = v.duration || 1; plage.value = v.currentTime || 0; }
 }
 
-// pause : pincer pour zoomer, glisser pour se déplacer, toucher un cadre pour ouvrir sa fiche
+// Pause : pincer, double-toucher, molette ou boutons + et − pour zoomer (le point visé reste sous le doigt), glisser pour se
+// déplacer ; toucher un cadre ouvre sa fiche, toucher ailleurs propose d'apprendre le panneau qui s'y trouve.
+function zoomer(k, sx = C.W / 2, sy = C.H / 2) {
+  const u = { x: (sx - C.ox) / C.s, y: (sy - C.oy) / C.s };
+  placer(Math.min(6, Math.max(1, k)), u, sx, sy);
+}
+// met le point u de l'image (en pixels vidéo) sous le point (sx, sy) de l'écran, au zoom k, sans laisser l'image quitter l'écran
+// Image agrandie : elle peut glisser jusqu'à amener son bord sous la barre du haut ou au-dessus du bloc du bas, pour que tout
+// point de l'image puisse être sorti de sous les commandes. À l'image entière, elle reprend sa place.
+function placer(k, u, sx, sy) {
+  const s = C.sBase * k, dw = C.vw * s, dh = C.vh * s, mx = Math.max(0, (dw - C.W) / 2);
+  const haut = C.T + dh / 2 - C.cy, bas = C.H - C.B - dh / 2 - C.cy;  // décalage vertical permis : de « bas » à « haut »
+  C.zoom.k = k;
+  C.zoom.x = k <= 1.001 ? 0 : Math.min(mx, Math.max(-mx, sx - u.x * s - (C.W - dw) / 2));
+  C.zoom.y = k <= 1.001 || bas > haut ? 0 : Math.min(haut, Math.max(bas, sy - u.y * s - (C.cy - dh / 2)));
+  $(".astuce-cam", C.racine).classList.add("cache");  // le geste est compris : l'astuce laisse voir l'image
+  disposer(); majZoom();
+}
+// Boutons − et + : en pause ils agrandissent l'image arrêtée ; en direct, ils règlent le zoom de l'objectif (s'il existe).
+function majZoom() {
+  const o = C.objectif, k = C.pause ? C.zoom.k : o ? o.v / o.min : 1, max = C.pause ? 6 : o ? o.max / o.min : 1;
+  $(".zoom-cam", C.racine).classList.toggle("cache", !C.pause && !o);
+  $(".zoom-val", C.racine).textContent = `${(Math.round(k * 10) / 10).toString().replace(".", ",")}×`;
+  $("[data-a=zoommoins]", C.racine).disabled = k <= 1.001;
+  $("[data-a=zoomplus]", C.racine).disabled = k >= max - 0.001;
+}
+async function objectif(v, memoriser = true) {
+  const o = C.objectif;
+  o.v = Math.min(o.max, Math.max(o.min, v));
+  majZoom();
+  try { await o.piste.applyConstraints({ advanced: [{ zoom: o.v }] }); } catch (e) { console.warn(e); }
+  if (memoriser && C) { C.p.reglages.zoomCamera = Math.round(100 * o.v / o.min) / 100; sauver(); }
+}
 function brancherZoom() {
   const zone = $(".calque-touche", C.racine), doigts = new Map();
-  let depart = null;
-  zone.addEventListener("pointerdown", e => { doigts.set(e.pointerId, { x: e.clientX, y: e.clientY }); depart = { ...C.zoom, d: ecart(), cx: centre().x, cy: centre().y, t: Date.now(), x0: e.clientX, y0: e.clientY }; });
+  let depart = null, dernierTap = { t: 0, x: 0, y: 0 }, attente = null;
+  const pts = () => [...doigts.values()];
+  const ecart = () => { const p = pts(); return p.length === 2 ? Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y) : 0; };
+  const centre = () => { const p = pts(); return p.length ? { x: p.reduce((s, q) => s + q.x, 0) / p.length, y: p.reduce((s, q) => s + q.y, 0) / p.length } : { x: 0, y: 0 }; };
+  const reperer = (t = 0, x0 = 0, y0 = 0) => { const c = centre(); depart = { k: C.zoom.k, d: ecart(), u: { x: (c.x - C.ox) / C.s, y: (c.y - C.oy) / C.s }, t, x0, y0, v: C.objectif?.v }; };
+  let tObjectif = 0;
+  zone.addEventListener("pointerdown", e => { doigts.set(e.pointerId, { x: e.clientX, y: e.clientY }); reperer(Date.now(), e.clientX, e.clientY); });
   zone.addEventListener("pointermove", e => {
-    if (!C.pause || !doigts.has(e.pointerId)) return;
+    if (!doigts.has(e.pointerId) || !depart) return;
     doigts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (!C.pause) {  // en direct : pincer règle le zoom de l'objectif (au plus dix réglages par seconde)
+      if (C.objectif && doigts.size === 2 && depart.d && Date.now() - tObjectif > 100) { tObjectif = Date.now(); objectif(depart.v * ecart() / depart.d); }
+      return;
+    }
+    if (doigts.size === 1 && Math.hypot(e.clientX - depart.x0, e.clientY - depart.y0) < 6) return;  // doigt posé : pas encore un glissement
     const c = centre();
-    if (doigts.size === 2 && depart.d) C.zoom.k = Math.min(5, Math.max(1, depart.k * ecart() / depart.d));
-    C.zoom.x = depart.x + c.x - depart.cx; C.zoom.y = depart.y + c.y - depart.cy;
-    disposer(); dessiner();
+    placer(doigts.size === 2 && depart.d ? Math.min(6, Math.max(1, depart.k * ecart() / depart.d)) : C.zoom.k, depart.u, c.x, c.y);
   });
   const fin = e => {
     const tap = depart && doigts.size === 1 && Date.now() - depart.t < 300 && Math.hypot(e.clientX - depart.x0, e.clientY - depart.y0) < 10;
     doigts.delete(e.pointerId);
-    if (tap) toucher(e.clientX, e.clientY);
-    if (doigts.size) depart = { ...C.zoom, d: ecart(), cx: centre().x, cy: centre().y, t: 0 };
+    if (doigts.size) reperer();
+    if (!tap) return;
+    const x = e.clientX, y = e.clientY, double = C.pause && Date.now() - dernierTap.t < 320 && Math.hypot(x - dernierTap.x, y - dernierTap.y) < 40;
+    clearTimeout(attente);
+    dernierTap = { t: double ? 0 : Date.now(), x, y };
+    if (double) zoomer(C.zoom.k > 1.3 ? 1 : 2.5, x, y);  // double toucher : zoom sur ce point, ou retour à l'image entière
+    else if (!C.pause) toucher(x, y);
+    else attente = setTimeout(() => C && toucher(x, y), 300);  // on attend de savoir si un second toucher suit
   };
   zone.addEventListener("pointerup", fin);
-  zone.addEventListener("pointercancel", e => doigts.delete(e.pointerId));
-  const pts = () => [...doigts.values()];
-  function ecart() { const p = pts(); return p.length === 2 ? Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y) : 0; }
-  function centre() { const p = pts(); return p.length ? { x: p.reduce((s, q) => s + q.x, 0) / p.length, y: p.reduce((s, q) => s + q.y, 0) / p.length } : { x: 0, y: 0 }; }
+  zone.addEventListener("pointercancel", e => { doigts.delete(e.pointerId); if (doigts.size) reperer(); });
+  zone.addEventListener("wheel", e => { if (!C.pause) return; e.preventDefault(); zoomer(C.zoom.k * (e.deltaY < 0 ? 1.25 : 0.8), e.clientX, e.clientY); }, { passive: false });
 }
 async function toucher(x, y) {
   if (!C.pause) return basculerPause(true);
   const vx = (x - C.ox) / C.s, vy = (y - C.oy) / C.s;
-  const t = moteur.pistes.filter(t => t.ok && vx >= t.box[0] && vx <= t.box[2] && vy >= t.box[1] && vy <= t.box[3])
+  if (vx < 0 || vy < 0 || vx > C.vw || vy > C.vh) return;
+  const m = 6 / C.s;  // marge de doigt : 6 points d'écran autour du cadre
+  const t = pistesVues().filter(t => vx >= t.box[0] - m && vx <= t.box[2] + m && vy >= t.box[1] - m && vy <= t.box[3] + m)
     .sort((a, b) => (a.box[2] - a.box[0]) - (b.box[2] - b.box[0]))[0];
-  if (t) { const it = D.items[moteur.classe(t)]; montrerCarte(it, t); const { ouvrirFiche } = await import("./album.js"); ouvrirFiche(it.code); }
+  if (!t) return apprendreIci(null, [vx, vy]);
+  const it = D.items[moteur.classe(t)], box = t.box.slice();
+  montrerCarte(it, t);
+  const { ouvrirFiche } = await import("./album.js");
+  ouvrirFiche(it.code, { corriger: it.groupe === "s" ? () => apprendreIci(box, [vx, vy]) : null });
+}
+// « Mes panneaux » depuis l'image en pause : l'utilisateur dit ce qu'est le panneau touché (ou corrige celui que l'appli a nommé)
+async function apprendreIci(box, point) {
+  // on garde ce que l'écran montre (zoom compris) : le panneau visé y est assez grand pour être cherché et vérifié d'un coup d'œil
+  const x0 = Math.max(0, -C.ox / C.s), y0 = Math.max(0, -C.oy / C.s), x1 = Math.min(C.vw, (C.W - C.ox) / C.s), y1 = Math.min(C.vh, (C.H - C.oy) / C.s);
+  const w = x1 - x0, h = y1 - y0, k = Math.min(1, 1600 / Math.max(w, h));
+  const cv = Object.assign(document.createElement("canvas"), { width: Math.round(w * k), height: Math.round(h * k) });
+  cv.getContext("2d").drawImage(C.video, x0, y0, w, h, 0, 0, cv.width, cv.height);
+  const vers = (v, i) => (v - (i % 2 ? y0 : x0)) * k;
+  const { apprendreImage } = await import("./mespanneaux.js");
+  apprendreImage(cv, moteur, () => { if (C) { configurerMoteur(C.p); message("Appris : il sera reconnu sur la route", "✓"); } }, { point: point.map(vers), box: box?.map(vers) });
 }
 
 function paysage() {
@@ -496,6 +612,7 @@ export async function terminer() {
   removeEventListener("resize", disposer);
   document.removeEventListener("visibilitychange", visibilite);
   PROG.notifier = (texte, badge) => toast(texte, badge);
+  PROG.silence = false;
   C.racine.remove();
   document.body.classList.remove("sans-defilement");
   moteur.reinitialiser();

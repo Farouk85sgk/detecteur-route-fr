@@ -12,6 +12,7 @@ const OPTIONS = [
   ["vibration", "Vibration", ""],
   ["lireLimitations", "Lire les limitations", "Annonce « Limitation à 50 » au lieu du nom du panneau."],
   ["expliquer", "Expliquer la règle à voix haute", "Après le nom : ce qu'il faut faire."],
+  ["recompenses", "Récompenses pendant la détection", "Messages « Nouveau dans l'album », XP, badges et quêtes pendant un trajet. Coupé : plus aucun message ni son de jeu sur l'image ; l'album continue de se remplir en silence."],
   ["photos", "Photo de chaque élément repéré", "Une photo de la route à chaque annonce, rangée dans « Mes trajets » sur l'accueil. Reste sur le téléphone."],
   ["gps", "Position GPS des photos", "Pour retrouver l'endroit exact sur une carte (caméra seulement). Le téléphone demande l'autorisation."],
   ["video", "Enregistrer chaque trajet en vidéo", "Démarre avec la caméra, cadres et panneau annoncé incrustés. À la fin du trajet : enregistrer ou partager. Le bouton rond en haut lance ou arrête aussi l'enregistrement."],
@@ -20,6 +21,25 @@ const OPTIONS = [
   ["multicoeur", "Calcul sur plusieurs cœurs", "Analyse plus rapide sur les téléphones sans accélération graphique. À couper si l'appli devient instable. Prend effet à la prochaine ouverture."],
 ];
 const QUALITES = [["rapide", "Rapide"], ["equilibree", "Équilibrée"], ["fine", "Fine"]];
+// Blocs facultatifs de l'appli : chacun peut être masqué (bouton « Masquer ce bloc » sur place, ou ici dans les réglages)
+export const BLOCS = [
+  ["quete", "La quête", "Carte, panneau mystère et quêtes du jour."],
+  ["niveau", "Niveau, album et badges", ""],
+  ["codes", "Code de la route", "Séries par thème et examens blancs."],
+  ["import", "Séries de l'auto-école", "Importer un fichier ou un lien, sur la page « Code de la route »."],
+  ["trajets", "Mes trajets", ""],
+  ["appris", "Mes panneaux", "Apprendre un panneau à partir d'une photo."],
+  ["reseau", "Réseau et mode sans réseau", "Dont « Tout préparer pour rouler sans réseau »."],
+  ["detection", "Ce que je veux détecter", ""],
+  ["diagnostic", "Diagnostic", ""],
+  ["reconnait", "Ce que l'appli reconnaît", ""],
+];
+export const blocVisible = (id, p = profil()) => p.reglages.accueil?.[id] !== false;
+export const nbBlocsMasques = (p = profil()) => BLOCS.filter(([id]) => !blocVisible(id, p)).length;
+export function montrerBloc(id, visible, p = profil()) {
+  if (visible) delete p.reglages.accueil[id]; else p.reglages.accueil[id] = false;
+  sauver();
+}
 
 export function nbActifs(p) {
   const r = p.reglages;
@@ -34,9 +54,10 @@ async function reconfigurer() {
   EVENEMENTS.reglagesChanges();
 }
 
-export function ouvrirReglages({ depuisCamera = false } = {}) {
+export function ouvrirReglages({ depuisCamera = false, vers = null } = {}) {
   const corps = ouvrirFeuille("Réglages", "", { onFerme: () => EVENEMENTS.reglagesChanges() });
   dessiner(corps, depuisCamera);
+  if (vers) requestAnimationFrame(() => corps.querySelector(`#${vers}`)?.scrollIntoView({ block: "start" }));
   corps.addEventListener("change", async e => {
     const p = profil(), r = p.reglages, cible = e.target;
     if (cible.dataset.reglage) { r[cible.dataset.reglage] = cible.checked; sauver(); if (cible.dataset.reglage === "voix" && cible.checked && "speechSynthesis" in window) speechSynthesis.speak(Object.assign(new SpeechSynthesisUtterance("Annonces activées"), { lang: "fr-FR" })); }
@@ -47,6 +68,7 @@ export function ouvrirReglages({ depuisCamera = false } = {}) {
       sauver(); majCompte(corps); reconfigurer();
     }
     if (cible.dataset.reglage === "debug") reconfigurer();
+    if (cible.dataset.bloc) montrerBloc(cible.dataset.bloc, cible.checked, p);
   });
   corps.addEventListener("click", async e => {
     const b = e.target.closest("[data-r]");
@@ -55,6 +77,8 @@ export function ouvrirReglages({ depuisCamera = false } = {}) {
     if (a === "fond") { p.fond = b.dataset.v; sauver(); appliquerTheme(p); $$(".nuancier button", corps).forEach(x => x.setAttribute("aria-pressed", x === b)); EVENEMENTS.reglagesChanges(); }
     if (a === "qualite") { r.qualite = b.dataset.v; sauver(); $$(".segments [data-r=qualite]", corps).forEach(x => x.setAttribute("aria-pressed", x === b)); reconfigurer(); }
     if (a === "profils") ouvrirProfils();
+    if (a === "refermer") { const d = b.closest("details"); d.open = false; d.closest(".famille-filtre").scrollIntoView({ block: "nearest" }); }
+    if (a === "blocs") { r.accueil = {}; sauver(); dessiner(corps, depuisCamera); toast("Tous les blocs sont affichés"); }
     if (a === "tout") { r.familles = {}; r.exclus = []; sauver(); dessiner(corps, depuisCamera); reconfigurer(); }
     if (a === "rien") { r.familles = Object.fromEntries(FAMILLES.map(f => [f.id, false])); sauver(); dessiner(corps, depuisCamera); reconfigurer(); }
     if (a === "effacer" && await confirmer("Effacer l'historique ?", "Les trajets et leurs photos de ce profil seront supprimés. L'album, les quiz et la quête sont gardés.", { oui: "Effacer", danger: true })) {
@@ -74,6 +98,11 @@ function dessiner(corps, depuisCamera) {
     <div class="ligne-sep"><h3 style="font-family:var(--corps);font-size:1.18rem;margin-bottom:14px">Couleur du fond</h3>
       <div class="nuancier">${FONDS.map(f => `<button data-r="fond" data-v="${f.id}" aria-pressed="${p.fond === f.id}"><i style="background:${{ auto: "linear-gradient(135deg,#f3f4f6 50%,#12163a 50%)", blanc: "#fff", creme: "#f4ecda", sauge: "#e3eadf", nuit: "#12163a" }[f.id]}"></i>${f.nom}</button>`).join("")}</div></div>
     ${OPTIONS.map(([id, titre, texte]) => `<div class="reglage"><div><h3>${titre}</h3>${texte ? `<p>${texte}</p>` : ""}</div>${bascule(id, r[id])}</div>`).join("")}
+    <div class="ligne-sep" id="reglages-accueil"><h3 style="font-family:var(--corps);font-size:1.18rem">Accueil : ce qui s'affiche</h3>
+      <p class="doux">Coupe ce dont tu ne te sers pas : le bloc disparaît de l'appli, rien n'est effacé.</p></div>
+    ${BLOCS.map(([id, titre, texte]) => `<div class="reglage compact"><div><h3>${titre}</h3>${texte ? `<p>${texte}</p>` : ""}</div>
+      <label class="bascule"><input type="checkbox" data-bloc="${id}" ${blocVisible(id, p) ? "checked" : ""} aria-label="Afficher : ${titre}"><span></span></label></div>`).join("")}
+    ${nbBlocsMasques(p) ? `<button class="btn" data-r="blocs">Tout réafficher</button>` : ""}
     <div class="ligne-sep"><div class="carte-titre"><div><h3 style="font-family:var(--corps);font-size:1.18rem">Ce que l'appli détecte</h3>
       <p class="doux">Coupe une famille entière, ou un seul élément avec « Choisir parmi… » ou la recherche. Ce qui est coupé n'est ni encadré ni annoncé.</p></div>
       <b class="compte-actifs" style="font-size:1.3rem;text-align:center;min-width:3.5em"></b></div></div>
@@ -101,7 +130,8 @@ function ligneFamille(f, r) {
   if (!items.length) return "";
   return `<div class="famille-filtre"><img src="${esc(icone(D.parCode[f.icone]))}" alt=""><div><b>${esc(f.nom)}</b><span class="doux">${items.length} élément${items.length > 1 ? "s" : ""}</span></div>
     <label class="bascule"><input type="checkbox" data-famille="${f.id}" ${r.familles[f.id] !== false ? "checked" : ""} aria-label="${esc(f.nom)}"><span></span></label>
-    <details><summary>Choisir parmi les ${items.length} ${ICONES.chevron.replace("<svg", '<svg class="chevron"')}</summary>${items.map(it => ligneElement(it, r)).join("")}</details></div>`;
+    <details><summary><span class="si-ferme">Choisir parmi les ${items.length}</span><span class="si-ouvert">Refermer la liste</span> ${ICONES.chevron.replace("<svg", '<svg class="chevron"')}</summary>${items.map(it => ligneElement(it, r)).join("")}
+      <button class="btn refermer" data-r="refermer">Refermer la liste</button></details></div>`;
 }
 const ligneElement = (it, r) => `<div class="element-filtre"><img src="${esc(icone(it))}" alt=""><span>${esc(it.nom)}</span>
   <label class="bascule"><input type="checkbox" data-element="${esc(it.code)}" ${r.exclus.includes(it.code) ? "" : "checked"} aria-label="${esc(it.nom)}"><span></span></label></div>`;

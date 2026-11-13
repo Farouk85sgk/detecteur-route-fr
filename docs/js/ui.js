@@ -59,7 +59,7 @@ let feuille = null;
 export function ouvrirFeuille(titre, corps, { onFerme, classe = "" } = {}) {
   fermerFeuille(true);
   const voile = el('<div class="voile"></div>');
-  const f = el(`<section class="feuille ${classe}" role="dialog" aria-modal="true" aria-label="${esc(titre)}"><div class="poignee"></div>
+  const f = el(`<section class="feuille ${classe}" role="dialog" aria-modal="true" aria-label="${esc(titre)}"><div class="poignee" role="button" aria-label="Refermer"></div>
     <div class="feuille-tete"><h2>${esc(titre)}</h2><button class="btn-rond contour" data-fermer aria-label="Fermer">${ICONES.fermer}</button></div>
     <div class="feuille-corps"></div></section>`);
   const zone = f.querySelector(".feuille-corps");
@@ -69,6 +69,21 @@ export function ouvrirFeuille(titre, corps, { onFerme, classe = "" } = {}) {
   feuille = { voile, f, onFerme };
   voile.onclick = () => fermerFeuille();
   f.querySelector("[data-fermer]").onclick = () => fermerFeuille();
+  // la poignée et le titre se tirent vers le bas pour refermer la feuille ; un simple toucher sur la poignée la referme aussi
+  let y0 = null;
+  for (const z of f.querySelectorAll(".poignee, .feuille-tete")) {
+    z.addEventListener("pointerdown", e => { if (e.target.closest("button")) return; y0 = e.clientY; z.setPointerCapture?.(e.pointerId); });
+    z.addEventListener("pointermove", e => { if (y0 != null) f.style.transform = `translateY(${Math.max(0, e.clientY - y0)}px)`; });
+    const fin = e => {
+      if (y0 == null) return;
+      const d = e.clientY - y0;
+      y0 = null;
+      if (e.type === "pointerup" && (d > 90 || (Math.abs(d) < 6 && z.classList.contains("poignee")))) return fermerFeuille();
+      f.style.transform = "";
+    };
+    z.addEventListener("pointerup", fin);
+    z.addEventListener("pointercancel", fin);
+  }
   history.pushState({ feuille: true }, "");
   return zone;
 }

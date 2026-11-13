@@ -244,22 +244,37 @@ def plan_markings(sc, rng):
             code = rng.choice(["M_fleche_tout_droit", "M_fleche_droite", "M_fleche_gauche", "M_fleche_tout_droit_droite", "M_fleche_tout_droit_gauche"])
             items.append(make_local(code, xc + rng.uniform(-0.2, 0.2), zi - rng.uniform(9, 20), lw, rng, cam))
         z_end = zi - 0.4
-    # marquages ponctuels supplémentaires, classes tirées uniformément
+    # marquages ponctuels supplémentaires, classes tirées uniformément ; deux marquages ne se recouvrent pas
+    places = []
     for _ in range(rng.choice([0, 1, 1, 2, 2, 3])):
         code = rng.choice(LOCAL_MARKINGS)
         z = rng.uniform(zb + 3, min(z_end - 2, 40)) if z_end > zb + 6 else rng.uniform(zb + 3, 30)
         x = xc + rng.uniform(-0.25, 0.25)
         if code == "M_zigzag":
-            x = xr - 0.1
-        elif code == "M_velo" and rng.random() < 0.5:
-            x = xr - rng.uniform(0.6, 0.9)
+            x = xr - 0.1 if rng.random() < 0.6 else xr + rng.uniform(2.4, 3.4)  # au bord de la voie, ou d'une voie plus à droite
+        elif code == "M_velo":
+            # bande cyclable : le plus souvent à droite de la voie, dedans ou juste au-delà de sa ligne
+            x = rng.choice([xr - rng.uniform(0.6, 0.9), xr + rng.uniform(0.6, 1.0), xl - rng.uniform(0.6, 1.0), xc + rng.uniform(-0.25, 0.25)])
+        elif code == "M_bus" and rng.random() < 0.5:
+            x = xc + rng.choice([1, 1, -1]) * lw  # couloir de bus : souvent la voie d'à côté
+        elif code == "M_vitesse_sol" and rng.random() < 0.2:
+            x = xc + rng.choice([1, -1]) * lw
+        elif code == "M_livraison":
+            x = xr + rng.uniform(1.0, 1.5) if rng.random() < 0.8 else xl - rng.uniform(1.0, 1.5)  # le long du trottoir
+            z = max(z, zb + 8)
         elif code == "M_zebras":
             x = xl - rng.uniform(0.6, 1.6)
         elif code == "M_fleche_rabattement":
             x = xl + rng.uniform(0.6, 1.2) if rng.random() < 0.5 else xc - 0.3
-        elif code in TRANSVERSAUX + ("M_passage_pietons", "M_damier"):
+        if any(abs(x - px) < 1.8 and abs(z - pz) < (9 if "M_livraison" in (code, pc) else 6) for px, pz, pc in places):
+            continue
+        places.append((x, z, code))
+        if code in TRANSVERSAUX + ("M_passage_pietons", "M_damier"):
             z_end = min(z_end, z - 0.4)
         items.append(make_local(code, x, z, lw, rng, cam))
+    if rng.random() < 0.12:  # autre inscription peinte (TAXI, PAYANT...) : jamais annotée
+        cote = rng.choice([0, 0, 1, -1])
+        items.append(make_local("_texte", xc + cote * lw + rng.uniform(-0.2, 0.2), rng.uniform(zb + 4, 30), lw, rng, cam))
     # lignes longitudinales. Une ligne qui longe le bord de la chaussée est une ligne de rive, les autres séparent des
     # voies : quand le bord n'est pas situé avec certitude, on ne trace rien de ce côté (pas d'exemple ambigu).
     if rng.random() < 0.88:
@@ -331,7 +346,8 @@ def paint_markings(sc, rng, nrng):
             continue
         paint = yellow if mk.color == "yellow" else white
         img = img * (1 - av[..., None]) + paint * av[..., None]
-        labels.append((DET_MARQUAGE.get(mk.code, DET_IGNORER), x0, y0, x1, y1))  # marquage peint mais non appris : zone ignorée
+        if not mk.code.startswith("_"):  # « _texte » : inscription peinte qui doit rester du fond
+            labels.append((DET_MARQUAGE.get(mk.code, DET_IGNORER), x0, y0, x1, y1))  # marquage peint mais non appris : zone ignorée
     sc.img = np.clip(img, 0, 255).astype(np.uint8)
     return labels
 

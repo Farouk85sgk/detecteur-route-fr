@@ -5,8 +5,8 @@ import { FAMILLES } from "./contenu.js";
 import { D, detectables, famille, icone, itemsFamille } from "./donnees.js";
 import { nbAlbum, vuFamille } from "./progression.js";
 import { aller } from "./nav.js";
-import { idbLire, profil } from "./stockage.js";
-import { ICONES, dateCourte, esc, ouvrirFeuille } from "./ui.js";
+import { idbLire, profil, sauver } from "./stockage.js";
+import { ICONES, dateCourte, esc, ouvrirFeuille, toast } from "./ui.js";
 
 const caseHtml = (it, p) => {
   const vu = p.album[it.code];
@@ -36,20 +36,37 @@ export function pageAlbum(racine) {
   racine.onclick = e => { const b = e.target.closest("[data-fiche]"); if (b) ouvrirFiche(b.dataset.fiche); };
 }
 
-export async function ouvrirFiche(code) {
+// corriger : fonction appelée par « Ce n'est pas ce panneau » (fiche ouverte depuis l'image en pause de la caméra)
+export async function ouvrirFiche(code, { corriger = null } = {}) {
   const it = D.parCode[code];
   if (!it) return;
   const p = profil(), a = p.album[code], f = famille(it.famille);
+  const quoi = it.groupe === "m" ? "ce marquage" : it.groupe === "s" ? "ce panneau" : "cet élément";
   const corps = ouvrirFeuille(it.nom, `
     <div class="fiche-tete"><img src="${esc(icone(it))}" alt=""><div><p class="doux">${esc(f?.nom || "Mes panneaux")}</p>
       <p style="margin:8px 0"><span class="code-badge">${esc(it.etiquette)}</span></p>
       <p class="doux">${a ? `Repéré ${a.vu} fois, la première fois le ${dateCourte(a.premier).toLowerCase()}` : it.detecte ? "Pas encore repéré sur la route" : `Fiche : la caméra ne reconnaît pas encore ce ${it.groupe === "m" ? "marquage" : "panneau"}`}</p></div></div>
+    ${corriger ? `<button class="btn" data-corriger>Ce n'est pas ce panneau : le corriger</button>` : ""}
     <div class="fiche-bloc"><h4>Ce qu'il signifie</h4><p>${esc(it.explication)}</p></div>
     ${it.reflexe && it.reflexe !== it.explication ? `<div class="fiche-bloc"><h4>Bon réflexe</h4><p>${esc(it.reflexe)}</p></div>` : ""}
     ${f ? `<div class="fiche-bloc"><h4>Le reconnaître</h4><p>${esc(f.forme)}</p></div>` : ""}
     <div class="photo-fiche"></div>
+    ${it.detecte || it.famille === "perso" ? `<div class="reglage fiche-annonce"><div><h3>L'annoncer pendant la détection</h3><p>Coupé : ${quoi} n'est plus ni encadré ni annoncé. À couper s'il est annoncé à tort.</p></div>
+      <label class="bascule"><input type="checkbox" data-annoncer ${p.reglages.exclus.includes(code) ? "" : "checked"} aria-label="Annoncer ${esc(it.nom)}"><span></span></label></div>` : ""}
     ${f ? `<button class="btn btn-plein" data-quiz="${f.id}">S'entraîner : ${esc(f.nom)}</button>` : ""}`);
-  corps.onclick = e => { const b = e.target.closest("[data-quiz]"); if (b) aller(`#/quiz/famille/${b.dataset.quiz}`); };
+  corps.onclick = e => {
+    const b = e.target.closest("[data-quiz]");
+    if (b) aller(`#/quiz/famille/${b.dataset.quiz}`);
+    if (e.target.closest("[data-corriger]")) corriger();
+  };
+  corps.onchange = async e => {
+    if (!e.target.matches("[data-annoncer]")) return;
+    const r = p.reglages;
+    r.exclus = e.target.checked ? r.exclus.filter(c => c !== code) : [...new Set([...r.exclus, code])];
+    sauver();
+    (await import("./camera.js")).configurerMoteur();
+    toast(e.target.checked ? `${it.nom} : de nouveau annoncé` : `${it.nom} : plus annoncé (à rétablir ici ou dans les Réglages)`);
+  };
   if (a?.photo) {
     const ph = await idbLire("photos", a.photo);
     if (ph?.blob) corps.querySelector(".photo-fiche").innerHTML = `<div class="fiche-bloc"><h4>Ta photo</h4><img class="fiche-photo" src="${URL.createObjectURL(ph.blob)}" alt="Photo de ${esc(it.nom)}"></div>`;

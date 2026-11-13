@@ -11,6 +11,8 @@ function profilVide(nom, couleur) {
     reglages: {
       voix: true, vibration: true, lireLimitations: true, expliquer: false, photos: true, gps: true, video: false, paysage: false, sons: true,
       qualite: "auto", debug: false, familles: {}, exclus: [], reseau: "avec", multicoeur: true,
+      recompenses: true,  // messages et sons de jeu pendant la détection (album, XP, badges, quêtes)
+      accueil: {},        // blocs de l'accueil masqués : { reseau: false, ... }
     },
     xp: 0, pepites: 0, coeurs: 3, coeursMaj: Date.now(), objets: { loupe: 1, potion: 1, bouclier: 0 }, titres: [], titre: null,
     album: {}, trajets: [], examens: [], gardiens: {}, badges: {}, amis: [], aRevoir: {},

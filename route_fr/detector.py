@@ -19,7 +19,7 @@ from utils.augmentations import letterbox  # noqa: E402
 from utils.general import check_img_size, non_max_suppression, scale_boxes  # noqa: E402
 from utils.torch_utils import select_device  # noqa: E402
 
-from .classes import BY_CODE, DET_PANNEAU  # noqa: E402
+from .classes import BY_CODE, CLASSES, DET_PANNEAU  # noqa: E402
 
 
 def nms_agnostic(d, iou=0.5):
@@ -66,6 +66,7 @@ class Detector:
             print("Sans classifieur, les panneaux ne peuvent pas être identifiés : seuls les marquages au sol sont affichés.")
         self.conf_signs = conf_signs  # seuil bas pour les panneaux : le classifieur confirme ensuite
         self.sign_factor = 1.3  # seuil final des panneaux (score combiné) = sign_factor x conf, calé sur la validation
+        self.seuils = np.array([c.seuil or 0.0 for c in CLASSES], np.float32)
         size = self.imgsz if isinstance(self.imgsz, list) else [self.imgsz, self.imgsz]
         self.model.warmup(imgsz=(1, 3, *size))
 
@@ -100,5 +101,6 @@ class Detector:
         signs = signs[ok]
         signs[:, 5] = cls[ok]
         signs[:, 4] = np.sqrt(signs[:, 4] * p[ok])  # confiance combinée détecteur x classifieur
-        signs = nms_agnostic(signs[signs[:, 4] >= self.sign_factor * self.conf]) if len(signs) else signs
+        if len(signs):  # seuil commun des panneaux, relevé pour quelques panneaux souvent annoncés à tort (classes.SEUILS)
+            signs = nms_agnostic(signs[signs[:, 4] >= np.maximum(self.sign_factor * self.conf, self.seuils[signs[:, 5].astype(int)])])
         return np.concatenate([marks, signs.reshape(-1, 6)])

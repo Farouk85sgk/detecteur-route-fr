@@ -14,6 +14,7 @@ Un tableau donne ensuite les mêmes nombres pour d'autres seuils de confiance, p
 """
 
 import argparse
+import json
 import collections
 import sys
 from pathlib import Path
@@ -54,6 +55,7 @@ def main():
     ap.add_argument("--conf", type=float, default=0.35)
     ap.add_argument("--facteur", type=float, default=None, help="seuil des panneaux = facteur x conf (défaut : celui du détecteur)")
     ap.add_argument("--max", type=int, default=0, help="nombre d'images (0 : toutes)")
+    ap.add_argument("--annonces", default="", help="fichier JSON où écrire toutes les annonces (score, nature, vrai type, type annoncé)")
     a = ap.parse_args()
     det = Detector(a.poids, a.taille, a.conf, classifier=a.classifieur)
     if a.facteur is not None:
@@ -99,6 +101,8 @@ def main():
                 par_classe[vrai][0] += 1
                 total["panneaux du catalogue"] += 1
         total["images"] += 1
+    if a.annonces:
+        Path(a.annonces).write_text(json.dumps(annonces), encoding="utf-8")
     for score, nature, vrai, code, t in annonces:  # bilan au seuil de l'appli
         if score < seuil:
             continue
@@ -118,6 +122,13 @@ def main():
     faibles = sorted(((c, v[1] / v[0], v[0]) for c, v in par_classe.items() if v[0] >= 4), key=lambda t: t[1])[:20]
     print("panneaux les moins bien reconnus : " + ", ".join(f"{c} {r:.0%} ({k})" for c, r, k in faibles))
     print("confusions les plus fréquentes : " + ", ".join(f"{a}→{b} ×{k}" for (a, b), k in confusions.most_common(15)))
+    # annonces fausses par panneau annoncé : confusions, annonces sur un objet ou sur un panneau d'un autre type
+    faux, justes = collections.Counter(), collections.Counter()
+    for score, nature, vrai, code, t in annonces:
+        if score >= seuil:
+            (justes if nature == "bonnes réponses" else faux)[code] += 1
+    pires = sorted(faux, key=lambda c: (-faux[c], c))[:25]
+    print("panneaux le plus souvent annoncés à tort (à tort / à raison) : " + ", ".join(f"{c} {faux[c]}/{justes[c]}" for c in pires))
     print(f"\nselon le seuil des panneaux (celui de l'appli : {seuil:.3f})")
     print(f"{'seuil':>6s} {'bien nommés':>12s} {'confusions':>11s} {'fausses annonces':>17s} {'exactitude':>11s}")
     for s in sorted({0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60, 0.70, round(seuil, 3)}):

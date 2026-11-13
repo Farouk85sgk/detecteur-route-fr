@@ -101,14 +101,26 @@ function ouvrirRegion(i) {
   }[e.etat]();
   const coeurs = Array.from({ length: QUETE.coeursMax }, (_, k) => k < p.coeurs ? ICONES.coeur : ICONES.coeurVide).join("");
   const corps = ouvrirFeuille(f.region, `<p class="doux">${esc(f.nom)}</p><p>${esc(texte)}</p>
-    <div class="grille-album">${items.map(it => `<div class="case ${p.album[it.code] ? "" : "inconnue"}"><img src="${esc(icone(it))}" alt=""><span>${p.album[it.code] ? esc(it.nom) : "???"}</span></div>`).join("")}</div>
+    <p class="doux petit">Touche une carte pour la retourner et découvrir l'élément ; touche-la encore pour lire sa fiche. Une carte ne compte pour la région qu'une fois l'élément repéré sur la route.</p>
+    <div class="grille-album">${items.map(it => `<button class="case carte-retour ${p.album[it.code] ? "" : "inconnue"}" data-carte="${esc(it.code)}" aria-label="${p.album[it.code] ? esc(it.nom) : "Carte à retourner"}"><img src="${esc(icone(it))}" alt=""><span>${p.album[it.code] ? esc(it.nom) : "???"}</span></button>`).join("")}</div>
     ${["gardien", "vaincue"].includes(e.etat) ? `<div class="ligne"><span class="q-coeurs">${coeurs}</span><span class="doux">${p.coeurs < QUETE.coeursMax ? `prochain cœur dans ${minutesProchainCoeur(p)} min` : "cœurs pleins"}</span></div>
       <button class="btn btn-plein btn-grand" data-r="donjon" ${p.coeurs ? "" : "disabled"}>${e.etat === "vaincue" ? "Retourner au donjon" : "Entrer dans le donjon"}</button>` : ""}
     ${e.etat !== "bloquee" ? `<button class="btn" data-r="reviser">Réviser : ${esc(f.nom)}</button>` : ""}`);
-  corps.onclick = ev => {
+  corps.onclick = async ev => {
     const r = ev.target.closest("[data-r]")?.dataset.r;
     if (r === "donjon") aller(`#/quiz/donjon/${f.id}`);
     if (r === "reviser") aller(`#/quiz/famille/${f.id}`);
+    const c = ev.target.closest("[data-carte]");
+    if (!c) return;
+    const it = D.parCode[c.dataset.carte];
+    if (c.classList.contains("inconnue") && !c.classList.contains("retournee")) {  // première touche : la carte se retourne
+      c.classList.add("retournee");
+      setTimeout(() => { c.querySelector("span").textContent = it.nom; }, matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 240);
+      c.setAttribute("aria-label", `${it.nom} (pas encore repéré)`);
+      son("clic", p.reglages.sons);
+      return;
+    }
+    (await import("./album.js")).ouvrirFiche(it.code);
   };
 }
 

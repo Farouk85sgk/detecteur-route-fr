@@ -11,6 +11,8 @@
 import { D } from "./donnees.js";
 
 const CONF = 0.35, CONF_SIGNS = 0.15, SIGN_FACTOR = 1.3, IOU = 0.45, MIN_HITS = 2, MAX_MISSES = 6;
+// lignes au sol : leur type se lit mal sur une seule image (une ligne discontinue vue de près ressemble à une continue)
+const LIGNES = /^M_ligne_(continue|discontinue|mixte|dissuasion|rive)$/;
 const EMB = 64, MEAN = [0.485, 0.456, 0.406], STD = [0.229, 0.224, 0.225];  // EMB : côté des vignettes d'empreinte
 const SIGN = -2;
 const COCO = { personne: 0, velo: 1, moto: 2, feu: 3 };  // ordre des classes gardées dans usagers.onnx
@@ -105,7 +107,7 @@ export class Moteur {
     if (appris !== undefined) { this.appris = appris; if (appris.length) this.chargerEmpreinte(); }
     if (this.avecUsagers && this.pret) this.chargerUsagers();
   }
-  reinitialiser() { this.pistes = []; this.prochainId = 1; this.vitesse = { valeur: null, code: null, quand: 0 }; this.image = 0; }
+  reinitialiser() { this.pistes = []; this.prochainId = 1; this.vitesse = { valeur: null, code: null, quand: 0 }; this.image = 0; this.lignes = { g: {}, d: {} }; }
 
   // ---------- pré-traitement : image -> tenseur letterbox (multiple de 32) ----------
   tenseur(src, w, h, cote) {
@@ -190,7 +192,8 @@ export class Moteur {
       }
       if (g < 0) return;
       d.cls = g; d.conf = Math.sqrt(d.conf * p);
-      if (d.conf >= SIGN_FACTOR * CONF) gardes.push(d);
+      // seuil propre à certains panneaux souvent annoncés à tort sur les vraies photos (balises...) : voir route_fr/classes.py
+      if (d.conf >= (D.items[g].seuil ?? SIGN_FACTOR * CONF)) gardes.push(d);
     });
     return autres.concat(nms(gardes, 0.5, false));
   }
@@ -257,8 +260,10 @@ export class Moteur {
     const nouveaux = [], changes = [], pairs = [], tUsed = new Set(), dUsed = new Set();
     this.pistes.forEach((t, i) => { if (!groupes.has(t.groupe)) return; dets.forEach((d, j) => { if (groupeDe(d.cls) === t.groupe) { const v = iou(t.box, d.box); if (v >= 0.25) pairs.push([v, i, j]); } }); });
     pairs.sort((a, b) => b[0] - a[0]);
-    const toucher = (t, d) => {
-      const a = t.hits ? 0.55 : 1;
+    // v : recouvrement entre le cadre suivi et le nouveau. Faible (l'objet a beaucoup bougé) : on prend presque tout le nouveau
+    // cadre, sinon le cadre affiché traîne derrière l'objet.
+    const toucher = (t, d, v = 1) => {
+      const a = !t.hits || this.net ? 1 : v >= 0.5 ? 0.55 : 0.9;
       t.box = t.box.map((v, k) => a * d.box[k] + (1 - a) * v);
       t.conf = a * d.conf + (1 - a) * t.conf;
       if (t.groupe === "f") {  // un feu change de couleur : on suit la dernière couleur vue deux fois de suite
@@ -269,7 +274,22 @@ export class Moteur {
       if (d.dist) t.dist = t.dist ? 0.7 * t.dist + 0.3 * d.dist : d.dist;
       t.hits++; t.misses = 0; t.vu = performance.now();
     };
-    for (const [, i, j] of pairs) { if (tUsed.has(i) || dUsed.has(j)) continue; tUsed.add(i); dUsed.add(j); toucher(this.pistes[i], dets[j]); }
+    for (const [v, i, j] of pairs) { if (tUsed.has(i) || dUsed.has(j)) continue; tUsed.add(i); dUsed.add(j); toucher(this.pistes[i], dets[j], v); }
+    // Seconde passe, panneaux et feux : avec peu d'images par seconde (ou un panneau tout proche), l'objet ne recouvre plus son
+    // cadre précédent. On le rattache à la piste de même groupe la plus proche (à moins de 2,5 fois sa taille, 1,5 si le nom
+    // diffère, tailles comparables) : la piste garde ses voix, au lieu d'une nouvelle piste jugée sur une seule image.
+    const centre = b => [(b[0] + b[2]) / 2, (b[1] + b[3]) / 2], cote = b => Math.max(b[2] - b[0], b[3] - b[1]), loin = [];
+    this.pistes.forEach((t, i) => {
+      if (tUsed.has(i) || !groupes.has(t.groupe) || (t.groupe !== "s" && t.groupe !== "f")) return;
+      const [tx, ty] = centre(t.box), ct = cote(t.box), nom = this.classe(t);
+      dets.forEach((d, j) => {
+        if (dUsed.has(j) || groupeDe(d.cls) !== t.groupe) return;
+        const [dx, dy] = centre(d.box), cd = cote(d.box), ecart = Math.hypot(dx - tx, dy - ty) / Math.max(ct, cd);
+        if (ecart <= (t.groupe === "f" || d.cls === nom ? 2.5 : 1.5) && cd < 2.2 * ct && ct < 2.2 * cd) loin.push([ecart, i, j]);
+      });
+    });
+    loin.sort((a, b) => a[0] - b[0]);
+    for (const [, i, j] of loin) { if (tUsed.has(i) || dUsed.has(j)) continue; tUsed.add(i); dUsed.add(j); toucher(this.pistes[i], dets[j], 0); }
     dets.forEach((d, j) => {
       if (dUsed.has(j)) return;
       const t = { id: this.prochainId++, box: d.box.slice(), groupe: groupeDe(d.cls), scores: {}, conf: 0, hits: 0, misses: 0, ok: false, debut: performance.now() };
@@ -279,10 +299,41 @@ export class Moteur {
     this.pistes.forEach((t, i) => {
       if (!groupes.has(t.groupe)) return;
       if (!tUsed.has(i)) { t.misses++; for (const k in t.scores) t.scores[k] *= 0.9; }
-      else if (!t.ok && (t.hits >= MIN_HITS || t.conf > 0.85) && (t.groupe === "m" || taille(t.box) >= 18)) { t.ok = true; nouveaux.push(t); }
+      else if (!t.ok && this.confirme(t, taille(t.box))) { t.ok = true; nouveaux.push(t); }
     });
     this.pistes = this.pistes.filter(t => t.misses <= MAX_MISSES);
     return { nouveaux, changes };
+  }
+
+  // un élément est annoncé quand il a été vu assez de fois. Marquages au sol : plus d'images, et un type qui domine nettement
+  // (5 images et 65 % des voix pour une ligne, 3 images et 55 % pour les autres marquages).
+  confirme(t, cote) {
+    if (t.groupe !== "m") return (t.hits >= MIN_HITS || t.conf > 0.85) && cote >= 18;
+    const c = this.classe(t), ligne = LIGNES.test(D.items[c]?.code || "");
+    let total = 0;
+    for (const k in t.scores) total += t.scores[k];
+    return t.hits >= (ligne ? 5 : 3) && t.scores[c] >= (ligne ? 0.65 : 0.55) * total;
+  }
+
+  // ligne qui borde la voie, de chaque côté : vote sur les dernières images (la plus proche du milieu de l'image compte)
+  majLignes(dets, w) {
+    for (const cote of ["g", "d"]) {
+      const v = this.lignes[cote];
+      for (const k in v) { v[k] *= 0.82; if (v[k] < 0.05) delete v[k]; }
+      let proche = null;
+      for (const d of dets) {
+        const code = D.items[d.cls]?.code, x = (d.box[0] + d.box[2]) / 2;
+        if (!code || !LIGNES.test(code) || (x < w / 2 ? "g" : "d") !== cote) continue;
+        if (!proche || Math.abs(x - w / 2) < Math.abs((proche.box[0] + proche.box[2]) / 2 - w / 2)) proche = d;
+      }
+      if (proche) { const code = D.items[proche.cls].code; v[code] = (v[code] || 0) + proche.conf; }
+    }
+  }
+  ligne(cote) {
+    const v = this.lignes[cote];
+    let best = null, total = 0;
+    for (const k in v) { total += v[k]; if (best === null || v[k] > v[best]) best = k; }
+    return best && v[best] >= 1.3 && v[best] >= 0.62 * total ? best : null;
   }
 
   classe(t) {
@@ -307,8 +358,10 @@ export class Moteur {
   }
 
   // ---------- analyse d'une image de la vidéo ----------
-  async analyser(src, w, h, { debug = false } = {}) {
+  // net : l'image est arrêtée (pause) ; les cadres suivis prennent exactement la place trouvée, sans lissage
+  async analyser(src, w, h, { debug = false, net = false } = {}) {
     const t0 = performance.now();
+    this.net = net;
     this.image++;
     const prep = this.tenseur(src, w, h, this.cote);
     const out = await this.session.run({ [this.session.inputNames[0]]: prep.t });
@@ -326,6 +379,7 @@ export class Moteur {
     }
     const brutes = debug ? dets.map(d => ({ ...d })) : null;
     if (this.actifs) dets = dets.filter(d => this.actifs.has(d.cls));
+    this.majLignes(dets, w);
     const { nouveaux, changes } = this.suivre(dets, groupes, w, h);
     this.majVitesse(w, h);
     const ms = performance.now() - t0;

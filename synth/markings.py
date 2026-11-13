@@ -8,6 +8,8 @@ Les formes locales sont définies en (x, z) mètres, z vers l'avant ; les pointe
 import math
 from dataclasses import dataclass, field
 
+from pathlib import Path
+
 import cv2
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
@@ -179,7 +181,23 @@ def text_raster(word, rng, w_px, h_px):
     return cv2.resize(np.array(im), (max(4, int(w_px)), max(4, int(h_px))), interpolation=cv2.INTER_AREA)
 
 
-def bike_raster(rng, w_px, h_px, rider=True):
+_PICTO_VELO = []
+
+
+def picto_velo():
+    """Pictogramme officiel du vélo (celui des panneaux), tiré de l'icône du panneau B22a : c'est lui qui est peint au sol."""
+    if not _PICTO_VELO:
+        a = np.array(Image.open(Path(__file__).resolve().parents[1] / "route_fr" / "icones" / "B22a.png").convert("RGBA")).astype(int)
+        yy, xx = np.mgrid[0:a.shape[0], 0:a.shape[1]]
+        blanc = (a[..., :3].min(-1) > 200) & (a[..., 3] > 200) & (np.hypot(xx - a.shape[1] / 2, yy - a.shape[0] / 2) < 0.4 * a.shape[0])
+        ys, xs = np.nonzero(blanc)
+        _PICTO_VELO.append((blanc[ys.min():ys.max() + 1, xs.min():xs.max() + 1] * 255).astype(np.uint8))
+    return _PICTO_VELO[0]
+
+
+def bike_raster(rng, w_px, h_px, rider=True, officiel=False):
+    if officiel:
+        return cv2.resize(picto_velo(), (max(4, int(w_px)), max(4, int(h_px))), interpolation=cv2.INTER_AREA)
     s = 200
     im = np.zeros((s, s), np.uint8)
     t = max(6, s // 28)
@@ -203,6 +221,32 @@ def bike_raster(rng, w_px, h_px, rider=True):
 
 def raster_corners(xc, zc, wm, lm):
     return np.array([[xc - wm / 2, zc + lm / 2], [xc + wm / 2, zc + lm / 2], [xc + wm / 2, zc - lm / 2], [xc - wm / 2, zc - lm / 2]])
+
+
+def texte_couche(word, rng, cam, xc, zc, hm, lm, cote=1):
+    """Inscription écrite le long de la voie, lue depuis la chaussée : la tête des lettres est tournée vers le trottoir
+    (cote = 1 : trottoir de droite, -1 : trottoir de gauche). hm : hauteur des lettres, lm : longueur du mot."""
+    wp, hp = raster_size(cam, xc, zc, hm, lm)
+    raster = text_raster(word, rng, hp, wp)
+    s = cote
+    coins = np.array([[xc + s * hm / 2, zc + s * lm / 2], [xc + s * hm / 2, zc - s * lm / 2], [xc - s * hm / 2, zc - s * lm / 2], [xc - s * hm / 2, zc + s * lm / 2]])
+    return raster, coins
+
+
+def tirets(a, b, ep, plein=0.5, vide=0.5):
+    """Trait discontinu de a à b (points route), en morceaux de « plein » mètres."""
+    a, b = np.asarray(a, float), np.asarray(b, float)
+    L = float(np.hypot(*(b - a)))
+    u, out, s = (b - a) / max(L, 1e-6), [], 0.0
+    while s < L:
+        out.append(stroke([a + u * s, a + u * min(s + plein, L)], ep))
+        s += plein + vide
+    return out
+
+
+# inscriptions peintes au sol
+VITESSES_SOL = ["30"] * 13 + ["50"] * 3 + ["70", "20", "90", "10"]
+LEURRES_TEXTE = ["TAXI", "TAXIS", "PAYANT", "ECOLE", "PARKING", "CAR", "CARS", "PIETONS", "LENT", "POLICE", "POMPIERS", "PRIVE", "SORTIE", "DEPOSE", "ZONE", "GIG GIC", "LIVRAISONS INTERDITES"]
 
 
 def raster_size(cam, xc, zc, wm, lm):
@@ -339,24 +383,54 @@ def make_local(code, xc, zc, lane_w, rng, cam):
         while x + 0.5 <= x1:
             mk.polys.append(rect_xz(x, x + 0.5, zc, zc + ep))
             x += 1.0
-    elif code in ("M_stop_sol", "M_bus"):
-        word = "STOP" if code == "M_stop_sol" else "BUS"
-        wm = min(lane_w * rng.uniform(0.55, 0.8), 2.6)
-        lm = rng.uniform(1.6, 3.2) if word == "STOP" else rng.uniform(1.5, 2.8)
+    elif code in ("M_stop_sol", "M_bus", "M_vitesse_sol"):
+        word = {"M_stop_sol": "STOP", "M_bus": "BUS"}.get(code) or rng.choice(VITESSES_SOL)
+        wm = min(lane_w * rng.uniform(0.55, 0.8), 2.6) if code != "M_vitesse_sol" else min(lane_w * rng.uniform(0.35, 0.6), 2.0)
+        lm = rng.uniform(1.6, 3.2) if word == "STOP" else rng.uniform(1.5, 4.2)  # lettres de 1,5 m en ville, jusqu'à 4 m ailleurs
         mk.rasters.append((text_raster(word, rng, *raster_size(cam, xc, zc, wm, lm)), raster_corners(xc, zc, wm, lm)))
+    elif code == "_texte":  # autre inscription (TAXI, PAYANT...) : peinte, jamais annotée, pour ne pas la prendre pour BUS ou STOP
+        word = rng.choice(LEURRES_TEXTE)
+        if rng.random() < 0.5:
+            wm, lm = min(lane_w * rng.uniform(0.55, 0.85), 2.8), rng.uniform(1.5, 3.5)
+            mk.rasters.append((text_raster(word, rng, *raster_size(cam, xc, zc, wm, lm)), raster_corners(xc, zc, wm, lm)))
+        else:
+            mk.rasters.append(texte_couche(word, rng, cam, xc, zc, rng.uniform(0.6, 1.2), rng.uniform(3.0, 6.0)))
+        mk.color = rng.choice(["white", "white", "yellow"])
+    elif code == "M_livraison":
+        # emplacement le long du trottoir : contour en traits jaunes, une ou deux croix en lignes continues, mot « LIVRAISON »
+        # écrit le long de l'emplacement (instruction interministérielle sur la signalisation routière, 7e partie)
+        cote = 1 if xc >= 0 else -1
+        L, wb, ep = rng.uniform(7.0, 12.0), rng.uniform(1.9, 2.5), rng.uniform(0.08, 0.14)
+        x0, x1, z0, z1 = xc - wb / 2, xc + wb / 2, zc - L / 2, zc + L / 2
+        xi = x0 if cote > 0 else x1  # bord côté chaussée
+        for a, b in (((xi, z0), (xi, z1)), ((x0, z0), (x1, z0)), ((x0, z1), (x1, z1))):
+            mk.polys += tirets(a, b, ep)
+        croix = rng.choice([0, 1, 1, 2])
+        avec_mot = croix == 0 or rng.random() < 0.85
+        zones = np.linspace(z0, z1, croix + 1) if croix else []
+        for za, zb in zip(zones[:-1], zones[1:]):
+            mk.polys += [stroke([[x0, za], [x1, zb]], ep), stroke([[x1, za], [x0, zb]], ep)]
+        if avec_mot:
+            mk.rasters.append(texte_couche("LIVRAISON", rng, cam, xc, zc, wb * rng.uniform(0.3, 0.55), min(L * rng.uniform(0.45, 0.75), 6.5), cote))
+        mk.color = "yellow"
     elif code == "M_velo":
         wm = rng.uniform(0.8, 1.4)
-        lm = wm * rng.uniform(1.2, 2.2)
-        mk.rasters.append((bike_raster(rng, *raster_size(cam, xc, zc, wm, lm), rider=rng.random() < 0.6), raster_corners(xc, zc, wm, lm)))
+        officiel = rng.random() < 0.7
+        lm = wm * (rng.uniform(1.0, 1.9) if officiel else rng.uniform(1.2, 2.2))
+        mk.rasters.append((bike_raster(rng, *raster_size(cam, xc, zc, wm, lm), rider=rng.random() < 0.6, officiel=officiel), raster_corners(xc, zc, wm, lm)))
+        if officiel and rng.random() < 0.35:  # flèche de sens, devant le pictogramme
+            mk.polys += [place(p, xc, zc + lm / 2 + 1.6) for p in arrow_straight(rng.uniform(1.6, 2.4), rng.uniform(0.35, 0.5), rng.uniform(0.1, 0.14))]
         if rng.random() < 0.3:  # chevrons d'accompagnement
             for k in range(2):
                 z = zc + lm / 2 + 0.4 + 0.5 * k
                 mk.polys.append(place(stroke([[-0.35, -0.25], [0, 0.1], [0.35, -0.25]], 0.12), xc, z))
     elif code == "M_zigzag":
-        L = rng.uniform(10, 22)
-        n = rng.randint(3, 5)
-        amp = rng.uniform(0.5, 1.0)
-        zs = np.linspace(zc - L / 2, zc + L / 2, 2 * n + 1)
+        # ligne jaune en dents serrées, à 45° environ, le long du trottoir (avant : quelques grandes dents très étirées,
+        # qui ne ressemblaient pas aux arrêts d'autobus réels)
+        L = rng.uniform(8, 20)
+        amp = rng.uniform(0.35, 0.7)
+        pas = amp * rng.uniform(0.8, 1.4)
+        zs = np.arange(zc - L / 2, zc + L / 2 + pas / 2, pas)
         xs = np.where(np.arange(len(zs)) % 2 == 0, xc, xc - amp)
         for a, b in zip(zip(xs[:-1], zs[:-1]), zip(xs[1:], zs[1:])):
             mk.polys.append(stroke([a, b], 0.13))

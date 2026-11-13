@@ -6,6 +6,7 @@ import { APP } from "./contenu.js";
 import { D, icone, officiels } from "./donnees.js";
 import { aller } from "./nav.js";
 import { idbMettre, idbSupprimer, idbTout, profil } from "./stockage.js";
+import { blocVisible, montrerBloc } from "./reglages.js";
 import { ICONES, confirmer, demander, esc, graine, melanger, ouvrirFeuille, toast } from "./ui.js";
 
 // ---------- banque intégrée ----------
@@ -90,14 +91,19 @@ export async function pageCodes(zone, rendre) {
       <h3 class="doux" style="font-family:var(--corps);font-size:1.1rem;margin-top:14px">Les dix thèmes de l'examen</h3>
       <div class="liste-lignes">${b.themes.map(t => { const n = reussies(p, t.questions); return `<button class="element-liste" data-theme="${t.id}"><div style="flex:1"><b>${esc(t.nom)}</b>
         <div class="doux">${esc(t.detail)}</div>${jauge(n, t.questions.length)}<div class="doux petit">${n} sur ${t.questions.length} réussies, ${t.examen} question${t.examen > 1 ? "s" : ""} à l'examen</div></div></button>`; }).join("")}</div>
-      <section class="carte" style="margin-top:18px"><h2>Séries de ton auto-école</h2>
+      ${blocVisible("import", p) ? `<section class="carte" style="margin-top:18px"><h2>Séries de ton auto-école</h2>
         <p class="doux">Importe le fichier de séries ou d'examens de ton auto-école, ou ajoute le lien de son catalogue.</p>
         <div class="liste-lignes">${packs.map(pk => `<button class="element-liste" data-pack="${esc(pk.id)}"><div><b>${esc(pk.titre)}</b><div class="doux">${esc([pk.auteur, resume(pk)].filter(Boolean).join(". "))}</div></div></button>`).join("")}</div>
-        <div class="duo"><label class="btn btn-plein">Importer un fichier<input type="file" accept=".json,application/json" hidden data-importer></label><button class="btn" data-lien>Ajouter un lien</button></div></section>
+        <div class="duo"><label class="btn btn-plein">Importer un fichier<input type="file" accept=".json,application/json" hidden data-importer></label><button class="btn" data-lien>Ajouter un lien</button></div>
+        <button class="btn-lien masquer" data-masquer="import">Masquer ce bloc</button></section>` : ""}
     </div></div>`;
   const z = zone.querySelector(".zone-codes");
   brancherCodes(z, rendre);
-  z.addEventListener("click", e => { const t = e.target.closest("[data-theme]"); if (t) ouvrirTheme(b.themes.find(x => x.id === t.dataset.theme)); });
+  z.addEventListener("click", e => {
+    const t = e.target.closest("[data-theme]");
+    if (t) ouvrirTheme(b.themes.find(x => x.id === t.dataset.theme));
+    if (e.target.closest("[data-masquer]")) { montrerBloc("import", false, p); toast("Bloc masqué. Pour le revoir : Réglages, « Accueil : ce qui s'affiche »"); rendre(); }
+  });
 }
 
 function ouvrirTheme(t) {

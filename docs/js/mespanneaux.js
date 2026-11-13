@@ -78,10 +78,30 @@ async function apprendre(fichier, moteur, apres) {
   }
 }
 
-function choisirZone(corps, cv, candidats, moteur, apres) {
+// Depuis une image déjà affichée (caméra en pause) : l'utilisateur a touché un endroit (point), ou veut corriger le
+// panneau que l'appli a nommé (box). On ouvre directement le choix « Qu'est-ce que c'est ? » sur ce panneau.
+export async function apprendreImage(cv, moteur, apres, depart = {}) {
+  const corps = ouvrirFeuille("Apprendre un panneau", `<p class="doux etape">Analyse de l'image…</p>`);
+  try {
+    choisirZone(corps, cv, await moteur.panneauxPhoto(cv, cv.width, cv.height), moteur, apres, depart);
+  } catch (e) {
+    console.error(e);
+    corps.innerHTML = `<p>Impossible d'analyser cette image : ${esc(e.message || e)}</p>`;
+  }
+}
+
+function choisirZone(corps, cv, candidats, moteur, apres, depart = {}) {
   const W = cv.width, H = cv.height;
   let choisi = candidats[0] ? { box: candidats[0].box, devine: candidats[0].devine } : null;
   let taille = 0.22;
+  if (depart.point || depart.box) {  // le panneau visé : un candidat trouvé à cet endroit, sinon un cadre posé à la main
+    const [px, py] = depart.point || [(depart.box[0] + depart.box[2]) / 2, (depart.box[1] + depart.box[3]) / 2];
+    const c = candidats.find(c => px >= c.box[0] && px <= c.box[2] && py >= c.box[1] && py <= c.box[3]);
+    if (depart.box) taille = Math.min(0.6, Math.max(0.06, 1.2 * Math.max(depart.box[2] - depart.box[0], depart.box[3] - depart.box[1]) / Math.min(W, H)));
+    else taille = 0.12;
+    const s = taille * Math.min(W, H);
+    choisi = c ? { box: c.box, devine: depart.box ? null : c.devine } : { box: [Math.max(0, px - s / 2), Math.max(0, py - s / 2), Math.min(W, px + s / 2), Math.min(H, py + s / 2)], manuel: [px, py] };
+  }
   const pct = b => `left:${100 * b[0] / W}%;top:${100 * b[1] / H}%;width:${100 * (b[2] - b[0]) / W}%;height:${100 * (b[3] - b[1]) / H}%`;
   corps.innerHTML = `<p>${candidats.length ? "Touche le panneau à apprendre (cadre vert)." : "Aucun panneau trouvé automatiquement : touche le panneau sur la photo."}</p>
     <div class="choix-zone"><img src="${cv.toDataURL("image/jpeg", 0.85)}" alt="Photo">${candidats.map((c, i) => `<div class="boite" data-i="${i}" style="${pct(c.box)}"></div>`).join("")}<div class="boite manuelle cache"></div></div>
@@ -107,6 +127,8 @@ function choisirZone(corps, cv, candidats, moteur, apres) {
     marquer();
   };
   if (choisi?.devine != null) choisirCode(D.items[choisi.devine].code);
+  if (choisi?.manuel) { manuelle.setAttribute("style", pct(choisi.box)); manuelle.classList.remove("cache"); manuelle.classList.add("choisie"); $(".reglage-taille", corps).classList.remove("cache"); $(".reglage-taille input", corps).value = taille; }
+  marquer();
   zone.onclick = e => {
     const b = e.target.closest(".boite[data-i]");
     if (b) { choisi = { box: candidats[+b.dataset.i].box, devine: candidats[+b.dataset.i].devine }; manuelle.classList.add("cache"); if (choisi.devine != null && code == null) choisirCode(D.items[choisi.devine].code); return marquer(); }

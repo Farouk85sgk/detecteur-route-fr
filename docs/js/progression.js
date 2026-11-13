@@ -5,8 +5,11 @@ import { D, detectables, itemsFamille, officiels } from "./donnees.js";
 import { profil, profils, sauver } from "./stockage.js";
 import { graine, jourCle, melanger, son, toast, vibrer } from "./ui.js";
 
-export const PROG = { notifier: (texte, badge) => toast(texte, badge) };
-const dire = (texte, badge) => PROG.notifier(texte, badge);
+// PROG.silence : pendant la détection, si le réglage « Récompenses » est coupé, la progression continue (album, XP,
+// quêtes) mais sans message ni son.
+export const PROG = { notifier: (texte, badge) => toast(texte, badge), silence: false };
+const dire = (texte, badge) => { if (!PROG.silence) PROG.notifier(texte, badge); };
+const feter = (nom, p) => son(nom, p.reglages.sons && !PROG.silence);
 
 // ---------- niveaux ----------
 export const xpNiveau = n => 50 * n * (n - 1);
@@ -20,7 +23,7 @@ export function gagner(p, { xp = 0, pepites = 0 } = {}) {
   p.xp += xp;
   p.pepites += pepites;
   const apres = niveau(p.xp);
-  if (apres.n > avant) { dire(`Niveau ${apres.n} : ${apres.nom} !`, "Bravo"); son("victoire", p.reglages.sons); }
+  if (apres.n > avant) { dire(`Niveau ${apres.n} : ${apres.nom} !`, "Bravo"); feter("victoire", p); }
   sauver();
 }
 
@@ -101,7 +104,7 @@ export function evenement(type, n = 1, p = profil()) {
     if (q.avance >= def.but) {
       gagner(p, { pepites: def.gain, xp: 15 });
       dire(`Quête du jour : ${def.texte}`, `+${def.gain} 💎`);
-      son("piece", p.reglages.sons);
+      feter("piece", p);
       majFlamme(p);
     }
   }
@@ -128,7 +131,7 @@ export function verifierMystere(p, code) {
   p.stats.mysteres++;
   gagner(p, { pepites: 40, xp: 30 });
   dire(`Panneau mystère trouvé : ${D.parCode[code].nom}`, "+40 💎");
-  son("victoire", p.reglages.sons);
+  feter("victoire", p);
   vibrer([80, 60, 80], p.reglages.vibration);
   verifierBadges(p);
   return true;

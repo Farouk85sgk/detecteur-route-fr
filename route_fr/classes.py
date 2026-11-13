@@ -61,6 +61,7 @@ class RoadClass:
     voix: str | None = None  # annonce vocale (None = le nom)
     famille: str = ""
     reflexe: str = ""  # ce qu'il faut faire ; vide = même texte que l'explication
+    seuil: float | None = None  # seuil d'annonce propre à ce panneau (None : seuil commun des panneaux)
 
 
 PANNEAUX: list[RoadClass] = []
@@ -71,8 +72,14 @@ def _fam(ident):
     _famille[:] = [ident, FAMILLES[ident][1]]
 
 
+# Seuil d'annonce plus sévère pour les panneaux le plus souvent annoncés à tort sur les 1 542 vraies photos de validation
+# (score combiné détecteur x classifieur ; le seuil commun est 0,455). Au seuil commun : balise J13 14 annonces justes
+# pour 18 fausses, J5 2 pour 8, J3 4 pour 6, C5 2 pour 4, C13a 3 pour 4. Mesure : tools/evaluer_chaine.py --annonces.
+SEUILS = {"J13": 0.70, "J5": 0.80, "J3": 0.65, "C5": 0.75, "C13a": 0.70}
+
+
 def _p(code, nom, explication, reflexe="", voix=None, vitesse=None, cat=None):
-    PANNEAUX.append(RoadClass(code, nom, cat or _famille[1], explication, vitesse, voix, _famille[0], reflexe))
+    PANNEAUX.append(RoadClass(code, nom, cat or _famille[1], explication, vitesse, voix, _famille[0], reflexe, SEUILS.get(code)))
 
 
 # ----------------------------------------------------------------------------- dangers (A)
@@ -416,6 +423,10 @@ MARQUAGES = [
               reflexe="Ne la franchis que pour dépasser un véhicule très lent (tracteur, cycliste)."),
     RoadClass("M_ligne_rive", "Ligne de rive", "marquage", "Ligne qui marque le bord de la chaussée.", famille="marquages", reflexe="Elle délimite le bord de la chaussée : ne roule pas dessus, sauf pour t'arrêter sur l'accotement."),
     RoadClass("M_ligne_feux", "Ligne d'effet des feux", "marquage", "Ligne de traits fins en travers de la voie : endroit où s'arrêter au feu rouge.", famille="marquages", reflexe="Au feu rouge ou orange, arrête-toi avant cette ligne."),
+    RoadClass("M_vitesse_sol", "Vitesse rappelée au sol", "marquage", "Nombre peint sur la chaussée (souvent 30) : il rappelle la vitesse maximale, par exemple à l'entrée d'une zone 30.", famille="marquages",
+              reflexe="Vérifie ta vitesse : le nombre peint au sol rappelle la limitation en vigueur.", voix="Vitesse rappelée au sol"),
+    RoadClass("M_livraison", "Place de livraison", "marquage", "Marquage jaune avec le mot « LIVRAISON » : emplacement réservé à l'arrêt des véhicules qui livrent.", famille="marquages",
+              reflexe="Ne t'y gare pas, même cinq minutes : c'est un stationnement gênant, sauf si un panneau l'autorise à certaines heures.", voix="Place de livraison"),
 ]
 
 CLASSES = PANNEAUX + MARQUAGES
