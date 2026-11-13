@@ -206,7 +206,8 @@ function montrerCarte(it, t, forcer = true) {
   if (!forcer && it.groupe === "m" && C.carteGroupe && C.carteGroupe !== "m" && Date.now() - C.derniereCarte < 4000) return;
   if (!carte.firstElementChild) carte.innerHTML = `<img alt=""><div><h2></h2><p></p><div class="meta"><span class="code-badge"></span><span></span></div></div>`;
   const img = carte.querySelector("img"), src = icone(it);
-  if (img.getAttribute("src") !== src) img.src = src;
+  // tant que le nouveau dessin n'est pas chargé, on cache l'ancien : jamais le dessin d'un panneau avec le nom d'un autre
+  if (img.getAttribute("src") !== src) { img.style.visibility = "hidden"; img.onload = img.onerror = () => { img.style.visibility = ""; }; img.src = src; }
   carte.querySelector("h2").textContent = it.nom;
   carte.querySelector("p").textContent = it.explication;
   carte.querySelector(".code-badge").textContent = it.etiquette;
