@@ -264,6 +264,14 @@ dents de requin (0,73) et surtout les deux lignes fines en travers de la voie, *
 ligne de cédez-le-passage (0,34)**, encore peu fiables. Le mot « STOP » peint au sol (0,90) et le triangle de
 cédez-le-passage (0,95) sont, eux, bien reconnus.
 
+**Dents de requin : dessinées à l'envers pendant l'entraînement.** Une relecture a montré que ces triangles
+étaient dessinés pointe vers le conducteur, alors qu'en France ils sont peints sur la rampe du ralentisseur, pointe
+dans le sens de la marche. Mesuré sur 5 000 images synthétiques redessinées dans le bon sens : le détecteur
+entraîné avec l'ancien dessin n'y retrouve que **3 %** de ces marquages (72 % avec l'ancien dessin). Le
+générateur (`synth/markings.py`) et l'icône sont corrigés ; il faut réentraîner le détecteur avec les nouvelles
+images pour qu'il reconnaisse ce marquage sur une vraie route. Les panneaux de ralentisseur (A2b, C27) ne sont pas
+concernés.
+
 **Le classifieur** (troisième tour, vignettes corrigées) donne le bon type pour **93,3 % des vignettes en moyenne
 par panneau** (94,1 % toutes vignettes confondues) sur 2 330 vraies vignettes de validation ; le tour précédent
 était à 92,9 % sur les mêmes vignettes. Il rejette maintenant 57 % des panneaux hors catalogue, contre 22 %.

@@ -2,7 +2,7 @@
 // avec zoom et toucher d'un panneau, annonces vocales, photos incrustées, vidéo du trajet, GPS, résumé du trajet.
 import { APP, FAMILLES } from "./contenu.js";
 import { D, icone } from "./donnees.js";
-import { Moteur, TAILLES } from "./moteur.js";
+import { FINS_VITESSE, Moteur, TAILLES } from "./moteur.js";
 import { evenement, noterAlbum, verifierBadges, verifierMystere, PROG } from "./progression.js";
 import { aller } from "./nav.js";
 import { idbMettre, idbSupprimerPrefixe, profil, sauver } from "./stockage.js";
@@ -272,7 +272,7 @@ function dessiner() {
   const zl = $(".lignes", C.racine);
   if (zl.dataset.html !== html) { zl.innerHTML = html; zl.dataset.html = html; zl.style.display = "flex"; zl.style.flexDirection = "column"; zl.style.gap = "10px"; }
   const v = moteur.vitesse, zv = $(".vitesse-cam", C.racine);
-  const val = v.valeur != null && !["B33", "B31"].includes(v.code) ? String(v.valeur) : "";
+  const val = v.valeur != null && !FINS_VITESSE.includes(v.code) ? String(v.valeur) : "";
   if (zv.textContent !== val) { zv.textContent = val; zv.classList.toggle("cache", !val); }
   if (C.derniereCarte) { const meta = $(".cam-carte .meta span:last-child", C.racine); if (meta && Date.now() - C.derniereCarte > 5000) meta.textContent = `il y a ${Math.round((Date.now() - C.derniereCarte) / 1000)} s`; }
 }

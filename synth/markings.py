@@ -157,14 +157,16 @@ def arrow_fold(L, head_w, shaft_w):
     return [stroke(pts, shaft_w), _arrow_head(tip, d, head_w, 0.25 * L)]
 
 
-def triangles_row(n, base, height, gap, apex_near=True):
-    """Rangée de triangles (dents de requin), pointe vers le conducteur."""
+def triangles_row(n, base, height, gap, apex_near=False):
+    """Rangée de triangles blancs (dents de requin) peints sur la rampe d'un ralentisseur ou d'un plateau.
+    En France, la pointe est tournée dans le sens de la marche, donc loin du conducteur qui arrive (instruction
+    interministérielle sur la signalisation routière, 7e partie). apex_near=True la tourne vers le conducteur."""
     total = n * base + (n - 1) * gap
+    s = 1 if apex_near else -1
     out = []
     for i in range(n):
         x0 = -total / 2 + i * (base + gap)
-        if apex_near:
-            out.append(np.array([[x0, height / 2], [x0 + base, height / 2], [x0 + base / 2, -height / 2]]))
+        out.append(np.array([[x0, s * height / 2], [x0 + base, s * height / 2], [x0 + base / 2, -s * height / 2]]))
     return out
 
 

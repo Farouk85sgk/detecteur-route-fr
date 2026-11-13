@@ -9,7 +9,7 @@ import cv2
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
-from .classes import CATEGORIES, CLASSES, CODE_AFFICHE
+from .classes import CATEGORIES, CLASSES, CODE_AFFICHE, FINS_VITESSE
 
 HERE = Path(__file__).resolve().parent
 FONT = HERE / "fonts" / "DejaVuSans.ttf"
@@ -90,7 +90,7 @@ class Hud:
         best = None
         for t in tracks:
             c = CLASSES[t.cls]
-            if (c.vitesse is not None or c.code in ("B33", "B31")) and t.conf >= 0.4 and t.size * scale >= 20:
+            if (c.vitesse is not None or c.code in FINS_VITESSE) and t.conf >= 0.4 and t.size * scale >= 20:
                 best = t if best is None or t.size > best.size else best
         if best is not None:
             c = CLASSES[best.cls]
@@ -126,7 +126,7 @@ class Hud:
         else:
             cv2.circle(p, (70, y + 52), 52, (90, 90, 90), 2, cv2.LINE_AA)
             put_text(p, "?", (58, y + 30), 40, (120, 120, 120), True)
-            msg = "Fin de limitation" if self.speed_code in ("B33", "B31") else "Aucune limitation lue"
+            msg = "Fin de limitation" if self.speed_code in FINS_VITESSE else "Aucune limitation lue"
             put_text(p, msg, (140, y + 36), 15, (180, 180, 180))
         y += 122
         cv2.line(p, (12, y), (PANEL_W - 12, y), (70, 70, 70), 1)

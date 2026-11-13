@@ -4,7 +4,7 @@
 // Il ajoute aussi aux pages les en-têtes d'isolation (COOP / COEP) que l'hébergement ne fournit pas : le navigateur
 // autorise alors le calcul sur plusieurs cœurs (WebAssembly multi-fils), deux à trois fois plus rapide sans carte graphique.
 const VERSION = "repere-3.0.2";
-const COEUR = `${VERSION}-coeur`, LOURDS = "repere-lourds-a28f5ada";
+const COEUR = `${VERSION}-coeur`, LOURDS = "repere-lourds-f4bc5366";
 const ORT = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.20.1/dist/";
 const EXTRAS = ["F_rouge", "F_orange", "F_vert", "U_pieton", "U_cycliste", "U_deux_roues"];
 const FICHIERS = ["./", "index.html", "manifest.webmanifest", "favicon.svg", "icone-192.png", "icone-512.png", "css/app.css", "catalogue.json", "panneaux.json", "empreinte.json",

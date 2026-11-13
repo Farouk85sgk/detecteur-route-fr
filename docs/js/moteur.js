@@ -16,6 +16,8 @@ const SIGN = -2;
 const COCO = { personne: 0, velo: 1, moto: 2, feu: 3 };  // ordre des classes gardées dans usagers.onnx
 const HAUTEUR = { U_pieton: 1.7, U_cycliste: 1.75, U_deux_roues: 1.45 };  // m, pour estimer la distance
 export const TAILLES = { rapide: 416, equilibree: 512, fine: 640 };
+// panneaux qui effacent la vitesse maximale gardée en mémoire sans en donner une nouvelle (la fin d'autoroute efface le 130)
+export const FINS_VITESSE = ["B33", "B31", "C208"];
 
 export function iou(a, b) {
   const x1 = Math.max(a[0], b[0]), y1 = Math.max(a[1], b[1]), x2 = Math.min(a[2], b[2]), y2 = Math.min(a[3], b[3]);
@@ -296,7 +298,7 @@ export class Moteur {
     for (const t of this.pistes) {
       if (!t.ok || t.groupe !== "s") continue;
       const it = D.items[this.classe(t)];
-      if ((it.vitesse != null || it.code === "B33" || it.code === "B31") && t.conf >= 0.4 && taille(t.box) >= 20 && (!best || taille(t.box) > taille(best.box))) best = t;
+      if ((it.vitesse != null || FINS_VITESSE.includes(it.code)) && t.conf >= 0.4 && taille(t.box) >= 20 && (!best || taille(t.box) > taille(best.box))) best = t;
     }
     if (best) {
       const it = D.items[this.classe(best)];

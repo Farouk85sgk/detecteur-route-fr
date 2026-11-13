@@ -93,7 +93,7 @@ _p("A8", "Passage à niveau sans barrière", "Passage à niveau sans barrière n
 _p("A9", "Traversée de tramways", "Traversée de voies de tramways.", "Le tramway est prioritaire : ralentis, regarde des deux côtés et ne reste jamais sur les voies.", voix="Tramway")
 _p("A13a", "Enfants", "Endroit fréquenté par les enfants (école, aire de jeux).", "Ralentis : un enfant peut surgir entre deux voitures.", voix="Attention enfants")
 _p("A13b", "Passage pour piétons (annonce)", "Passage pour piétons à proximité.", "Prépare-toi à t'arrêter : le piéton qui traverse ou s'apprête à traverser est prioritaire.")
-_p("A14", "Autres dangers", "Danger dont la nature est précisée par un panonceau.", "Lis le panonceau qui précise le danger, et ralentis.")
+_p("A14", "Autres dangers", "Danger autre que ceux des panneaux habituels ; un panonceau peut en préciser la nature.", "Ralentis et redouble d'attention ; s'il y a un panonceau, il te dit quel est le danger.")
 _p("A15a1", "Animaux domestiques (bovins)", "Passage d'animaux domestiques, ici du bétail.", "Ralentis : des bêtes peuvent traverser et la chaussée peut être salie ; n'utilise pas le klaxon près d'elles.")
 _p("A15a2", "Animaux domestiques (ovins)", "Passage d'animaux domestiques, ici des moutons.", "Ralentis : un troupeau peut occuper toute la route ; avance au pas sans klaxonner.")
 _p("A15b", "Animaux sauvages", "Passage d'animaux sauvages.", "Ralentis, surtout à l'aube et au crépuscule. Face à un animal, freine fort sans donner de coup de volant.")
@@ -110,7 +110,7 @@ _p("A24", "Vent latéral", "Vent latéral fréquent et violent.", "Tiens fermeme
 # ----------------------------------------------------------------------------- intersections et priorités (AB)
 _fam("priorites")
 _p("AB1", "Priorité à droite", "Intersection où la priorité à droite s'applique.", "À cette intersection, cède le passage aux véhicules qui arrivent de ta droite.", voix="Priorité à droite")
-_p("AB2", "Route non prioritaire croisée", "Intersection avec une route dont les usagers doivent te céder le passage.", "Tu es prioritaire à la prochaine intersection seulement : reste attentif.")
+_p("AB2", "Priorité ponctuelle", "Intersection avec une route dont les usagers doivent te céder le passage.", "Tu es prioritaire à la prochaine intersection seulement : reste attentif.", voix="Prioritaire à la prochaine intersection")
 _p("AB3a", "Cédez le passage", "Cédez le passage à l'intersection.", "Ralentis, regarde et cède le passage ; arrête-toi seulement si quelqu'un arrive.", voix="Cédez le passage")
 _p("AB3b", "Cédez le passage annoncé", "Annonce d'un cédez-le-passage, à la distance indiquée par le panonceau.", "Commence à ralentir : tu devras céder le passage à l'intersection annoncée.", voix="Cédez le passage annoncé")
 _p("AB4", "STOP", "Arrêt obligatoire à l'intersection, puis cédez le passage.", "Arrêt complet à la ligne, roues immobiles, même si personne n'arrive ; puis cède le passage.", voix="Stop")
@@ -125,7 +125,7 @@ _p("C18", "Prioritaire sur le sens inverse", "Priorité par rapport à la circul
 _fam("interdictions")
 _p("B0", "Circulation interdite", "Circulation interdite à tout véhicule, dans les deux sens.", "Aucun véhicule ne peut circuler, dans les deux sens ; les piétons peuvent passer.")
 _p("B1", "Sens interdit", "Sens interdit à tout véhicule.", "Ne t'engage pas : la circulation vient en face (souvent une rue à sens unique).", voix="Sens interdit")
-_p("B1_M9v", "Sens interdit sauf vélos", "Sens interdit, sauf pour les cyclistes : la rue est à double-sens cyclable.", "Ne t'engage pas ; en sortant de cette rue, attends-toi à croiser des vélos venant en face.", voix="Sens interdit sauf vélos")
+_p("B1_M9v", "Sens interdit sauf vélos", "Sens interdit, sauf pour les cyclistes : la rue est à double-sens cyclable.", "Ne t'engage pas ; des cyclistes peuvent y entrer, et tu en croiseras si tu prends cette rue dans le sens autorisé.", voix="Sens interdit sauf vélos")
 _p("B1_M1", "Sens interdit annoncé", "Annonce d'un sens interdit, à la distance indiquée par le panonceau.", "Prépare ton changement d'itinéraire : tu ne pourras pas continuer tout droit.")
 _p("B2a", "Interdit de tourner à gauche", "Interdiction de tourner à gauche à la prochaine intersection.")
 _p("B2b", "Interdit de tourner à droite", "Interdiction de tourner à droite à la prochaine intersection.")
@@ -138,7 +138,7 @@ _p("B5b", "Arrêt au poste de police", "Arrêt obligatoire au poste de police.",
 _p("B5c", "Arrêt au péage", "Arrêt obligatoire au poste de péage.", "Ralentis, choisis ta voie selon ton moyen de paiement et arrête-toi à la barrière.")
 _p("B7a", "Interdit aux véhicules à moteur sauf cyclomoteurs", "Accès interdit aux véhicules à moteur, à l'exception des cyclomoteurs.")
 _p("B7b", "Interdit à tous les véhicules à moteur", "Accès interdit à tous les véhicules à moteur.", "Ne t'engage pas en voiture ; piétons et cyclistes peuvent passer.")
-_p("B8", "Interdit aux poids lourds", "Accès interdit aux véhicules affectés au transport de marchandises.", "En voiture, tu peux passer ; un panonceau peut préciser le poids à partir duquel l'interdiction s'applique.")
+_p("B8", "Interdit aux véhicules de marchandises", "Accès interdit aux véhicules affectés au transport de marchandises.", "En voiture, tu peux passer. Camionnettes et camions sont interdits, sauf si un panonceau fixe un poids qu'ils ne dépassent pas.")
 _p("B9a", "Interdit aux piétons", "Accès interdit aux piétons.")
 _p("B9b", "Interdit aux cycles", "Accès interdit aux cycles.")
 _p("B9c", "Interdit aux véhicules à traction animale", "Accès interdit aux véhicules à traction animale.")
@@ -151,7 +151,7 @@ _p("B9i", "Interdit aux caravanes et remorques", "Accès interdit aux véhicules
 _p("B10a", "Longueur limitée", "Accès interdit aux véhicules ou ensembles plus longs que la longueur indiquée.")
 _p("B11", "Largeur limitée", "Accès interdit aux véhicules dont la largeur, chargement compris, dépasse le nombre indiqué.", "Vérifie que ton véhicule passe, rétroviseurs et chargement compris.")
 _p("B12", "Hauteur limitée", "Accès interdit aux véhicules dont la hauteur, chargement compris, dépasse le nombre indiqué.", "Pense au coffre de toit, aux vélos sur le toit ou à la camionnette de location.")
-_p("B13", "Poids limité", "Accès interdit aux véhicules dont le poids total dépasse le nombre indiqué.")
+_p("B13", "Poids limité", "Accès interdit aux véhicules dont le poids total autorisé en charge (PTAC, ou PTRA avec une remorque) dépasse le nombre indiqué.", "Compare avec le PTAC inscrit sur ta carte grise (case F.2), même si tu roules à vide.")
 _p("B13a", "Poids par essieu limité", "Accès interdit aux véhicules pesant, sur un essieu, plus que le nombre indiqué.")
 _p("B16", "Signaux sonores interdits", "Usage de l'avertisseur sonore interdit, sauf danger immédiat.", "N'utilise pas le klaxon, sauf pour éviter un accident.")
 _p("B17", "Distance minimale entre véhicules", "Interdiction de circuler sans laisser, entre deux véhicules, au moins l'intervalle indiqué.", "Garde au moins la distance indiquée avec le véhicule qui te précède (souvent en tunnel).")
@@ -195,7 +195,7 @@ _p("B52", "Zone de rencontre", "Entrée d'une zone de rencontre : 20 km/h, les p
 _p("B53", "Fin de zone de rencontre", "Sortie de la zone de rencontre.", "En agglomération, la limite redevient en général 50 km/h ; les piétons retrouvent les trottoirs.", vitesse=50, cat="fin")
 _p("B54", "Aire piétonne", "Entrée d'une aire piétonne, réservée aux piétons.", "N'entre que si tu y es autorisé, au pas, en laissant toujours la priorité aux piétons.", voix="Aire piétonne")
 _p("B55", "Fin d'aire piétonne", "Sortie de l'aire piétonne.", cat="fin")
-_p("B56", "Zone à faibles émissions", "Entrée d'une zone à circulation restreinte : seuls les véhicules portant certaines vignettes Crit'Air y circulent.", "Vérifie que la vignette Crit'Air de ton véhicule est acceptée, aux jours et heures indiqués.")
+_p("B56", "Zone à faibles émissions", "Entrée d'une zone à circulation restreinte : seuls les véhicules autorisés y circulent, le plus souvent selon leur vignette Crit'Air.", "Lis le panonceau : n'entre que si ton véhicule est autorisé (vignette Crit'Air, jours et heures indiqués).")
 _p("B57", "Fin de zone à faibles émissions", "Sortie de la zone à circulation restreinte.", cat="fin")
 _p("B58", "Zone à équipements d'hiver obligatoires", "Entrée d'une zone de montagne où pneus hiver ou chaînes sont obligatoires du 1er novembre au 31 mars.", "Du 1er novembre au 31 mars, roule avec des pneus hiver ou garde des chaînes ou chaussettes à bord.")
 _p("B59", "Fin de zone à équipements d'hiver", "Sortie de la zone où les équipements d'hiver sont obligatoires.", cat="fin")
@@ -206,8 +206,8 @@ _p("C1a_M4c", "Parking motos", "Stationnement réservé aux motos.", "Ne te gare
 
 # ----------------------------------------------------------------------------- obligations (B21 à B29)
 _fam("obligations")
-_p("B21-1", "Obligation de tourner à droite", "Obligation de tourner à droite avant le panneau.", "Tu dois passer à droite, dans le sens indiqué par la flèche.")
-_p("B21-2", "Obligation de tourner à gauche", "Obligation de tourner à gauche avant le panneau.", "Tu dois passer à gauche, dans le sens indiqué par la flèche.")
+_p("B21-1", "Obligation de tourner à droite", "Obligation de tourner à droite avant le panneau.", "Tourne à droite avant le panneau, dans le sens de la flèche.")
+_p("B21-2", "Obligation de tourner à gauche", "Obligation de tourner à gauche avant le panneau.", "Tourne à gauche avant le panneau, dans le sens de la flèche.")
 _p("B21a1", "Contournement par la droite", "Contournement obligatoire de l'obstacle par la droite.", "Contourne l'îlot ou l'obstacle par la droite.")
 _p("B21a2", "Contournement par la gauche", "Contournement obligatoire de l'obstacle par la gauche.", "Contourne l'îlot ou l'obstacle par la gauche.")
 _p("B21b", "Tout droit obligatoire", "Direction obligatoire à la prochaine intersection : tout droit.", "À la prochaine intersection, tu dois continuer tout droit.")
@@ -243,7 +243,7 @@ _p("B49", "Fin d'une autre obligation", "Fin d'une obligation dont la nature est
 
 # ----------------------------------------------------------------------------- indications (C)
 _fam("indications")
-_p("C2", "Hôpital", "Hôpital ou clinique à proximité.", "Reste discret : évite le klaxon, et facilite le passage des ambulances.")
+_p("C2", "Hôpital", "Hôpital ou clinique à proximité (ancien panneau, encore très répandu).", "Reste discret : évite le klaxon, et facilite le passage des ambulances.")
 _p("C3", "Risque d'incendie", "Forêt facilement inflammable : risque d'incendie.", "Ne jette ni cigarette ni déchet ; ne fais pas de feu.")
 _p("C5", "Station de taxis", "Station de taxis : arrêt et stationnement réservés aux taxis en service.", "Ne t'arrête pas sur les emplacements réservés aux taxis.")
 _p("C6", "Arrêt d'autobus", "Arrêt d'autobus.", "Ne t'arrête pas et ne stationne pas sur l'emplacement du bus ; en ville, laisse le bus quitter son arrêt.")
@@ -266,7 +266,7 @@ _p("C25a", "Limitations de vitesse en France", "Rappel, à la frontière, des li
 _p("C26a", "Voie de détresse à droite", "Voie de détresse à droite, pour les véhicules dont les freins ne répondent plus.", "N'y stationne jamais : elle sert à arrêter un véhicule sans freins dans une descente.")
 _p("C26b", "Voie de détresse à gauche", "Voie de détresse à gauche.", "N'y stationne jamais : elle sert à arrêter un véhicule sans freins dans une descente.")
 _p("C27", "Surélévation de chaussée", "Surélévation de chaussée : ralentisseur ou plateau.", "Ralentis franchement avant la surélévation.", voix="Ralentisseur")
-_p("C28", "Réduction du nombre de voies", "Réduction du nombre de voies.", "Rabats-toi tôt et laisse s'insérer ceux qui perdent leur voie, en fermeture éclair.")
+_p("C28", "Réduction du nombre de voies", "Réduction du nombre de voies.", "Si ta voie disparaît, insère-toi sans forcer le passage ; sinon, laisse s'insérer ceux qui perdent leur voie, chacun son tour.")
 _p("C29a", "Créneau de dépassement", "Présignalisation d'un créneau de dépassement ou d'une section à chaussées séparées.", "Attends le créneau pour dépasser en sécurité.")
 _p("C30", "Fin de créneau de dépassement", "Fin du créneau de dépassement.", "Termine ton dépassement et rabats-toi : la route repasse à une voie par sens.")
 _p("C50", "Indication diverse", "Indication écrite sur le panneau (par exemple « Arrêt autorisé sur trottoir »).")
@@ -282,7 +282,7 @@ _p("C113", "Piste cyclable conseillée", "Piste ou bande cyclable conseillée, r
 _p("C114", "Fin de piste cyclable conseillée", "Fin de la piste ou bande cyclable conseillée.", cat="fin")
 _p("C115", "Voie verte", "Voie verte, réservée aux piétons et aux véhicules non motorisés.", "N'y circule pas avec un véhicule à moteur.")
 _p("C116", "Fin de voie verte", "Fin de la voie verte.", cat="fin")
-_p("C207", "Autoroute", "Début d'une section d'autoroute.", "130 km/h maximum par temps sec, 110 par temps de pluie ; ni piétons ni vélos, ni arrêt ni demi-tour.", voix="Autoroute", vitesse=130)
+_p("C207", "Autoroute", "Début d'une section d'autoroute.", "130 km/h maximum par temps sec, 110 par temps de pluie, et jamais plus de 110 en apprentissage ou en permis probatoire ; ni piétons ni vélos, ni arrêt ni demi-tour.", voix="Autoroute", vitesse=130)
 _p("C208", "Fin d'autoroute", "Fin de l'autoroute.", "Ralentis et réadapte ta conduite : les règles de la route ordinaire s'appliquent.", cat="fin")
 
 # ----------------------------------------------------------------------------- services (CE)
@@ -333,13 +333,14 @@ _p("AK2", "Cassis ou dos-d'âne (temporaire)", "Signalisation temporaire : défo
 _p("AK3", "Chaussée rétrécie (temporaire)", "Signalisation temporaire : chaussée rétrécie.", "Ralentis et serre à droite : la zone de chantier réduit la largeur de la route.")
 _p("AK4", "Chaussée glissante (temporaire)", "Signalisation temporaire : chaussée glissante.", "Ralentis et augmente tes distances : boue, gravillons ou enrobé frais.")
 _p("AK5", "Travaux", "Signalisation temporaire : travaux.", "Ralentis et attends-toi à des ouvriers, des engins ou une voie neutralisée.", voix="Travaux")
-_p("AK14", "Autres dangers (temporaire)", "Signalisation temporaire : danger précisé par un panonceau.", "Lis le panonceau qui précise le danger, et ralentis.")
+_p("AK14", "Autres dangers (temporaire)", "Signalisation temporaire : danger particulier, parfois précisé par un panonceau.", "Ralentis et sois prêt à t'arrêter ; lis le panonceau s'il y en a un.")
 _p("AK17", "Feux de chantier (annonce)", "Signalisation temporaire : annonce de feux réglant la circulation.", "Prépare-toi à t'arrêter au feu de chantier : la circulation est alternée.")
 _p("AK22", "Projection de gravillons", "Signalisation temporaire : projection de gravillons.", "Ralentis et augmente les distances pour protéger ton pare-brise et celui des autres.")
 _p("AK30", "Bouchon", "Signalisation temporaire : bouchon.", "Ralentis, allume tes feux de détresse à l'approche de la file et garde une marge devant toi.", voix="Bouchon")
 _p("AK31", "Accident", "Signalisation temporaire : accident.", "Ralentis, ne t'arrête pas pour regarder et facilite le passage des secours.")
 _p("AK32", "Brouillard ou fumées", "Signalisation temporaire : nappes de brouillard ou fumées épaisses.", "Ralentis, allume tes feux de croisement et de brouillard, augmente tes distances.")
-_p("B1j", "Sens interdit (temporaire)", "Sens interdit sur fond jaune : interdiction temporaire, liée à un chantier ou à une déviation.", "Ne t'engage pas et suis la déviation.")
+_fam("interdictions")  # le B1j est un panneau permanent (créé en 2015) : rangé avec les interdictions, sans le déplacer dans la liste
+_p("B1j", "Sens interdit sur fond jaune", "Sens interdit sur fond jaune vif, pour être mieux vu : on le trouve surtout au bout des bretelles de sortie d'autoroute et de voie rapide, pour éviter les contresens.", "Ne t'engage surtout pas : sur une bretelle de sortie, tu roulerais à contresens.", voix="Sens interdit")
 
 # ----------------------------------------------------------------------------- agglomérations, balises et repères
 _fam("reperes")
@@ -347,7 +348,7 @@ _p("EB10", "Entrée d'agglomération", "Entrée d'agglomération : la vitesse es
 _p("EB20", "Sortie d'agglomération", "Sortie d'agglomération : fin des règles propres à l'agglomération.", "Fin de l'agglomération : la vitesse générale hors agglomération s'applique (souvent 80 km/h).", voix="Sortie d'agglomération", vitesse=80, cat="fin")
 _p("J3", "Balise d'intersection", "Balise blanche à anneau rouge : elle signale une intersection hors agglomération.", "Une route débouche ici : ralentis et regarde si un véhicule s'apprête à sortir.")
 _p("J5", "Balise de tête d'îlot", "Balise signalant la tête d'un îlot directionnel : passe du côté indiqué par la flèche.", "Contourne l'îlot du côté de la flèche.")
-_p("J13", "Balise d'obstacle", "Balise à chevrons bleus et blancs signalant un obstacle ou un îlot.", "Contourne l'obstacle signalé par la balise.")
+_p("J13", "Balise d'obstacle", "Balise à bandes obliques bleues et blanches : elle signale un obstacle tout proche du bord de la chaussée, comme un muret ou un petit pont.", "Écarte-toi de l'obstacle et ralentis si tu dois croiser un autre véhicule.")
 _p("J10", "Balises de passage à niveau", "Balises annonçant un passage à niveau : trois, deux puis une barre rouge, tous les 50 m environ.", "Compte les barres : à la dernière balise, le passage à niveau est à une cinquantaine de mètres.")
 _p("SR3", "Contrôle radar", "Zone où la vitesse est contrôlée par un radar automatique.", "Vérifie ta vitesse : elle est contrôlée, ici ou dans les kilomètres qui suivent.", voix="Contrôle radar", cat="indication")
 
@@ -361,8 +362,8 @@ _p("M4b", "Panonceau : transports en commun", "Le panneau concerne les véhicule
 _p("M4c", "Panonceau : motos", "Le panneau concerne les motocyclettes.")
 _p("M4d1", "Panonceau : vélos", "Le panneau concerne les cycles.")
 _p("M4d2", "Panonceau : cyclomoteurs", "Le panneau concerne les cyclomoteurs.")
-_p("M4f", "Panonceau : poids", "Le panneau concerne les véhicules dont le poids dépasse le nombre indiqué.")
-_p("M4g", "Panonceau : poids lourds", "Le panneau concerne les véhicules de transport de marchandises.")
+_p("M4f", "Panonceau : poids", "Le panneau concerne les véhicules dont le poids total autorisé en charge (PTAC) dépasse le nombre indiqué.")
+_p("M4g", "Panonceau : transport de marchandises", "Le panneau concerne les véhicules de transport de marchandises.")
 _p("M5", "Panonceau STOP à distance", "Annonce la distance à laquelle se trouve le STOP.", "Ralentis : tu devras marquer l'arrêt à la distance indiquée.")
 _p("M6a", "Panonceau : mise en fourrière", "Stationnement gênant : le véhicule peut être mis en fourrière.")
 _p("M6c", "Panonceau : durée limitée (disque)", "Stationnement à durée limitée, contrôlée par disque.")
@@ -374,7 +375,7 @@ _p("M7", "Panonceau schéma d'intersection", "Schéma de l'intersection : le tra
 _p("M8", "Panonceau d'application", "Flèches indiquant où commence, continue ou finit la prescription (stationnement...).")
 _p("M9a", "Panonceau : avion", "Précise le danger : passage d'avions à basse altitude.")
 _p("M9c", "Panonceau « Cédez le passage »", "Rappelle l'obligation de céder le passage.")
-_p("M9d", "Panonceau : ralentisseur", "Précise le danger : ralentisseur.")
+_p("M9d", "Panonceau : passage surélevé", "Sous un panneau de passage pour piétons : le passage est surélevé, comme un ralentisseur.")
 _p("M9e", "Panonceau SOS", "Poste d'appel d'urgence.")
 _p("M9v", "Panonceau « Sauf vélos »", "L'interdiction ne s'applique pas aux cyclistes.", "Attends-toi à voir des vélos là où les autres véhicules sont interdits.")
 _p("M9z", "Panonceau à inscription", "Indication écrite : « Rappel », « Verglas fréquent », « Sauf riverains »...", "Lis l'inscription : elle complète le panneau placé au-dessus.")
@@ -418,6 +419,9 @@ MARQUAGES = [
 ]
 
 CLASSES = PANNEAUX + MARQUAGES
+# Panneaux qui effacent la vitesse maximale gardée en mémoire sans en donner une nouvelle (fin de limitation, fin de toutes
+# les interdictions, fin d'autoroute : la limite d'après dépend de la route)
+FINS_VITESSE = ("B33", "B31", "C208")
 NAMES = [c.code for c in CLASSES]
 BY_CODE = {c.code: i for i, c in enumerate(CLASSES)}
 SIGN_CODES = [c.code for c in PANNEAUX]
