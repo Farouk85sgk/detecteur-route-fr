@@ -56,10 +56,13 @@ def main():
     ap.add_argument("--facteur", type=float, default=None, help="seuil des panneaux = facteur x conf (défaut : celui du détecteur)")
     ap.add_argument("--max", type=int, default=0, help="nombre d'images (0 : toutes)")
     ap.add_argument("--annonces", default="", help="fichier JSON où écrire toutes les annonces (score, nature, vrai type, type annoncé)")
+    ap.add_argument("--sans-seuils", action="store_true", help="ignorer les seuils propres à certains panneaux (SEUILS de route_fr/classes.py)")
     a = ap.parse_args()
     det = Detector(a.poids, a.taille, a.conf, classifier=a.classifieur)
     if a.facteur is not None:
         det.sign_factor = a.facteur
+    if a.sans_seuils:
+        det.seuils[:] = 0
     seuil = det.sign_factor * det.conf  # seuil de l'appli ; on récolte les annonces plus bas pour le tableau des seuils
     det.sign_factor = min(det.sign_factor, 0.2 / det.conf)
     dossier = Path(a.images)
