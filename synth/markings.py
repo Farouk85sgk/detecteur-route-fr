@@ -50,6 +50,7 @@ class Marking:
     rasters: list = field(default_factory=list)  # (alpha uint8, coins route TL, TR, BR, BL)
     color: str = "white"
     label_zmax: float = 0.0  # lignes longitudinales : on n'annote que la partie Z < label_zmax
+    extras: list = field(default_factory=list)  # marquages peints à côté : « _ignorer » (zone ignorée) ou « _texte » (fond)
 
 
 # ----------------------------------------------------------------------------- géométrie
@@ -278,6 +279,19 @@ def raster_corners(xc, zc, wm, lm):
     return np.array([[xc - wm / 2, zc + lm / 2], [xc + wm / 2, zc + lm / 2], [xc + wm / 2, zc - lm / 2], [xc - wm / 2, zc - lm / 2]])
 
 
+def tourner(coins, xc, zc, ang):
+    """Fait tourner une emprise au sol (coins route) autour de (xc, zc), d'un angle ang (radians)."""
+    c, s = math.cos(ang), math.sin(ang)
+    d = np.asarray(coins, float) - [xc, zc]
+    return np.stack([xc + c * d[:, 0] - s * d[:, 1], zc + s * d[:, 0] + c * d[:, 1]], 1)
+
+
+def angle_au_sol(rng, ecart, part_libre, libre):
+    """Petit écart d'orientation d'un pictogramme ou d'un mot peint (tracé à la main, voie qui tourne), et parfois un
+    angle franc (carrefour, traversée en biais) : sur les vraies photos, ils ne sont pas toujours dans l'axe de la voie."""
+    return rng.uniform(-libre, libre) if rng.random() < part_libre else rng.gauss(0, ecart)
+
+
 def texte_couche(word, rng, cam, xc, zc, hm, lm, cote=1):
     """Inscription écrite le long de la voie, lue depuis la chaussée : la tête des lettres est tournée vers le trottoir
     (cote = 1 : trottoir de droite, -1 : trottoir de gauche). hm : hauteur des lettres, lm : longueur du mot."""
@@ -301,7 +315,8 @@ def tirets(a, b, ep, plein=0.5, vide=0.5):
 
 # inscriptions peintes au sol
 VITESSES_SOL = ["30"] * 13 + ["50"] * 3 + ["70", "20", "90", "10"]
-LEURRES_TEXTE = ["TAXI", "TAXIS", "PAYANT", "ECOLE", "PARKING", "CAR", "CARS", "PIETONS", "LENT", "POLICE", "POMPIERS", "PRIVE", "SORTIE", "DEPOSE", "ZONE", "GIG GIC", "LIVRAISONS INTERDITES"]
+LEURRES_TEXTE = ["TAXI", "TAXIS", "PAYANT", "ECOLE", "PARKING", "CAR", "CARS", "PIETONS", "LENT", "POLICE", "POMPIERS", "PRIVE", "SORTIE", "DEPOSE", "ZONE", "GIG GIC", "LIVRAISONS INTERDITES",
+                 "TRAM", "RALENTIR", "SAUF", "ARRET", "TRAM", "RALENTIR"]
 
 
 def raster_size(cam, xc, zc, wm, lm):
@@ -329,7 +344,7 @@ def render_alpha(cam, mk, ss=2, zmin=1.2):
         pts = np.clip(pts, -4 * W, 5 * W)
         cv2.fillPoly(canvas, [np.round(pts * 16).astype(np.int32)], 255, cv2.LINE_AA, shift=4)
     for raster, corners in mk.rasters:
-        if corners[:, 1].min() < zmin:
+        if corners[:, 1].min() < 1.0:  # (un mot ou un pictogramme coupé par le bas de l'image reste dessiné)
             continue
         u, v = cam.project(corners[:, 0], corners[:, 1])
         dst = np.stack([u * ss, v * ss], 1).astype(np.float32)
@@ -403,9 +418,14 @@ def make_local(code, xc, zc, lane_w, rng, cam):
         bw, ln = rng.uniform(0.9, 1.5), rng.uniform(2.5, 5.0)
         mk.polys = [place([[-bw / 2, ln / 2], [bw / 2, ln / 2], [0, -ln / 2]], xc, zc)]
     elif code == "M_dents_requin":
-        n = rng.randint(3, 7)
-        base = min(rng.uniform(0.45, 0.9), (lane_w - 0.3) / n)
-        mk.polys = [place(p, xc, zc) for p in triangles_row(n, base, rng.uniform(0.6, 1.4), rng.uniform(0.1, 0.3))]
+        if rng.random() < 0.35:  # rangée qui barre toute la chaussée (8 à 14 triangles), la plus courante sur les vraies photos
+            n, gap = rng.randint(8, 14), rng.uniform(0.1, 0.3)
+            base = min(rng.uniform(0.45, 0.8), (2.1 * lane_w - (n - 1) * gap) / n)
+            xc -= rng.uniform(0.3, 0.6) * lane_w  # centrée sur la chaussée, pas sur la voie
+        else:
+            n, gap = rng.randint(3, 7), rng.uniform(0.1, 0.3)
+            base = min(rng.uniform(0.45, 0.9), (lane_w - 0.3) / n)
+        mk.polys = [place(p, xc, zc) for p in triangles_row(n, base, rng.uniform(0.6, 1.4), gap)]
     elif code == "M_passage_pietons":
         ln = rng.uniform(2.5, 6.0)
         stripe, gap = 0.5, rng.uniform(0.5, 0.8)
@@ -415,8 +435,8 @@ def make_local(code, xc, zc, lane_w, rng, cam):
             mk.polys.append(rect_xz(x, x + stripe, zc - ln / 2, zc + ln / 2))
             x += stripe + gap
     elif code == "M_damier":
-        sq = rng.choice([0.5, 0.5, 0.6])
-        rows = rng.choice([2, 2, 3])
+        sq = rng.choice([0.5, 0.5, 0.6]) if rng.random() < 0.8 else rng.uniform(0.8, 1.0)  # grands damiers des carrefours
+        rows = rng.choice([2, 2, 3]) if sq < 0.7 else rng.choice([2, 3, 4])
         n = int(lane_w * rng.uniform(1.0, 2.2) / sq)
         x0 = xc - n * sq / 2
         for r in range(rows):
@@ -443,20 +463,26 @@ def make_local(code, xc, zc, lane_w, rng, cam):
         # pour la voie d'en face (un quart des « BUS » et des « 30 » des vraies photos).
         word = {"M_stop_sol": "STOP", "M_bus": "BUS"}.get(code) or rng.choice(VITESSES_SOL)
         envers = rng.random() < (0.08 if code == "M_stop_sol" else 0.25)
+        ang = angle_au_sol(rng, 0.05, 0.1, 0.5)
         if code == "M_vitesse_sol":
-            style = rng.choice(["anneau"] * 13 + ["disque"] * 3 + ["seul"] * 2 + ["zone"] * 2)
-            if style == "zone":  # « ZONE 30 » en travers de la voie
-                wm, lm = min(lane_w * rng.uniform(0.7, 0.9), 3.0), rng.uniform(1.5, 3.0)
-                raster = text_raster("ZONE " + word, rng, *raster_size(cam, xc, zc, wm, lm))
-            else:
-                wm = min(lane_w * rng.uniform(0.45, 0.7), 2.4) if style != "seul" else min(lane_w * rng.uniform(0.35, 0.6), 2.0)
-                lm = wm * rng.uniform(1.3, 2.3) if style != "seul" else rng.uniform(1.5, 4.2)
-                raster = vitesse_raster(word, rng, *raster_size(cam, xc, zc, wm, lm), style)
+            style = rng.choice(["anneau"] * 13 + ["disque"] * 3 + ["seul"] * 2 + ["zone"] * 3)
+            zone = style == "zone"
+            if zone:  # « ZONE 30 » sur deux lignes : le nombre (annoté), et le mot ZONE juste avant ou juste après (fond)
+                style = rng.choice(["anneau", "seul", "seul"])
+            wm = min(lane_w * rng.uniform(0.45, 0.7), 2.4) if style != "seul" else min(lane_w * rng.uniform(0.35, 0.6), 2.0)
+            lm = wm * rng.uniform(1.3, 2.3) if style != "seul" else rng.uniform(1.5, 4.2)
+            raster = vitesse_raster(word, rng, *raster_size(cam, xc, zc, wm, lm), style)
+            if zone:
+                wz, lz = min(lane_w * rng.uniform(0.55, 0.85), 2.8), lm * rng.uniform(0.45, 0.8)
+                zz = zc + rng.choice([-1, 1]) * (lm / 2 + rng.uniform(0.3, 1.0) + lz / 2)
+                mot = Marking("_texte")
+                mot.rasters.append((text_raster("ZONE", rng, *raster_size(cam, xc, zz, wz, lz)), tourner(np.roll(raster_corners(xc, zz, wz, lz), 2 if envers else 0, 0), xc, zc, ang)))
+                mk.extras.append(mot)
         else:
             wm = min(lane_w * rng.uniform(0.55, 0.8), 2.6)
             lm = rng.uniform(1.6, 3.2) if word == "STOP" else rng.uniform(1.5, 4.2)  # lettres de 1,5 m en ville, jusqu'à 4 m ailleurs
             raster = text_raster(word, rng, *raster_size(cam, xc, zc, wm, lm))
-        mk.rasters.append((raster, np.roll(raster_corners(xc, zc, wm, lm), 2 if envers else 0, 0)))
+        mk.rasters.append((raster, tourner(np.roll(raster_corners(xc, zc, wm, lm), 2 if envers else 0, 0), xc, zc, ang)))
     elif code == "_texte":  # autre inscription (TAXI, PAYANT...) : peinte, jamais annotée, pour ne pas la prendre pour BUS ou STOP
         word = rng.choice(LEURRES_TEXTE)
         if rng.random() < 0.5:
@@ -501,14 +527,23 @@ def make_local(code, xc, zc, lane_w, rng, cam):
         else:
             coins = np.roll(raster_corners(xc, zc, wm, lm), quart, 0)
             w_px, h_px = raster_size(cam, xc, zc, wm, lm)
-        mk.rasters.append((bike_raster(rng, w_px, h_px, rider=rng.random() < 0.6, officiel=officiel, plein=plein), coins))
-        officiel = officiel and quart == 0
-        if officiel and rng.random() < 0.35:  # flèche de sens, devant le pictogramme
-            mk.polys += [place(p, xc, zc + lm / 2 + 1.6) for p in arrow_straight(rng.uniform(1.6, 2.4), rng.uniform(0.35, 0.5), rng.uniform(0.1, 0.14))]
-        if rng.random() < 0.3:  # chevrons d'accompagnement
-            for k in range(2):
-                z = zc + lm / 2 + 0.4 + 0.5 * k
-                mk.polys.append(place(stroke([[-0.35, -0.25], [0, 0.1], [0.35, -0.25]], 0.12), xc, z))
+        ang = angle_au_sol(rng, 0.08, 0.15, 0.7)
+        mk.rasters.append((bike_raster(rng, w_px, h_px, rider=rng.random() < 0.6, officiel=officiel, plein=plein), tourner(coins, xc, zc, ang)))
+        # Petite flèche de sens ou double chevron, devant le pictogramme (dans le sens de lecture) : souvent présents dans
+        # les rues. Ce ne sont pas des flèches de voie : zone ignorée, et hors du cadre du pictogramme.
+        if quart % 2 == 0:
+            sens_z = 1 if quart == 0 else -1
+            acc = Marking("_ignorer")
+            if (officiel or plein) and rng.random() < 0.35:
+                L = rng.uniform(1.6, 2.4)
+                acc.polys += [place(p * [1, sens_z], xc, zc + sens_z * (lm / 2 + 0.5 + L / 2)) for p in arrow_straight(L, rng.uniform(0.35, 0.5), rng.uniform(0.1, 0.14))]
+            if rng.random() < 0.3:
+                for k in range(2):
+                    z = zc + sens_z * (lm / 2 + 0.4 + 0.5 * k)
+                    acc.polys.append(place(stroke([[-0.35, -0.25 * sens_z], [0, 0.1 * sens_z], [0.35, -0.25 * sens_z]], 0.12), xc, z))
+            if acc.polys:
+                acc.polys = [tourner(p, xc, zc, ang) for p in acc.polys]
+                mk.extras.append(acc)
     elif code == "M_zigzag":
         # Ligne jaune en zigzag d'un arrêt d'autobus. Sur les vraies photos (24 arrêts relevés dans six régions), les dents
         # sont grandes : elles balaient toute la largeur de l'arrêt (2 m environ) et se suivent tous les 2 à 5 m. Les

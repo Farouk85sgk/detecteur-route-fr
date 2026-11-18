@@ -29,6 +29,9 @@ from route_fr.classes import DET_IGNORER, DET_MARQUAGE, DET_PANNEAU, DETECTEUR, 
 from route_fr.signs_svg import DECOY_KINDS, SVG_CODES, build, decoy, other_sign  # noqa: E402
 from synth.markings import Camera, longitudinal, make_local, render_alpha  # noqa: E402
 
+JAUNE_CHANTIER = ("M_passage_pietons", "M_ligne_stop", "M_ligne_cedez", "M_fleche_tout_droit", "M_fleche_droite", "M_fleche_gauche",
+                  "M_fleche_tout_droit_droite", "M_fleche_tout_droit_gauche")  # repeints en jaune pendant des travaux
+
 ROAD, MOVABLE, MYCAR = 1, 4, 5
 OUT = 416  # taille des images générées (échelle d'une inférence en 640 sur une image 16:9)
 LONGITUDINAUX = ("M_ligne_continue", "M_ligne_discontinue", "M_ligne_mixte", "M_ligne_dissuasion", "M_ligne_rive")
@@ -248,7 +251,13 @@ def plan_markings(sc, rng):
     places = []
     for _ in range(rng.choice([0, 1, 1, 2, 2, 3])):
         code = rng.choice(LOCAL_MARKINGS)
-        z = rng.uniform(zb + 3, min(z_end - 2, 40)) if z_end > zb + 6 else rng.uniform(zb + 3, 30)
+        if rng.random() < 0.35:
+            # Tout près, jusqu'à passer sous le bas de l'image. Sur les vraies photos, les marquages sont souvent vus de
+            # près et de haut, peu écrasés, et coupés par le bas ou le bord : le détecteur appris sur des marquages
+            # toujours lointains ne les voyait pas.
+            z = rng.uniform(max(zb - 2.5, 1.8), zb + 3)
+        else:
+            z = rng.uniform(zb + 1.5, min(z_end - 2, 40)) if z_end > zb + 6 else rng.uniform(zb + 1.5, 30)
         x = xc + rng.uniform(-0.25, 0.25)
         if code == "M_zigzag":
             x = xr - 0.1 if rng.random() < 0.6 else xr + rng.uniform(2.4, 3.4)  # au bord de la voie, ou d'une voie plus à droite
@@ -304,6 +313,76 @@ def smooth_noise(shape, rng, scale):
     return cv2.resize(small, (shape[1], shape[0]), interpolation=cv2.INTER_CUBIC)
 
 
+def part_dans_image(cam, mk):
+    """Part de la peinture d'un marquage qui tombe dans l'image (le reste passe sous le bas ou hors des bords)."""
+    m, mb = cam.w // 2, cam.h_img
+    grand = Camera(cam.f, cam.u0 + m, cam.v0, cam.w + 2 * m, cam.h_img + mb, cam.h)
+    a = render_alpha(grand, mk, ss=1)
+    tout = float(a.sum())
+    return float(a[: cam.h_img, m : m + cam.w].sum()) / tout if tout > 0 else 0.0
+
+
+def teinter_chaussee(sc, rng):
+    """Chaussées qui ne sont pas grises : couloir de bus ou bande cyclable colorés (une voie), béton clair, enrobé beige ou
+    rouge (toute la chaussée). La texture de la chaussée est gardée, seule sa couleur change ; la peinture vient après."""
+    r = rng.random()
+    if r > 0.15:
+        return
+    cam, H, W = sc.cam, sc.mask.shape[0], sc.mask.shape[1]
+    road = sc.mask == ROAD
+    vv, uu = np.mgrid[0:H, 0:W].astype(np.float32)
+    if r < 0.07:
+        couleur = rng.choice([(55, 60, 150), (70, 80, 165), (75, 125, 85)])  # rouge brique, rouge, vert (BGR)
+        z = cam.f * cam.h / np.maximum(vv - cam.v0, 1e-3)
+        X = (uu - cam.u0) * z / cam.f
+        xa = sc.xl + rng.choice([-1, 0, 0, 1]) * sc.lane_w
+        xb = xa + (sc.lane_w if rng.random() < 0.6 else rng.uniform(1.4, 2.0))
+        zone = road & (vv > cam.v0 + 2) & (X >= xa) & (X <= xb)
+    else:
+        couleur = rng.choice([(150, 158, 162), (125, 150, 172), (95, 105, 145), (135, 135, 135)])  # béton, beige, rouge, gris clair
+        zone = road
+    if zone.sum() < 50:
+        return
+    img = sc.img.astype(np.float32)
+    lum = img.mean(-1, keepdims=True)
+    teinte = lum / max(float(lum[zone].mean()), 1.0) * np.array(couleur, np.float32)
+    k = rng.uniform(0.3, 0.7)
+    img[zone] = img[zone] * (1 - k) + teinte[zone] * k
+    sc.img = np.clip(img, 0, 255).astype(np.uint8)
+
+
+def ombres(sc, rng, nrng):
+    """Ombres portées sur la chaussée et ses marquages : bord net d'un bâtiment, ou taches d'un feuillage."""
+    if rng.random() > 0.3:
+        return
+    H, W = sc.mask.shape
+    road = cv2.GaussianBlur((sc.mask == ROAD).astype(np.float32), (0, 0), 1.0)
+    if rng.random() < 0.5:
+        m = np.zeros((H, W), np.float32)
+        x_haut, x_bas = rng.uniform(-0.3, 1.3) * W, rng.uniform(-0.3, 1.3) * W
+        cote = 0 if rng.random() < 0.5 else W
+        pts = np.array([[cote, 0], [x_haut, 0], [x_bas, H], [cote, H]], np.int32)
+        cv2.fillPoly(m, [pts], 1.0)
+        if rng.random() < 0.4:  # ombre d'un poteau ou d'un arbre isolé : une bande
+            m[:] = 0
+            x0 = rng.uniform(0, W)
+            cv2.fillPoly(m, [np.array([[x0, H], [x0 + rng.uniform(8, 40), H], [rng.uniform(0, W), sc.cam.v0 + 5], [rng.uniform(0, W), sc.cam.v0 + 5]], np.int32)], 1.0)
+        m = cv2.GaussianBlur(m, (0, 0), rng.uniform(0.8, 2.5))
+    else:  # feuillage : grandes taches aux bords doux, sur une partie de la chaussée seulement
+        bruit = smooth_noise((H, W), nrng, rng.choice([10, 14, 20])) * 0.85 + smooth_noise((H, W), nrng, 5) * 0.15
+        seuil = np.quantile(bruit, rng.uniform(0.3, 0.6))
+        m = cv2.GaussianBlur((bruit > seuil).astype(np.float32), (0, 0), rng.uniform(1.5, 3.5))
+        xa = rng.uniform(-0.2, 0.6) * W
+        bande = np.zeros((H, W), np.float32)
+        bande[:, int(max(0, xa)) : int(min(W, xa + rng.uniform(0.4, 0.9) * W))] = 1.0
+        m *= cv2.GaussianBlur(bande, (0, 0), 0.08 * W)
+    force = rng.uniform(0.25, 0.55)
+    fac = 1 - force * m * road
+    teinte = np.array([1.0, 0.97, 0.93], np.float32)  # l'ombre est un peu bleutée (lumière du ciel)
+    img = sc.img.astype(np.float32) * (fac[..., None] * np.where(m[..., None] * road[..., None] > 0.5, teinte, 1.0))
+    sc.img = np.clip(img, 0, 255).astype(np.uint8)
+
+
 def paint_markings(sc, rng, nrng):
     cam = sc.cam
     road = (sc.mask == ROAD).astype(np.float32)
@@ -315,9 +394,17 @@ def paint_markings(sc, rng, nrng):
     ratio = rng.uniform(1.7, 3.2) if not sc.night else rng.uniform(1.5, 3.5)
     white = np.clip(illum * ratio + rng.uniform(0, 25), 0, 250)
     yellow = np.clip(illum * ratio * np.array([0.35, 0.85, 1.05]), 0, 250)
+    if rng.random() < 0.5:  # jaune pâli (zigzags et places de livraison anciens, peu saturés sur les vraies photos)
+        p = rng.uniform(0.15, 0.55)
+        yellow = yellow * (1 - p) + white * p
     wear_field = smooth_noise(road.shape, nrng, 24) * 0.6 + smooth_noise(road.shape, nrng, 3) * 0.4
     labels = []
+    tous = []
     for mk in plan_markings(sc, rng):
+        if mk.code in JAUNE_CHANTIER and rng.random() < 0.06:
+            mk.color = "yellow"
+        tous += [mk] + [e for e in mk.extras if e is not None]
+    for mk in tous:
         a = render_alpha(cam, mk)
         total = a.sum()
         if total < 4:
@@ -325,6 +412,7 @@ def paint_markings(sc, rng, nrng):
         wear = rng.uniform(0, 0.75) if rng.random() < 0.6 else 0.0
         opacity = rng.uniform(0.7, 0.97)
         av = a * road * opacity * np.clip(1 - wear * wear_field, 0.15, 1)
+        vu = float((a * road).sum() / total)  # part non cachée par un véhicule ou le capot
         if av.sum() / (total * opacity) < 0.35:
             continue
         lab = av.copy()
@@ -346,8 +434,15 @@ def paint_markings(sc, rng, nrng):
             continue
         paint = yellow if mk.color == "yellow" else white
         img = img * (1 - av[..., None]) + paint * av[..., None]
-        if not mk.code.startswith("_"):  # « _texte » : inscription peinte qui doit rester du fond
-            labels.append((DET_MARQUAGE.get(mk.code, DET_IGNORER), x0, y0, x1, y1))  # marquage peint mais non appris : zone ignorée
+        if mk.code == "_texte":  # inscription peinte qui doit rester du fond (TAXI, PAYANT, ZONE...)
+            continue
+        if mk.code == "_ignorer":  # flèche ou chevrons d'un pictogramme vélo : zone ignorée
+            labels.append((DET_IGNORER, x0, y0, x1, y1))
+            continue
+        classe = DET_MARQUAGE.get(mk.code, DET_IGNORER)  # marquage peint mais non appris : zone ignorée
+        if not mk.label_zmax and classe != DET_IGNORER and vu * part_dans_image(cam, mk) < 0.6:
+            classe = DET_IGNORER  # moins de 60 % visible (coupé par le bas, le bord, ou caché) : zone ignorée, comme sur les vraies photos
+        labels.append((classe, x0, y0, x1, y1))
     sc.img = np.clip(img, 0, 255).astype(np.uint8)
     return labels
 
@@ -557,7 +652,9 @@ def make_sample(job):
         if img is not None and mask is not None:
             break
     sc = Scene(img, mask, meta_all[name], rng)
+    teinter_chaussee(sc, rng)
     labels = paint_markings(sc, rng, nrng)
+    ombres(sc, rng, nrng)
     labels += place_objects(sc, rng, nrng)
     labels += sc.real
     final = augment(sc.img, rng, nrng)
