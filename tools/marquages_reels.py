@@ -574,13 +574,42 @@ def rectangles_sans(zone, trous):
     return res
 
 
+def peinture_non_annotee(fen, exclues, yh, pas=16):
+    """Cellules (pas x pas points) d'une fenêtre de 416 points où l'on voit de la peinture que personne n'a annotée :
+    surtout les lignes longitudinales, qui ne sont pas toutes annotées. Elles deviennent des zones ignorées : le réseau
+    n'y est ni encouragé ni corrigé. Partout ailleurs sous l'horizon, ce qui n'est pas annoté est du fond."""
+    hsv = cv2.cvtColor(fen, cv2.COLOR_BGR2HSV)
+    h, sat, v = hsv[..., 0], hsv[..., 1], hsv[..., 2].astype(np.int16)
+    fond = cv2.medianBlur(hsv[..., 2], 31).astype(np.int16)
+    blanc = (v > fond + 28) & (sat < 85) & (v > 105)
+    jaune = (h >= 14) & (h <= 40) & (sat > 70) & (v > 95) & (v > fond + 8)
+    m = cv2.morphologyEx((blanc | jaune).astype(np.uint8), cv2.MORPH_OPEN, np.ones((2, 2), np.uint8))
+    m[: int(yh)] = 0
+    for x1, y1, x2, y2 in exclues:
+        m[max(0, int(y1)) : max(0, int(math.ceil(y2))), max(0, int(x1)) : max(0, int(math.ceil(x2)))] = 0
+    boites = []
+    n = m.shape[0] // pas
+    for r in range(n):
+        debut = None
+        for c in range(n + 1):
+            plein = c < n and m[r * pas : (r + 1) * pas, c * pas : (c + 1) * pas].mean() > 0.04
+            if plein and debut is None:
+                debut = c
+            elif not plein and debut is not None:
+                boites.append((debut * pas, r * pas, c * pas, (r + 1) * pas))
+                debut = None
+    return boites
+
+
 def exporte(a):
     """Fait des vues annotées un jeu d'entraînement au format YOLO : fenêtres carrées de 416 points découpées dans les vues
     (trois fenêtres fixes de 720 points de côté, plus une fenêtre rapprochée par marquage), étiquettes des marquages, et
-    zones techniques : rien n'est compté au-dessus de l'horizon (_ignorer : les panneaux n'y sont pas annotés), et sous
-    l'horizon seuls les marquages annotés comptent (_reel : un marquage non annoté n'est pas traité comme du fond).
-    Les leurres annotés (_leurre : mot TRAM, pictogramme handicapé, bouche d'égout...) sont retirés de la zone _reel : le
-    réseau y est corrigé comme sur du fond s'il y voit un marquage. Une fenêtre sans marquage mais avec un leurre est gardée.
+    zones techniques : rien n'est compté au-dessus de l'horizon (_ignorer : les panneaux n'y sont pas tous annotés). Sous
+    l'horizon, ce qui n'est pas annoté est du fond, sauf la peinture non annotée (lignes surtout), ignorée cellule par
+    cellule (voir peinture_non_annotee). (Jusqu'au 18 novembre 2026, toute la chaussée était une zone _reel où un marquage
+    non annoté ne coûtait rien : le détecteur v5a, appris ainsi, voyait des marquages partout sur les vraies routes.)
+    Les leurres annotés (_leurre : mot TRAM, pictogramme handicapé, bouche d'égout...) restent du fond : le réseau y est
+    corrigé s'il y voit un marquage. Une fenêtre sans marquage mais avec un leurre est gardée.
     Avec --panneaux det_xxx.json (détections d'un détecteur déjà entraîné, faites par « detecte --sortie »), les panneaux
     vus sous l'horizon (balises, bornes, panonceaux bas) sont ajoutés : sûrs -> panneau, douteux -> _ignorer. Sans cela,
     la zone _reel apprendrait au réseau à ne pas voir ces panneaux, qui ne sont pas annotés sur ces vues."""
@@ -644,9 +673,12 @@ def exporte(a):
                 yh = min(max(0, HORIZON - y0), s)
                 if yh > 0:
                     lignes.append((k_ign, 0.5, yh / (2 * s), 1.0, yh / s))
-                for rx1, ry1, rx2, ry2 in rectangles_sans((0, yh, s, s), trous) if yh < s else []:
-                    lignes.append((k_reel, (rx1 + rx2) / (2 * s), (ry1 + ry2) / (2 * s), (rx2 - rx1) / s, (ry2 - ry1) / s))
-                cv2.imwrite(str(dest / "images" / a.partie / f"{pid}_{k}.jpg"), cv2.resize(im[y0 : y0 + s, x0 : x0 + s], (416, 416), interpolation=cv2.INTER_AREA), [cv2.IMWRITE_JPEG_QUALITY, 90])
+                fen = cv2.resize(im[y0 : y0 + s, x0 : x0 + s], (416, 416), interpolation=cv2.INTER_AREA)
+                exclues = [((cx - w / 2) * 416 - 4, (cy - h / 2) * 416 - 4, (cx + w / 2) * 416 + 4, (cy + h / 2) * 416 + 4) for c, cx, cy, w, h in lignes]
+                exclues += [(t[0] * e, t[1] * e, t[2] * e, t[3] * e) for t in trous]
+                for bx1, by1, bx2, by2 in peinture_non_annotee(fen, exclues, yh * e):
+                    lignes.append((k_ign, (bx1 + bx2) / 832, (by1 + by2) / 832, (bx2 - bx1) / 416, (by2 - by1) / 416))
+                cv2.imwrite(str(dest / "images" / a.partie / f"{pid}_{k}.jpg"), fen, [cv2.IMWRITE_JPEG_QUALITY, 90])
                 (dest / "labels" / a.partie / f"{pid}_{k}.txt").write_text("".join(f"{c} {x:.6f} {y:.6f} {w:.6f} {h:.6f}\n" for c, x, y, w, h in lignes))
                 n_fen += 1
     print(f"{n_vues} vues annotées -> {n_fen} fenêtres dans {dest}/images/{a.partie} ; marquages : {dict(compte.most_common())}")
