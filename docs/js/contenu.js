@@ -9,6 +9,8 @@ export const APP = {
   depot: "https://github.com/Farouk85sgk/detecteur-route-fr",
   version: "3.1.0",
 };
+// lien « Code source » : la branche de développement de la 3.x (la branche par défaut du dépôt, main, est restée à la 2.0)
+APP.source = `${APP.depot}/tree/v3-reel`;
 
 // Éléments ajoutés à ceux du catalogue
 export const EXTRAS = [

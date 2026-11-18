@@ -25,9 +25,11 @@ payer les frais, signer et envoyer l'appli.
 
 1. Mets la dernière version (zip 3.1.0 ou plus récent) sur Hostinger, dans le dossier `repere`, comme d'habitude.
 2. Le site doit s'ouvrir en `https://`. C'est le cas chez Hostinger quand le certificat SSL est activé.
-3. Ouvre `https://TON-DOMAINE.fr/repere/confidentialite.html`. Deux lignes sont « à compléter » : le nom de l'éditeur
-   et l'adresse e-mail de contact. Donne-les moi et je les écris, ou modifie le fichier `confidentialite.html`.
-   Les deux boutiques exigent cette page.
+3. Ouvre `https://TON-DOMAINE.fr/repere/confidentialite.html`. Six champs sont « à compléter » : nom de l'éditeur
+   (auto-école ou personne responsable), adresse et téléphone (numéro SIREN pour une entreprise), directeur de la
+   publication, adresse e-mail de contact, et durée de conservation des journaux de l'hébergeur (Hostinger l'indique
+   dans sa politique de confidentialité). Donne-les moi et je les écris, ou modifie le fichier `confidentialite.html`.
+   Les deux boutiques exigent cette page, et la loi demande ces mentions.
 
 Partout dans ce dossier, remplace `TON-DOMAINE.fr` par ton vrai nom de domaine.
 
@@ -119,7 +121,7 @@ Cette licence demande que tout ce qui en dérive soit publié sous la même lice
 Ultralytics considère que les modèles entraînés avec son logiciel en font partie.
 
 - **Aujourd'hui, c'est respecté** : le code de Repère est public sur GitHub, sous licence AGPL-3.0, et l'appli donne
-  le lien vers ce code.
+  le lien vers ce code (la branche `v3-reel` du dépôt, celle de la version publiée).
 - **Sur Google Play**, une appli libre et gratuite peut être publiée ainsi. Garde le dépôt public et le lien dans l'appli.
 - **Sur l'App Store**, c'est moins clair : les conditions d'Apple ajoutent des restrictions que les licences de cette
   famille n'acceptent pas toujours. Des applis sous licence GPL ont déjà été retirées pour cette raison.

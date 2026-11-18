@@ -18,6 +18,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+# bibliothèque standard seulement (pas export_web.py, qui demande torch, onnx et YOLOv5) : le zip se fait avec le Python
+# du système, sans rien installer
+from tools.cache_web import version_cache  # noqa: E402
+
 HTACCESS = """# Appli « Repère » : réglages pour l'hébergeur (Apache / LiteSpeed)
 AddType application/manifest+json .webmanifest
 AddType application/wasm .wasm
@@ -57,7 +61,7 @@ LISEZ_MOI = """REPÈRE : mettre l'appli sur votre site, puis sur votre télépho
    - Sur un Xiaomi, si l'icône n'apparaît pas : Paramètres > Applications > Gérer les applications
      > Chrome > Autres autorisations, puis activez « Raccourcis sur l'écran d'accueil » et recommencez.
    - Au premier lancement de la caméra, acceptez l'autorisation « Caméra »
-     (et « Position » si vous voulez la carte de vos trajets).
+     (et « Position » si vous voulez que les photos des trajets gardent l'endroit où elles ont été prises).
 
 3) Pour rouler sans réseau
    - Dans l'appli, sur l'accueil, touchez « Tout préparer pour rouler sans réseau »
@@ -70,7 +74,8 @@ LISEZ_MOI = """REPÈRE : mettre l'appli sur votre site, puis sur votre télépho
      Le numéro de version est écrit en bas des Réglages de l'appli.
      Les profils et la progression restent sur le téléphone.
 
-Rien n'est envoyé sur Internet par l'appli : photos, trajets et profils restent sur le téléphone.
+L'appli n'envoie ni photos, ni trajets, ni profils : ils restent sur le téléphone (seul le bouton « Voir l'endroit
+sur la carte » d'une photo ouvre OpenStreetMap avec la position de cette photo). Détails : confidentialite.html.
 Au premier chargement, le moteur de calcul (ONNX Runtime) est téléchargé depuis cdn.jsdelivr.net.
 """
 
@@ -80,8 +85,6 @@ def main():
     ap.add_argument("--sortie", default=str(ROOT / "repere-hostinger.zip"))
     ap.add_argument("--dossier", default="repere", help="nom du dossier créé à l'extraction (et fin de l'adresse)")
     a = ap.parse_args()
-    from tools.export_web import version_cache
-
     web = ROOT / "docs"
     cache = version_cache(web)  # le nom du cache suit le contenu des modèles, icônes et photos
     fichiers = sorted(f for f in web.rglob("*") if f.is_file())

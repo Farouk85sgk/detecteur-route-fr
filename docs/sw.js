@@ -63,13 +63,21 @@ self.addEventListener("message", e => {
   if (e.data?.type === "mode") { mode = e.data.mode === "sans" ? "sans" : "avec"; e.waitUntil(memoriser("__mode", mode)); }
   if (e.data?.type === "isolation") { coep = ["require-corp", "credentialless"].includes(e.data.coep) ? e.data.coep : "non"; e.waitUntil(memoriser("__coep", coep)); }
   if (e.data?.type === "tout-preparer") e.waitUntil((async () => {
-    const c = await caches.open(LOURDS);
-    const res = await Promise.allSettled(MODELES.map(async u => { if (!(await c.match(u))) { const r = await fetch(u, { mode: "cors" }); if (!r.ok) throw new Error(u); await c.put(u, r); } }));
-    const catalogue = await (await fetch("catalogue.json")).json().catch(() => ({ items: [] }));
-    const photos = await (await fetch("series/photos.json")).json().catch(() => ({ photos: [] }));
-    const images = [...[...catalogue.items.map(x => x.code), ...EXTRAS].map(code => `icones/${code}.png`), ...photos.photos.map(ph => `series/photos/${ph.f}`)];
-    await Promise.allSettled(images.map(async u => { if (!(await c.match(u))) await c.add(u); }));
-    e.source?.postMessage({ type: "pret", ok: res.every(r => r.status === "fulfilled") });
+    let ok = false;  // la réponse « pret » part toujours, même sans réseau ou si le réseau coupe en route
+    try {
+      const coeur = await caches.open(COEUR), c = await caches.open(LOURDS);
+      const ajouter = async (cache, u, init) => { if (await cache.match(u)) return; const r = await fetch(u, init); if (!r.ok) throw new Error(u); await cache.put(u, r); };
+      // pages, scripts et données aussi : le cache cœur a pu en perdre (vidé par le bouton « Recharger la dernière version »
+      // de la 3.1.0, ou par le navigateur) ; sans panneaux.json ni empreinte.json, aucun panneau n'est identifié hors ligne
+      const res = await Promise.allSettled([...FICHIERS.map(f => ajouter(coeur, f, { cache: "reload" })), ...MODELES.map(u => ajouter(c, u, { mode: "cors" }))]);
+      // listes lues dans la copie du téléphone (cache cœur), à défaut en ligne : sans réseau, on vérifie ce qui est déjà là
+      const lire = async f => { try { return await ((await coeur.match(f)) || await fetch(f)).json(); } catch { return null; } };
+      const catalogue = await lire("catalogue.json"), photos = await lire("series/photos.json");
+      const images = [...[...(catalogue?.items ?? []).map(x => x.code), ...EXTRAS].map(code => `icones/${code}.png`), ...(photos?.photos ?? []).map(ph => `series/photos/${ph.f}`)];
+      res.push(...await Promise.allSettled(images.map(u => ajouter(c, u))));
+      ok = !!catalogue && !!photos && res.every(r => r.status === "fulfilled");  // icônes et photos comptent aussi
+    } catch { /* ok reste faux : « Téléchargement incomplet » */ }
+    e.source?.postMessage({ type: "pret", ok });
   })());
 });
 
@@ -94,7 +102,10 @@ self.addEventListener("fetch", e => {
   e.respondWith((async () => {
     mode ??= await reglage("__mode", "avec");
     const cache = await caches.open(lourd(url) ? LOURDS : COEUR);
-    const enCache = await cache.match(req, { ignoreSearch: url.origin === location.origin && page });
+    // polices et icônes de l'appli : rangées parmi les fichiers lourds, mais copiées dans le cache cœur à l'installation
+    // (seul ce cache est consulté en plus : pendant une mise à jour, tous les caches mêleraient deux versions)
+    const enCache = (await cache.match(req, { ignoreSearch: url.origin === location.origin && page }))
+      || (lourd(url) ? await (await caches.open(COEUR)).match(req) : undefined);
     const rendre = rep => page ? isoler(rep) : rep;
     if (enCache && (mode === "sans" || lourd(url))) return rendre(enCache);
     try {

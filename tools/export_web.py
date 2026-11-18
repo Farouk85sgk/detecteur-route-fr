@@ -1,7 +1,7 @@
 """Prépare la version web (dossier docs/, publié par GitHub Pages) :
 - detecteur.onnx : détecteur de panneaux (une classe) et de marquages au sol (YOLOv5n, taille dynamique) ;
 - usagers.onnx : YOLOv5n COCO d'origine réduit aux piétons, vélos, motos et feux tricolores ;
-- catalogue.json : tous les éléments connus (route_fr/classes.py) et les classes du détecteur ;
+- catalogue.json : tous les éléments connus (route_fr/classes.py) et les classes du détecteur livré (lues dans detecteur.onnx) ;
 - icônes et page de crédits.
 (panneaux.onnx, le classifieur de panneaux, est produit par tools/train_classifieur.py ; empreinte.onnx, pour
 « Mes panneaux », par tools/train_empreinte.py ; series/banque.json par tools/construire_series.py.)
@@ -13,10 +13,9 @@ Puis envoyer sur GitHub (la page se met à jour toute seule, voir README) ou tes
 """
 
 import argparse
+import ast
 import dataclasses
-import hashlib
 import json
-import re
 import shutil
 import subprocess
 import sys
@@ -34,6 +33,7 @@ from models.yolo import Detect  # noqa: E402
 from ultralytics.utils.export import torch2onnx  # noqa: E402
 
 from route_fr.classes import CLASSES, CODE_AFFICHE, DETECTEUR, FICHES_SEULES, MARQUAGES_FICHES  # noqa: E402
+from tools.cache_web import version_cache  # noqa: E402
 
 USAGERS = [0, 1, 3, 9]  # classes COCO gardées : personne, vélo, moto, feu tricolore
 
@@ -94,25 +94,16 @@ def credits_html(md):
     )
 
 
-LOURDS = (".onnx", ".wasm", ".mjs", ".png", ".jpg", ".woff2")  # mêmes fichiers que la fonction lourd() de docs/sw.js
-
-
-def version_cache(web):
-    """Donne au cache des fichiers lourds (modèles, icônes, photos du quiz, polices), dans sw.js, un nom tiré de leur
-    contenu : dès que l'un d'eux change, les téléphones qui ont déjà l'appli passent à un nouveau cache.
-    Écrit aussi docs/lourds.json, l'empreinte de chaque fichier : à la mise à jour, le service worker reprend de
-    l'ancien cache les fichiers inchangés et ne retélécharge que ceux qui ont changé."""
-    # (les captures d'écran du manifeste, docs/captures, ne servent qu'à la fenêtre d'installation : pas besoin hors ligne)
-    fichiers = {f.relative_to(web).as_posix(): hashlib.sha1(f.read_bytes()).hexdigest()[:16] for f in sorted(web.rglob("*"))
-                if f.is_file() and f.suffix in LOURDS and "captures" not in f.relative_to(web).parts}
-    (web / "lourds.json").write_text(json.dumps({"fichiers": fichiers}, separators=(",", ":")), encoding="utf-8")
-    nom = f"repere-lourds-{hashlib.sha1(json.dumps(fichiers, sort_keys=True).encode()).hexdigest()[:8]}"
-    sw = web / "sw.js"
-    js, n = re.subn(r'LOURDS = "repere-lourds-[^"]*"', f'LOURDS = "{nom}"', sw.read_text(encoding="utf-8"))
-    if n != 1:
-        raise SystemExit("sw.js : nom du cache des fichiers lourds introuvable")
-    sw.write_text(js, encoding="utf-8")
-    return nom
+def classes_detecteur(chemin):
+    """Classes du détecteur livré, lues dans ses métadonnées (écrites par yolov5/export.py) et non dans DETECTEUR, qui
+    peut avoir changé avant le réentraînement : moteur.js nomme chaque sortie du réseau d'après la liste du catalogue."""
+    m = onnx.load(str(chemin))
+    noms = ast.literal_eval({p.key: p.value for p in m.metadata_props}.get("names", "[]"))
+    noms = [noms[i] for i in sorted(noms, key=int)] if isinstance(noms, dict) else list(noms)
+    sortie = m.graph.output[0].type.tensor_type.shape.dim[-1].dim_value  # 5 + nombre de classes (0 : dimension libre)
+    if not noms or (sortie and sortie != 5 + len(noms)):
+        raise SystemExit(f"{chemin} : {len(noms)} noms de classes dans les métadonnées pour {sortie} valeurs par détection en sortie")
+    return noms
 
 
 def main():
@@ -126,8 +117,23 @@ def main():
         export_onnx(a.poids, web / "detecteur.onnx", 640)
         shutil.copy(web / "detecteur.onnx", Path(a.poids).with_suffix(".onnx"))  # même fichier pour l'application de bureau
         export_usagers(a.usagers, web / "usagers.onnx")
-    items = [dict(dataclasses.asdict(c), affiche=CODE_AFFICHE.get(c.code, c.code), detecte=c.code not in FICHES_SEULES | MARQUAGES_FICHES) for c in CLASSES]
-    (web / "catalogue.json").write_text(json.dumps({"detecteur": DETECTEUR, "items": items}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    noms = classes_detecteur(web / "detecteur.onnx")  # après l'export : le catalogue suit le détecteur réellement livré
+    if noms != DETECTEUR:
+        ecart = [f"{titre} : {', '.join(liste)}" for titre, liste in (("absentes du modèle", [n for n in DETECTEUR if n not in noms]),
+                                                                     ("inconnues de DETECTEUR", [n for n in noms if n not in DETECTEUR])) if liste]
+        print(f"Attention : detecteur.onnx a {len(noms)} classes, DETECTEUR (route_fr/classes.py) en a {len(DETECTEUR)}"
+              f" ({' ; '.join(ecart) or 'mêmes classes dans un autre ordre'}). Le catalogue suit detecteur.onnx.")
+    items = []
+    for c in CLASSES:
+        it = dataclasses.asdict(c)
+        seuil = it.pop("seuil")
+        # un marquage absent du détecteur livré n'a qu'une fiche (il passera seul à detecte au réentraînement)
+        it.update(affiche=CODE_AFFICHE.get(c.code, c.code),
+                  detecte=(c.code in noms and c.code not in MARQUAGES_FICHES) if c.categorie == "marquage" else c.code not in FICHES_SEULES)
+        if seuil is not None:  # seuls quelques panneaux ont un seuil propre ; sinon moteur.js prend le seuil commun
+            it["seuil"] = seuil
+        items.append(it)
+    (web / "catalogue.json").write_text(json.dumps({"detecteur": noms, "items": items}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     shutil.rmtree(web / "icones", ignore_errors=True)
     shutil.copytree(ROOT / "route_fr" / "icones", web / "icones", ignore=shutil.ignore_patterns("*.md"))
     (web / "credits.html").write_text(credits_html((ROOT / "route_fr" / "icones" / "CREDITS.md").read_text(encoding="utf-8")), encoding="utf-8")

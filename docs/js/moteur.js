@@ -127,6 +127,10 @@ export class Moteur {
   // ---------- panneaux et marquages ----------
   postRoute(out, { r, px, py }, seuilPanneaux = CONF_SIGNS) {
     const [, n, d] = out.dims, v = out.data, nc = d - 5, dets = [];
+    if (nc !== this.detMap.length && !this.averti) {  // détecteur et catalogue d'âges différents : les classes en trop sont ignorées
+      this.averti = true;
+      console.warn(`detecteur.onnx a ${nc} classes, catalogue.json en décrit ${this.detMap.length} : refaire le catalogue avec tools/export_web.py`);
+    }
     const bas = Math.min(CONF, seuilPanneaux);
     for (let i = 0; i < n; i++) {
       const o = i * d, obj = v[o + 4];

@@ -91,10 +91,17 @@ export async function supprimerProfil(id) {
   await idbSupprimerPrefixe("photos", id + "/");
   for (const { cle, valeur } of await idbTout("appris")) if (valeur.profil === id) await idbSupprimer("appris", cle);
 }
-export async function effacerHistorique(p) {
-  for (const t of p.trajets) await idbSupprimerPrefixe("photos", `${p.id}/${t.id}/`);
-  for (const a of Object.values(p.album)) delete a.photo;
-  p.trajets = [];
+export async function effacerHistorique(p, enCours = null) {
+  // toutes les photos du profil, même celles d'un trajet interrompu (appli fermée sans toucher la croix : ce trajet n'est
+  // jamais entré dans p.trajets) ; seul le trajet filmé en ce moment est gardé (réglages ouverts depuis la caméra)
+  const a = p.id + "/", garde = enCours ? `${a}${enCours}/` : null;
+  if (!garde) await idbSupprimerPrefixe("photos", a);
+  else await tx("photos", "readwrite", s => {  // deux plages : avant et après celle du trajet gardé
+    s.delete(IDBKeyRange.bound(a, garde, false, true));
+    s.delete(IDBKeyRange.bound(garde + "￿", a + "￿", true));
+  });
+  for (const x of Object.values(p.album)) if (!garde || !x.photo?.startsWith(garde)) delete x.photo;
+  p.trajets = p.trajets.filter(t => t.id === enCours);
   sauver();
 }
 

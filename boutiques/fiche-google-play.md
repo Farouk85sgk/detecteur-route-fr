@@ -51,7 +51,7 @@ SIMPLE ET RESPECTUEUX
 IMPORTANT
 Repère est un outil d'apprentissage. Il ne remplace ni l'attention du conducteur ni la signalisation réelle, et il peut se tromper. En voiture, le téléphone est fixé sur un support et le conducteur ne le manipule pas : c'est le passager ou l'accompagnateur qui s'en occupe.
 
-Photos de démonstration : contributeurs de Panoramax (IGN), Licence Ouverte 2.0. Logiciel libre (licence AGPL-3.0) : le code source est public.
+Crédits photo. Capture « détection » et image de présentation : sogefi sig, Panoramax (IGN), 16 juillet 2026. Capture du quiz : sigm50, Panoramax (IGN), 2025. Licence Ouverte 2.0 (Etalab). Dans l'appli, l'auteur de chaque photo du quiz est indiqué sous la photo. Logiciel libre (licence AGPL-3.0) : le code source est public.
 ```
 
 ## Catégorie et coordonnées
@@ -71,7 +71,7 @@ Photos de démonstration : contributeurs de Panoramax (IGN), Licence Ouverte 2.0
 
 ## Questionnaires de la console
 
-**Sécurité des données.** L'appli ne collecte et ne partage aucune donnée : rien ne quitte le téléphone. Réponds « Non » à « Votre appli collecte-t-elle ou partage-t-elle des données utilisateur ? ».
+**Sécurité des données.** L'appli ne collecte et ne partage aucune donnée : photos, trajets, profils et résultats restent sur le téléphone. Seule exception : la position d'une photo est envoyée au site OpenStreetMap quand l'utilisateur touche « Voir l'endroit sur la carte ». Ce transfert est lancé par l'utilisateur lui-même : réponds donc « Non » à « Votre appli collecte-t-elle ou partage-t-elle des données utilisateur ? ».
 
 **Classification du contenu.** Catégorie « Référence, actualités ou éducation ». Réponds « Non » à toutes les questions (violence, sexualité, jeux d'argent, échanges entre utilisateurs, achats).
 

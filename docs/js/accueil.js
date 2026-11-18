@@ -81,7 +81,7 @@ export async function pageAccueil(racine, { moteur, appris, lancerCamera }) {
       ${cachés ? `<button class="btn" data-a="blocs">${cachés} bloc${cachés > 1 ? "s masqués : les choisir" : " masqué : le réafficher"}</button>` : ""}
 
       <p class="credits centre">Outil d'aide pédagogique : il ne remplace ni ton attention ni la signalisation réelle. En voiture, le téléphone est fixé sur un support et le conducteur ne le manipule pas.
-        <br><a href="confidentialite.html" target="_blank" rel="noopener">Confidentialité</a> · <a href="${APP.depot}" target="_blank" rel="noopener">Code source (licence AGPL-3.0)</a></p>
+        <br><a href="confidentialite.html" target="_blank" rel="noopener">Confidentialité</a> · <a href="${APP.source}" target="_blank" rel="noopener">Code source (licence AGPL-3.0)</a></p>
     </div></div>`;
 
   const codes = $(".zone-codes", racine);
@@ -143,7 +143,7 @@ function ouvrirBadges() {
 async function tailleHorsLigne(racine) {
   const z = $(".taille-hors-ligne", racine);
   if (!z || !("caches" in window)) return;
-  let total = 0, lourds = 0;
+  let total = 0, lourds = 0, wasm = false;
   for (const nom of await caches.keys()) {
     const cache = await caches.open(nom);
     for (const req of await cache.keys()) {
@@ -151,9 +151,14 @@ async function tailleHorsLigne(racine) {
       const n = +(rep.headers.get("content-length") || 0) || (await rep.clone().blob()).size;
       total += n;
       if (/\.(onnx|wasm)$/.test(req.url)) lourds++;
+      if (req.url.endsWith(".wasm")) wasm = true;
     }
   }
-  if (total) z.textContent = lourds >= 4 ? `Elle est prête sans réseau (${Math.round(total / 1e6)} Mo).` : `Déjà sur le téléphone : ${Math.round(total / 1e6)} Mo.`;
+  // « prête » seulement si le moteur de calcul (.wasm : sans lui la caméra ne démarre pas, et un téléchargement coupé
+  // laisse souvent les 4 .onnx sans ce gros fichier), le classifieur et les empreintes sont là aussi : la caméra les
+  // demande, l'ouverture jamais
+  const prete = lourds >= 4 && wasm && !!(await caches.match("panneaux.json")) && !!(await caches.match("empreinte.json"));
+  if (total) z.textContent = prete ? `Elle est prête sans réseau (${Math.round(total / 1e6)} Mo).` : `Déjà sur le téléphone : ${Math.round(total / 1e6)} Mo.`;
 }
 
 async function preparerHorsLigne(racine) {
@@ -187,9 +192,15 @@ async function diagnostic(zone, moteur) {
   ];
   zone.innerHTML = `<div class="liste-lignes">${lignes.map(([k, v]) => `<div class="element-liste"><span class="doux">${esc(k)}</span><b style="text-align:right">${esc(v)}</b></div>`).join("")}</div>
     <button class="btn" data-maj>Recharger la dernière version</button>`;
-  zone.querySelector("[data-maj]").onclick = async () => {
-    for (const k of await caches.keys()) if (!k.includes("lourds")) await caches.delete(k);
-    (await navigator.serviceWorker?.getRegistration())?.update();
+  const maj = zone.querySelector("[data-maj]");
+  maj.onclick = async () => {
+    // Les caches restent : ils servent hors ligne (vidés, l'appli ne se rouvrait plus sans réseau). Une nouvelle version
+    // (sw.js changé) s'installe avec son propre cache complet : on attend qu'elle prenne la main, sinon « Sans réseau »
+    // rouvrirait l'ancienne. Sans nouvelle version, « Avec réseau » reprend déjà pages et scripts du serveur.
+    maj.disabled = true; maj.textContent = "Recherche de la dernière version…";
+    const sw = navigator.serviceWorker, reg = await sw?.getRegistration();
+    await reg?.update().catch(() => {});
+    if (reg?.installing || reg?.waiting) await new Promise(fin => { sw.addEventListener("controllerchange", fin, { once: true }); setTimeout(fin, 20000); });
     location.reload();
   };
 }

@@ -28,7 +28,7 @@ permis,panneaux,signalisation,auto-école,conduite,examen,quiz,ETG,conduite acco
 
 ## Description
 
-Reprends la « Description complète » de `fiche-google-play.md` : elle convient telle quelle.
+Reprends la « Description complète » de `fiche-google-play.md` : elle convient telle quelle. Garde sa dernière ligne : elle crédite les auteurs des photos visibles sur les captures, comme l'exige leur licence.
 
 ## Réglages de la fiche
 
@@ -56,7 +56,7 @@ Apple refuse une appli qui utilise la caméra sans dire pourquoi. Ces deux phras
 | Clé | Phrase |
 |---|---|
 | `NSCameraUsageDescription` | `La caméra filme la route pour reconnaître les panneaux. Les images restent sur ton iPhone.` |
-| `NSLocationWhenInUseUsageDescription` | `Pour noter l'endroit où chaque panneau a été repéré pendant un trajet. C'est facultatif.` |
+| `NSLocationWhenInUseUsageDescription` | `Pour noter sur chaque photo de trajet l'endroit où elle a été prise. C'est facultatif.` |
 
 ## Note pour l'équipe de validation d'Apple
 

@@ -66,6 +66,7 @@ export async function ouvrirCamera({ fichier = null, apresFermeture = () => {} }
   brancherZoom();
   addEventListener("resize", disposer);
   document.addEventListener("visibilitychange", visibilite);
+  document.addEventListener("change", reglageChange);
 
   // Après chaque attente, on vérifie que cette session est toujours la session en cours : l'écran a pu être fermé (ou fermé
   // puis rouvert) pendant le chargement des modèles ou l'ouverture de la caméra.
@@ -89,11 +90,28 @@ export async function ouvrirCamera({ fichier = null, apresFermeture = () => {} }
   }
   if (r.paysage) paysage();
   if ("wakeLock" in navigator) navigator.wakeLock.request("screen").then(w => { if (C === moi) C.verrou = w; else w.release?.().catch(() => {}); }).catch(() => {});
-  if (r.gps && !fichier && "geolocation" in navigator)
-    C.geo = navigator.geolocation.watchPosition(g => { if (C === moi) C.pos = { lat: +g.coords.latitude.toFixed(6), lon: +g.coords.longitude.toFixed(6) }; }, () => {}, { enableHighAccuracy: true, maximumAge: 5000 });
+  majGps();
   if (r.video) demarrerEnregistrement();
   boucle();
 }
+
+// Position : suivie en caméra seulement, et tant que « Position GPS des photos » et les photos sont allumées (elle ne sert
+// qu'à situer les photos). Ces réglages peuvent changer pendant le trajet, depuis le bouton Réglages de la caméra : le
+// suivi s'arrête ou reprend aussitôt, et la dernière position connue est oubliée.
+export function majGps() {
+  if (!C || C.fini || !C.demarre) return;
+  const r = C.p.reglages, voulu = r.gps && r.photos && !C.fichier && "geolocation" in navigator;
+  if (voulu && C.geo == null) {
+    const moi = C, id = navigator.geolocation.watchPosition(g => { if (C === moi && C.geo === id) C.pos = { lat: +g.coords.latitude.toFixed(6), lon: +g.coords.longitude.toFixed(6) }; }, () => {}, { enableHighAccuracy: true, maximumAge: 5000 });
+    C.geo = id;
+  } else if (!voulu && C.geo != null) {
+    navigator.geolocation.clearWatch(C.geo);
+    C.geo = null;
+    C.pos = null;
+  }
+}
+// (la feuille Réglages a déjà enregistré le choix quand l'événement arrive ici : elle l'écoute plus près de la case)
+const reglageChange = e => { if (["gps", "photos"].includes(e.target.dataset?.reglage)) majGps(); };
 
 function messageErreur(e) {
   if (e?.name === "NotAllowedError") return "L'accès à la caméra a été refusé. Autorise la caméra pour ce site dans les réglages du navigateur.";
@@ -264,8 +282,8 @@ function annoncer(t, phrase = null) {
   // perdue puis retrouvée : on ne le recompte pas (le trajet affichait « vu 4 fois » pour un seul panneau). Une correction
   // passe quand son nom n'est pas celui qui est affiché : sans cela la carte et la voix resteraient sur le mauvais panneau.
   if (!phrase && maintenant - dernier < pause && !(correction && C.historique[0] !== it.code)) return;
-  // trajet, album, quêtes : chaque annonce compte
-  const ev = { code: it.code, t: tempsTrajet(), pos: C.pos };
+  // trajet, album, quêtes : chaque annonce compte (sans la position : rien ne la lisait, seules les photos la gardent)
+  const ev = { code: it.code, t: tempsTrajet() };
   let neuf = false;
   C.trajet.elements[it.code] = (C.trajet.elements[it.code] || 0) + 1;
   if (C.trajet.evenements.length < 400) C.trajet.evenements.push(ev);
@@ -448,7 +466,7 @@ function prendrePhoto(t) {
   const it = D.items[moteur.classe(t)];
   composer(cv, Math.min(960, C.video.videoWidth), it);
   const noms = [...new Set(moteur.pistes.filter(x => x.ok && x.misses === 0 && x.groupe !== "m").map(x => D.items[moteur.classe(x)]?.nom).filter(Boolean))];
-  const meta = { code: it.code, noms: noms.length ? noms.slice(0, 3) : [it.nom], t: tempsTrajet(), quand: Date.now(), pos: C.pos };
+  const meta = { code: it.code, noms: noms.length ? noms.slice(0, 3) : [it.nom], t: tempsTrajet(), quand: Date.now(), pos: C.p.reglages.gps ? C.pos : null };
   const n = C.nPhoto++, { p, trajet } = C;
   cv.toBlob(async blob => {
     if (!blob) return;
@@ -714,6 +732,7 @@ export async function terminer() {
   if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
   removeEventListener("resize", disposer);
   document.removeEventListener("visibilitychange", visibilite);
+  document.removeEventListener("change", reglageChange);
   PROG.notifier = (texte, badge) => toast(texte, badge);
   PROG.silence = false;
   C.racine.remove();

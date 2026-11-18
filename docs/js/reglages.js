@@ -84,8 +84,12 @@ export function ouvrirReglages({ depuisCamera = false, vers = null } = {}) {
     if (a === "blocs") { r.accueil = {}; sauver(); dessiner(corps, depuisCamera); toast("Tous les blocs sont affichés"); }
     if (a === "tout") { r.familles = {}; r.exclus = []; sauver(); dessiner(corps, depuisCamera); reconfigurer(); }
     if (a === "rien") { r.familles = Object.fromEntries(FAMILLES.map(f => [f.id, false])); sauver(); dessiner(corps, depuisCamera); reconfigurer(); }
-    if (a === "effacer" && await confirmer("Effacer l'historique ?", "Les trajets et leurs photos de ce profil seront supprimés. L'album, les quiz et la quête sont gardés.", { oui: "Effacer", danger: true })) {
-      await effacerHistorique(p); toast("Historique effacé"); EVENEMENTS.reglagesChanges();
+    if (a === "effacer") {
+      // réglages ouverts depuis la caméra : le trajet filmé en ce moment (et ses photos) est gardé
+      const s = (await import("./camera.js")).sessionCamera(), enCours = s?.p === p ? s.trajet.id : null;
+      if (await confirmer("Effacer l'historique ?", `Les trajets et leurs photos de ce profil seront supprimés${enCours ? ", sauf le trajet en cours" : ""}. L'album, les quiz et la quête sont gardés.`, { oui: "Effacer", danger: true })) {
+        await effacerHistorique(p, enCours); toast("Historique effacé"); EVENEMENTS.reglagesChanges();
+      }
     }
   });
   corps.addEventListener("input", e => { if (e.target.matches("[data-recherche]")) filtrer(corps, e.target.value); });
@@ -123,7 +127,7 @@ function dessiner(corps, depuisCamera) {
       exécuté par ONNX Runtime Web © Microsoft, licence MIT. Photos d'entraînement : contributeurs de Panoramax (instance IGN), Licence Ouverte Etalab 2.0, et comma10k, licence MIT.
       Icônes des panneaux : schémas de Wikimedia Commons (Roulex 45 et autres auteurs, licences CC BY-SA, CC BY, CC0 ou domaine public), <a href="credits.html" target="_blank" rel="noopener">crédits détaillés</a>.
       Polices Bricolage Grotesque et Overpass, licence OFL.
-      <a href="confidentialite.html" target="_blank" rel="noopener">Confidentialité</a> · <a href="${APP.depot}" target="_blank" rel="noopener">Code source (licence AGPL-3.0)</a>.
+      <a href="confidentialite.html" target="_blank" rel="noopener">Confidentialité</a> · <a href="${APP.source}" target="_blank" rel="noopener">Code source (licence AGPL-3.0)</a>.
       Outil d'aide pédagogique : il ne remplace ni ton attention ni la signalisation réelle.${depuisCamera ? "" : ""}</p>`;
   majCompte(corps);
 }

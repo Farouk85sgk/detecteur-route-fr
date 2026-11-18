@@ -39,7 +39,8 @@ export async function partieCode(genre, id) {
   const b = await banque(), p = profil();
   if (genre === "examen") {
     const qs = b.themes.flatMap(t => melanger(t.questions).slice(0, t.examen));
-    return { titre: "Examen blanc du code", questions: melanger(qs).map(versQuiz), options: { examen: true, chrono: 30, code: "examen" } };
+    // 20 secondes par question, comme à l'examen (l'examen blanc en laissait 30 : il préparait mal au rythme réel)
+    return { titre: "Examen blanc du code", questions: melanger(qs).map(versQuiz), options: { examen: true, chrono: 20, code: "examen" } };
   }
   if (genre === "lot") {
     const lot = b.lots.find(l => l.id === id);
@@ -133,6 +134,8 @@ function demo() {
 
 export async function listerPacks() {
   const importes = (await idbTout("series")).map(x => x.valeur).sort((a, b) => b.ajoute - a.ajoute);
+  // images copiées à l'import (rangées une fois par adresse) : affichées à la place de leur adresse d'origine
+  for (const pk of importes) if (pk.images) for (const s of pk.series) for (const q of s.questions) q.image = pk.images[q.image] || q.image;
   return [demo(), ...importes];
 }
 
@@ -161,13 +164,63 @@ const resume = pk => {
   return [s && `${s} série${s > 1 ? "s" : ""}`, e && `${e} examen${e > 1 ? "s" : ""} blanc${e > 1 ? "s" : ""}`].filter(Boolean).join(", ");
 };
 
+// Images https d'une série importée : copiées dans l'appli au moment de l'import (une fois par adresse, dans pk.images).
+// Leur site n'est plus contacté à chaque affichage, et elles s'affichent sans réseau. Il faut que ce site l'autorise
+// (CORS) ; sinon, ou pour une image trop lourde, d'un autre format ou trop lente, l'adresse d'origine reste, comme avant.
+// L'import reste rapide : 6 téléchargements à la fois, 1,4 Mo par image, 15 Mo en tout, 15 s au plus.
+const IMAGE_MAX = 1_400_000, IMAGES_MAX = 15_000_000, IMAGES_DELAI = 15000;
+async function copierImage(url, signal, max) {
+  const r = await fetch(url, { mode: "cors", credentials: "omit", referrerPolicy: "no-referrer", signal });
+  const type = (r.headers.get("content-type") || "").split(";")[0].trim().toLowerCase().replace("/jpg", "/jpeg");
+  const lecteur = r.body?.getReader(), morceaux = [];
+  let n = 0;
+  try {  // lue morceau par morceau : une image trop lourde est abandonnée sans être téléchargée en entier
+    if (!r.ok || !lecteur || !/^image\/(png|jpeg|webp|gif)$/.test(type) || +r.headers.get("content-length") > max) throw new Error("image refusée");
+    for (let m; !(m = await lecteur.read()).done;) { if ((n += m.value.length) > max) throw new Error("image trop lourde"); morceaux.push(m.value); }
+  } finally { lecteur?.cancel().catch(() => {}); }
+  const data = await new Promise((ok, ko) => { const f = new FileReader(); f.onload = () => ok(f.result); f.onerror = () => ko(f.error); f.readAsDataURL(new Blob(morceaux, { type })); });
+  return { data, n };
+}
+async function copierImages(pk) {
+  const adresses = [...new Set(pk.series.flatMap(s => s.questions.map(q => q.image)).filter(u => /^https:\/\//i.test(u || "")))];
+  if (!adresses.length) return { copiees: 0, gardees: 0 };
+  toast(`Copie des images dans l'appli (${adresses.length})…`);
+  // téléphone presque plein : les copies ne prennent qu'un quart de la place libre (sinon la série ne s'enregistrerait pas)
+  const { quota, usage = 0 } = (await navigator.storage?.estimate?.().catch(() => null)) || {};
+  const plafond = quota ? Math.min(IMAGES_MAX, (quota - usage) / 4) : IMAGES_MAX;
+  const images = {}, arret = new AbortController(), minuteur = setTimeout(() => arret.abort(), IMAGES_DELAI);
+  let total = 0, suivante = 0, copiees = 0;
+  await Promise.all(Array.from({ length: Math.min(6, adresses.length) }, async () => {
+    while (suivante < adresses.length && total < plafond && !arret.signal.aborted) {
+      const url = adresses[suivante++];
+      try {
+        const { data, n } = await copierImage(url, arret.signal, Math.min(IMAGE_MAX, plafond - total));
+        if (total + n <= plafond) { total += n; images[url] = data; copiees++; }
+      } catch { /* site sans CORS, hors ligne, image refusée ou trop lente : l'adresse reste */ }
+    }
+  }));
+  clearTimeout(minuteur);
+  if (copiees) pk.images = images;
+  return { copiees, gardees: adresses.length - copiees };
+}
+// enregistre une série importée, après la copie de ses images ; le message dit combien ont été copiées
+async function enregistrer(pk) {
+  const { copiees, gardees } = await copierImages(pk);
+  await idbMettre("series", pk.id, pk);
+  const images = copiees + gardees ? `. ${copiees} image${copiees > 1 ? "s" : ""} copiée${copiees > 1 ? "s" : ""} dans l'appli${gardees ? `, ${gardees} ${gardees > 1 ? "restent sur leur" : "reste sur son"} site (réseau nécessaire)` : ""}.` : "";
+  toast(`Importé : ${pk.titre}${images}`, resume(pk));
+}
+
 export function brancherCodes(zone, apres) {
+  // l'import peut durer (copie des images, 15 s au plus) : la page n'est réaffichée que si on y est encore (sinon un
+  // quiz ou un examen commencé entre-temps repartait de la première question)
+  const ici = location.hash, rafraichir = () => { if (location.hash === ici) apres(); };
   zone.addEventListener("change", async e => {
     if (!e.target.matches("[data-importer]")) return;
     const f = e.target.files[0];
     e.target.value = "";
     if (!f) return;
-    try { const pk = lirePack(JSON.parse(await f.text()), f.name); await idbMettre("series", pk.id, pk); toast(`Importé : ${pk.titre}`, resume(pk)); apres(); }
+    try { const pk = lirePack(JSON.parse(await f.text()), f.name); await enregistrer(pk); rafraichir(); }
     catch (err) { toast(`Import impossible : ${err.message}`); }
   });
   zone.addEventListener("click", async e => {
@@ -179,8 +232,7 @@ export function brancherCodes(zone, apres) {
         const rep = await fetch(url, { mode: "cors", credentials: "omit" });
         if (!rep.ok) throw new Error(`réponse ${rep.status}`);
         const pk = lirePack(await rep.json(), url);
-        await idbMettre("series", pk.id, pk);
-        toast(`Importé : ${pk.titre}`, resume(pk)); apres();
+        await enregistrer(pk); rafraichir();
       } catch (err) { toast(`Lien impossible : ${err.message}`); }
       return;
     }
