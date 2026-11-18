@@ -667,6 +667,9 @@ function brancherZoom() {
 }
 async function toucher(x, y) {
   if (!C.pause) return basculerPause(true);
+  // un toucher sur l'astuce la referme, sans rien ouvrir (elle laisse passer les gestes pour ne pas gêner la pince)
+  const astuce = $(".astuce-cam", C.racine), ra = astuce.getBoundingClientRect();
+  if (ra.width && x >= ra.left && x <= ra.right && y >= ra.top && y <= ra.bottom) return astuce.classList.add("cache");
   const vx = (x - C.ox) / C.s, vy = (y - C.oy) / C.s;
   if (vx < 0 || vy < 0 || vx > C.vw || vy > C.vh) return;
   const m = 6 / C.s;  // marge de doigt : 6 points d'écran autour du cadre

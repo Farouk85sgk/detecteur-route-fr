@@ -59,7 +59,7 @@ export class Moteur {
     this.fils = self.crossOriginIsolated && !monofil ? Math.max(1, Math.min(4, Math.ceil((navigator.hardwareConcurrency || 2) / 2))) : 1;
     ort.env.wasm.numThreads = this.fils;
     const opts = { executionProviders: this.fournisseurs, graphOptimizationLevel: "all" };
-    progression("Chargement du détecteur…");
+    progression("Détecteur…");
     try {
       try { this.session = await ort.InferenceSession.create("detecteur.onnx", opts); }
       catch (e) {  // WebGPU indisponible ou défaillant : repli sur le processeur
@@ -75,7 +75,7 @@ export class Moteur {
     this.opts = { ...opts, executionProviders: this.fournisseurs };
     // classe du détecteur -> élément du catalogue (marquages), SIGN pour « panneau », -1 pour les classes techniques
     this.detMap = D.detecteur.map(n => n === "panneau" ? SIGN : D.parCode[n] ? D.parCode[n].index : -1);
-    progression("Chargement du classifieur…");
+    progression("Classifieur…");
     try {
       const conf = await (await fetch("panneaux.json")).json();
       [this.wCls, this.hCls] = conf.taille;
