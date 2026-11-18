@@ -12,6 +12,9 @@ et à utiliser un jeu de vraies photos annotées, tirées de Panoramax (instance
   refaire --dossier DOSSIER
       retélécharge les vues notées dans DOSSIER/meta.jsonl (ou seulement les vues annotées avec --annotees) : les
       annotations du dépôt (data/marquages_reels/) suffisent ainsi à reconstituer le jeu d'images
+  reparer --dossier DOSSIER [--appliquer]
+      refait les vues à 360° dont l'ancienne découpe avait étiré les bords (photos découpées en 16 x 8 tuiles) et signale
+      les cadres d'annotation tombés dans la partie étirée (rapport : DOSSIER/reparation.json)
   planches --dossier DOSSIER
       assemble les vues en planches de 9 (3 x 3, numérotées) -> DOSSIER/planches/p_000.jpg ... et DOSSIER/planches/index.json
   grille --dossier DOSSIER --id IDENTIFIANT [...]
@@ -60,8 +63,8 @@ def get(url, essais=4, delai=30):
             time.sleep(1.5 * (k + 1))
 
 
-def vue_avant(pano, W, H, x0, y0, sortie=(1280, 720), hfov=82.0, tangage=-12.0):
-    """Vue rectiligne vers l'avant tirée d'un panorama équirectangulaire (pano : morceau du panorama dont le coin haut gauche est (x0, y0))."""
+def carte_vue(W, H, sortie=(1280, 720), hfov=82.0, tangage=-12.0):
+    """Pour chaque point de la vue « conducteur », sa position (px, py) dans le panorama équirectangulaire entier de W x H points."""
     w, h = sortie
     f = (w / 2) / math.tan(math.radians(hfov / 2))
     xs, ys = np.meshgrid(np.arange(w) - w / 2 + 0.5, np.arange(h) - h / 2 + 0.5)
@@ -71,9 +74,42 @@ def vue_avant(pano, W, H, x0, y0, sortie=(1280, 720), hfov=82.0, tangage=-12.0):
     y = d[..., 1] * math.cos(t) + d[..., 2] * math.sin(t)
     z = -d[..., 1] * math.sin(t) + d[..., 2] * math.cos(t)
     lon, lat = np.arctan2(d[..., 0], z), np.arcsin(np.clip(y, -1, 1))
-    px = (lon / (2 * math.pi) + 0.5) * W - x0
-    py = (0.5 - lat / math.pi) * H - y0
-    return cv2.remap(pano, px.astype(np.float32), py.astype(np.float32), cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE)
+    return (lon / (2 * math.pi) + 0.5) * W, (0.5 - lat / math.pi) * H
+
+
+def vue_avant(pano, W, H, x0, y0, sortie=(1280, 720), hfov=82.0, tangage=-12.0):
+    """Vue rectiligne vers l'avant tirée d'un panorama équirectangulaire (pano : morceau du panorama dont le coin haut gauche est (x0, y0))."""
+    px, py = carte_vue(W, H, sortie, hfov, tangage)
+    return cv2.remap(pano, (px - x0).astype(np.float32), (py - y0).astype(np.float32), cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE)
+
+
+def tuiles_vue(mw, mh, tw, th):
+    """Colonnes et rangées de tuiles qu'il faut pour couvrir toute la vue (bornes comprises).
+
+    Avant novembre 2026, l'outil prenait toujours les 2 x 2 tuiles du centre. C'est assez pour un panorama découpé en
+    8 x 4 tuiles (45° par tuile), mais pas pour les photos récentes découpées en 16 x 8 (22,5° par tuile) : la vue
+    n'avait que 45° de vraie image et ses bords étaient étirés. On calcule maintenant les tuiles nécessaires."""
+    px, py = carte_vue(mw * tw, mh * th)
+    c0, c1 = max(0, int(math.floor(px.min())) // tw), min(mw - 1, (int(math.ceil(px.max())) + 1) // tw)
+    r0, r1 = max(0, int(math.floor(py.min())) // th), min(mh - 1, (int(math.ceil(py.max())) + 1) // th)
+    return c0, c1, r0, r1
+
+
+def vue_360(pid, tm):
+    """Vue « conducteur » d'une photo à 360°, assemblée à partir des tuiles qui la couvrent ; None si une tuile manque."""
+    mw, mh, tw, th = int(tm[0]["matrixWidth"]), int(tm[0]["matrixHeight"]), int(tm[0]["tileWidth"]), int(tm[0]["tileHeight"])
+    c0, c1, r0, r1 = tuiles_vue(mw, mh, tw, th)
+    lignes = []
+    for r in range(r0, r1 + 1):
+        ligne = []
+        for c in range(c0, c1 + 1):
+            b = get(f"{API}/pictures/{pid}/tiled/{c}_{r}.jpg")
+            t = cv2.imdecode(np.frombuffer(b, np.uint8), cv2.IMREAD_COLOR) if b else None
+            if t is None:
+                return None
+            ligne.append(t if t.shape[:2] == (th, tw) else cv2.resize(t, (tw, th), interpolation=cv2.INTER_AREA))
+        lignes.append(np.hstack(ligne))
+    return vue_avant(np.vstack(lignes), mw * tw, mh * th, c0 * tw, r0 * th)
 
 
 def collecte(a):
@@ -97,13 +133,9 @@ def collecte(a):
             io = p.get("pers:interior_orientation") or {}
             tm = (p.get("tiles:tile_matrix_sets") or {}).get("geovisio", {}).get("tileMatrix")
             if io.get("field_of_view") == 360 and tm:
-                mw, mh, tw, th = int(tm[0]["matrixWidth"]), int(tm[0]["matrixHeight"]), int(tm[0]["tileWidth"]), int(tm[0]["tileHeight"])
-                c0, r0 = mw // 2 - 1, mh // 2 - 1
-                tuiles = [[get(f"{API}/pictures/{pid}/tiled/{c}_{r}.jpg") for c in (c0, c0 + 1)] for r in (r0, r0 + 1)]
-                if any(t is None for l in tuiles for t in l):
+                vue, genre = vue_360(pid, tm), "360"
+                if vue is None:
                     continue
-                pano = np.vstack([np.hstack([cv2.imdecode(np.frombuffer(t, np.uint8), cv2.IMREAD_COLOR) for t in l]) for l in tuiles])
-                vue, genre = vue_avant(pano, mw * tw, mh * th, c0 * tw, r0 * th), "360"
             else:
                 d = get(f"{API}/pictures/{pid}/sd.jpg")
                 img = cv2.imdecode(np.frombuffer(d, np.uint8), cv2.IMREAD_COLOR) if d else None
@@ -204,13 +236,7 @@ def vue_de(pid):
     io = p.get("pers:interior_orientation") or {}
     tm = (p.get("tiles:tile_matrix_sets") or {}).get("geovisio", {}).get("tileMatrix")
     if io.get("field_of_view") == 360 and tm:
-        mw, mh, tw, th = int(tm[0]["matrixWidth"]), int(tm[0]["matrixHeight"]), int(tm[0]["tileWidth"]), int(tm[0]["tileHeight"])
-        c0, r0 = mw // 2 - 1, mh // 2 - 1
-        tuiles = [[get(f"{API}/pictures/{pid}/tiled/{c}_{r}.jpg") for c in (c0, c0 + 1)] for r in (r0, r0 + 1)]
-        if any(x is None for l in tuiles for x in l):
-            return None
-        pano = np.vstack([np.hstack([cv2.imdecode(np.frombuffer(x, np.uint8), cv2.IMREAD_COLOR) for x in l]) for l in tuiles])
-        return vue_avant(pano, mw * tw, mh * th, c0 * tw, r0 * th)
+        return vue_360(pid, tm)
     d = get(f"{API}/pictures/{pid}/sd.jpg")
     img = cv2.imdecode(np.frombuffer(d, np.uint8), cv2.IMREAD_COLOR) if d else None
     if img is None or img.shape[1] < img.shape[0]:
@@ -238,6 +264,62 @@ def refaire(a):
             print("introuvable :", pid); continue
         ecrire_image(f, vue); n += 1
     print(f"{d} : {n} vues retéléchargées, {len(ids)} attendues")
+
+
+def zone_saine(mw, mh, tw, th):
+    """Points de la vue que l'ancienne découpe (les 2 x 2 tuiles du centre) couvrait vraiment ; ailleurs, l'image était étirée."""
+    px, py = carte_vue(mw * tw, mh * th)
+    c0, r0 = mw // 2 - 1, mh // 2 - 1
+    return (px >= c0 * tw) & (px <= (c0 + 2) * tw - 1) & (py >= r0 * th) & (py <= (r0 + 2) * th - 1)
+
+
+def reparer(a):
+    """Refait les vues à 360° que l'ancienne découpe avait étirées sur les bords (panoramas découpés en 16 x 8 tuiles) et
+    signale les cadres d'annotation tombés dans la partie étirée. La partie saine de la vue ne change pas : les cadres qui
+    s'y trouvent restent justes. Sans --appliquer, rien n'est modifié : le rapport (reparation.json) dit ce qui le serait."""
+    d = Path(a.dossier)
+    rapport, n_ref = {}, 0
+    for f in sorted((d / "annots").glob("*.json")):
+        pid = f.stem
+        b = get(f"{API}/search?ids={pid}")
+        feats = json.loads(b).get("features", []) if b else []
+        if not feats:
+            rapport[pid] = {"erreur": "photo introuvable"}; continue
+        p = feats[0]["properties"]
+        tm = (p.get("tiles:tile_matrix_sets") or {}).get("geovisio", {}).get("tileMatrix")
+        if (p.get("pers:interior_orientation") or {}).get("field_of_view") != 360 or not tm:
+            continue
+        mw, mh, tw, th = int(tm[0]["matrixWidth"]), int(tm[0]["matrixHeight"]), int(tm[0]["tileWidth"]), int(tm[0]["tileHeight"])
+        if tuiles_vue(mw, mh, tw, th) == (mw // 2 - 1, mw // 2, mh // 2 - 1, mh // 2):
+            continue  # les 2 x 2 tuiles du centre suffisaient : vue juste
+        saine = zone_saine(mw, mh, tw, th)
+        ancienne = cv2.imread(str(d / "vues" / f"{pid}.jpg"))
+        nouvelle = vue_360(pid, tm)
+        if nouvelle is None:
+            rapport[pid] = {"erreur": "tuiles manquantes"}; continue
+        ecart = float(np.abs(nouvelle.astype(np.int16) - ancienne.astype(np.int16))[saine].mean()) if ancienne is not None else None
+        objets = json.loads(f.read_text())
+        douteux = []
+        for k, o in enumerate(objets):
+            x1, y1, x2, y2 = (int(round(v)) for v in o["box"])
+            m = saine[max(0, y1) : max(0, y2), max(0, x1) : max(0, x2)]
+            hors = float(1 - m.mean()) if m.size else 1.0
+            if hors > 0.15:
+                douteux.append({"cadre": k, "classe": o["classe"], "box": o["box"], "part_etiree": round(hors, 2)})
+        appliquee = bool(a.appliquer and (ecart is None or ecart < 8))
+        rapport[pid] = {"tuiles": f"{mw}x{mh}", "part_saine": round(float(saine.mean()), 3), "ecart_partie_saine": None if ecart is None else round(ecart, 2),
+                        "cadres_douteux": douteux, "refaite": appliquee}
+        if appliquee:
+            (d / "vues_etirees").mkdir(exist_ok=True)
+            if ancienne is not None and not (d / "vues_etirees" / f"{pid}.jpg").exists():
+                shutil.copy(d / "vues" / f"{pid}.jpg", d / "vues_etirees" / f"{pid}.jpg")
+            ecrire_image(d / "vues" / f"{pid}.jpg", nouvelle)
+            dessiner_controle(d, pid, objets)
+            n_ref += 1
+    (d / "reparation.json").write_text(json.dumps(rapport, ensure_ascii=False, indent=1))
+    etirees = [k for k, v in rapport.items() if "tuiles" in v]
+    print(f"{d} : {len(etirees)} vues étirées sur {len(list((d / 'annots').glob('*.json')))} annotées, {n_ref} refaites, "
+          f"{sum(len(rapport[k]['cadres_douteux']) for k in etirees)} cadres à revoir, {sum('erreur' in v for v in rapport.values())} erreurs")
 
 
 def bilan(a):
@@ -332,6 +414,17 @@ def ajuster(im, box, jaune):
     return [float(max(0, nx1 - 2)), float(max(0, ny1 - 2)), float(min(W, nx2 + 2)), float(min(H, ny2 + 2))]
 
 
+def dessiner_controle(d, pid, liste, im=None):
+    """Image de contrôle d'une vue annotée (annots/<id>.jpg) : chaque cadre avec le nom de sa classe."""
+    im = cv2.imread(str(d / "vues" / f"{pid}.jpg")) if im is None else im
+    for o in liste:
+        x1, y1, x2, y2 = (int(v) for v in o["box"])
+        cv2.rectangle(im, (x1, y1), (x2, y2), (0, 255, 0) if o["classe"] != "_ignorer" else (128, 128, 128), 2)
+        cv2.rectangle(im, (x1, max(0, y1 - 18)), (x1 + 9 * len(o["classe"]) + 6, max(18, y1)), (0, 255, 0), -1)
+        cv2.putText(im, o["classe"], (x1 + 3, max(13, y1 - 5)), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 0), 1, cv2.LINE_AA)
+    ecrire_image(d / "annots" / f"{pid}.jpg", im, 88)
+
+
 def annote(a):
     """Enregistre les marquages d'une vue : --boites "M_velo:612,300,700,352;M_bus:..." (remplace l'annotation précédente de cette vue)."""
     d = Path(a.dossier); (d / "annots").mkdir(exist_ok=True)
@@ -352,12 +445,7 @@ def annote(a):
             box = ajuster(im, box, jaune=nom in ("M_zigzag", "M_livraison"))
         liste.append({"classe": nom, "box": [round(v, 1) for v in box]})
     (d / "annots" / f"{a.id}.json").write_text(json.dumps(liste))
-    for o in liste:
-        x1, y1, x2, y2 = (int(v) for v in o["box"])
-        cv2.rectangle(im, (x1, y1), (x2, y2), (0, 255, 0) if o["classe"] != "_ignorer" else (128, 128, 128), 2)
-        cv2.rectangle(im, (x1, max(0, y1 - 18)), (x1 + 9 * len(o["classe"]) + 6, max(18, y1)), (0, 255, 0), -1)
-        cv2.putText(im, o["classe"], (x1 + 3, max(13, y1 - 5)), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 0), 1, cv2.LINE_AA)
-    ecrire_image(d / "annots" / f"{a.id}.jpg", im, 88)
+    dessiner_controle(d, a.id, liste, im)
     print(f"{len(liste)} marquage(s) enregistré(s) ; contrôle visuel : {d / 'annots' / (a.id + '.jpg')} ; cadres retenus : {[(o['classe'], o['box']) for o in liste]}")
 
 
@@ -483,6 +571,7 @@ if __name__ == "__main__":
     m = sp.add_parser("compare"); m.add_argument("--dossier", required=True); m.add_argument("--conf", type=float, default=0.25); m.add_argument("--det", default="", help="fichier de détections à comparer (défaut : det.json)")
     x = sp.add_parser("exporte"); x.add_argument("--dossiers", nargs="+", required=True); x.add_argument("--vers", required=True); x.add_argument("--partie", default="train", choices=["train", "val"])
     f = sp.add_parser("refaire"); f.add_argument("--dossier", required=True); f.add_argument("--annotees", action="store_true", help="seulement les vues annotées")
+    rp = sp.add_parser("reparer"); rp.add_argument("--dossier", required=True); rp.add_argument("--appliquer", action="store_true", help="remplacer les vues étirées (sinon : rapport seulement)")
     bl = sp.add_parser("bilan"); bl.add_argument("poids"); bl.add_argument("nom"); bl.add_argument("--dossiers", nargs="+", required=True); bl.add_argument("--conf", type=float, nargs="+", default=[0.25, 0.35])
     a = ap.parse_args()
-    {"collecte": collecte, "planches": planches, "detecte": detecte, "grille": grille, "annote": annote, "compare": compare, "exporte": exporte, "refaire": refaire, "bilan": bilan}[a.cmd](a)
+    {"collecte": collecte, "planches": planches, "detecte": detecte, "grille": grille, "annote": annote, "compare": compare, "exporte": exporte, "refaire": refaire, "reparer": reparer, "bilan": bilan}[a.cmd](a)
