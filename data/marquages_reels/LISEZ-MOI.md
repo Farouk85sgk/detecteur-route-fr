@@ -18,8 +18,16 @@ Un dossier par région de collecte (`paris`, `sud`, `nord-2`…) :
 - `meta.jsonl` : une ligne par vue annotée (attribution, voir plus haut) ;
 - `annots/<identifiant>.json` : les marquages de la vue, en coordonnées de la vue de 1 280 × 720 points :
   `[{"classe": "M_velo", "box": [x1, y1, x2, y2]}, ...]`. Les classes sont celles du détecteur
-  (`route_fr/classes.py`, liste `DETECTEUR`). `_ignorer` marque une zone à ne pas compter (marquage illisible, ou
-  ambigu).
+  (`route_fr/classes.py`, liste `DETECTEUR`). `_ignorer` marque une zone à ne pas compter (marquage trop petit,
+  illisible, ambigu, ou visible à moins de 60 % : coupé par le bord ou caché). `_leurre` (annotation seulement, pas une
+  classe du détecteur) marque ce qui ressemble à un marquage sans en être un : autre mot peint (TAXI, TRAM, PAYANT,
+  ZONE…), pictogramme handicapé, plaque d'égout, capot ou toit du véhicule de prise de vue. Une détection sur un leurre
+  compte comme fausse ;
+- `retirees.jsonl` (s'il existe) : les vues retirées du jeu au contrôle, avec la raison.
+
+Conventions : la petite flèche ou le double chevron d'une bande cyclable n'est pas une flèche de voie (`_ignorer`) ;
+une flèche vue à l'envers (voie d'en face) garde la classe de sa propre forme ; les lignes longitudinales sont
+facultatives (toutes ne sont pas annotées).
 
 La vue est une vue « conducteur » : pour une photo à 360°, la vue vers l'avant reprojetée (champ horizontal 82°,
 caméra inclinée de 12° vers le bas) ; pour une photo ordinaire, la partie basse de l'image ramenée à 1 280 points de
@@ -43,6 +51,8 @@ python tools/marquages_reels.py exporte --dossiers data/marquages_reels/paris ..
 ## Comment les annotations ont été faites
 
 Des agents ont parcouru les vues, encadré chaque marquage lisible (le cadre est ensuite resserré automatiquement sur
-la peinture), puis un contrôle indépendant a relu les cadres, corrigé les erreurs et retiré les vues douteuses.
-Les régions de la première vague (`paris`, `lyon-grenoble`, `ouest`, `nord-est`, `sud`, `idf-banlieue`) ont été
-contrôlées ainsi ; la région `sud` est tenue à l'écart de l'entraînement et ne sert qu'à mesurer.
+la peinture), puis un contrôle indépendant a relu les cadres, corrigé les erreurs et retiré les vues douteuses ; un
+second contrôleur a revu chaque vue modifiée. La deuxième vague (`centre-2`, `est-2`, `nord-2`, `ouest-2`, `paris-2`,
+`sud-2`) a été contrôlée ainsi le 18 novembre 2026 (environ 8 vues sur 10 corrigées : flèches de bande cyclable prises
+pour des flèches de voie, marquages coupés annotés comme entiers, cadres incomplets) ; la première vague a ensuite été
+recontrôlée sur ces points. La région `sud` est tenue à l'écart de l'entraînement et ne sert qu'à mesurer.

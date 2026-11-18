@@ -1,1 +1,1 @@
-[{"classe": "M_fleche_gauche", "box": [220.0, 501.0, 360.0, 553.0]}, {"classe": "M_fleche_tout_droit", "box": [615.0, 508.0, 672.0, 565.0]}]
+[{"classe": "M_fleche_tout_droit", "box": [208.0, 499.0, 360.0, 556.0]}, {"classe": "M_fleche_tout_droit", "box": [609.0, 506.0, 675.0, 564.0]}, {"classe": "_leurre", "box": [0.0, 680.0, 1280.0, 720.0]}]
