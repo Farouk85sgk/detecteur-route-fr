@@ -1,1 +1,1 @@
-[{"classe": "M_livraison", "box": [0.0, 395.0, 585.0, 720.0]}, {"classe": "M_passage_pietons", "box": [598.0, 303.0, 722.0, 330.0]}, {"classe": "_ignorer", "box": [670.0, 276.0, 724.0, 291.0]}]
+[{"classe": "M_livraison", "box": [0.0, 395.0, 585.0, 720.0]}, {"classe": "M_passage_pietons", "box": [598.0, 303.0, 722.0, 330.0]}, {"classe": "_ignorer", "box": [670.0, 276.0, 737.0, 291.0]}, {"classe": "_leurre", "box": [505.0, 590.0, 1175.0, 720.0]}, {"classe": "_leurre", "box": [330.0, 612.0, 505.0, 720.0]}]

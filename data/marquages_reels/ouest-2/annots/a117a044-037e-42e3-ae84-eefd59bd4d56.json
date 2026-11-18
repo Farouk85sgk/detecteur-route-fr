@@ -1,1 +1,1 @@
-[{"classe": "M_fleche_gauche", "box": [373.0, 284.0, 441.0, 339.0]}, {"classe": "M_passage_pietons", "box": [250.0, 254.0, 510.0, 277.0]}, {"classe": "_ignorer", "box": [383.0, 462.0, 427.0, 503.0]}]
+[{"classe": "M_fleche_gauche", "box": [373.0, 284.0, 441.0, 339.0]}, {"classe": "M_passage_pietons", "box": [205.0, 254.0, 508.0, 280.0]}, {"classe": "_leurre", "box": [426.0, 478.0, 925.0, 518.0]}, {"classe": "_leurre", "box": [60.0, 518.0, 1150.0, 565.0]}, {"classe": "_leurre", "box": [0.0, 565.0, 1280.0, 720.0]}]
