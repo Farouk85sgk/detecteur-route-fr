@@ -26,3 +26,6 @@ enregistrement_*.mp4
 # Système
 .DS_Store
 Thumbs.db
+
+# Vues retéléchargées des vraies photos de marquages (voir data/marquages_reels/LISEZ-MOI.md)
+data/marquages_reels/*/vues/
