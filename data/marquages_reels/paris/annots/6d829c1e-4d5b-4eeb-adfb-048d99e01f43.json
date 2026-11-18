@@ -1,1 +1,1 @@
-[{"classe": "M_livraison", "box": [350.0, 220.0, 698.0, 454.0]}, {"classe": "M_fleche_tout_droit", "box": [861.0, 215.0, 893.0, 251.0]}, {"classe": "M_velo", "box": [844.0, 253.0, 927.0, 291.0]}]
+[{"classe": "M_livraison", "box": [350.0, 220.0, 698.0, 454.0]}, {"classe": "_ignorer", "box": [861.0, 215.0, 893.0, 251.0]}, {"classe": "M_velo", "box": [844.0, 253.0, 927.0, 291.0]}]
