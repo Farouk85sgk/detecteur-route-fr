@@ -281,7 +281,7 @@ def plan_markings(sc, rng):
         if code in TRANSVERSAUX + ("M_passage_pietons", "M_damier"):
             z_end = min(z_end, z - 0.4)
         items.append(make_local(code, x, z, lw, rng, cam))
-    if rng.random() < 0.12:  # autre inscription peinte (TAXI, PAYANT...) : jamais annotée
+    if rng.random() < 0.2:  # autre inscription peinte (TAXI, PAYANT...) ou pictogramme non appris : jamais annotés
         cote = rng.choice([0, 0, 1, -1])
         items.append(make_local("_texte", xc + cote * lw + rng.uniform(-0.2, 0.2), rng.uniform(zb + 4, 30), lw, rng, cam))
     # lignes longitudinales. Une ligne qui longe le bord de la chaussée est une ligne de rive, les autres séparent des

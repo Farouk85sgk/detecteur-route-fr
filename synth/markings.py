@@ -316,7 +316,26 @@ def tirets(a, b, ep, plein=0.5, vide=0.5):
 # inscriptions peintes au sol
 VITESSES_SOL = ["30"] * 13 + ["50"] * 3 + ["70", "20", "90", "10"]
 LEURRES_TEXTE = ["TAXI", "TAXIS", "PAYANT", "ECOLE", "PARKING", "CAR", "CARS", "PIETONS", "LENT", "POLICE", "POMPIERS", "PRIVE", "SORTIE", "DEPOSE", "ZONE", "GIG GIC", "LIVRAISONS INTERDITES",
-                 "TRAM", "RALENTIR", "SAUF", "ARRET", "TRAM", "RALENTIR"]
+                 "TRAM", "RALENTIR", "SAUF", "ARRET", "TRAM", "RALENTIR", "PASSAGE", "PASSAGE", "VELOS", "RIVERAINS"]
+
+
+def picto_leurre(rng, w_px, h_px):
+    """Pictogramme peint qui n'est pas un marquage appris : piéton (voie partagée, aire piétonne) ou fauteuil roulant
+    (place réservée). Sur les vraies photos, le détecteur les prenait pour un vélo ou une flèche."""
+    s = 200
+    im = np.zeros((s, s), np.uint8)
+    e = int(rng.uniform(14, 22))
+    if rng.random() < 0.5:  # piéton qui marche
+        cv2.circle(im, (100, 28), 18, 255, -1, cv2.LINE_AA)
+        cv2.line(im, (100, 50), (96, 112), 255, e + 6, cv2.LINE_AA)  # buste
+        cv2.polylines(im, [np.array([(70, 96), (90, 64), (124, 86)], np.int32)], False, 255, e - 4, cv2.LINE_AA)  # bras
+        cv2.polylines(im, [np.array([(62, 190), (84, 150), (96, 112), (118, 150), (136, 190)], np.int32)], False, 255, e, cv2.LINE_AA)  # jambes
+    else:  # fauteuil roulant
+        cv2.circle(im, (92, 140), 46, 255, max(10, e - 4), cv2.LINE_AA)
+        cv2.circle(im, (86, 30), 17, 255, -1, cv2.LINE_AA)
+        cv2.polylines(im, [np.array([(84, 54), (84, 112), (132, 112), (150, 168)], np.int32)], False, 255, e, cv2.LINE_AA)
+        cv2.line(im, (84, 78), (122, 78), 255, e - 6, cv2.LINE_AA)
+    return cv2.resize(im[:, ::-1] if rng.random() < 0.5 else im, (max(4, int(w_px)), max(4, int(h_px))), interpolation=cv2.INTER_AREA)
 
 
 def raster_size(cam, xc, zc, wm, lm):
@@ -485,7 +504,10 @@ def make_local(code, xc, zc, lane_w, rng, cam):
         mk.rasters.append((raster, tourner(np.roll(raster_corners(xc, zc, wm, lm), 2 if envers else 0, 0), xc, zc, ang)))
     elif code == "_texte":  # autre inscription (TAXI, PAYANT...) : peinte, jamais annotée, pour ne pas la prendre pour BUS ou STOP
         word = rng.choice(LEURRES_TEXTE)
-        if rng.random() < 0.5:
+        if rng.random() < 0.3:  # ou un pictogramme qui n'est pas appris (piéton, fauteuil roulant)
+            wm = rng.uniform(0.9, 1.5); lm = wm * rng.uniform(1.0, 1.8)
+            mk.rasters.append((picto_leurre(rng, *raster_size(cam, xc, zc, wm, lm)), tourner(np.roll(raster_corners(xc, zc, wm, lm), 2 if rng.random() < 0.3 else 0, 0), xc, zc, rng.gauss(0, 0.1))))
+        elif rng.random() < 0.5:
             wm, lm = min(lane_w * rng.uniform(0.55, 0.85), 2.8), rng.uniform(1.5, 3.5)
             mk.rasters.append((text_raster(word, rng, *raster_size(cam, xc, zc, wm, lm)), raster_corners(xc, zc, wm, lm)))
         else:
