@@ -580,7 +580,10 @@ def exporte(a):
     zones techniques : rien n'est compté au-dessus de l'horizon (_ignorer : les panneaux n'y sont pas annotés), et sous
     l'horizon seuls les marquages annotés comptent (_reel : un marquage non annoté n'est pas traité comme du fond).
     Les leurres annotés (_leurre : mot TRAM, pictogramme handicapé, bouche d'égout...) sont retirés de la zone _reel : le
-    réseau y est corrigé comme sur du fond s'il y voit un marquage. Une fenêtre sans marquage mais avec un leurre est gardée."""
+    réseau y est corrigé comme sur du fond s'il y voit un marquage. Une fenêtre sans marquage mais avec un leurre est gardée.
+    Avec --panneaux det_xxx.json (détections d'un détecteur déjà entraîné, faites par « detecte --sortie »), les panneaux
+    vus sous l'horizon (balises, bornes, panonceaux bas) sont ajoutés : sûrs -> panneau, douteux -> _ignorer. Sans cela,
+    la zone _reel apprendrait au réseau à ne pas voir ces panneaux, qui ne sont pas annotés sur ces vues."""
     import random, zlib
     noms = classes_marquages()
     k_ign, k_reel = noms.index("_ignorer"), noms.index("_reel")
@@ -592,12 +595,16 @@ def exporte(a):
     HORIZON = 230
     for dossier in a.dossiers:
         d = Path(dossier)
+        det_pan = json.loads((d / a.panneaux).read_text()) if a.panneaux and (d / a.panneaux).exists() else {}
+        if a.panneaux and not det_pan:
+            print(f"attention : pas de détections de panneaux dans {d / a.panneaux}")
         for f in sorted((d / "annots").glob("*.json")):
             pid = f.stem
             objets = json.loads(f.read_text())
             im = cv2.imread(str(d / "vues" / f"{pid}.jpg"))
             if im is None or not objets:
                 continue
+            pan = [{"classe": "panneau" if x["conf"] >= 0.45 else "_ignorer", "box": x["box"]} for x in det_pan.get(pid, []) if x["classe"] == "panneau" and x["conf"] >= 0.15]
             H, W = im.shape[:2]
             rng = random.Random(zlib.crc32(pid.encode()))
             fenetres = [(x0, 0, 720) for x0 in (0, (W - 720) // 2, W - 720)]
@@ -612,8 +619,8 @@ def exporte(a):
             n_vues += 1
             for k, (x0, y0, s) in enumerate(fenetres):
                 e = 416 / s
-                lignes, trous = [], []
-                for o in objets:
+                lignes, trous, marquage = [], [], False
+                for o in objets + pan:
                     x1, y1, x2, y2 = o["box"]
                     if o["classe"] == LEURRE:
                         ix1, iy1, ix2, iy2 = max(x1, x0) - x0, max(y1, y0) - y0, min(x2, x0 + s) - x0, min(y2, y0 + s) - y0
@@ -631,7 +638,8 @@ def exporte(a):
                     lignes.append((c, ((ix1 + ix2) / 2 - x0) / s, ((iy1 + iy2) / 2 - y0) / s, (ix2 - ix1) / s, (iy2 - iy1) / s))
                     if garde:
                         compte[o["classe"]] += 1
-                if not any(c < k_ign for c, *_ in lignes) and not trous:
+                        marquage = marquage or o["classe"] != "panneau"
+                if not marquage and not trous:
                     continue
                 yh = min(max(0, HORIZON - y0), s)
                 if yh > 0:
@@ -657,6 +665,7 @@ if __name__ == "__main__":
     n.add_argument("--sans-ajustement", action="store_true", help="garder exactement les cadres donnés (sinon ils sont resserrés sur la peinture)")
     m = sp.add_parser("compare"); m.add_argument("--dossier", required=True); m.add_argument("--conf", type=float, default=0.25); m.add_argument("--det", default="", help="fichier de détections à comparer (défaut : det.json)")
     x = sp.add_parser("exporte"); x.add_argument("--dossiers", nargs="+", required=True); x.add_argument("--vers", required=True); x.add_argument("--partie", default="train", choices=["train", "val"])
+    x.add_argument("--panneaux", default="", help="fichier de détections (dans chaque dossier) qui donne les panneaux à ajouter")
     f = sp.add_parser("refaire"); f.add_argument("--dossier", required=True); f.add_argument("--annotees", action="store_true", help="seulement les vues annotées")
     zo = sp.add_parser("zoom"); zo.add_argument("--dossier", required=True); zo.add_argument("--id", required=True); zo.add_argument("--zone", required=True, help="x1,y1,x2,y2 dans la vue")
     zo.add_argument("--facteur", type=float, default=0); zo.add_argument("--cadres", action="store_true", help="dessiner les cadres annotés")
