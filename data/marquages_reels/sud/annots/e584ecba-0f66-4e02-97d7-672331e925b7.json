@@ -1,1 +1,1 @@
-[{"classe": "M_velo", "box": [398.0, 466.0, 592.0, 512.0]}, {"classe": "M_passage_pietons", "box": [0.0, 333.0, 447.0, 416.0]}]
+[{"classe": "M_velo", "box": [398.0, 466.0, 592.0, 512.0]}, {"classe": "M_passage_pietons", "box": [0.0, 333.0, 447.0, 416.0]}, {"classe": "_leurre", "box": [453.0, 417.0, 544.0, 441.0]}, {"classe": "_leurre", "box": [545.0, 432.0, 624.0, 456.0]}, {"classe": "_leurre", "box": [180.0, 580.0, 1170.0, 720.0]}]

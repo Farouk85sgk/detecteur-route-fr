@@ -1,1 +1,1 @@
-[{"classe": "M_vitesse_sol", "box": [574.0, 368.0, 681.0, 419.0]}, {"classe": "M_passage_pietons", "box": [515.0, 445.0, 808.0, 602.0]}]
+[{"classe": "M_vitesse_sol", "box": [574.0, 368.0, 681.0, 419.0]}, {"classe": "M_passage_pietons", "box": [515.0, 445.0, 808.0, 602.0]}, {"classe": "_ignorer", "box": [80.0, 355.0, 300.0, 447.0]}, {"classe": "_leurre", "box": [915.0, 458.0, 1152.0, 570.0]}, {"classe": "_leurre", "box": [210.0, 588.0, 1165.0, 720.0]}]
