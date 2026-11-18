@@ -1,1 +1,1 @@
-[{"classe": "M_passage_pietons", "box": [283.0, 396.0, 1068.0, 498.0]}, {"classe": "M_zigzag", "box": [0.0, 503.0, 590.0, 708.0]}, {"classe": "_ignorer", "box": [430.0, 266.0, 645.0, 372.0]}]
+[{"classe": "M_passage_pietons", "box": [283.0, 396.0, 1068.0, 498.0]}, {"classe": "M_zigzag", "box": [0.0, 503.0, 590.0, 708.0]}, {"classe": "M_zigzag", "box": [430.0, 266.0, 646.0, 372.0]}]

@@ -416,7 +416,12 @@ def ajuster(im, box, jaune):
     nx1, ny1, nx2, ny2 = X1 + np.percentile(xs, 1), Y1 + np.percentile(ys, 1), X1 + np.percentile(xs, 99) + 1, Y1 + np.percentile(ys, 99) + 1
     if (nx2 - nx1) < 0.45 * (x2 - x1) or (ny2 - ny1) < 0.45 * (y2 - y1):  # la peinture trouvée est bien plus petite que le cadre donné : on garde le cadre
         return box
-    return [float(max(0, nx1 - 2)), float(max(0, ny1 - 2)), float(min(W, nx2 + 2)), float(min(H, ny2 + 2))]
+    # Le cadre peut se resserrer, mais à peine s'agrandir : la peinture voisine (tiret de ligne, autre marquage) faisait
+    # parfois grossir un petit cadre bien au-delà du marquage (relevé par les contrôleurs le 18 novembre 2026).
+    gx, gy = max(4.0, 0.08 * (x2 - x1)), max(4.0, 0.08 * (y2 - y1))
+    nx1, nx2 = max(nx1 - 2, x1 - gx), min(nx2 + 2, x2 + gx)
+    ny1, ny2 = max(ny1 - 2, y1 - gy), min(ny2 + 2, y2 + gy)
+    return [float(max(0, nx1)), float(max(0, ny1)), float(min(W, nx2)), float(min(H, ny2))]
 
 
 LEURRE = "_leurre"  # annotation seulement (pas une classe du détecteur) : ressemble à un marquage mais n'en est pas un

@@ -1,1 +1,1 @@
-[{"classe": "M_zigzag", "box": [542.0, 310.0, 790.0, 529.0]}, {"classe": "M_passage_pietons", "box": [698.0, 236.0, 792.0, 258.0]}, {"classe": "M_passage_pietons", "box": [608.0, 230.0, 682.0, 238.0]}]
+[{"classe": "M_zigzag", "box": [410.0, 278.0, 840.0, 557.0]}, {"classe": "M_passage_pietons", "box": [698.0, 236.0, 792.0, 258.0]}, {"classe": "M_passage_pietons", "box": [562.0, 230.0, 686.0, 239.0]}, {"classe": "_ignorer", "box": [0.0, 336.0, 192.0, 430.0]}, {"classe": "_leurre", "box": [240.0, 555.0, 1016.0, 720.0]}]
