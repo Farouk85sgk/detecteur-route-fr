@@ -19,8 +19,13 @@ et à utiliser un jeu de vraies photos annotées, tirées de Panoramax (instance
       assemble les vues en planches de 9 (3 x 3, numérotées) -> DOSSIER/planches/p_000.jpg ... et DOSSIER/planches/index.json
   grille --dossier DOSSIER --id IDENTIFIANT [...]
       vue quadrillée tous les 80 points, pour lire les coordonnées d'un marquage
+  zoom --dossier DOSSIER --id IDENTIFIANT --zone x1,y1,x2,y2 [--cadres]
+      agrandit une partie de la vue, graduée dans les coordonnées de la vue (et les cadres annotés avec --cadres)
   annote --dossier DOSSIER --id IDENTIFIANT --boites "M_velo:612,300,700,352;M_bus:..."
-      enregistre tous les marquages d'une vue (cadres resserrés sur la peinture) et écrit une image de contrôle
+      enregistre tous les marquages d'une vue (cadres resserrés sur la peinture, sauf ceux précédés de « = ») et écrit
+      une image de contrôle
+  retire --dossier DOSSIER --id IDENTIFIANT --raison "..."
+      retire une vue inutilisable du jeu annoté (annots_retirees/, raisons.jsonl)
   detecte --dossier DOSSIER [--poids FICHIER.pt] [--conf 0.2]     puis     compare --dossier DOSSIER
       passe le détecteur sur les vues annotées, puis compare ses détections aux annotations (tableau par classe)
   bilan POIDS.pt NOM --dossiers D1 D2 ...
@@ -414,19 +419,66 @@ def ajuster(im, box, jaune):
     return [float(max(0, nx1 - 2)), float(max(0, ny1 - 2)), float(min(W, nx2 + 2)), float(min(H, ny2 + 2))]
 
 
+LEURRE = "_leurre"  # annotation seulement (pas une classe du détecteur) : ressemble à un marquage mais n'en est pas un
+COULEUR_CADRE = {"_ignorer": (128, 128, 128), LEURRE: (60, 60, 255)}
+
+
 def dessiner_controle(d, pid, liste, im=None):
     """Image de contrôle d'une vue annotée (annots/<id>.jpg) : chaque cadre avec le nom de sa classe."""
     im = cv2.imread(str(d / "vues" / f"{pid}.jpg")) if im is None else im
     for o in liste:
         x1, y1, x2, y2 = (int(v) for v in o["box"])
-        cv2.rectangle(im, (x1, y1), (x2, y2), (0, 255, 0) if o["classe"] != "_ignorer" else (128, 128, 128), 2)
-        cv2.rectangle(im, (x1, max(0, y1 - 18)), (x1 + 9 * len(o["classe"]) + 6, max(18, y1)), (0, 255, 0), -1)
+        coul = COULEUR_CADRE.get(o["classe"], (0, 255, 0))
+        cv2.rectangle(im, (x1, y1), (x2, y2), coul, 2)
+        cv2.rectangle(im, (x1, max(0, y1 - 18)), (x1 + 9 * len(o["classe"]) + 6, max(18, y1)), coul, -1)
         cv2.putText(im, o["classe"], (x1 + 3, max(13, y1 - 5)), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 0), 1, cv2.LINE_AA)
     ecrire_image(d / "annots" / f"{pid}.jpg", im, 88)
 
 
+def zoom(a):
+    """Agrandit une partie d'une vue (zoom/<id>_<x1>_<y1>.jpg), graduée dans les coordonnées de la vue, pour lire un petit marquage."""
+    d = Path(a.dossier); (d / "zoom").mkdir(exist_ok=True)
+    im = cv2.imread(str(d / "vues" / f"{a.id}.jpg"))
+    if im is None:
+        raise SystemExit(f"vue introuvable : {a.id}")
+    H, W = im.shape[:2]
+    x1, y1, x2, y2 = (int(round(float(v))) for v in a.zone.split(","))
+    x1, y1, x2, y2 = max(0, x1), max(0, y1), min(W, x2), min(H, y2)
+    if x2 - x1 < 4 or y2 - y1 < 4:
+        raise SystemExit("zone trop petite")
+    k = a.facteur or max(1.0, min(6.0, 900 / max(x2 - x1, y2 - y1)))
+    z = cv2.resize(im[y1:y2, x1:x2], (round((x2 - x1) * k), round((y2 - y1) * k)), interpolation=cv2.INTER_CUBIC)
+    pas = next(p for p in (5, 10, 20, 40, 80, 160) if p * k >= 45)
+    for x in range((x1 // pas + 1) * pas, x2, pas):
+        X = round((x - x1) * k); cv2.line(z, (X, 0), (X, 12), (0, 255, 255), 1); cv2.line(z, (X, z.shape[0] - 12), (X, z.shape[0]), (0, 255, 255), 1)
+        cv2.putText(z, str(x), (X + 2, 24), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 0), 3, cv2.LINE_AA); cv2.putText(z, str(x), (X + 2, 24), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 255, 255), 1, cv2.LINE_AA)
+    for y in range((y1 // pas + 1) * pas, y2, pas):
+        Y = round((y - y1) * k); cv2.line(z, (0, Y), (12, Y), (0, 255, 255), 1); cv2.line(z, (z.shape[1] - 12, Y), (z.shape[1], Y), (0, 255, 255), 1)
+        cv2.putText(z, str(y), (14, Y + 5), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 0), 3, cv2.LINE_AA); cv2.putText(z, str(y), (14, Y + 5), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 255, 255), 1, cv2.LINE_AA)
+    if a.cadres and (d / "annots" / f"{a.id}.json").exists():
+        for o in json.loads((d / "annots" / f"{a.id}.json").read_text()):
+            bx1, by1, bx2, by2 = o["box"]
+            cv2.rectangle(z, (round((bx1 - x1) * k), round((by1 - y1) * k)), (round((bx2 - x1) * k), round((by2 - y1) * k)), COULEUR_CADRE.get(o["classe"], (0, 255, 0)), 1)
+    f = d / "zoom" / f"{a.id}_{x1}_{y1}.jpg"
+    ecrire_image(f, z, 92)
+    print(f"{f} (x{k:.1f}, graduations tous les {pas} points de la vue)")
+
+
+def retire(a):
+    """Retire une vue du jeu annoté (annots -> annots_retirees), avec la raison, quand elle ne peut pas servir (floue, étirée, douteuse)."""
+    d = Path(a.dossier); (d / "annots_retirees").mkdir(exist_ok=True)
+    for ext in (".json", ".jpg"):
+        f = d / "annots" / f"{a.id}{ext}"
+        if f.exists():
+            shutil.move(str(f), str(d / "annots_retirees" / f.name))
+    with open(d / "annots_retirees" / "raisons.jsonl", "a") as j:
+        j.write(json.dumps({"id": a.id, "raison": a.raison}, ensure_ascii=False) + "\n")
+    print(f"vue {a.id} retirée : {a.raison}")
+
+
 def annote(a):
-    """Enregistre les marquages d'une vue : --boites "M_velo:612,300,700,352;M_bus:..." (remplace l'annotation précédente de cette vue)."""
+    """Enregistre les marquages d'une vue : --boites "M_velo:612,300,700,352;M_bus:..." (remplace l'annotation précédente de cette vue).
+    Un cadre précédé de « = » (« =M_velo:612,300,700,352 ») est gardé tel quel ; les autres sont resserrés sur la peinture."""
     d = Path(a.dossier); (d / "annots").mkdir(exist_ok=True)
     im = cv2.imread(str(d / "vues" / f"{a.id}.jpg"))
     if im is None:
@@ -436,12 +488,14 @@ def annote(a):
     for morceau in [m for m in a.boites.split(";") if m.strip()]:
         nom, coords = morceau.strip().split(":")
         nom = nom.strip()
-        if nom not in noms or nom == "panneau" or nom == "_reel":
-            raise SystemExit(f"classe inconnue : {nom}. Classes permises : {[n for n in noms if n not in ('panneau', '_reel')]}")
+        exact = nom.startswith("=")  # « =M_velo:... » : cadre gardé tel quel (déjà resserré lors d'une annotation précédente)
+        nom = nom.lstrip("=")
+        if (nom not in noms and nom != LEURRE) or nom == "panneau" or nom == "_reel":
+            raise SystemExit(f"classe inconnue : {nom}. Classes permises : {[n for n in noms if n not in ('panneau', '_reel')] + [LEURRE]}")
         box = [float(v) for v in coords.split(",")]
         if len(box) != 4 or box[2] <= box[0] or box[3] <= box[1]:
             raise SystemExit(f"cadre invalide : {morceau} (attendu x1,y1,x2,y2 avec x2 > x1 et y2 > y1)")
-        if not a.sans_ajustement and nom != "_ignorer" and not nom.startswith("M_ligne_") and nom not in ("M_zebras", "M_passage_pietons", "M_damier"):
+        if not a.sans_ajustement and not exact and not nom.startswith("_") and not nom.startswith("M_ligne_") and nom not in ("M_zebras", "M_passage_pietons", "M_damier"):
             box = ajuster(im, box, jaune=nom in ("M_zigzag", "M_livraison"))
         liste.append({"classe": nom, "box": [round(v, 1) for v in box]})
     (d / "annots" / f"{a.id}.json").write_text(json.dumps(liste))
@@ -466,7 +520,7 @@ def compare(a):
         pid = f.stem
         gts = [g for g in json.loads(f.read_text())]
         ign = [g["box"] for g in gts if g["classe"] == "_ignorer"]
-        gts = [g for g in gts if g["classe"] != "_ignorer"]
+        gts = [g for g in gts if not g["classe"].startswith("_")]  # ni _ignorer ni _leurre : une détection sur un leurre est une fausse détection
         ds = [x for x in det.get(pid, []) if x["conf"] >= a.conf and x["classe"] != "panneau"]
         pris = set()
         for g in gts:
@@ -494,11 +548,39 @@ def compare(a):
     (d / ("comparaison.json" if not a.det else "comparaison_" + a.det)).write_text(json.dumps({"seuil": a.conf, "bilan": {c: {**b, "autre_nom": dict(b["autre_nom"])} for c, b in table.items()}, "details": details}, ensure_ascii=False))
 
 
+def rectangles_sans(zone, trous):
+    """Le rectangle zone (x1, y1, x2, y2) privé des rectangles trous, découpé en rectangles disjoints."""
+    X1, Y1, X2, Y2 = zone
+    trous = [(max(X1, t[0]), max(Y1, t[1]), min(X2, t[2]), min(Y2, t[3])) for t in trous]
+    trous = [t for t in trous if t[2] > t[0] and t[3] > t[1]]
+    if not trous:
+        return [zone]
+    xs = sorted({X1, X2, *(t[0] for t in trous), *(t[2] for t in trous)})
+    bandes = []
+    for xa, xb in zip(xs, xs[1:]):
+        y = Y1
+        for b, d in sorted((t[1], t[3]) for t in trous if t[0] <= xa and t[2] >= xb):
+            if b > y:
+                bandes.append((xa, y, xb, b))
+            y = max(y, d)
+        if y < Y2:
+            bandes.append((xa, y, xb, Y2))
+    res = []  # bandes voisines de même hauteur réunies
+    for r in sorted(bandes, key=lambda r: (r[1], r[3], r[0])):
+        if res and res[-1][1] == r[1] and res[-1][3] == r[3] and res[-1][2] == r[0]:
+            res[-1] = (res[-1][0], r[1], r[2], r[3])
+        else:
+            res.append(r)
+    return res
+
+
 def exporte(a):
     """Fait des vues annotées un jeu d'entraînement au format YOLO : fenêtres carrées de 416 points découpées dans les vues
     (trois fenêtres fixes de 720 points de côté, plus une fenêtre rapprochée par marquage), étiquettes des marquages, et
     zones techniques : rien n'est compté au-dessus de l'horizon (_ignorer : les panneaux n'y sont pas annotés), et sous
-    l'horizon seuls les marquages annotés comptent (_reel : un marquage non annoté n'est pas traité comme du fond)."""
+    l'horizon seuls les marquages annotés comptent (_reel : un marquage non annoté n'est pas traité comme du fond).
+    Les leurres annotés (_leurre : mot TRAM, pictogramme handicapé, bouche d'égout...) sont retirés de la zone _reel : le
+    réseau y est corrigé comme sur du fond s'il y voit un marquage. Une fenêtre sans marquage mais avec un leurre est gardée."""
     import random, zlib
     noms = classes_marquages()
     k_ign, k_reel = noms.index("_ignorer"), noms.index("_reel")
@@ -522,7 +604,7 @@ def exporte(a):
             if a.partie == "train":
                 for o in objets:
                     if o["classe"] == "_ignorer" or o["classe"].startswith("M_ligne_"):
-                        continue
+                        continue  # (une fenêtre rapprochée par marquage, et aussi par leurre)
                     x1, y1, x2, y2 = o["box"]
                     s = int(min(H, max(300, 3.2 * max(x2 - x1, y2 - y1) * rng.uniform(0.8, 1.3))))
                     cx, cy = (x1 + x2) / 2 + rng.uniform(-0.15, 0.15) * s, (y1 + y2) / 2 + rng.uniform(-0.15, 0.15) * s
@@ -530,9 +612,14 @@ def exporte(a):
             n_vues += 1
             for k, (x0, y0, s) in enumerate(fenetres):
                 e = 416 / s
-                lignes = []
+                lignes, trous = [], []
                 for o in objets:
                     x1, y1, x2, y2 = o["box"]
+                    if o["classe"] == LEURRE:
+                        ix1, iy1, ix2, iy2 = max(x1, x0) - x0, max(y1, y0) - y0, min(x2, x0 + s) - x0, min(y2, y0 + s) - y0
+                        if ix2 > ix1 and iy2 > iy1 and (ix2 - ix1) * (iy2 - iy1) >= 0.5 * (x2 - x1) * (y2 - y1):
+                            trous.append((ix1, iy1, ix2, iy2))
+                        continue
                     ix1, iy1, ix2, iy2 = max(x1, x0), max(y1, y0), min(x2, x0 + s), min(y2, y0 + s)
                     if ix2 <= ix1 or iy2 <= iy1:
                         continue
@@ -544,13 +631,13 @@ def exporte(a):
                     lignes.append((c, ((ix1 + ix2) / 2 - x0) / s, ((iy1 + iy2) / 2 - y0) / s, (ix2 - ix1) / s, (iy2 - iy1) / s))
                     if garde:
                         compte[o["classe"]] += 1
-                if not any(c < k_ign for c, *_ in lignes):
+                if not any(c < k_ign for c, *_ in lignes) and not trous:
                     continue
                 yh = min(max(0, HORIZON - y0), s)
                 if yh > 0:
                     lignes.append((k_ign, 0.5, yh / (2 * s), 1.0, yh / s))
-                if yh < s:
-                    lignes.append((k_reel, 0.5, (yh + s) / (2 * s), 1.0, (s - yh) / s))
+                for rx1, ry1, rx2, ry2 in rectangles_sans((0, yh, s, s), trous) if yh < s else []:
+                    lignes.append((k_reel, (rx1 + rx2) / (2 * s), (ry1 + ry2) / (2 * s), (rx2 - rx1) / s, (ry2 - ry1) / s))
                 cv2.imwrite(str(dest / "images" / a.partie / f"{pid}_{k}.jpg"), cv2.resize(im[y0 : y0 + s, x0 : x0 + s], (416, 416), interpolation=cv2.INTER_AREA), [cv2.IMWRITE_JPEG_QUALITY, 90])
                 (dest / "labels" / a.partie / f"{pid}_{k}.txt").write_text("".join(f"{c} {x:.6f} {y:.6f} {w:.6f} {h:.6f}\n" for c, x, y, w, h in lignes))
                 n_fen += 1
@@ -571,7 +658,10 @@ if __name__ == "__main__":
     m = sp.add_parser("compare"); m.add_argument("--dossier", required=True); m.add_argument("--conf", type=float, default=0.25); m.add_argument("--det", default="", help="fichier de détections à comparer (défaut : det.json)")
     x = sp.add_parser("exporte"); x.add_argument("--dossiers", nargs="+", required=True); x.add_argument("--vers", required=True); x.add_argument("--partie", default="train", choices=["train", "val"])
     f = sp.add_parser("refaire"); f.add_argument("--dossier", required=True); f.add_argument("--annotees", action="store_true", help="seulement les vues annotées")
+    zo = sp.add_parser("zoom"); zo.add_argument("--dossier", required=True); zo.add_argument("--id", required=True); zo.add_argument("--zone", required=True, help="x1,y1,x2,y2 dans la vue")
+    zo.add_argument("--facteur", type=float, default=0); zo.add_argument("--cadres", action="store_true", help="dessiner les cadres annotés")
+    rt = sp.add_parser("retire"); rt.add_argument("--dossier", required=True); rt.add_argument("--id", required=True); rt.add_argument("--raison", required=True)
     rp = sp.add_parser("reparer"); rp.add_argument("--dossier", required=True); rp.add_argument("--appliquer", action="store_true", help="remplacer les vues étirées (sinon : rapport seulement)")
     bl = sp.add_parser("bilan"); bl.add_argument("poids"); bl.add_argument("nom"); bl.add_argument("--dossiers", nargs="+", required=True); bl.add_argument("--conf", type=float, nargs="+", default=[0.25, 0.35])
     a = ap.parse_args()
-    {"collecte": collecte, "planches": planches, "detecte": detecte, "grille": grille, "annote": annote, "compare": compare, "exporte": exporte, "refaire": refaire, "reparer": reparer, "bilan": bilan}[a.cmd](a)
+    {"collecte": collecte, "planches": planches, "detecte": detecte, "grille": grille, "annote": annote, "compare": compare, "exporte": exporte, "refaire": refaire, "reparer": reparer, "zoom": zoom, "retire": retire, "bilan": bilan}[a.cmd](a)
