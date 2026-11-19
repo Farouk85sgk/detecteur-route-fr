@@ -7,7 +7,7 @@ export const APP = {
   slogan: "Le code de la route, en direct.",
   accroche: "Filme ta route : panneaux, feux, marquages, piétons et cyclistes sont reconnus et expliqués en direct.",
   depot: "https://github.com/Farouk85sgk/detecteur-route-fr",
-  version: "3.1.0",
+  version: "3.1.1",
 };
 // lien « Code source » : la branche de développement de la 3.x (la branche par défaut du dépôt, main, est restée à la 2.0)
 APP.source = `${APP.depot}/tree/v3-reel`;

@@ -93,7 +93,7 @@ Web : carte graphique WebGPU si disponible, sinon processeur) et **rien n'est en
 photos, trajets et progression restent sur le téléphone. Sur Android ou iPhone, menu du navigateur →
 « Ajouter à l'écran d'accueil » pour l'installer comme une appli.
 
-- **Détection en direct** (caméra ou vidéo) : 209 panneaux et 22 marquages, plus **feux tricolores** (couleur lue,
+- **Détection en direct** (caméra ou vidéo) : 209 panneaux et 24 marquages, plus **feux tricolores** (couleur lue,
   annonce du passage au vert), **piétons, cyclistes et deux-roues** avec leur distance approximative. Carte du
   dernier élément avec son explication, historique en pastilles, vitesse maximale en cours, lignes à gauche et à
   droite, annonces vocales (« Limitation à 50 », règle expliquée à voix haute), vibration. Mode paysage : la route
@@ -277,18 +277,37 @@ géographiques que les modèles n'ont jamais vues à l'entraînement.
 | version précédente | 0,645 | 0,79 | 0,56 | 0,14 | 0,38 | 0,69 |
 | après la première phase d'entraînement | 0,841 | 0,70 | 0,83 | 0,22 | 0,72 | 0,95 |
 | après la deuxième phase | 0,902 | 0,77 | 0,88 | 0,39 | 0,81 | 0,97 |
-| **version livrée** (affinage : dents de requin redessinées) | **0,905** | 0,77 | **0,89** | 0,41 | 0,84 | 0,97 |
+| versions 3.0.3 à 3.1.0 (affinage : dents de requin redessinées) | 0,905 | 0,77 | 0,89 | 0,41 | 0,84 | 0,97 |
+| **version livrée 3.1.1** (vraies photos de marquages, voir plus bas) | **0,905** | 0,79 | 0,88 | 0,44 | 0,82 | 0,96 |
 
 La version précédente manquait presque un panneau sur deux sur ces photos ; la version livrée en trouve près de
-neuf sur dix, et 97 % de ceux qui mesurent plus de 20 pixels.
+neuf sur dix, et 96 % de ceux qui mesurent plus de 20 pixels.
 
-**Les marquages au sol** sont mesurés sur 1 500 images synthétiques de validation : AP50 moyenne de 0,84 pour les
-22 marquages, dont 18 au-dessus de 0,83 (passage piétons 0,90, flèches 0,83 à 0,95, lignes continues et
-discontinues 0,84 et 0,86, zébras 0,92, damier 0,89, mot « BUS » 0,88). Quatre restent en retrait : la ligne de
-rive (0,74), les dents de requin (0,74), la **ligne d'arrêt STOP (0,62)** et surtout la **ligne de
-cédez-le-passage (0,37)**, encore peu fiable. Le mot « STOP » peint au sol (0,91) et le triangle de
-cédez-le-passage (0,95) sont, eux, bien reconnus. Ces images sont synthétiques : sur une vraie route, la
-reconnaissance des marquages n'a pas été mesurée.
+**Les marquages au sol sur de vraies routes.** Jusqu'à la version 3.1.0, le détecteur n'avait appris les marquages
+que sur des images de synthèse ; mesuré sur de vraies photos, il n'en reconnaissait qu'un sur huit. Pour la 3.1.1,
+454 vues de rues françaises tirées de Panoramax (IGN, Licence Ouverte 2.0) ont été annotées marquage par marquage,
+puis relues deux fois (`data/marquages_reels/`, outil `tools/marquages_reels.py`). Les 45 vues de la région Sud ne
+servent qu'à mesurer : le détecteur ne les a jamais vues (94 marquages, seuil de l'appli 0,35).
+
+| Détecteur | Marquages trouvés et bien nommés | Fausses détections (45 vues) |
+|---|---|---|
+| 3.1.0 (images de synthèse seulement) | 12 % | 3 |
+| premier essai sur vraies photos | 80 % | 472 |
+| **3.1.1 (version livrée)** | **66 %** | **16** |
+
+Le premier essai voyait des marquages partout : sur les vraies photos, toute la chaussée était une zone où un
+marquage non annoté ne coûtait rien. Dans la 3.1.1, la chaussée non annotée compte comme du fond ; seule la peinture
+que personne n'a annotée (surtout les lignes longitudinales, facultatives) est ignorée, et les leurres annotés (mots
+TRAM, PAYANT, PASSAGE, capot du véhicule, plaques d'égout) apprennent au détecteur ce qui n'est pas un marquage. Par
+marquage : vélo 18 sur 29, passage piétons 11 sur 20, flèche tout droit 8 sur 13, BUS 7 sur 10, « 30 » au sol 6 sur
+6, flèches combinées 6 sur 7, zigzag d'arrêt de bus 2 sur 2, damier 2 sur 2, place de livraison 1 sur 1 ; les dents
+de requin (0 sur 2) restent à travailler. Ces chiffres valent pour une seule photo : en roulant, l'appli voit chaque
+marquage sur plusieurs images, et attend de le voir trois fois avant de l'afficher.
+
+**Sur 1 500 images synthétiques de validation** du nouveau générateur (plus difficiles qu'avant : marquages vus de
+près et coupés par le bord, ombres, chaussées colorées), l'AP50 moyenne des 24 marquages est de 0,83. Les plus
+faibles sont la **ligne d'arrêt STOP (0,38)**, le pictogramme vélo (0,57, dessiné dans des styles très variés) et la
+ligne de cédez-le-passage (0,60).
 
 **Dents de requin : redessinées, puis réapprises.** Une relecture a montré que ces triangles étaient dessinés
 pointe vers le conducteur dans les images d'entraînement, alors qu'en France ils sont peints sur la rampe du
@@ -306,25 +325,30 @@ par panneau** (94,1 % toutes vignettes confondues) sur 2 330 vraies vignettes de
 était à 92,9 % sur les mêmes vignettes. Il rejette maintenant 57 % des panneaux hors catalogue, contre 22 %.
 
 **La chaîne complète**, comme dans l'appli (détecteur, puis classifieur, seuil des panneaux à 0,455 ;
-`tools/evaluer_chaine.py`), sur les 1 811 panneaux du catalogue annotés dans ces photos :
+`tools/evaluer_chaine.py`), sur les 1 811 panneaux du catalogue annotés dans ces photos. Depuis la 3.1.0, l'appli
+relève le seuil de neuf panneaux souvent annoncés à tort (balises J3, J5, J13...) : les lignes « sans les seuils »
+sont mesurées sans cette règle (`--sans-seuils`), comme les plus anciennes.
 
 | Modèles | Trouvés et bien nommés | Confusions | Fausses annonces | Annonces justes |
 |---|---|---|---|---|
 | détecteur de la première phase + classifieur du deuxième tour | 77,0 % | 95 | 150 | 85,1 % |
 | détecteur de la deuxième phase + classifieur du deuxième tour | 80,9 % | 105 | 145 | 85,4 % |
 | détecteur de la deuxième phase + classifieur du troisième tour | 80,8 % | 88 | 137 | 86,7 % |
-| **détecteur affiné + classifieur du troisième tour (version livrée)** | **81,1 %** | **88** | **134** | **86,9 %** |
+| détecteur affiné + classifieur du troisième tour, sans les seuils (3.0.3) | 81,1 % | 88 | 134 | 86,9 % |
+| détecteur affiné + classifieur du troisième tour, avec les seuils (3.1.0) | 80,3 % | 82 | 104 | 88,7 % |
+| détecteur 3.1.1 + classifieur du troisième tour, sans les seuils | 80,8 % | 90 | 136 | 86,6 % |
+| **détecteur 3.1.1 + classifieur du troisième tour, avec les seuils (version livrée)** | **79,9 %** | **85** | **99** | **88,7 %** |
 
-Selon la taille du panneau dans l'image : 90 % au-dessus de 24 px, 80 % entre 12 et 24 px, 44 % en dessous de
+Selon la taille du panneau dans l'image : 90 % au-dessus de 24 px, 77 % entre 12 et 24 px, 44 % en dessous de
 12 px. Ces chiffres valent pour **une seule photo** ; en roulant, le panneau grossit d'image en image et l'appli
 attend de le voir plusieurs fois de suite avant de l'annoncer. Le seuil règle le compromis entre oublis et erreurs :
 
 | Seuil des panneaux | Trouvés et bien nommés | Confusions | Fausses annonces | Annonces justes |
 |---|---|---|---|---|
-| 0,35 | 83,2 % | 99 | 184 | 84,2 % |
-| **0,455 (appli)** | **81,1 %** | **88** | **134** | **86,9 %** |
-| 0,55 | 78,1 % | 73 | 108 | 88,7 % |
-| 0,70 | 72,2 % | 35 | 60 | 93,2 % |
+| 0,35 | 81,5 % | 99 | 126 | 86,8 % |
+| **0,455 (appli)** | **79,9 %** | **85** | **99** | **88,7 %** |
+| 0,55 | 77,7 % | 64 | 81 | 90,7 % |
+| 0,70 | 71,4 % | 40 | 52 | 93,4 % |
 
 Les panneaux les moins bien reconnus (cinq à dix exemples chacun dans ces photos) sont le panonceau M6h, la
 limitation de hauteur B12, la balise J3, la distance minimale B17 et la chaussée rétrécie A3 ; les confusions les plus fréquentes touchent des
