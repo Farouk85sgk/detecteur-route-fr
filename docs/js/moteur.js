@@ -38,6 +38,7 @@ export class Moteur {
     this.pret = false; this.session = null; this.cls = null; this.usagers = null; this.emp = null;
     this.clsMap = []; this.detMap = []; this.fournisseurs = []; this.wCls = 64; this.hCls = 96;
     this.cote = 640; this.avecUsagers = true; this.actifs = null; this.appris = []; this.seuilAppris = 0.5;
+    this.loin = 0; this.pleines = 0; this.horizon = null;  // vue au loin : une analyse sur « loin » (0 : jamais)
     this.work = document.createElement("canvas"); this.wctx = this.work.getContext("2d", { willReadFrequently: true });
     this.crop = document.createElement("canvas"); this.cctx = this.crop.getContext("2d", { willReadFrequently: true });
     this.cfeu = document.createElement("canvas"); this.fctx = this.cfeu.getContext("2d", { willReadFrequently: true });
@@ -100,8 +101,9 @@ export class Moteur {
   }
 
   // cote : taille d'analyse ; actifs : Set des indices d'éléments affichés (null = tous) ; appris : [{index, emb, correction}]
-  configurer({ cote, avecUsagers, actifs, appris } = {}) {
+  configurer({ cote, avecUsagers, actifs, appris, loin } = {}) {
     if (cote) this.cote = cote;
+    if (loin !== undefined) this.loin = +loin || 0;
     if (avecUsagers !== undefined) this.avecUsagers = avecUsagers;
     if (actifs !== undefined) this.actifs = actifs;
     if (appris !== undefined) { this.appris = appris; if (appris.length) this.chargerEmpreinte(); }
@@ -112,20 +114,35 @@ export class Moteur {
   reinitialiser() { this.pistes = []; this.prochainId = 1; this.vitesse = { valeur: null, code: null, quand: 0 }; this.image = 0; this.lignes = { g: {}, d: {} }; this.generation = (this.generation || 0) + 1; }
 
   // ---------- pré-traitement : image -> tenseur letterbox (multiple de 32) ----------
-  tenseur(src, w, h, cote) {
-    const r = cote / Math.max(w, h);
-    const nw = Math.round(w * r), nh = Math.round(h * r);
+  // region [x, y, largeur, hauteur] : seule cette partie de l'image est analysée (vue au loin), à l'échelle cote / grand côté
+  tenseur(src, w, h, cote, region = null) {
+    const [rx, ry, rw, rh] = region || [0, 0, w, h];
+    const r = cote / Math.max(rw, rh);
+    const nw = Math.round(rw * r), nh = Math.round(rh * r);
     const W = Math.ceil(nw / 32) * 32, H = Math.ceil(nh / 32) * 32, px = (W - nw) / 2, py = (H - nh) / 2;
     this.work.width = W; this.work.height = H;
     this.wctx.fillStyle = "rgb(114,114,114)"; this.wctx.fillRect(0, 0, W, H);
-    this.wctx.drawImage(src, px, py, nw, nh);
+    this.wctx.drawImage(src, rx, ry, rw, rh, px, py, nw, nh);
     const data = this.wctx.getImageData(0, 0, W, H).data, n = W * H, f = new Float32Array(3 * n);
     for (let i = 0; i < n; i++) { f[i] = data[4 * i] / 255; f[n + i] = data[4 * i + 1] / 255; f[2 * n + i] = data[4 * i + 2] / 255; }
-    return { t: new ort.Tensor("float32", f, [1, 3, H, W]), r, px, py };
+    return { t: new ort.Tensor("float32", f, [1, 3, H, W]), r, px, py, ox: rx, oy: ry };
+  }
+
+  // Vue au loin : le milieu de l'image, autour de l'horizon, là où les panneaux apparaissent quand ils sont encore loin.
+  // L'image entière est réduite de moitié environ avant l'analyse : un panneau n'y devient lisible qu'à une vingtaine de
+  // mètres, et en roulant il ne reste qu'une seconde avant qu'il sorte du champ. Cette région, analysée à pleine
+  // définition une image sur deux, le montre presque deux fois plus gros : il est reconnu vers 35 mètres.
+  // 36° de large et 19° de haut (de 14° au-dessus de l'horizon à 5° en dessous), pour un objectif qui voit 68° dans sa
+  // grande dimension ; l'horizon est pris au milieu de l'image tant que les lignes de la route n'ont pas dit mieux.
+  regionLoin(w, h) {
+    const ppd = Math.max(w, h) / 68;
+    const rw = Math.min(w, Math.round(36 * ppd)), rh = Math.min(h, Math.round(19 * ppd));
+    const yh = this.horizon?.w === w && this.horizon.h === h ? this.horizon.y : h / 2;
+    return [Math.round((w - rw) / 2), Math.round(Math.min(Math.max(0, yh - 14 * ppd), h - rh)), rw, rh];
   }
 
   // ---------- panneaux et marquages ----------
-  postRoute(out, { r, px, py }, seuilPanneaux = CONF_SIGNS) {
+  postRoute(out, { r, px, py, ox = 0, oy = 0 }, seuilPanneaux = CONF_SIGNS) {
     const [, n, d] = out.dims, v = out.data, nc = d - 5, dets = [];
     if (nc !== this.detMap.length && !this.averti) {  // détecteur et catalogue d'âges différents : les classes en trop sont ignorées
       this.averti = true;
@@ -141,7 +158,7 @@ export class Moteur {
       if (cls === -1 || cls === undefined || conf < (cls === SIGN ? seuilPanneaux : CONF)) continue;
       if (cls === SIGN && !this.cls) continue;  // sans classifieur, impossible de dire de quel panneau il s'agit
       const cx = v[o], cy = v[o + 1], w = v[o + 2], h = v[o + 3];
-      dets.push({ box: [(cx - w / 2 - px) / r, (cy - h / 2 - py) / r, (cx + w / 2 - px) / r, (cy + h / 2 - py) / r], conf, cls });
+      dets.push({ box: [(cx - w / 2 - px) / r + ox, (cy - h / 2 - py) / r + oy, (cx + w / 2 - px) / r + ox, (cy + h / 2 - py) / r + oy], conf, cls });
     }
     return nms(dets).slice(0, 100);
   }
@@ -261,8 +278,12 @@ export class Moteur {
   }
 
   // ---------- suivi ----------
-  suivre(dets, groupes, w, h) {
-    const groupeDe = c => D.items[c].groupe, taille = b => Math.max(b[2] - b[0], b[3] - b[1]) * 640 / Math.max(w, h);
+  // champ : région analysée par cette passe (vue au loin), ou null pour l'image entière
+  suivre(dets, groupes, w, h, champ = null) {
+    // taille d'un objet telle que l'a vue la passe qui l'a trouvé, ramenée à une analyse de 640 points : c'est elle qui dit
+    // s'il était assez gros pour être lu (un panneau lointain est petit dans l'image, mais gros dans la vue au loin)
+    const pleine = 640 / Math.max(w, h), ech = champ ? 640 / Math.max(champ[2], champ[3]) : pleine;
+    const groupeDe = c => D.items[c].groupe, taille = b => Math.max(b[2] - b[0], b[3] - b[1]) * ech;
     const nouveaux = [], changes = [], pairs = [], tUsed = new Set(), dUsed = new Set();
     this.pistes.forEach((t, i) => { if (!groupes.has(t.groupe)) return; dets.forEach((d, j) => { if (groupeDe(d.cls) === t.groupe) { const v = iou(t.box, d.box); if (v >= 0.25) pairs.push([v, i, j]); } }); });
     pairs.sort((a, b) => b[0] - a[0]);
@@ -306,9 +327,17 @@ export class Moteur {
       toucher(t, d);
       this.pistes.push(t); tUsed.add(this.pistes.length - 1);
     });
+    // Un objet non retrouvé ne compte comme manqué que si cette passe pouvait le voir : la vue au loin ne voit que sa
+    // région, et l'image entière ne voit pas un panneau encore trop petit pour elle (trouvé jusqu'ici par la vue au loin).
+    const visible = t => {
+      const cx = (t.box[0] + t.box[2]) / 2, cy = (t.box[1] + t.box[3]) / 2, c = Math.max(t.box[2] - t.box[0], t.box[3] - t.box[1]);
+      if (champ) return cx > champ[0] && cx < champ[0] + champ[2] && cy > champ[1] && cy < champ[1] + champ[3];
+      return !(t.groupe === "s" && t.auLoin && c * pleine < 14);
+    };
     this.pistes.forEach((t, i) => {
       if (!groupes.has(t.groupe)) return;
-      if (!tUsed.has(i)) { t.misses++; for (const k in t.scores) t.scores[k] *= 0.9; }
+      if (tUsed.has(i)) t.auLoin = !!champ;
+      if (!tUsed.has(i)) { if (visible(t)) { t.misses++; for (const k in t.scores) t.scores[k] *= 0.9; } }
       else if (!t.ok && this.confirme(t, taille(t.box))) { t.ok = true; t.annonce = this.classe(t); t.vuesAnnonce = t.hits; nouveaux.push(t); }
       else if (t.ok && t.groupe === "s" && this.classe(t) !== t.annonce && t.hits - t.vuesAnnonce >= 3 && t.conf >= 0.65) {
         // Le nom a changé depuis l'annonce : de près, le panneau se lit mieux (un 110 devient un 130). Quand le nouveau nom
@@ -394,11 +423,19 @@ export class Moteur {
     const t0 = performance.now(), generation = this.generation;
     this.net = net;
     this.image++;
+    // vue au loin : une analyse sur « loin », jamais sur une image arrêtée (là, on veut tout ce que montre l'image)
+    const champ = this.loin > 1 && !net && this.image % this.loin === 0 ? this.regionLoin(w, h) : null;
+    if (champ) return this.analyserLoin(src, w, h, champ, t0, generation, debug);
+    this.pleines++;
     const prep = this.tenseur(src, w, h, this.cote);
     const out = await this.session.run({ [this.session.inputNames[0]]: prep.t });
     let dets = await this.affiner(src, this.postRoute(out[this.session.outputNames[0]], prep));
+    const ech = 640 / Math.max(w, h);
+    for (const d of dets) d.ech = ech;
+    this.majHorizon(dets, w, h);
     const groupes = new Set(["s", "m"]);
-    if (this.avecUsagers && this.usagers && this.image % 2 === 0) {
+    // usagers : une analyse sur deux en tout (chaque image entière quand elle alterne avec la vue au loin)
+    if (this.avecUsagers && this.usagers && (this.loin === 2 && !net ? true : this.loin > 2 && !net ? this.pleines % 2 === 0 : this.image % 2 === 0)) {
       const p2 = this.tenseur(src, w, h, Math.min(this.cote, 512));
       const o2 = await this.usagers.run({ [this.usagers.inputNames[0]]: p2.t });
       const { usagers, feux } = this.postUsagers(o2[this.usagers.outputNames[0]], p2, w, h);
@@ -417,6 +454,36 @@ export class Moteur {
     const ms = performance.now() - t0;
     this.ms = this.ms ? 0.9 * this.ms + 0.1 * ms : ms;
     return { nouveaux, changes, brutes };
+  }
+
+  // Analyse de la vue au loin : seulement les panneaux. Les marquages, les feux et les usagers restent à l'image entière
+  // (au loin ils n'apprennent rien d'utile au conducteur), et leurs pistes ne sont pas touchées par cette passe.
+  async analyserLoin(src, w, h, champ, t0, generation, debug) {
+    const prep = this.tenseur(src, w, h, this.cote, champ);
+    const out = await this.session.run({ [this.session.inputNames[0]]: prep.t });
+    const bords = d => d.box[0] > champ[0] + 2 && d.box[1] > champ[1] + 2 && d.box[2] < champ[0] + champ[2] - 2 && d.box[3] < champ[1] + champ[3] - 2;
+    // un panneau coupé par le bord de la région serait mal lu : il est laissé à l'image entière
+    let dets = await this.affiner(src, this.postRoute(out[this.session.outputNames[0]], prep).filter(d => d.cls === SIGN && bords(d)));
+    if (generation !== this.generation) return { nouveaux: [], changes: [], brutes: null };
+    const ech = 640 / Math.max(champ[2], champ[3]);
+    for (const d of dets) d.ech = ech;
+    const brutes = debug ? dets.map(d => ({ ...d })) : null;
+    if (this.actifs) dets = dets.filter(d => this.actifs.has(d.cls));
+    const { nouveaux, changes } = this.suivre(dets, new Set(["s"]), w, h, champ);
+    this.majVitesse(w, h);
+    const ms = performance.now() - t0;
+    this.ms = this.ms ? 0.9 * this.ms + 0.1 * ms : ms;
+    return { nouveaux, changes, brutes, champ };
+  }
+
+  // Horizon : le haut des lignes de la route (elles se rejoignent à l'horizon), lissé d'image en image. Il sert à placer
+  // la vue au loin quand le téléphone penche vers le haut ou vers le bas.
+  majHorizon(dets, w, h) {
+    let haut = null;
+    for (const d of dets) if (d.conf >= 0.5 && LIGNES.test(D.items[d.cls]?.code || "") && d.box[3] - d.box[1] > 0.12 * h) haut = haut === null ? d.box[1] : Math.min(haut, d.box[1]);
+    if (haut === null) return;
+    haut = Math.min(Math.max(haut, 0.3 * h), 0.7 * h);
+    this.horizon = this.horizon?.w === w && this.horizon.h === h ? { w, h, y: 0.92 * this.horizon.y + 0.08 * haut } : { w, h, y: haut };
   }
 
   // ---------- « Mes panneaux » : panneaux d'une photo, et empreintes d'un panneau choisi ----------
