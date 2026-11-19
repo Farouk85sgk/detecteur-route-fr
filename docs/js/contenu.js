@@ -3,7 +3,7 @@
 // route_fr/classes.py ; les feux et usagers (détectés par le YOLOv5 COCO d'origine) sont définis ici.
 
 export const APP = {
-  nom: "Repère",
+  nom: "Permiscope",
   slogan: "Le code de la route, en direct.",
   accroche: "Filme ta route : panneaux, feux, marquages, piétons et cyclistes sont reconnus et expliqués en direct.",
   depot: "https://github.com/Farouk85sgk/detecteur-route-fr",

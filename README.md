@@ -4,7 +4,7 @@ Application de détection **en direct** des panneaux de signalisation et des mar
 sur le code de [YOLOv5](https://github.com/ultralytics/yolov5) (dossier `yolov5/`) et **entraînée sur de vraies
 photos de routes françaises**.
 
-**Version téléphone « Repère », sans installation : https://farouk85sgk.github.io/detecteur-route-fr/** :
+**Version téléphone « Permiscope » (d'abord appelée « Repère »), sans installation : https://farouk85sgk.github.io/detecteur-route-fr/** :
 détection en direct avec feux, piétons et cyclistes, trajets en photos, album, **685 questions de code en 57 séries**,
 examens blancs, quiz sur de vraies photos, quête et profils (voir « Version téléphone » plus bas).
 
@@ -85,7 +85,7 @@ rencontrés, à ouvrir dans Excel pour le débriefing d'une leçon). `python app
 1. Installez **IP Webcam** (Android) ou **DroidCam** (Android / iPhone), téléphone et ordinateur sur le même Wi-Fi.
 2. Lancez le serveur vidéo dans l'appli, puis `python app.py --source http://<adresse-du-téléphone>:8080/video`.
 
-### Version téléphone : l'appli « Repère » (navigateur, sans installation)
+### Version téléphone : l'appli « Permiscope » (navigateur, sans installation)
 
 Le dossier `docs/` contient une application complète qui fonctionne **directement dans le navigateur du
 téléphone** : **https://farouk85sgk.github.io/detecteur-route-fr/**. Le calcul se fait sur l'appareil (ONNX Runtime
@@ -452,7 +452,7 @@ synth/                  génération des images synthétiques
 tools/                  données réelles (panoramax_*.py), entraînements (train_cpu_bf16.py, train_classifieur.py,
                         train_empreinte.py), évaluation, icônes, banque de questions, photos du quiz, export web
 data/                   configuration des entraînements, codes Panoramax, crédits des schémas, questions du code
-docs/                   appli web « Repère » publiée par GitHub Pages : index.html, css/, js/ (moteur.js détection,
+docs/                   appli web « Permiscope » publiée par GitHub Pages : index.html, css/, js/ (moteur.js détection,
                         camera.js, quiz.js, series.js, quete.js, album.js...), modèles ONNX, icônes, séries, polices
 weights/                modèles entraînés
 yolov5/                 code YOLOv5 (ultralytics/yolov5, commit af08ba1, non modifié)

@@ -1,6 +1,6 @@
 {
-  "name": "Repère : le code de la route en direct",
-  "short_name": "Repère",
+  "name": "Permiscope – Code de la route",
+  "short_name": "Permiscope",
   "description": "Panneaux, feux, marquages, piétons et cyclistes reconnus et expliqués en direct, avec quiz, album et quête.",
   "lang": "fr",
   "start_url": "./",

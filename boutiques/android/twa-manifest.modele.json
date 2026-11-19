@@ -1,8 +1,8 @@
 {
   "packageId": "fr.tondomaine.repere",
   "host": "TON-DOMAINE.fr",
-  "name": "Repère : code de la route",
-  "launcherName": "Repère",
+  "name": "Permiscope – Code de la route",
+  "launcherName": "Permiscope",
   "display": "standalone",
   "orientation": "default",
   "themeColor": "#FFC61E",

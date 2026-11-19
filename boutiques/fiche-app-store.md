@@ -5,7 +5,7 @@
 ## Nom (30 caractères au plus)
 
 ```
-Repère : code de la route
+Permiscope – Code de la route
 ```
 
 ## Sous-titre (30 caractères au plus)
@@ -17,7 +17,7 @@ Panneaux reconnus en direct
 ## Texte promotionnel (170 caractères au plus)
 
 ```
-Filme la route : panneaux, feux et marquages sont reconnus et expliqués en direct. Puis révise avec 685 questions de code, des examens blancs et une quête.
+Gratuit, sans pub, sans abonnement, sans compte. Filme la route : panneaux et marquages sont reconnus et expliqués en direct. Puis révise le code.
 ```
 
 ## Mots-clés (100 caractères au plus, séparés par des virgules)
@@ -63,7 +63,7 @@ Apple refuse une appli qui utilise la caméra sans dire pourquoi. Ces deux phras
 À coller dans « Notes pour la vérification » (Apple travaille en anglais) :
 
 ```
-Repère recognises French road signs, traffic lights and road markings on the device, using the camera and on-device machine learning. No image leaves the phone and the app works offline.
+Permiscope recognises French road signs, traffic lights and road markings on the device, using the camera and on-device machine learning. No image leaves the phone and the app works offline.
 
 How to test without driving:
 1. Open the app and tap "Lancer la caméra" (start camera).

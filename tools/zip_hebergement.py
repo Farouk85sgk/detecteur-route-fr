@@ -1,4 +1,4 @@
-"""Fabrique un fichier .zip de l'appli web « Repère », prêt à déposer chez un hébergeur (Hostinger, o2switch, OVH...).
+"""Fabrique un fichier .zip de l'appli web « Permiscope », prêt à déposer chez un hébergeur (Hostinger, o2switch, OVH...).
 
 Le zip contient un seul dossier (« repere » par défaut). Une fois extrait dans le dossier public du site
 (public_html), l'appli répond à l'adresse https://votre-domaine/repere/ sans toucher au reste du site.
@@ -22,7 +22,7 @@ sys.path.insert(0, str(ROOT))
 # du système, sans rien installer
 from tools.cache_web import version_cache  # noqa: E402
 
-HTACCESS = """# Appli « Repère » : réglages pour l'hébergeur (Apache / LiteSpeed)
+HTACCESS = """# Appli « Permiscope » : réglages pour l'hébergeur (Apache / LiteSpeed)
 AddType application/manifest+json .webmanifest
 AddType application/wasm .wasm
 AddType application/octet-stream .onnx
@@ -57,7 +57,7 @@ LISEZ_MOI = """REPÈRE : mettre l'appli sur votre site, puis sur votre télépho
 2) Sur le téléphone (Android, par exemple Xiaomi)
    - Ouvrez cette adresse avec Chrome.
    - Touchez le menu (les trois points en haut à droite), puis « Ajouter à l'écran d'accueil »
-     ou « Installer l'application ». L'icône « Repère » apparaît avec vos autres applis.
+     ou « Installer l'application ». L'icône « Permiscope » apparaît avec vos autres applis.
    - Sur un Xiaomi, si l'icône n'apparaît pas : Paramètres > Applications > Gérer les applications
      > Chrome > Autres autorisations, puis activez « Raccourcis sur l'écran d'accueil » et recommencez.
    - Au premier lancement de la caméra, acceptez l'autorisation « Caméra »

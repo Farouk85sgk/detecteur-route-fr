@@ -1,4 +1,4 @@
-/* Repère : style de la version web (téléphone d'abord). Polices : Bricolage Grotesque (titres) et Overpass (texte). */
+/* Permiscope : style de la version web (téléphone d'abord). Polices : Bricolage Grotesque (titres) et Overpass (texte). */
 @font-face { font-family: "Bricolage"; src: url(../polices/bricolage-grotesque-latin-600-normal.woff2) format("woff2"); font-weight: 600; font-display: swap; }
 @font-face { font-family: "Bricolage"; src: url(../polices/bricolage-grotesque-latin-700-normal.woff2) format("woff2"); font-weight: 700; font-display: swap; }
 @font-face { font-family: "Bricolage"; src: url(../polices/bricolage-grotesque-latin-800-normal.woff2) format("woff2"); font-weight: 800; font-display: swap; }

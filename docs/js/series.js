@@ -85,7 +85,7 @@ export async function pageCodes(zone, rendre) {
   zone.innerHTML = `<div class="page"><div class="entete"><h1>Code de la route</h1><button class="btn-rond" data-nav="#/" aria-label="Fermer">${ICONES.fermer}</button></div>
     <div class="contenu zone-codes">
       <div class="choix-menu">
-        <button class="vedette" data-nav="#/quiz/code/examen"><b>Examen blanc</b><span>40 questions réparties comme à l'examen, 30 secondes chacune : 35 bonnes réponses pour réussir</span></button>
+        <button class="vedette" data-nav="#/quiz/code/examen"><b>Examen blanc</b><span>40 questions réparties comme à l'examen, 20 secondes chacune : 35 bonnes réponses pour réussir</span></button>
         ${err ? `<button data-nav="#/quiz/code/erreurs"><b>Mes erreurs</b><span>${err} question${err > 1 ? "s" : ""} à revoir</span></button>` : ""}
       </div>
       <p class="doux">${ok} question${ok > 1 ? "s" : ""} réussie${ok > 1 ? "s" : ""} sur ${b.total}</p>${jauge(ok, b.total)}

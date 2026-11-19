@@ -6,19 +6,21 @@ Les longueurs maximales sont celles demandées par Google.
 ## Nom de l'appli (30 caractères au plus)
 
 ```
-Repère : code de la route
+Permiscope – Code de la route
 ```
 
 ## Description courte (80 caractères au plus)
 
 ```
-Panneaux, feux et marquages reconnus et expliqués en direct. Quiz et code.
+Gratuit, sans pub ni compte. Panneaux et marquages reconnus en direct, quiz.
 ```
 
 ## Description complète (4 000 caractères au plus)
 
 ```
-Repère reconnaît la signalisation française avec la caméra du téléphone et l'explique tout de suite : le nom du panneau, ce qu'il veut dire, le bon réflexe.
+Gratuit, sans publicité, sans abonnement et sans compte.
+
+Permiscope reconnaît la signalisation française avec la caméra du téléphone et l'explique tout de suite : le nom du panneau, ce qu'il veut dire, le bon réflexe.
 
 Pour qui ? Pour les élèves qui préparent le code et le permis, en conduite accompagnée ou en auto-école, et pour tous ceux qui veulent réviser.
 
@@ -49,7 +51,7 @@ SIMPLE ET RESPECTUEUX
 • Plusieurs profils sur le même téléphone.
 
 IMPORTANT
-Repère est un outil d'apprentissage. Il ne remplace ni l'attention du conducteur ni la signalisation réelle, et il peut se tromper. En voiture, le téléphone est fixé sur un support et le conducteur ne le manipule pas : c'est le passager ou l'accompagnateur qui s'en occupe.
+Permiscope est un outil d'apprentissage. Il ne remplace ni l'attention du conducteur ni la signalisation réelle, et il peut se tromper. En voiture, le téléphone est fixé sur un support et le conducteur ne le manipule pas : c'est le passager ou l'accompagnateur qui s'en occupe.
 
 Crédits photo. Capture « détection » et image de présentation : sogefi sig, Panoramax (IGN), 16 juillet 2026. Capture du quiz : sigm50, Panoramax (IGN), 2025. Licence Ouverte 2.0 (Etalab). Dans l'appli, l'auteur de chaque photo du quiz est indiqué sous la photo. Logiciel libre (licence AGPL-3.0) : le code source est public.
 ```

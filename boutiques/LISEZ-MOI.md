@@ -1,4 +1,4 @@
-# Publier Repère sur Google Play et sur l'App Store
+# Publier Permiscope sur Google Play et sur l'App Store
 
 Ce dossier contient tout ce que les deux boutiques demandent, sauf ce que toi seul peux faire : ouvrir les comptes,
 payer les frais, signer et envoyer l'appli.
@@ -15,7 +15,7 @@ payer les frais, signer et envoyer l'appli.
 
 ## Trois choses à savoir avant de commencer
 
-1. **Le plus simple existe déjà.** Depuis ton site, Chrome propose « Installer l'appli » : Repère s'installe sur le
+1. **Le plus simple existe déjà.** Depuis ton site, Chrome propose « Installer l'appli » : Permiscope s'installe sur le
    téléphone, avec son icône, et marche sans réseau. C'est gratuit et immédiat. Les boutiques servent surtout à être
    trouvé par des inconnus.
 2. **Google Play : compte 25 dollars, payés une fois. App Store : 99 dollars par an, et il faut un Mac.**
@@ -49,8 +49,8 @@ Trusted Web Activity). Tu n'as rien à programmer : le site PWABuilder fabrique 
 
 1. Va sur `pwabuilder.com`, colle l'adresse `https://TON-DOMAINE.fr/repere/` et lance l'analyse.
 2. Choisis « Package for stores », puis « Android ».
-3. Remplis : identifiant du paquet `fr.tondomaine.repere` (il ne pourra plus changer), nom « Repère : code de la
-   route », nom court « Repère », version `3.1.0`, code de version `1`.
+3. Remplis : identifiant du paquet `fr.tondomaine.repere` (il ne pourra plus changer), nom « Permiscope – Code de
+   la route », nom court « Permiscope », version `3.2.0`, code de version `1`.
 4. Laisse PWABuilder créer une nouvelle clé de signature, puis télécharge le zip.
 5. **Garde ce zip en lieu sûr, en double.** Il contient la clé de signature et ses mots de passe. Sans elle, tu ne
    pourras plus jamais mettre l'appli à jour.
@@ -110,7 +110,7 @@ Sans Mac, il existe des services de Mac à distance, ou un développeur peut le 
    avec TestFlight, puis envoie-la en validation.
 
 **Le risque de refus.** La règle 4.2 d'Apple dit qu'une appli doit offrir plus qu'un site web mis dans une boîte.
-Apple refuse souvent les enveloppes de sites. Repère a de bons arguments : reconnaissance par la caméra faite sur
+Apple refuse souvent les enveloppes de sites. Permiscope a de bons arguments : reconnaissance par la caméra faite sur
 l'appareil, fonctionnement sans réseau, voix. La note pour la validation les met en avant. Mais un refus reste
 possible, et dans ce cas il faudrait ajouter des fonctions propres à l'iPhone. Rien ne garantit l'acceptation.
 
@@ -120,7 +120,7 @@ Le détecteur a été entraîné avec YOLOv5, un logiciel de la société Ultral
 Cette licence demande que tout ce qui en dérive soit publié sous la même licence, code source compris.
 Ultralytics considère que les modèles entraînés avec son logiciel en font partie.
 
-- **Aujourd'hui, c'est respecté** : le code de Repère est public sur GitHub, sous licence AGPL-3.0, et l'appli donne
+- **Aujourd'hui, c'est respecté** : le code de Permiscope est public sur GitHub, sous licence AGPL-3.0, et l'appli donne
   le lien vers ce code (la branche `v3-reel` du dépôt, celle de la version publiée).
 - **Sur Google Play**, une appli libre et gratuite peut être publiée ainsi. Garde le dépôt public et le lien dans l'appli.
 - **Sur l'App Store**, c'est moins clair : les conditions d'Apple ajoutent des restrictions que les licences de cette
