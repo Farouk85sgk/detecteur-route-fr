@@ -498,12 +498,27 @@ export class Moteur {
     }
   }
 
+  // Image figée : toute une analyse lit la même image, copiée ici à son début. La vidéo, elle, continue pendant le calcul
+  // du détecteur (0,1 à 0,3 s sur un processeur). Le classifieur lisait ensuite la vidéo du moment : à 50 km/h, un panneau
+  // proche s'y était déjà déplacé de sa propre largeur, la vignette tombait à côté et il était rejeté. Sur un téléphone
+  // lent, aucun panneau n'était alors annoncé à 30 ou 50 km/h (essai : panneau de 0,7 m à 3 m sur le côté, 3,4 analyses
+  // par seconde, 0 passage annoncé sur 6 ; 6 sur 6 avec l'image figée). Les usagers et la couleur des feux lisent
+  // la même image que les panneaux. (Copie sur le processeur : les vignettes et les tenseurs y sont ensuite pris sans
+  // relire la vidéo.)
+  figer(source, w, h) {
+    if (!this.fige) { this.fige = document.createElement("canvas"); this.gctx = this.fige.getContext("2d", { willReadFrequently: true }); }
+    if (this.fige.width !== w || this.fige.height !== h) { this.fige.width = w; this.fige.height = h; }
+    this.gctx.drawImage(source, 0, 0, w, h);
+    return this.fige;
+  }
+
   // ---------- analyse d'une image de la vidéo ----------
   // net : l'image est arrêtée (pause) ; les cadres suivis prennent exactement la place trouvée, sans lissage
-  async analyser(src, w, h, { debug = false, net = false } = {}) {
+  async analyser(source, w, h, { debug = false, net = false } = {}) {
     const t0 = performance.now(), generation = this.generation;
     this.net = net;
     this.image++;
+    const src = this.figer(source, w, h);
     // vue au loin : une analyse sur « loin », jamais sur une image arrêtée (là, on veut tout ce que montre l'image)
     let champ = this.loin > 1 && !net && this.image % this.loin === 0 ? this.regionLoin(w, h) : null, attend = false;
     // Sauf si un panneau proche, vu sur le côté par la dernière image entière, attend encore d'être confirmé : il aura quitté

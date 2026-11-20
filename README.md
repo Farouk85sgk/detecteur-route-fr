@@ -421,6 +421,14 @@ carte graphique, et le résultat est le même que sur le processeur seul :
 | 3.1.1 sur la carte graphique | 11 | 2 | 6 | 6 m |
 | **3.2.0 sur la carte graphique** | **13** | **0** | **3** | **10 m** |
 
+**Téléphone lent** : pendant que le détecteur calcule (0,1 à 0,3 s sur un processeur), la vidéo continue. Jusqu'à
+la 3.1.1, le classifieur lisait ensuite la vidéo du moment : à 50 km/h un panneau proche s'y était déjà déplacé de sa
+propre largeur, la vignette tombait à côté et il était rejeté. Depuis la 3.2.0, toute l'analyse lit la même image,
+figée à son début, et les photos des trajets montrent cette image-là. Essai avec une caméra simulée (un panneau de
+0,7 m, à 3 m sur le côté, qui approche en temps réel) et des calculs ralentis à 3,4 analyses par seconde : 5 passages
+annoncés sur 12 avant (aucun à 30 ni à 50 km/h), 12 sur 12 après. Les mesures sur les trajets de contrôle ne changent
+pas : leurs photos ne bougent pas pendant le calcul, c'est pourquoi elles n'avaient pas montré ce défaut.
+
 ## 4. Améliorer les modèles avec vos propres vidéos
 
 Filmez vos trajets habituels (caméra embarquée ou téléphone sur support), puis :

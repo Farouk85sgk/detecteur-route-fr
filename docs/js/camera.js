@@ -201,6 +201,7 @@ async function changer() {
     C.video.srcObject = null;           // pas d'analyse de la dernière image de l'ancienne caméra pendant l'ouverture
     await demarrerSource().catch(e => { console.error(e); if (C === moi) statut(messageErreur(e), "erreur"); });
     if (C === moi) {
+      if (C.pause && C.video.srcObject) basculerPause(false);  // image touchée pendant l'ouverture de la nouvelle caméra : même remède
       moteur.reinitialiser();
       refus = ouverte() !== suivante.deviceId;  // elle n'a pas voulu s'ouvrir : ouvrirFlux est revenu au choix automatique
       if (refus) { refusee = suivante.deviceId; noterCamera(""); }
@@ -560,7 +561,11 @@ function composer(canvas, largeur, focus = null) {
   const { video } = C, vw = video.videoWidth, vh = video.videoHeight, W = largeur, H = Math.round(largeur * vh / vw), k = W / vw;
   canvas.width = W; canvas.height = H;
   const g = canvas.getContext("2d");
-  g.drawImage(video, 0, 0, W, H);
+  // L'image dessinée est celle que le moteur vient d'analyser (figée au début de l'analyse), pas la vidéo du moment :
+  // les cadres tombent juste sur les panneaux. Avec la vidéo du moment, sur un téléphone lent, le panneau avait déjà
+  // avancé quand la photo était prise, et son cadre flottait à côté de lui.
+  const fige = moteur.fige?.width === vw && moteur.fige.height === vh && !C.pause ? moteur.fige : video;
+  g.drawImage(fige, 0, 0, W, H);
   g.font = `700 ${Math.round(W / 46)}px Overpass, system-ui, sans-serif`;
   g.textBaseline = "middle";
   for (const t of moteur.pistes) {
@@ -638,10 +643,10 @@ function refairePhotos() {
     const t = a.t;
     if (!moteur.pistes.includes(t) || t.misses > 2 || D.items[moteur.classe(t)]?.code !== a.meta.code) return false;  // perdu, ou renommé (la correction a sa propre photo)
     if (t.misses || cotePiste(t) < 1.5 * a.cote) return true;
-    // Panneau à moins d'une fois sa taille du bord : la photo précédente est gardée. L'image prise est celle que la caméra
-    // montre à cet instant, un peu après l'image analysée : sur un téléphone lent, le panneau en serait déjà sorti.
-    const m = cotePiste(t);
-    if (t.box[0] < m || t.box[2] > C.vw - m || t.box[1] < m / 2) return false;
+    // Panneau au bord de l'image (à moins d'un tiers de sa taille : le cadre suivi traîne un peu derrière lui, il peut
+    // déjà être coupé) : la photo précédente, où il était entier, est gardée.
+    const m = 0.3 * cotePiste(t);
+    if (t.box[0] < m || t.box[2] > C.vw - m || t.box[1] < m || t.box[3] > C.vh - m) return false;
     prendrePhoto(t, a);
     return a.fois < 3 && a.cote < COTE_PHOTO;
   });

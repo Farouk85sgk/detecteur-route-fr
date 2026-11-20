@@ -12,7 +12,7 @@ const objetUrl = blob => { const u = URL.createObjectURL(blob); urls.push(u); re
 export function sousTitreTrajet(t) {
   const min = t.fin ? duree((t.fin - t.debut) / 1000) : "";
   // (un long nom de fichier sans espace élargissait la page sur un petit écran : il est abrégé)
-  const f = t.fichier || "?", nom = f.length > 24 ? `${f.slice(0, 14)}…${f.slice(-8)}` : f;
+  const f = t.fichier || "?", nom = f.length > 20 ? `${f.slice(0, 11)}…${f.slice(-8)}` : f;
   return [`${t.photos} photo${t.photos > 1 ? "s" : ""}`, min, t.source === "video" ? `vidéo « ${nom} »` : "caméra"].filter(Boolean).join(", ");
 }
 
