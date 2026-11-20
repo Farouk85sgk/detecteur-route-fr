@@ -1,13 +1,14 @@
 // Quiz : séries de 10 questions sur la signalisation (tout, une famille, le dernier trajet, l'album, les erreurs à
 // revoir), donjons des gardiens (cœurs et objets), examens blancs (40 questions, 35 pour réussir), séries du code de
-// la route (banque intégrée, voir series.js) et séries importées.
-import { FAMILLES, QUETE, VITESSE_APRES } from "./contenu.js";
+// la route (banque intégrée, voir series.js) et séries importées. « Signaler une erreur » : un texte que l'élève envoie
+// lui-même, depuis l'explication d'une question ou la liste des erreurs d'un examen.
+import { APP, FAMILLES, QUETE, VITESSE_APRES } from "./contenu.js";
 import { D, famille, icone, itemsFamille, officiels } from "./donnees.js";
 import { aller } from "./nav.js";
 import { evenement, gagner, majCoeurs, minutesProchainCoeur, verifierBadges } from "./progression.js";
 import { banque, listerPacks, partieCode, photosQuiz, themesMaitrises } from "./series.js";
 import { profil, sauver } from "./stockage.js";
-import { $, ICONES, esc, ilYa, melanger, son, toast } from "./ui.js";
+import { $, ICONES, esc, fermerFeuille, ilYa, melanger, ouvrirFeuille, son, toast } from "./ui.js";
 
 let Q = null;  // partie en cours
 let BANQUE_CHARGEE = null;  // banque du code, une fois chargée (pour le badge « thème maîtrisé »)
@@ -125,7 +126,8 @@ export async function lancer(racine, mode, arg, arg2) {
     if (!serie) return aller("#/codes");
     titre = serie.titre;
     questions = melanger(serie.questions).map(q => ({ ...q, importee: true }));
-    options = { examen: serie.type === "examen", chrono: serie.type === "examen" ? 20 : 0, pack: pack.id };
+    // origine : d'où vient la série, pour « Signaler une erreur » (titre et auteur du fichier importé)
+    options = { examen: serie.type === "examen", chrono: serie.type === "examen" ? 20 : 0, pack: pack.id, origine: `« ${pack.titre} »${pack.auteur ? ` (${pack.auteur})` : ""}` };
     if (serie.type !== "examen") questions = questions.slice(0, 40);
   }
   if (!questions.length) { toast("Rien à réviser ici pour l'instant"); return aller("#/quiz"); }
@@ -159,6 +161,7 @@ function afficher(racine) {
     if (x === "loupe") return utiliserLoupe(racine);
     if (x === "potion") { p.objets.potion--; p.coeurs = Math.min(QUETE.coeursMax, p.coeurs + 1); sauver(); son("piece", p.reglages.sons); return afficher(racine); }
     if (x === "suivant") return suivante(racine);
+    if (x === "signaler") return signaler(q, Q);
     if (x === "valider") return repondre(racine, [...choisis]);
     const b = e.target.closest("[data-c]");
     if (!b || Q.reponse) return;
@@ -208,6 +211,7 @@ function repondre(racine, ks) {
   });
   const fin = Q.donjon && p.coeurs <= 0;
   $(".q-suite", racine).innerHTML = `<div class="q-explication ${juste ? "" : "faux"}"><b>${juste ? "Bonne réponse !" : ks.length ? "Raté…" : "Temps écoulé"}</b>${esc(q.explication || "")}</div>
+    <button class="btn-lien signaler" data-x="signaler">Signaler une erreur</button>
     <div class="q-pied"><button class="btn btn-plein btn-grand" data-x="suivant">${fin ? "Voir le résultat" : Q.i + 1 < Q.questions.length ? "Continuer" : "Voir le résultat"}</button></div>`;
   if (Q.donjon) racine.querySelector(".q-coeurs").innerHTML = Array.from({ length: QUETE.coeursMax }, (_, k) => k < p.coeurs ? ICONES.coeur : ICONES.coeurVide).join("");
   else racine.querySelector(".q-score").innerHTML = `${Q.score} ${ICONES.coche.replace("<svg", '<svg width="22" height="22"')}`;
@@ -226,7 +230,7 @@ function suivante(racine, examen = false) {
 // ---------- résultat et récompenses ----------
 function resultat(racine) {
   const p = profil(), n = Q.resultats.length, k = Q.score, gains = { xp: 0, pepites: 0 };
-  let titre, message, detail = "";
+  let titre, message, detail = "", erreurs = [];
   p.stats.reponses += n; p.stats.justes += k;
   if (Q.donjon) {
     const f = famille(Q.famille), gagne = p.coeurs > 0 && n === Q.questions.length;
@@ -248,10 +252,11 @@ function resultat(racine) {
     if (!Q.pack || n === 40) p.examens.push({ date: Date.now(), score: k, total: n, ...(Q.code ? { code: true } : {}) });
     gains.xp = 5 * k; gains.pepites = reussi ? 30 : 5;
     son(reussi ? "victoire" : "defaite", p.reglages.sons);
-    const erreurs = Q.questions.filter((q, i) => !Q.resultats[i]);
-    if (erreurs.length) detail = `<h3>À retenir</h3><div class="liste-lignes">${erreurs.map(q => `<div class="element-liste" style="align-items:flex-start">
+    erreurs = Q.questions.filter((q, i) => !Q.resultats[i]);
+    if (erreurs.length) detail = `<h3>À retenir</h3><div class="liste-lignes">${erreurs.map((q, i) => `<div class="element-liste" style="align-items:flex-start">
       ${q.image ? `<img src="${esc(q.image)}" alt="" style="width:52px;height:52px;object-fit:contain;flex:none">` : ""}<div style="flex:1"><b>${esc(q.texte)}</b>
-      <div class="doux">Réponse : ${esc(q.choix.filter(c => c.ok).map(c => c.label).join(" ; "))}</div>${q.explication ? `<div class="doux petit">${esc(q.explication)}</div>` : ""}</div></div>`).join("")}</div>`;
+      <div class="doux">Réponse : ${esc(q.choix.filter(c => c.ok).map(c => c.label).join(" ; "))}</div>${q.explication ? `<div class="doux petit">${esc(q.explication)}</div>` : ""}
+      <button class="btn-lien signaler" data-x="signaler" data-k="${i}">Signaler une erreur</button></div></div>`).join("")}</div>`;
   } else {
     const parfait = k === n && n >= 5;
     p.stats.series++;
@@ -275,12 +280,58 @@ function resultat(racine) {
     <div class="resultat"><div class="gros">${k}/${n}</div><h2>${esc(titre)}</h2><p class="doux">${esc(message)}</p>
       <div class="gains">${gains.xp ? `<span>+${gains.xp} XP</span>` : ""}${gains.pepites ? `<span class="pep">${ICONES.gemme} +${gains.pepites}</span>` : ""}</div></div>
     <div class="contenu">${detail}<button class="btn btn-plein btn-grand" data-x="rejouer">${Q.donjon ? "Retenter" : "Rejouer"}</button><button class="btn" data-x="retour">Retour</button></div></div>`;
-  const retour = Q.retour;
+  const retour = Q.retour, partie = Q;  // la partie finie reste connue de cette page, pour « Signaler une erreur »
   Q = null;
   racine.onclick = e => {
-    const x = e.target.closest("[data-x]")?.dataset.x;
+    const b = e.target.closest("[data-x]"), x = b?.dataset.x;
     if (x === "retour") aller(retour);
     if (x === "rejouer") { history.replaceState(null, "", rejouer); aller(rejouer); }
+    if (x === "signaler") signaler(erreurs[+b.dataset.k], partie);
   };
 }
 export const partieEnCours = () => !!Q;
+
+// ---------- signaler une erreur ----------
+// Le signalement est un simple texte, que l'élève envoie lui-même : par mail à l'éditeur si son adresse est renseignée
+// (APP.contact, dans contenu.js), sinon par le partage du téléphone, sinon copié pour être collé dans un message.
+// L'appli n'envoie rien et ne garde rien. partie : la partie d'où vient la question (en cours, ou finie).
+// coupe : texte raccourci à n caractères ; un demi-caractère laissé au bord (émoji coupé en deux) est retiré.
+const coupe = (s, n) => (s.length > n ? `${s.slice(0, n - 1)}…` : s).replace(/[\uD800-\uDFFF]/gu, "");
+function signaler(q, partie) {
+  const ref = q.qid ? `question ${q.qid}` : partie.origine ? `série importée ${partie.origine}` : `panneau ${q.code}`;
+  const sujet = `Signalement ${APP.nom} : ${ref}`;
+  const texte = remarque => [`Signalement d'une erreur dans ${APP.nom} ${APP.version}`,
+    q.qid ? `Question ${q.qid} de la banque du code (« ${partie.titre} »)`
+      : partie.origine ? `Série importée ${partie.origine}, série « ${partie.titre} »${q.code ? `, panneau ${q.code}` : ""}`
+      : `Panneau ${q.code}, quiz « ${partie.titre} »${q.photo ? `, photo ${q.image.split("/").pop()}` : ""}`,
+    remarque && `\nMa remarque : ${remarque}`,
+    `\nQuestion : ${q.texte}`, "Réponses proposées :",
+    ...q.choix.map((c, k) => `${k + 1}. ${c.label}${c.ok ? " (réponse attendue)" : ""}${q.donnee?.includes(k) ? " (ma réponse)" : ""}`),
+    q.explication && `Explication affichée : ${q.explication}`].filter(Boolean).join("\n");
+  const corps = ouvrirFeuille("Signaler une erreur", `<div style="overflow-wrap:anywhere"><p class="gras">${esc(coupe(q.texte, 140))}</p><p class="doux petit">${esc(ref.charAt(0).toUpperCase() + ref.slice(1))}</p></div>
+    <textarea class="champ" maxlength="500" rows="4" placeholder="Qu'est-ce qui ne va pas ? (facultatif)" aria-label="Ta remarque (facultatif)"></textarea>
+    ${APP.contact ? `<a class="btn btn-plein" href="mailto:${esc(APP.contact)}" data-envoyer>Envoyer le signalement</a>` : `<button class="btn btn-plein" data-envoyer>Envoyer le signalement</button>`}
+    <p class="doux petit">${APP.contact ? "Ton appli de mail s'ouvre avec le message prêt." : navigator.share ? "Tu choisis ensuite à qui l'envoyer&nbsp;: ton auto-école, par exemple." : "Le texte sera copié&nbsp;: colle-le ensuite dans un message à ton auto-école."}
+      C'est toi qui l'envoies&nbsp;: l'appli n'envoie rien toute seule.</p>`);
+  const bouton = $("[data-envoyer]", corps), fermer = () => { if (corps.isConnected) fermerFeuille(); };
+  bouton.onclick = async () => {
+    const t = texte($("textarea", corps).value.trim().slice(0, 500));
+    if (APP.contact) {
+      // Vrai lien « mailto: », complété au moment du toucher : le téléphone ouvre l'appli de mail avec le message prêt
+      // (coupé à 1 500 caractères : une adresse trop longue ne s'ouvre pas partout). La feuille se referme un instant
+      // après, pour que son retour d'historique ne croise pas cette ouverture.
+      bouton.href = `mailto:${APP.contact}?subject=${encodeURIComponent(sujet)}&body=${encodeURIComponent(coupe(t, 1500).replace(/\n/g, "\r\n"))}`;
+      return setTimeout(() => { if (corps.isConnected) { fermerFeuille(); toast("Il te reste à envoyer le message depuis ton appli de mail"); } }, 600);
+    }
+    bouton.disabled = true;  // pas de second envoi pendant le premier
+    if (navigator.share) {
+      try { await navigator.share({ title: sujet, text: t }); fermer(); return toast("Merci pour ton signalement !"); }
+      catch (err) { if (err.name === "AbortError") { bouton.disabled = false; return; } }  // partage annulé : la feuille reste, sans message ; autre échec : on copie
+    }
+    try { await navigator.clipboard.writeText(t); fermer(); toast("Signalement copié : colle-le dans un message à ton auto-école"); }
+    catch {  // pas de presse-papiers (page non sécurisée, autorisation refusée) : le texte s'affiche, à copier à la main
+      corps.innerHTML = `<p>La copie n'a pas marché. Sélectionne ce texte, copie-le, puis colle-le dans un message à ton auto-école.</p><textarea class="champ" rows="10" readonly aria-label="Ton signalement">${esc(t)}</textarea>`;
+      $("textarea", corps).select();
+    }
+  };
+}

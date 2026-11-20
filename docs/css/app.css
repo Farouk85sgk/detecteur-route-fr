@@ -315,6 +315,32 @@ button.case { font: inherit; color: inherit; cursor: pointer; -webkit-tap-highli
 .gains span { background: var(--jaune); color: var(--nuit); border-radius: 18px; padding: 8px 16px; font-weight: 800; display: inline-flex; gap: 6px; align-items: center; }
 .gains svg { width: 22px; height: 22px; }
 .gains span.pep { background: var(--nuit); color: #fff; }
+/* « Signaler une erreur » : lien discret sous l'explication d'une question et sous chaque erreur d'un examen ; la feuille a
+   une zone de texte pour la remarque */
+.signaler { font-size: .95rem; font-weight: 600; color: var(--texte-doux); }
+.q-suite > .signaler { display: flex; margin: 0 22px -14px auto; }
+.element-liste .signaler { margin-bottom: -10px; }
+textarea.champ { display: block; min-height: 120px; padding: 14px 18px; font: inherit; font-size: 1.05rem; color: inherit; resize: none; }
+/* l'invite de la zone de texte est son seul libellé visible : le gris du navigateur se lisait mal sur le fond « nuit » */
+textarea.champ::placeholder { color: var(--texte-doux); opacity: 1; }
+
+/* ---------- « Prêt pour l'examen ? » (page Code de la route) ---------- */
+.pret-tete { display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 16px; align-items: center; }
+.pret-tete .anneau { width: 104px; height: 104px; }
+.pret-tete .anneau b { font-size: 1.75rem; }
+.pret-etat { font: 800 1.5rem/1.1 var(--titres); letter-spacing: -.02em; }
+.critere { justify-content: flex-start; align-items: flex-start; padding: 14px 0; }
+.critere > div { flex: 1; min-width: 0; }
+.critere .coche { width: 30px; height: 30px; flex: none; margin-top: 1px; border-radius: 50%; border: 3px solid var(--bord); display: grid; place-items: center; color: #fff; }
+.critere.fait .coche { background: var(--vert); border-color: var(--vert); }
+.critere .coche svg { width: 18px; height: 18px; }
+.critere summary { list-style: none; min-height: 44px; display: flex; align-items: center; gap: 6px; font-weight: 700; cursor: pointer; }
+.critere summary::-webkit-details-marker { display: none; }
+.critere summary .chevron { transition: transform .2s; }
+.critere details[open] > summary .chevron { transform: rotate(180deg); }
+.pret-themes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.pret-themes button { min-height: 44px; padding: 8px 14px; border-radius: 16px; border: 2px solid var(--bord); background: var(--carte-2); font-weight: 700; font-size: .98rem;
+  line-height: 1.2; text-align: left; }
 
 /* ---------- la quête (page sombre) ---------- */
 .page-sombre { background: #0e1233; color: #fff; min-height: 100vh; }

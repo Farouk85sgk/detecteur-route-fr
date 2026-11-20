@@ -8,6 +8,10 @@ export const APP = {
   accroche: "Filme ta route : panneaux, feux, marquages, piétons et cyclistes sont reconnus et expliqués en direct.",
   depot: "https://github.com/Farouk85sgk/detecteur-route-fr",
   version: "3.1.1",
+  // Adresse e-mail de contact de l'éditeur : c'est là qu'arrivent les « Signaler une erreur » des quiz (l'appli de mail
+  // de l'élève s'ouvre avec le message prêt). À remplir avant de publier. Vide : le signalement passe par le partage du
+  // téléphone, ou il est copié, et l'élève l'envoie à qui il veut (son auto-école, par exemple).
+  contact: "",
 };
 // lien « Code source » : la branche de développement de la 3.x (la branche par défaut du dépôt, main, est restée à la 2.0)
 APP.source = `${APP.depot}/tree/v3-reel`;
@@ -106,6 +110,14 @@ export const QUETE = {
   minutesParCoeur: 20,
   recompenseGardien: 50,
 };
+
+// Jauge « Prêt pour l'examen ? » (page « Code de la route ») : quatre seuils que l'auto-école peut régler.
+//   examens : nombre d'examens blancs du code à réussir de suite (les derniers passés) ;
+//   seuil   : bonnes réponses sur 40 pour qu'un examen blanc compte comme réussi (35 à l'épreuve officielle) ;
+//   theme   : part de bonnes réponses qui rend un thème « solide », parmi ses questions déjà vues (0.75 = 75 %),
+//             une fois vue au moins la moitié des questions du thème ;
+//   vues    : part de la banque de questions à avoir vue au moins une fois (0.6 = 60 %).
+export const PRET = { examens: 5, seuil: 35, theme: 0.75, vues: 0.6 };
 
 export const QUETES_DU_JOUR = [
   { id: "trajet5", type: "route", texte: "Fais un trajet d'au moins 5 minutes", but: 1, gain: 20 },

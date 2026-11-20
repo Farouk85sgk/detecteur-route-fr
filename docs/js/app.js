@@ -1,8 +1,9 @@
-// Démarrage de l'appli et navigation entre les pages (#/, #/quiz, #/album, #/quete, #/trajets, #/codes...).
+// Démarrage de l'appli et navigation entre les pages (#/, #/quiz, #/album, #/quete, #/trajets, #/codes, #/passer-examen...).
 import { pageAccueil } from "./accueil.js";
 import { pageAlbum } from "./album.js";
 import { cameraOuverte, configurerMoteur, moteur, ouvrirCamera } from "./camera.js";
 import { chargerDonnees } from "./donnees.js";
+import { pageExamen } from "./examen.js";
 import { chargerAppris } from "./mespanneaux.js";
 import { NAV, aller } from "./nav.js";
 import { verifierBadges } from "./progression.js";
@@ -33,6 +34,7 @@ async function rendre() {
     else if (page === "trajets") pageTrajets(zone);
     else if (page === "trajet") await pageTrajet(zone, a);
     else if (page === "codes") await pageCodes(zone, rendre);
+    else if (page === "passer-examen") pageExamen(zone);
     else return aller("#/");
   } catch (e) {
     console.error(e);

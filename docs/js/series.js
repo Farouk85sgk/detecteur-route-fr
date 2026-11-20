@@ -1,8 +1,8 @@
 // « Code de la route » : la banque de questions intégrée (series/banque.json : les dix thèmes de l'examen, compilée par
-// tools/construire_series.py), avec la progression du profil, les erreurs à revoir et l'examen blanc ; plus les séries
-// d'un prestataire (auto-école, éditeur) importées depuis un fichier JSON ou un lien, communes à tous les profils du
-// téléphone (format : voir README), et une démo sur les panneaux.
-import { APP } from "./contenu.js";
+// tools/construire_series.py), avec la progression du profil, les erreurs à revoir, l'examen blanc et la jauge « Prêt pour
+// l'examen ? » ; plus les séries d'un prestataire (auto-école, éditeur) importées depuis un fichier JSON ou un lien,
+// communes à tous les profils du téléphone (format : voir README), et une démo sur les panneaux.
+import { APP, PRET } from "./contenu.js";
 import { D, icone, officiels } from "./donnees.js";
 import { aller } from "./nav.js";
 import { idbMettre, idbSupprimer, idbTout, profil } from "./stockage.js";
@@ -35,10 +35,14 @@ function versQuiz(q) {
 
 // Parties du quiz : examen (40 questions réparties par thème comme à l'épreuve), série d'un lot, 10 questions d'un thème
 // (celles jamais réussies d'abord), erreurs à revoir.
+// Examen sans redites : chaque thème garde son nombre de questions (t.examen), prises d'abord parmi celles que l'élève
+// n'a jamais vues, puis parmi les autres, au hasard. Les questions ratées ne passent pas devant les réussies : l'examen
+// blanc doit rester aussi difficile qu'un tirage au hasard, pas plus.
 export async function partieCode(genre, id) {
   const b = await banque(), p = profil();
   if (genre === "examen") {
-    const qs = b.themes.flatMap(t => melanger(t.questions).slice(0, t.examen));
+    const vue = q => +(p.code.q[q.id] !== undefined);
+    const qs = b.themes.flatMap(t => melanger(t.questions).sort((x, y) => vue(x) - vue(y)).slice(0, t.examen));
     // 20 secondes par question, comme à l'examen (l'examen blanc en laissait 30 : il préparait mal au rythme réel)
     return { titre: "Examen blanc du code", questions: melanger(qs).map(versQuiz), options: { examen: true, chrono: 20, code: "examen" } };
   }
@@ -68,13 +72,59 @@ export async function photosQuiz() {
 
 const jauge = (n, total) => `<div class="jauge"><i style="width:${total ? (100 * n / total).toFixed(1) : 0}%"></i></div>`;
 
+// ---------- « Prêt pour l'examen ? » ----------
+// Indication calculée à partir du seul profil, donc sur le téléphone (seuils : PRET, dans contenu.js). Trois critères :
+// les derniers examens blancs du code réussis de suite (la moitié de la jauge), les thèmes « solides » (30 %) et la part
+// de la banque déjà vue (20 %). La jauge n'affiche 100 % que si les trois critères sont remplis.
+const part = (n, total) => (total > 0 ? Math.min(1, n / total) : 1);
+export function pretExamen(p, b) {
+  const examens = p.examens.filter(e => e.code && e.total === 40), vue = q => p.code.q[q.id] !== undefined;
+  let suite = 0;  // examens réussis de suite, en remontant depuis le dernier
+  while (suite < examens.length && examens[examens.length - 1 - suite].score >= PRET.seuil) suite++;
+  const reussis = Math.min(suite, PRET.examens), scores = examens.slice(-Math.max(1, PRET.examens)).map(e => e.score);
+  // thème à travailler : moins de la moitié de ses questions vues, ou trop peu de bonnes réponses parmi celles vues
+  const faibles = b.themes.filter(t => { const n = t.questions.filter(vue).length; return n * 2 < t.questions.length || reussies(p, t.questions) / n < PRET.theme; });
+  const solides = b.themes.length - faibles.length, vues = Object.keys(p.code.q).filter(id => b.parId[id]).length, cible = Math.round(PRET.vues * b.total);
+  // (\u00a0 : espace insécable avant « : » et « % », pour que la colonne étroite ne coupe pas la ligne juste avant)
+  const criteres = [
+    { id: "examens", titre: PRET.examens > 1 ? `${PRET.examens} examens blancs réussis de suite` : "Un examen blanc réussi", part: part(reussis, PRET.examens),
+      detail: `${reussis} sur ${PRET.examens} (il faut au moins ${PRET.seuil} sur 40). ${scores.length ? `Tes derniers scores\u00a0: ${scores.join(", ")}.` : "Aucun examen blanc pour l'instant."}` },
+    { id: "themes", titre: "Tous les thèmes solides", part: part(solides, b.themes.length), themes: faibles,
+      detail: `${solides} sur ${b.themes.length}.${faibles.length ? ` Un thème est solide quand tu as vu au moins la moitié de ses questions, avec ${Math.round(100 * PRET.theme)}\u00a0% de bonnes réponses.` : ""}` },
+    { id: "vues", titre: `${Math.round(100 * PRET.vues)}\u00a0% des questions vues`, part: part(vues, cible),
+      detail: `${vues} question${vues > 1 ? "s" : ""} vue${vues > 1 ? "s" : ""} sur ${b.total}${vues < cible ? `\u00a0: il en faut ${cible}` : ""}.` },
+  ];
+  for (const c of criteres) c.fait = c.part >= 1;
+  const pct = criteres.every(c => c.fait) ? 100 : Math.min(99, Math.round(100 * (0.5 * criteres[0].part + 0.3 * criteres[1].part + 0.2 * criteres[2].part)));
+  return { pct, etat: pct >= 100 ? "Prêt" : pct >= 70 ? "Presque prêt" : pct >= 35 ? "En bonne voie" : "Au début", criteres };
+}
+
+// carte de la page « Code de la route » : anneau (pourcentage et état), les trois critères, cochés une fois remplis, et les
+// thèmes à travailler en boutons (ils ouvrent la feuille du thème ; au-delà de trois, la liste est repliée)
+function cartePret({ pct, etat, criteres }) {
+  const circ = 2 * Math.PI * 64;
+  const themes = ts => { const boutons = `<div class="pret-themes">${ts.map(t => `<button data-theme="${t.id}">${esc(t.nom)}</button>`).join("")}</div>`;
+    return ts.length > 3 ? `<details><summary><span class="si-ferme">Voir les ${ts.length} thèmes à travailler</span><span class="si-ouvert">Refermer la liste</span>${ICONES.chevron.replace("<svg", '<svg class="chevron"')}</summary>${boutons}</details>`
+      : `<div class="doux">À travailler&nbsp;:</div>${boutons}`; };
+  return `<section class="carte carte-pret"><h2>Prêt pour l'examen&nbsp;?</h2>
+    <div class="pret-tete"><div class="anneau" role="img" aria-label="${pct} %"><svg viewBox="0 0 150 150"><circle cx="75" cy="75" r="64" stroke="var(--bord)" stroke-width="14" fill="none"/>
+        ${pct ? `<circle cx="75" cy="75" r="64" stroke="var(--${pct === 100 ? "vert" : "jaune"})" stroke-width="14" fill="none" stroke-linecap="round" stroke-dasharray="${(circ * pct / 100).toFixed(1)} ${circ.toFixed(1)}"/>` : ""}</svg>
+        <div><b>${pct}<small>&nbsp;%</small></b></div></div>
+      <div><p class="pret-etat">${etat}</p>${pct === 100 ? "<p>Tu peux réserver ta place.</p>" : ""}</div></div>
+    ${pct === 100 ? `<button class="btn btn-plein" data-nav="#/passer-examen">Passer l'examen</button>` : ""}
+    <div class="liste-lignes">${criteres.map(c => `<div class="element-liste critere ${c.fait ? "fait" : ""}"><span class="coche" role="img" aria-label="${c.fait ? "Fait" : "À faire"}">${c.fait ? ICONES.coche : ""}</span>
+      <div><b>${esc(c.titre)}</b><div class="doux">${esc(c.detail)}</div>${c.themes?.length ? themes(c.themes) : ""}</div></div>`).join("")}</div>
+    <p class="doux petit">Indication calculée sur ce téléphone, d'après tes examens blancs et tes réponses. Ce n'est pas une garantie.</p></section>`;
+}
+
 // carte de l'accueil
 export async function carteCodes() {
-  const b = await banque(), p = profil(), ok = reussies(p, Object.values(b.parId)), err = nbErreursCode(p, b);
+  const b = await banque(), p = profil(), ok = reussies(p, Object.values(b.parId)), err = nbErreursCode(p, b), pret = pretExamen(p, b);
   const meilleur = Math.max(0, ...p.examens.filter(e => e.code).map(e => e.score));
   return `<section class="carte carte-codes"><div class="carte-titre"><h2>Code de la route</h2><span class="pastille">${b.total} questions</span></div>
     <p class="doux">Les dix thèmes de l'examen, en séries de 12 questions expliquées, et des examens blancs de 40 questions.</p>
     ${jauge(ok, b.total)}<p class="doux petit">${ok} question${ok > 1 ? "s" : ""} réussie${ok > 1 ? "s" : ""} sur ${b.total}${meilleur ? `. Meilleur examen : ${meilleur}/40` : ""}${err ? `. ${err} à revoir` : ""}</p>
+    <p><b>Prêt pour l'examen&nbsp;: ${pret.pct}&nbsp;%</b> <span class="doux">(${pret.etat.toLowerCase()})</span></p>
     <div class="duo"><button class="btn btn-plein" data-nav="#/codes">Séries par thème</button><button class="btn" data-nav="#/quiz/code/examen">Examen blanc</button></div></section>`;
 }
 
@@ -84,9 +134,11 @@ export async function pageCodes(zone, rendre) {
   const packs = await listerPacks();
   zone.innerHTML = `<div class="page"><div class="entete"><h1>Code de la route</h1><button class="btn-rond" data-nav="#/" aria-label="Fermer">${ICONES.fermer}</button></div>
     <div class="contenu zone-codes">
+      ${cartePret(pretExamen(p, b))}
       <div class="choix-menu">
         <button class="vedette" data-nav="#/quiz/code/examen"><b>Examen blanc</b><span>40 questions réparties comme à l'examen, 20 secondes chacune : 35 bonnes réponses pour réussir</span></button>
         ${err ? `<button data-nav="#/quiz/code/erreurs"><b>Mes erreurs</b><span>${err} question${err > 1 ? "s" : ""} à revoir</span></button>` : ""}
+        <button data-nav="#/passer-examen"><b>Passer l'examen</b><span>Inscription, prix, déroulement, et après un échec</span></button>
       </div>
       <p class="doux">${ok} question${ok > 1 ? "s" : ""} réussie${ok > 1 ? "s" : ""} sur ${b.total}</p>${jauge(ok, b.total)}
       <h3 class="doux" style="font-family:var(--corps);font-size:1.1rem;margin-top:14px">Les dix thèmes de l'examen</h3>
