@@ -8,6 +8,7 @@
 // 4. Suivi dans le temps (comme route_fr/tracker.py) : un élément n'est confirmé qu'après 2 détections, sa classe
 //    est votée sur plusieurs images ; mémoire de la vitesse maximale.
 /* global ort */
+import { APP } from "./contenu.js";
 import { D } from "./donnees.js";
 
 const CONF = 0.35, CONF_SIGNS = 0.15, SIGN_FACTOR = 1.3, IOU = 0.45, MIN_HITS = 2, MAX_MISSES = 6;
@@ -39,6 +40,8 @@ export class Moteur {
     this.clsMap = []; this.detMap = []; this.fournisseurs = []; this.wCls = 64; this.hCls = 96;
     this.cote = 640; this.avecUsagers = true; this.actifs = null; this.appris = []; this.seuilAppris = 0.5;
     this.loin = 0; this.pleines = 0; this.horizon = null;  // vue au loin : une analyse sur « loin » (0 : jamais)
+    this.proche = true; this.reports = 0;  // vue au loin reportée tant qu'un panneau tout proche attend d'être confirmé
+    this.apercus = 0;  // panneaux aperçus depuis le chargement (pistes créées) : sert au diagnostic d'un trajet
     this.work = document.createElement("canvas"); this.wctx = this.work.getContext("2d", { willReadFrequently: true });
     this.crop = document.createElement("canvas"); this.cctx = this.crop.getContext("2d", { willReadFrequently: true });
     this.cfeu = document.createElement("canvas"); this.fctx = this.cfeu.getContext("2d", { willReadFrequently: true });
@@ -53,6 +56,8 @@ export class Moteur {
     if (!backend && "gpu" in navigator) {
       try { gpu = !!(await Promise.race([navigator.gpu.requestAdapter(), new Promise(r => setTimeout(() => r(null), 4000))])); } catch { gpu = false; }
     }
+    // (carte graphique déjà trouvée fausse sur ce téléphone, voir verifierGpu : on ne la prépare même pas)
+    if (gpu && this.noteGpu()?.ok === false) { gpu = false; this.gpuEcarte = true; }
     this.fournisseurs = backend ? [backend] : gpu ? ["webgpu", "wasm"] : ["wasm"];
     // plusieurs fils de calcul seulement si la page est isolée (voir sw.js) ; sinon ONNX Runtime n'en utilise qu'un
     let monofil = false;
@@ -83,7 +88,66 @@ export class Moteur {
       this.cls = await ort.InferenceSession.create("panneaux.onnx", this.opts);
       this.clsMap = conf.classes.map(n => D.parCode[n] && D.parCode[n].index < D.nbModele ? D.parCode[n].index : -1);  // -1 : autre panneau ou fond
     } catch (e) { console.warn("Classifieur indisponible : les panneaux ne seront pas identifiés", e); this.cls = null; }
+    if (this.fournisseurs[0] === "webgpu") await this.verifierGpu(opts, progression);
     this.pret = true;
+  }
+
+  // Sur certains téléphones, le calcul sur carte graphique rend des résultats faux sans prévenir (pilote graphique) : le
+  // détecteur ne trouve alors presque rien, ou n'importe quoi. Une fois par version de l'appli et du navigateur, la même
+  // image d'essai est donc calculée par la carte graphique et par le processeur. Si les résultats diffèrent, la carte
+  // graphique est écartée et tout se fait sur le processeur (plus lent, mais juste). Ce premier calcul sert aussi
+  // d'échauffement : la toute première image de la route n'attend plus la préparation de la carte graphique.
+  // note gardée sur le téléphone : { s: version de l'appli et du navigateur, ok }, ou null si elle date d'une autre version
+  noteGpu() {
+    try { const n = JSON.parse(localStorage.getItem("repere.gpu")); return n?.s === `1|${APP.version}|${navigator.userAgent}` ? n : null; } catch { return null; }
+  }
+  async verifierGpu(opts, progression) {
+    const cle = "repere.gpu", signature = `1|${APP.version}|${navigator.userAgent}`;
+    const note = this.noteGpu();
+    const ecarter = async (det, cls) => {
+      this.fournisseurs = ["wasm"]; this.gpuEcarte = true;
+      this.opts = { ...opts, executionProviders: ["wasm"] };
+      this.session = det || await ort.InferenceSession.create("detecteur.onnx", this.opts);
+      if (this.cls) this.cls = cls || await ort.InferenceSession.create("panneaux.onnx", this.opts);
+    };
+    try {
+      if (note) { if (!note.ok) await ecarter(); return; }
+      progression("Vérification de la carte graphique…");
+      const wasm = { ...opts, executionProviders: ["wasm"] };
+      // image d'essai : une route grise avec quelques formes de panneaux (toujours la même)
+      const essai = document.createElement("canvas"); essai.width = 1280; essai.height = 720;
+      const g = essai.getContext("2d");
+      const fond = g.createLinearGradient(0, 0, 0, 720); fond.addColorStop(0, "#9db4c8"); fond.addColorStop(0.5, "#b9b4a6"); fond.addColorStop(1, "#5c5c60");
+      g.fillStyle = fond; g.fillRect(0, 0, 1280, 720);
+      const formes = [[980, 250, 46, "#d2161e", "#fff"], [300, 300, 30, "#1c56b5", "#1c56b5"], [1120, 330, 70, "#d2161e", "#fff"], [640, 280, 22, "#f2c200", "#fff"]];
+      for (const [x, y, r, bord, dedans] of formes) { g.fillStyle = bord; g.beginPath(); g.arc(x, y, r, 0, 7); g.fill(); g.fillStyle = dedans; g.beginPath(); g.arc(x, y, r * 0.72, 0, 7); g.fill(); g.fillStyle = "#111"; g.fillRect(x - r * 0.3, y - r * 0.12, r * 0.6, r * 0.24); }
+      g.fillStyle = "#f4f4f4"; for (let i = 0; i < 6; i++) g.fillRect(560 + i * 30, 470 + i * 40, 26 + i * 8, 14 + i * 4);
+      const ecart = (a, b, pas = 1) => { let m = 0; for (let i = 0; i < a.length; i += pas) { const d = Math.abs(a[i] - b[i]); if (!(d <= m)) m = Number.isFinite(d) ? d : Infinity; } return m; };
+      // détecteur : mêmes cadres (à 4 points près) et mêmes scores (à 0,1 près) sur toute la grille
+      const prep = this.tenseur(essai, 1280, 720, this.cote);
+      const detW = await ort.InferenceSession.create("detecteur.onnx", wasm);
+      const nom = this.session.inputNames[0], sortie = this.session.outputNames[0];
+      const a = (await this.session.run({ [nom]: prep.t }))[sortie], b = (await detW.run({ [nom]: prep.t }))[sortie];
+      const larg = a.dims[2];
+      let juste = a.data.length === b.data.length;
+      if (juste) for (let i = 0; i < a.data.length && juste; i += larg) {
+        for (let k = 0; k < 4; k++) if (!(Math.abs(a.data[i + k] - b.data[i + k]) <= 4)) juste = false;
+        if (!(Math.abs(a.data[i + 4] - b.data[i + 4]) <= 0.1)) juste = false;
+      }
+      // classifieur : mêmes notes (à 0,5 près) sur deux vignettes
+      let clsW = null;
+      if (juste && this.cls) {
+        const x = this.vignettes(essai, [[934, 204, 1026, 296], [270, 270, 330, 330]], this.wCls, this.hCls);
+        clsW = await ort.InferenceSession.create("panneaux.onnx", wasm);
+        const e = this.cls.inputNames[0], o = this.cls.outputNames[0];
+        const c = (await this.cls.run({ [e]: x }))[o].data, d = (await clsW.run({ [e]: x }))[o].data;
+        juste = c.length === d.length && ecart(c, d) <= 0.5;
+      }
+      try { localStorage.setItem(cle, JSON.stringify({ s: signature, ok: juste })); } catch { /* stockage indisponible */ }
+      if (juste) { detW.release?.().catch(() => {}); clsW?.release?.().catch(() => {}); return; }
+      console.warn("Carte graphique écartée : ses résultats diffèrent de ceux du processeur");
+      await ecarter(detW, clsW);
+    } catch (e) { console.warn("Vérification de la carte graphique impossible", e); }  // dans le doute, on la garde
   }
   async chargerUsagers() {
     if (this.usagers || this.chargeUsagers) return this.chargeUsagers;
@@ -101,9 +165,10 @@ export class Moteur {
   }
 
   // cote : taille d'analyse ; actifs : Set des indices d'éléments affichés (null = tous) ; appris : [{index, emb, correction}]
-  configurer({ cote, avecUsagers, actifs, appris, loin } = {}) {
+  configurer({ cote, avecUsagers, actifs, appris, loin, proche } = {}) {
     if (cote) this.cote = cote;
     if (loin !== undefined) this.loin = +loin || 0;
+    if (proche !== undefined) this.proche = !!+proche;
     if (avecUsagers !== undefined) this.avecUsagers = avecUsagers;
     if (actifs !== undefined) this.actifs = actifs;
     if (appris !== undefined) { this.appris = appris; if (appris.length) this.chargerEmpreinte(); }
@@ -324,6 +389,7 @@ export class Moteur {
     dets.forEach((d, j) => {
       if (dUsed.has(j)) return;
       const t = { id: this.prochainId++, box: d.box.slice(), groupe: groupeDe(d.cls), scores: {}, conf: 0, hits: 0, misses: 0, ok: false, debut: performance.now() };
+      if (t.groupe === "s") this.apercus++;
       toucher(t, d);
       this.pistes.push(t); tUsed.add(this.pistes.length - 1);
     });
@@ -356,6 +422,9 @@ export class Moteur {
   // Panneaux : plus le score est bas, plus on attend. Sur les photos de contrôle, une annonce au score de 0,46 à 0,65 n'est
   // juste qu'une fois sur deux (45 %), contre 77 % de 0,75 à 0,85 et 91 % au-dessus. Un vrai panneau grossit en approchant
   // et son score monte : attendre coûte une fraction de seconde, et les détections hésitantes qui clignotent ne passent plus.
+  // (Essayé puis écarté : exiger en plus une durée de suivi, 0,2 s ou 0,5 s, pour qu'un téléphone rapide n'annonce pas sur
+  // deux images presque identiques. Sur les trajets de contrôle, cela faisait perdre deux à quatre vrais panneaux sur
+  // cent sans rien retirer de faux : les annonces en plus d'un téléphone rapide sont presque toutes de vrais panneaux.)
   // Marquages au sol : un type qui domine nettement, et plus d'images. Une ligne : 5 images et 65 % des voix. Les autres
   // marquages : 3 images et 55 % des voix, ou 2 images quand le score atteint 0,85 (un passage piétons net file vite sous
   // la voiture : à quelques images par seconde, il n'en laisse pas trois).
@@ -424,7 +493,15 @@ export class Moteur {
     this.net = net;
     this.image++;
     // vue au loin : une analyse sur « loin », jamais sur une image arrêtée (là, on veut tout ce que montre l'image)
-    const champ = this.loin > 1 && !net && this.image % this.loin === 0 ? this.regionLoin(w, h) : null;
+    let champ = this.loin > 1 && !net && this.image % this.loin === 0 ? this.regionLoin(w, h) : null;
+    // Sauf si un panneau proche, vu sur le côté par la dernière image entière, attend encore d'être confirmé : il aura quitté
+    // l'image avant la prochaine image entière. On regarde alors de nouveau l'image entière (trois fois de suite au plus,
+    // pour qu'un objet douteux sur le côté ne prive pas longtemps de la vue au loin).
+    if (champ && this.proche) {
+      const pleine = 640 / Math.max(w, h), dedans = b => b[0] > champ[0] + 2 && b[1] > champ[1] + 2 && b[2] < champ[0] + champ[2] - 2 && b[3] < champ[1] + champ[3] - 2;
+      const attend = this.reports < 3 && this.pistes.some(t => t.groupe === "s" && !t.ok && !t.misses && t.hits < 4 && Math.max(t.box[2] - t.box[0], t.box[3] - t.box[1]) * pleine >= 18 && !dedans(t.box));
+      if (attend) { champ = null; this.reports++; } else this.reports = 0;
+    }
     if (champ) return this.analyserLoin(src, w, h, champ, t0, generation, debug);
     this.pleines++;
     const prep = this.tenseur(src, w, h, this.cote);

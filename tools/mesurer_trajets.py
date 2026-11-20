@@ -6,19 +6,24 @@ navigateur, crée un moteur (docs/js/moteur.js) et lui donne les images une par 
 image de 1 280 x 720 (téléphone couché) ou de 720 x 1 280 (téléphone debout, champ plus étroit). Il relève chaque
 annonce (panneau confirmé par le suivi) et la compare à la vérité terrain :
 
-- un « passage » (un vrai panneau vu sur plusieurs images) est annoncé si son code est annoncé pendant le passage, dans
-  les deux images qui suivent, ou jusqu'à huit images avant (Panoramax n'annote un panneau qu'une fois assez gros) ;
-- une annonce de panneau sans passage du même code à ce moment-là est « à tort ou invérifiable » (Panoramax n'annote pas
+- un « passage » (un vrai panneau vu sur plusieurs images) est annoncé si, pendant le passage, le suivi du moteur tient
+  à cet endroit un panneau annoncé sous le bon nom. Peu importe quand l'annonce a été faite : la vue au loin annonce un
+  panneau bien avant que Panoramax ne l'annote (il ne l'annote qu'une fois assez gros). À défaut de suivi au bon
+  endroit, une annonce du bon nom pendant le passage ou juste autour compte aussi ;
+- « avance » : nombre d'images entre l'annonce et la fin du passage (plus c'est grand, plus le conducteur est prévenu tôt) ;
+- une annonce de panneau qui ne se rattache à aucun passage est « à tort ou invérifiable » (Panoramax n'annote pas
   tous les panneaux : ce chiffre sert à comparer deux réglages, pas à juger une annonce).
 
     python tools/mesurer_trajets.py --trajets datasets/trajets_reels --ort DOSSIER_DIST_ONNXRUNTIME \\
         --cas "actuel:cote=512" "loin:cote=512,loin=1" --pas 1 2 --modes couche debout
 
 Dans un cas, ces clés décrivent l'image et non le moteur : flux=1920 (définition de la caméra), echelle=0.6 (objectif
-ultra grand-angle : tout est plus petit), zoom=0.02 (flou d'avancée), flou=1.2 (points), bruit=4, jpeg=45, lum=0.6.
+ultra grand-angle : tout est plus petit), zoom=0.02 (flou d'avancée), flou=1.2 (points), bruit=4, jpeg=45, lum=0.6,
+rep=2 (deux analyses par image : téléphone deux fois plus rapide).
 --pas 2 : une image sur deux (le véhicule roule deux fois plus vite, ou le téléphone calcule deux fois moins vite).
+Les photos sont espacées de 3,6 m en moyenne : à 50 km/h, --pas 1 vaut 4 analyses par seconde, rep=4 en vaut 16.
 """
-import argparse, asyncio, collections, functools, http.server, json, os, sys, tempfile, threading
+import argparse, asyncio, collections, functools, http.server, json, math, os, sys, tempfile, threading
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -29,11 +34,13 @@ async (cfg) => {
   const { D } = await import('./js/donnees.js');
   const m = window.__m || (window.__m = new Moteur());
   if (!m.pret) await m.charger({ backend: 'wasm' });
-  m.configurer({ cote: cfg.cote, avecUsagers: false, actifs: null, ...cfg.options });
+  // (le moteur sert à tous les cas : chaque cas repart des réglages d'origine, pas de ceux du cas précédent)
+  const origine = window.__origine || (window.__origine = { loin: m.loin, proche: m.proche });
+  m.configurer({ cote: cfg.cote, avecUsagers: false, actifs: null, ...origine, ...cfg.options });
   m.reinitialiser();
   const cv = document.createElement('canvas'); cv.width = cfg.w; cv.height = cfg.h;
   const ctx = cv.getContext('2d', { willReadFrequently: true });
-  const annonces = [], vus = [];
+  const annonces = [], vus = [], suivis = [];
   let ms = 0;
   // Défauts d'une vraie vidéo de téléphone, absents des photos de relevé : flou d'avancée (pose longue quand la lumière
   // baisse : tout s'étire depuis le centre), flou de bougé ou de mise au point, bruit, exposition, compression vidéo.
@@ -53,13 +60,18 @@ async (cfg) => {
     ctx.drawImage(bmp, sx, sy, sw, sh, dx, dy, dw, dh);
     bmp.close();
     await degrader(cfg.degrade || {});
-    const t0 = performance.now();
-    const res = await m.analyser(cv, cfg.w, cfg.h, {});
-    ms += performance.now() - t0;
-    for (const t of res.nouveaux) annonces.push({ image: k, code: D.items[m.classe(t)].code, groupe: t.groupe, box: t.box.map(v => Math.round(v)), conf: +t.conf.toFixed(3), vues: t.hits, corrige: !!t.corrige });
+    // rep analyses par image : un téléphone rep fois plus rapide (ou un véhicule rep fois plus lent) voit rep fois la même scène
+    for (let i = 0; i < (cfg.rep || 1); i++) {
+      const t0 = performance.now();
+      const res = await m.analyser(cv, cfg.w, cfg.h, {});
+      ms += performance.now() - t0;
+      for (const t of res.nouveaux) annonces.push({ image: k, id: t.id, code: D.items[m.classe(t)].code, groupe: t.groupe, box: t.box.map(v => Math.round(v)), conf: +t.conf.toFixed(3), vues: t.hits, corrige: !!t.corrige, loin: !!res.champ });
+    }
     vus.push(m.pistes.filter(t => t.groupe === 's' && t.misses === 0).length);
+    // panneaux annoncés que le suivi tient encore sur cette image, avec le nom dit au conducteur
+    suivis.push(m.pistes.filter(t => t.ok && t.groupe === 's' && t.misses <= 1).map(t => ({ id: t.id, code: D.items[t.annonce].code, box: t.box.map(v => Math.round(v)) })));
   }
-  return { annonces, vus, ms: ms / Math.max(1, cfg.images.length) };
+  return { annonces, vus, suivis, ms: ms / Math.max(1, cfg.images.length * (cfg.rep || 1)) };
 }
 """
 
@@ -83,7 +95,6 @@ def cadre(mode, vue, echelle=1.0, flux=1280):
         ox, oy = (w - W * e) / 2, (h - H * e) / 2
         return w, h, [0, 0, W, H, ox, oy, W * e, H * e], lambda b: [b[0] * e + ox, b[1] * e + oy, b[2] * e + ox, b[3] * e + oy]
     # debout : le téléphone voit 68° en hauteur et 41,6° en largeur ; la vue (68° x 41,6°) n'en couvre que la bande centrale
-    import math
     f = (W / 2) / math.tan(math.radians(68 / 2))
     demi = f * math.tan(math.atan(math.tan(math.radians(34)) * 720 / 1280))  # demi-largeur vue par le téléphone debout
     x0, larg = W / 2 - demi, 2 * demi
@@ -115,26 +126,37 @@ def juger(verite, res, pas, w, h, vers_flux, minimum):
         if vues and max(v["cote"] for v in vues) * 640 / max(w, h) >= minimum:  # assez gros, au moins une fois, pour être lisible à l'échelle 640
             passages.append({"code": p["code"], "vues": vues, "debut": vues[0]["k"], "fin": vues[-1]["k"]})
     sign = [a for a in res["annonces"] if a["groupe"] == "s"]
-    pris = set()
+    suivis = res.get("suivis") or []
+    def au_meme_endroit(a, b):  # cadre suivi et cadre de la vérité : centres proches (le cadre suivi traîne un peu derrière le panneau)
+        return iou(a, b) >= 0.1 or math.hypot((a[0] + a[2] - b[0] - b[2]) / 2, (a[1] + a[3] - b[1] - b[3]) / 2) <= max(a[2] - a[0], a[3] - a[1], b[2] - b[0], b[3] - b[1])
+    pris = set()  # identifiants des pistes rattachées à un passage (bon nom ou non)
     for p in passages:
         bilan["passages"] += 1
-        # l'annonce peut précéder le passage : Panoramax n'annote un panneau qu'une fois assez gros, la vue au loin le voit avant
-        tot = p["debut"] - max(2, -(-8 // pas))
-        cand = [(i, a) for i, a in enumerate(sign) if a["code"] == p["code"] and tot <= a["image"] <= p["fin"] + 2 and i not in pris]
-        if cand:
-            i, a = min(cand, key=lambda ia: max(0, p["debut"] - ia[1]["image"]))  # de préférence une annonce faite pendant le passage
-            pris.add(i)
+        bons, autres = set(), {}
+        for v in p["vues"]:
+            for s in (suivis[v["k"]] if v["k"] < len(suivis) else []):
+                if au_meme_endroit(s["box"], v["box"]):
+                    if s["code"] == p["code"]: bons.add(s["id"])
+                    else: autres[s["id"]] = s["code"]
+        a = None
+        if bons:  # première annonce, sous le bon nom, d'une de ces pistes
+            a = min((x for x in sign if x["id"] in bons and x["code"] == p["code"]), key=lambda x: x["image"], default=None)
+            pris |= bons
+        if a is None:  # pas de piste au bon endroit : une annonce du bon nom pendant le passage ou juste autour
+            a = min((x for x in sign if x["code"] == p["code"] and x["id"] not in pris and p["debut"] - 2 <= x["image"] <= p["fin"] + 2), key=lambda x: x["image"], default=None)
+            if a: pris.add(a["id"])
+        if a:
             bilan["annonces_justes"] += 1
-            reste = p["fin"] - a["image"]  # images restantes avant la fin du passage : plus c'est grand, plus l'annonce est tôt
-            bilan["avance_images"] += max(0, reste)
+            bilan["avance_images"] += max(0, p["fin"] - a["image"])
+            bilan["annonces_au_loin"] += 1 if a.get("loin") else 0
             vue = min(p["vues"], key=lambda v: abs(v["k"] - a["image"]))
-            details.append({"code": p["code"], "annonce": a["image"], "debut": p["debut"], "fin": p["fin"], "cote": round(vue["cote"] * 640 / max(w, h), 1)})
+            details.append({"code": p["code"], "annonce": a["image"], "debut": p["debut"], "fin": p["fin"], "loin": bool(a.get("loin")), "cote": round(vue["cote"] * 640 / max(w, h), 1)})
         else:
-            autre = [a for a in sign if p["debut"] - 1 <= a["image"] <= p["fin"] + 2 and any(v["k"] == min(max(a["image"], p["debut"]), p["fin"]) and iou(a["box"], v["box"]) >= 0.2 for v in p["vues"])]
-            bilan["confondus" if autre else "manques"] += 1
-            details.append({"code": p["code"], "manque": True, "pris_pour": autre[0]["code"] if autre else None, "debut": p["debut"], "fin": p["fin"], "vues": len(p["vues"]),
+            pris |= set(autres)
+            bilan["confondus" if autres else "manques"] += 1
+            details.append({"code": p["code"], "manque": True, "pris_pour": next(iter(autres.values()), None), "debut": p["debut"], "fin": p["fin"], "vues": len(p["vues"]),
                             "cote_max": round(max(v["cote"] for v in p["vues"]) * 640 / max(w, h), 1)})
-    bilan["autres_annonces"] = len(sign) - len(pris)
+    bilan["autres_annonces"] = len({x["id"] for x in sign} - pris)
     return bilan, details
 
 
@@ -153,7 +175,7 @@ async def mesurer(a):
         opts = dict(kv.split("=") for kv in reste.split(",") if kv)
         cote = int(opts.pop("cote", 512))
         opts = {k: (float(v) if v.replace(".", "", 1).isdigit() else v) for k, v in opts.items()}
-        mesure = {k: opts.pop(k) for k in list(opts) if k in ("zoom", "flou", "bruit", "jpeg", "lum", "echelle", "flux")}  # défauts de l'image, pas du moteur
+        mesure = {k: opts.pop(k) for k in list(opts) if k in ("zoom", "flou", "bruit", "jpeg", "lum", "echelle", "flux", "rep")}  # défauts de l'image, pas du moteur
         cas.append((nom, cote, opts, mesure))
     resultats = {}
     async with async_playwright() as p:
@@ -176,7 +198,7 @@ async def mesurer(a):
                         v = json.loads((d / "verite.json").read_text())
                         w, h, decoupe, vers_flux = cadre(mode, v["vue"]["taille"], mesure.get("echelle", 1.0), int(mesure.get("flux", 1280)))
                         images = [f"/trajets/{d.name}/{im['fichier']}" for k, im in enumerate(v["images"]) if k % pas == 0]
-                        res = await pg.evaluate(JS, {"cote": cote, "options": opts, "w": w, "h": h, "cadre": decoupe, "images": images, "degrade": mesure})
+                        res = await pg.evaluate(JS, {"cote": cote, "options": opts, "w": w, "h": h, "cadre": decoupe, "images": images, "degrade": mesure, "rep": int(mesure.get("rep", 1))})
                         bilan, details = juger(v, res, pas, w, h, vers_flux, a.minimum)
                         total.update(bilan); ms.append(res["ms"])
                         tous.append({"trajet": d.name, "bilan": dict(bilan), "details": details, "annonces": res["annonces"]})
@@ -184,7 +206,8 @@ async def mesurer(a):
                     cle = f"{nom} | {mode} | 1 image sur {pas}"
                     resultats[cle] = {"bilan": dict(total), "trajets": tous, "ms": sum(ms) / max(1, len(ms))}
                     print(f"{cle:44s} passages {total['passages']:3d}  annoncés {total['annonces_justes']:3d} ({100 * total['annonces_justes'] / n:4.0f} %)  confondus {total['confondus']:2d}  "
-                          f"manqués {total['manques']:3d}  autres annonces {total['autres_annonces']:3d}  avance {total['avance_images'] / max(1, total['annonces_justes']):.1f} image(s)  {sum(ms) / max(1, len(ms)):.0f} ms", flush=True)
+                          f"manqués {total['manques']:3d}  autres annonces {total['autres_annonces']:3d}  avance {total['avance_images'] / max(1, total['annonces_justes']):.1f} image(s)  "
+                          f"dont {total['annonces_au_loin']:2d} par la vue au loin  {sum(ms) / max(1, len(ms)):.0f} ms", flush=True)
         await b.close()
     srv.shutdown()
     if a.sortie:

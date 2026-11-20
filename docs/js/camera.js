@@ -25,6 +25,23 @@ export function configurerMoteur(p = profil()) {
   }
   const usagers = ["F_rouge", "F_orange", "F_vert", "U_pieton", "U_cycliste", "U_deux_roues"].some(c => actifs.has(D.parCode[c].index));
   moteur.configurer({ cote: TAILLES[r.qualite === "auto" ? auto : r.qualite] || 512, avecUsagers: usagers, actifs: actifs.size === D.items.length ? null : actifs });
+  if (r.loin === false) moteur.configurer({ loin: 0 });
+}
+
+// Vue au loin (réglage « Voir les panneaux de plus loin ») : une analyse sur deux regarde en grand le milieu de l'image.
+// Mesuré sur 16 vrais trajets (tools/mesurer_trajets.py) : les panneaux sont annoncés deux fois plus tôt, et des panneaux
+// restés trop petits pour l'image entière sont enfin vus. Mais l'image entière est regardée deux fois moins souvent : il
+// faut que le téléphone analyse assez d'images par seconde, sinon des panneaux proches, sur les côtés, passent sans être
+// vus (téléphone couché : rien de perdu à 8 analyses par seconde, 3 panneaux sur 100 à 4). Téléphone debout, le champ
+// est étroit et la vue au loin en couvre presque toute la largeur : elle sert même à un rythme lent. En dessous de ces
+// rythmes elle se coupe d'elle-même. Le rythme est relu toutes les dix analyses ; les deux seuils de chaque sens sont
+// écartés pour ne pas basculer sans cesse.
+const LOIN_DES = { couche: 6.5, debout: 3.5 }, LOIN_SOUS = { couche: 5, debout: 2.5 };  // analyses par seconde
+function reglerLoin() {
+  if (C.p.reglages.loin === false || !C.fps) { if (moteur.loin) moteur.configurer({ loin: 0 }); return; }
+  const sens = C.vh > C.vw ? "debout" : "couche";
+  if (!moteur.loin && C.fps >= LOIN_DES[sens]) moteur.configurer({ loin: 2 });
+  else if (moteur.loin && C.fps < LOIN_SOUS[sens]) moteur.configurer({ loin: 0 });
 }
 
 export async function ouvrirCamera({ fichier = null, apresFermeture = () => {} } = {}) {
@@ -54,6 +71,8 @@ export async function ouvrirCamera({ fichier = null, apresFermeture = () => {} }
     racine, video, calque, ctx, fichier, apresFermeture, p, pause: false, cadres: true, fini: false, zoom: { k: 1, x: 0, y: 0 },
     trajet: { id: "t" + Date.now().toString(36), debut: Date.now(), source: fichier ? "video" : "camera", fichier: fichier?.name || null, elements: {}, nouveaux: [], photos: 0, evenements: [] },
     dernier: {}, historique: [], file: [], zones: [], derniereCarte: null, dernierePhoto: 0, nPhoto: 0, pos: null, fps: 0, tPrec: performance.now(), lignes: {}, enregistreur: null,
+    diag: { n: 0, nLoin: 0, ms: 0, t0: 0, t1: 0, vus0: moteur.apercus },  // pour le diagnostic du trajet : analyses faites, temps passé, panneaux aperçus
+    aRefaire: [],  // photos prises quand le panneau était encore petit, à refaire quand il aura grossi
   };
   PROG.notifier = message;
   D.items.forEach(it => imageDe(icone(it)));  // icônes en mémoire : affichage immédiat pendant la détection
@@ -121,6 +140,52 @@ function messageErreur(e) {
   return e?.message || String(e);
 }
 
+// Caméra du dos. Sur un téléphone qui en a plusieurs, le navigateur n'ouvre pas toujours la principale : certains
+// modèles donnent le très grand-angle, où tout est deux fois plus petit (un panneau n'est alors reconnu qu'à dix mètres).
+// Android numérote les caméras et la principale porte le numéro 0 : c'est elle qu'on prend, sauf choix fait dans les
+// réglages (« Changer de caméra »), mémorisé sur ce téléphone.
+const CLE_CAMERA = "repere.camera";
+const lireCamera = () => { try { return localStorage.getItem(CLE_CAMERA) || ""; } catch { return ""; } };
+const noterCamera = id => { try { id ? localStorage.setItem(CLE_CAMERA, id) : localStorage.removeItem(CLE_CAMERA); } catch { /* stockage indisponible */ } };
+// (Chrome sur Android nomme ses caméras « camera2 0, facing back » : le numéro est celui qui précède la virgule)
+const numero = d => { const m = d.label.match(/(\d+)\s*,\s*facing/i) || d.label.match(/camera2?\s+(\d+)/i); return m ? +m[1] : 99; };
+export async function camerasDos() {
+  const toutes = (await navigator.mediaDevices.enumerateDevices().catch(() => [])).filter(d => d.kind === "videoinput" && d.deviceId);
+  const dos = toutes.filter(d => /back|rear|arri[eè]re|environment/i.test(d.label));
+  return (dos.length ? dos : toutes).sort((a, b) => numero(a) - numero(b));
+}
+async function ouvrirFlux() {
+  const video = { width: { ideal: 1280 }, height: { ideal: 720 }, zoom: true }, md = navigator.mediaDevices;
+  const ouvrir = (id, sinon = null) => md.getUserMedia({ audio: false, video: id ? { ...video, deviceId: { exact: id } } : { ...video, facingMode: { ideal: "environment" } } }).catch(e => { if (sinon === null) throw e; return sinon; });
+  const choisie = lireCamera();
+  let flux = choisie ? await ouvrir(choisie, false) : false;
+  if (flux) return flux;
+  flux = await ouvrir("");
+  try {
+    const actuelle = flux.getVideoTracks()[0].getSettings?.().deviceId, dos = await camerasDos(), principale = dos[0];
+    if (dos.length > 1 && principale && numero(principale) === 0 && principale.deviceId !== actuelle && /back|rear|arri[eè]re|environment/i.test(principale.label)) {
+      flux.getTracks().forEach(t => t.stop());  // (deux caméras ne s'ouvrent pas toujours en même temps)
+      flux = (await ouvrir(principale.deviceId, false)) || await ouvrir("");
+    }
+  } catch (e) { console.warn("choix de la caméra", e); }
+  return flux;
+}
+// Réglages, « Changer de caméra » : passe à la caméra suivante du dos, la mémorise et relance l'image si on filme.
+export async function changerCamera() {
+  const dos = await camerasDos();
+  if (dos.length < 2) return null;
+  const actuelle = C?.video.srcObject?.getVideoTracks()[0]?.getSettings?.().deviceId || lireCamera();
+  const suivante = dos[(dos.findIndex(d => d.deviceId === actuelle) + 1) % dos.length];
+  noterCamera(suivante.deviceId);
+  if (C && !C.fichier && !C.fini) {
+    C.video.srcObject?.getTracks().forEach(t => t.stop());
+    C.objectif = null;
+    await demarrerSource().catch(e => { console.error(e); statut(messageErreur(e), "erreur"); });
+    moteur.reinitialiser();
+  }
+  return { rang: dos.indexOf(suivante) + 1, total: dos.length, nom: suivante.label };
+}
+
 async function demarrerSource() {
   const moi = C, { video, fichier } = C;
   if (fichier) {
@@ -140,7 +205,7 @@ async function demarrerSource() {
     video.addEventListener("ended", () => basculerPause(true));
     statut("Vidéo", "");
   } else {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: { facingMode: { ideal: "environment" }, width: { ideal: 1280 }, height: { ideal: 720 }, zoom: true } });
+    const stream = await ouvrirFlux();
     const eteindre = () => stream.getTracks().forEach(t => t.stop());
     if (C !== moi) return eteindre();  // écran fermé pendant l'ouverture de la caméra : on l'éteint, sinon son voyant reste allumé
     video.srcObject = stream;
@@ -219,9 +284,10 @@ async function boucle(moi = C) {
   if ((!C.pause || fige) && !document.hidden && video.readyState >= 2 && video.videoWidth) {
     if (video.videoWidth !== C.vw || video.videoHeight !== C.vh) disposer();
     try {
-      const tour = C.tour;
+      const tour = C.tour, tA = performance.now();
       const res = await moteur.analyser(video, video.videoWidth, video.videoHeight, { debug: C.p.reglages.debug, net: fige });
       if (C !== moi || C.fini) return;
+      if (!C.pause) { const d = C.diag; d.n++; d.ms += performance.now() - tA; d.t0 ||= tA; d.t1 = performance.now(); if (res.champ) d.nLoin++; }
       if (tour !== C.tour) {  // on s'est déplacé dans la vidéo pendant le calcul : ce résultat est celui d'une image qu'on ne voit plus
         moteur.reinitialiser();
         C.raf = setTimeout(() => requestAnimationFrame(() => boucle(moi)), 15);
@@ -231,6 +297,7 @@ async function boucle(moi = C) {
       C.brutes = res.brutes;
       for (const t of res.nouveaux) annoncer(t);
       majZones();  // après les annonces : une piste tout juste confirmée ne doit pas « rafraîchir » l'endroit d'un panneau plus ancien
+      if (!C.pause) refairePhotos();
       for (const { t, avant } of res.changes) if (D.items[avant]?.code === "F_rouge" && D.items[moteur.classe(t)]?.code === "F_vert") annoncer(t, "Le feu passe au vert");
       dessiner();
       if (C.enregistreur) composer(C.compoVideo, C.compoVideo.width);
@@ -238,6 +305,7 @@ async function boucle(moi = C) {
       C.fps = C.fps ? 0.9 * C.fps + 0.1 * 1000 / (now - C.tPrec) : 1000 / (now - C.tPrec);
       C.tPrec = now;
       if (moteur.image % 20 === 1) window.__etatDetecteur = decrireMoteur();
+      if (C.diag.n % 10 === 5 && !C.pause) reglerLoin();
       majLecteur();
     } catch (e) { console.error(e); }
   } else if (C.fichier) majLecteur();
@@ -245,8 +313,9 @@ async function boucle(moi = C) {
 }
 
 const visibilite = () => { if (C && !document.hidden) C.tPrec = performance.now(); };
-const decrireMoteur = () => `Prêt (${moteur.fournisseurs[0] === "webgpu" ? "carte graphique" : `processeur, ${moteur.fils > 1 ? `${moteur.fils} fils de calcul` : "un seul fil de calcul"}`}, classifieur ${moteur.cls ? "actif" : "absent"}, `
-  + `usagers ${moteur.usagers ? "actifs" : "inactifs"}${moteur.emp ? ", Mes panneaux actif" : ""}, ${Math.round(moteur.ms)} ms par image, ${C?.fps ? C.fps.toFixed(1) : "?"} images/s).`;
+const decrireMoteur = () => `Prêt (${moteur.fournisseurs[0] === "webgpu" ? "carte graphique" : `processeur${moteur.gpuEcarte ? " (carte graphique écartée : ses calculs étaient faux)" : ""}, ${moteur.fils > 1 ? `${moteur.fils} fils de calcul` : "un seul fil de calcul"}`}, classifieur ${moteur.cls ? "actif" : "absent"}, `
+  + `usagers ${moteur.usagers ? "actifs" : "inactifs"}${moteur.emp ? ", Mes panneaux actif" : ""}, ${Math.round(moteur.ms)} ms par image, ${C?.fps ? C.fps.toFixed(1) : "?"} images/s`
+  + `${C?.vw ? `, image de ${C.vw} × ${C.vh} points` : ""}${moteur.loin > 1 ? ", vue au loin active" : ""}).`;
 
 // pistes encadrées à l'écran : confirmées et vues à l'instant (en pause, une fois l'image arrêtée analysée : celles qu'on y a retrouvées)
 function pistesVues() {
@@ -385,11 +454,24 @@ function dessiner() {
     ctx.lineWidth = 1.5 * dpr; ctx.strokeStyle = "rgba(170,120,255,.9)";
     for (const d of C.brutes) ctx.strokeRect(d.box[0] * k + dx, d.box[1] * k + dy, (d.box[2] - d.box[0]) * k, (d.box[3] - d.box[1]) * k);
   }
+  if (C.p.reglages.debug && C.vw) dessinerDiagnostic(ctx, dpr, k, dx, dy);
   // largeur visible du calque : la zone vidéo, ou tout l'écran quand l'image agrandie passe sous le volet du mode couché
   const LW = (C.zoom.k > 1.001 ? innerWidth : C.W) * dpr;
   // (un cadre entièrement sorti de l'écran n'est pas dessiné : son étiquette, ramenée au bord, flotterait seule sur l'image)
   const vues = (C.cadres ? pistesVues() : []).filter(t => t.box[2] * k + dx > 0 && t.box[0] * k + dx < LW && t.box[3] * k + dy > 0 && t.box[1] * k + dy < calque.height);
   const boites = vues.map(t => t.box.map((v, i) => v * k + (i % 2 ? dy : dx)));
+  // Panneau repéré mais pas encore confirmé (trop loin, ou vu une seule fois) : un fin contour blanc, sans nom. On voit
+  // que l'appli l'a remarqué et qu'elle attend d'en être sûre ; le nom, la carte et la voix viennent à la confirmation.
+  if (C.cadres && !C.pause) {
+    ctx.save(); ctx.lineWidth = 1.5 * dpr; ctx.strokeStyle = "rgba(255,255,255,.75)"; ctx.setLineDash([5 * dpr, 4 * dpr]);
+    for (const t of moteur.pistes) {
+      if (t.ok || t.groupe !== "s" || t.misses || !(moteur.actifs?.has(moteur.classe(t)) ?? true)) continue;
+      const x = t.box[0] * k + dx, y = t.box[1] * k + dy, l = (t.box[2] - t.box[0]) * k, h = (t.box[3] - t.box[1]) * k;
+      if (x + l < 0 || x > LW || l < 6 * dpr) continue;
+      ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x - 2 * dpr, y - 2 * dpr, l + 4 * dpr, h + 4 * dpr, 5 * dpr) : ctx.rect(x, y, l, h); ctx.stroke();
+    }
+    ctx.restore();
+  }
   for (const [i, t] of vues.entries()) {
     const it = D.items[moteur.classe(t)];
     const [x1, y1, x2, y2] = boites[i];
@@ -420,6 +502,28 @@ function dessiner() {
   const val = v.valeur != null && !FINS_VITESSE.includes(v.code) ? String(v.valeur) : "";
   if (zv.textContent !== val) { zv.textContent = val; zv.classList.toggle("cache", !val); }
   if (C.derniereCarte) { const meta = $(".cam-carte .meta span:last-child", C.racine); if (meta && Date.now() - C.derniereCarte > 5000) meta.textContent = `il y a ${Math.round((Date.now() - C.derniereCarte) / 1000)} s`; }
+}
+
+// Réglage « Afficher les zones testées » : la région de la vue au loin (pointillés) et, en clair, ce que donne la caméra et
+// le rythme du calcul. C'est ce qu'il faut regarder quand la détection trouve peu de choses sur un téléphone.
+function lignesDiagnostic() {
+  const o = C.objectif, calcul = moteur.fournisseurs[0] === "webgpu" ? "carte graphique" : `processeur, ${moteur.fils > 1 ? `${moteur.fils} fils` : "1 fil"}`;
+  return [`Image ${C.vw} × ${C.vh}${o ? `, zoom ${(o.v / o.min).toFixed(1).replace(".", ",")}×` : ""}`, `Calcul : ${calcul}, analyse ${moteur.cote}`,
+    `${Math.round(moteur.ms)} ms, ${(C.fps || 0).toFixed(1).replace(".", ",")} images/s${moteur.loin > 1 ? `, vue au loin 1 sur ${moteur.loin}` : ""}`];
+}
+function dessinerDiagnostic(ctx, dpr, k, dx, dy) {
+  if (moteur.loin > 1 && !C.pause) {
+    const [x, y, w, h] = moteur.regionLoin(C.vw, C.vh);
+    ctx.save(); ctx.setLineDash([7 * dpr, 6 * dpr]); ctx.lineWidth = 1.5 * dpr; ctx.strokeStyle = "rgba(255,255,255,.85)";
+    ctx.strokeRect(x * k + dx, y * k + dy, w * k, h * k); ctx.restore();
+  }
+  const lignes = lignesDiagnostic(), h = 17 * dpr, police = ctx.font;
+  ctx.font = `600 ${Math.round(12 * dpr)}px Overpass, system-ui, sans-serif`;
+  const l = Math.max(...lignes.map(t => ctx.measureText(t).width)) + 12 * dpr, x0 = 8 * dpr, y0 = (C.H - C.B) * dpr - lignes.length * h - 10 * dpr;
+  ctx.fillStyle = "rgba(18,22,58,.72)"; ctx.fillRect(x0, y0, l, lignes.length * h + 6 * dpr);
+  ctx.fillStyle = "#fff";
+  lignes.forEach((t, i) => ctx.fillText(t, x0 + 6 * dpr, y0 + 3 * dpr + h * (i + 0.5)));
+  ctx.font = police;
 }
 
 // ---------- photo incrustée (cadres, bandeau du panneau annoncé) ----------
@@ -460,23 +564,50 @@ function composer(canvas, largeur, focus = null) {
   g.fillStyle = "#fff"; g.fillText(tag, W / 80 + W / 100, W / 80 + W / 68);
 }
 
-function prendrePhoto(t) {
-  C.dernierePhoto = Date.now();
+// Avec la vue au loin, un panneau est annoncé alors qu'il est encore petit dans l'image : sa photo ne montrerait qu'un
+// point. La photo est prise tout de suite (il y en a toujours une), puis refaite au même rang chaque fois que le panneau
+// a grossi de moitié, jusqu'à ce qu'il soit bien visible (trois fois au plus).
+const COTE_PHOTO = 90;  // points de l'image de la caméra : au-delà, la photo est bonne
+const cotePiste = t => Math.max(t.box[2] - t.box[0], t.box[3] - t.box[1]);
+const prises = new Map();  // rang de la dernière prise de chaque photo : une prise plus ancienne, encodée plus lentement, ne l'écrase pas
+function prendrePhoto(t, refaite = null) {
+  if (!refaite) C.dernierePhoto = Date.now();
   const cv = document.createElement("canvas");
   const it = D.items[moteur.classe(t)];
   composer(cv, Math.min(960, C.video.videoWidth), it);
   const noms = [...new Set(moteur.pistes.filter(x => x.ok && x.misses === 0 && x.groupe !== "m").map(x => D.items[moteur.classe(x)]?.nom).filter(Boolean))];
-  const meta = { code: it.code, noms: noms.length ? noms.slice(0, 3) : [it.nom], t: tempsTrajet(), quand: Date.now(), pos: C.p.reglages.gps ? C.pos : null };
-  const n = C.nPhoto++, { p, trajet } = C;
+  const meta = refaite ? { ...refaite.meta, noms: noms.length ? noms.slice(0, 3) : refaite.meta.noms }
+    : { code: it.code, noms: noms.length ? noms.slice(0, 3) : [it.nom], t: tempsTrajet(), quand: Date.now(), pos: C.p.reglages.gps ? C.pos : null };
+  const n = refaite ? refaite.n : C.nPhoto++, { p, trajet } = C;
+  if (refaite) { refaite.cote = cotePiste(t); refaite.fois++; }
+  else if (t.groupe === "s" && cotePiste(t) < COTE_PHOTO) C.aRefaire.push({ t, n, meta, cote: cotePiste(t), fois: 0 });
+  const cle = `${p.id}/${trajet.id}/${String(n).padStart(3, "0")}`, prise = (prises.get(cle) || 0) + 1;
+  prises.set(cle, prise);
   cv.toBlob(async blob => {
     if (!blob) return;
-    const cle = `${p.id}/${trajet.id}/${String(n).padStart(3, "0")}`;
-    await idbMettre("photos", cle, { blob, ...meta });
+    if (prises.get(cle) === prise) await idbMettre("photos", cle, { blob, ...meta });  // (une photo refaite entre-temps est déjà plus récente)
+    if (refaite) return;
     trajet.photos++;
     p.stats.photos++;
+    // le trajet est rangé dans « Mes trajets » dès sa première photo : si l'appli est fermée sans toucher la croix, il y
+    // reste visible, et ses photos peuvent être supprimées avec lui
+    trajet.fin = Date.now();
+    if (!p.trajets.includes(trajet)) p.trajets.unshift(trajet);
     if (p.album[it.code] && !p.album[it.code].photo) p.album[it.code].photo = cle;
     sauver();
   }, "image/jpeg", 0.74);
+}
+
+// après chaque image analysée : les photos à refaire dont le panneau, toujours suivi sous le même nom, a assez grossi
+function refairePhotos() {
+  if (!C.aRefaire.length) return;
+  C.aRefaire = C.aRefaire.filter(a => {
+    const t = a.t;
+    if (!moteur.pistes.includes(t) || t.misses > 2 || D.items[moteur.classe(t)]?.code !== a.meta.code) return false;  // perdu, ou renommé (la correction a sa propre photo)
+    if (t.misses || cotePiste(t) < 1.5 * a.cote) return true;
+    prendrePhoto(t, a);
+    return a.fois < 3 && a.cote < COTE_PHOTO;
+  });
 }
 
 // ---------- vidéo du trajet (cadres et panneau incrustés) ----------
@@ -724,6 +855,12 @@ export async function terminer() {
   clearTimeout(C.tFile);
   const videoBlob = (await arreterEnregistrement()) || C.videoBlob;
   const { p, trajet, video } = C;
+  // Diagnostic du trajet (affiché en bas de sa page) : ce que la caméra a donné et à quel rythme le téléphone a analysé.
+  // Si la détection trouve peu de choses, ces chiffres disent pourquoi (image trop petite, calcul trop lent...).
+  const piste = video.srcObject?.getVideoTracks()[0], dg = C.diag, secondesAnalyse = (dg.t1 - dg.t0) / 1000;
+  trajet.diag = { flux: [video.videoWidth, video.videoHeight], camera: piste?.label || null, zoom: C.objectif ? +(C.objectif.v / C.objectif.min).toFixed(1) : null,
+    moteur: moteur.fournisseurs[0] === "webgpu" ? "gpu" : `cpu${moteur.fils}`, gpuEcarte: !!moteur.gpuEcarte, cote: moteur.cote, loin: dg.n ? +(dg.nLoin / dg.n).toFixed(2) : 0, analyses: dg.n, vus: Math.max(0, moteur.apercus - dg.vus0),
+    ips: secondesAnalyse > 2 ? +(dg.n / secondesAnalyse).toFixed(1) : null, ms: dg.n ? Math.round(dg.ms / dg.n) : null };
   video.srcObject?.getTracks().forEach(t => t.stop());
   if (C.fichier) URL.revokeObjectURL(video.src);
   C.verrou?.release?.().catch(() => {});
@@ -742,9 +879,9 @@ export async function terminer() {
   const total = Object.values(trajet.elements).reduce((a, b) => a + b, 0);
   const apres = C.apresFermeture;
   C = null;
-  if (secondes < 20 && !total) { apres(); return; }
+  if (secondes < 20 && !total && !trajet.photos) { apres(); return; }
   Object.assign(trajet, { fin, minutes: +(secondes / 60).toFixed(1) });
-  p.trajets.unshift(trajet);
+  if (!p.trajets.includes(trajet)) p.trajets.unshift(trajet);
   for (const vieux of p.trajets.splice(30)) idbSupprimerPrefixe("photos", `${p.id}/${vieux.id}/`);
   p.stats.minutes += secondes / 60;
   evenement("trajet", secondes / 60);

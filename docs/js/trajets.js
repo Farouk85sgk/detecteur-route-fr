@@ -14,6 +14,26 @@ export function sousTitreTrajet(t) {
   return [`${t.photos} photo${t.photos > 1 ? "s" : ""}`, min, t.source === "video" ? `vidéo « ${t.fichier || "?"} »` : "caméra"].filter(Boolean).join(", ");
 }
 
+// Diagnostic d'un trajet : ce que la caméra a donné et le rythme d'analyse. À lire quand la détection a trouvé peu de
+// choses : image trop petite, calcul trop lent, panneaux aperçus mais trop brièvement pour être annoncés.
+function diagnostic(t) {
+  const d = t.diag;
+  if (!d || !d.analyses) return "";
+  const [w, h] = d.flux, fr = v => String(v).replace(".", ","), s = n => n > 1 ? "s" : "";
+  const calcul = d.moteur === "gpu" ? "carte graphique" : `processeur (${d.moteur === "cpu1" ? "un seul fil de calcul" : `${d.moteur.slice(3)} fils de calcul`}${d.gpuEcarte ? " ; la carte graphique a été écartée, ses calculs étaient faux" : ""})`;
+  const annonces = Object.entries(t.elements || {}).filter(([c]) => D.parCode[c]?.groupe === "s").reduce((n, [, v]) => n + v, 0);
+  const conseils = [];
+  if (d.ips !== null && d.ips < 4) conseils.push("Le calcul est lent sur ce téléphone : au-dessus de 30 km/h, un panneau passe sans être vu assez de fois. Essaie la qualité « Rapide » dans les réglages.");
+  if (Math.max(w, h) < 1000) conseils.push("L'image donnée par la caméra est petite : les panneaux ne sont reconnus que de très près.");
+  if (d.vus >= 16 && annonces < d.vus / 8) conseils.push("Beaucoup de panneaux ont été aperçus sans être annoncés : ils étaient trop petits ou sont passés trop vite. Fixe le téléphone, la route au milieu de l'image, et essaie « Changer de caméra » dans les réglages si l'image paraît très large.");
+  if (t.source !== "video" && d.vus < 3 && d.analyses > 150) conseils.push("Presque aucun panneau n'a été aperçu. Vérifie que la caméra voit bien la route (pare-brise propre, pas de reflet, téléphone droit).");
+  return `<details class="diag-trajet doux petit"><summary style="padding:12px 0;cursor:pointer"><b>Diagnostic de ce trajet</b></summary>
+    <p>Image de ${w} × ${h} points (${w >= h ? "en largeur" : "en hauteur"})${d.zoom && d.zoom > 1.05 ? `, zoom ${fr(d.zoom)}×` : ""}${d.camera ? `, caméra « ${esc(d.camera.slice(0, 40))} »` : ""}.</p>
+    <p>Calcul : ${calcul}, analyse en ${d.cote} points${d.loin >= 0.05 ? `, avec la vue au loin (${Math.round(d.loin * 100)} % des analyses)` : ""}${d.ips !== null ? `, ${fr(d.ips)} image${d.ips >= 2 ? "s" : ""} par seconde` : ""}${d.ms ? ` (${d.ms} ms par image)` : ""}.</p>
+    <p>${d.analyses} image${s(d.analyses)} analysée${s(d.analyses)}, ${d.vus} panneau${d.vus > 1 ? "x" : ""} aperçu${s(d.vus)}, ${annonces} annoncé${s(annonces)}.</p>
+    ${conseils.map(c => `<p><b>${esc(c)}</b></p>`).join("")}</details>`;
+}
+
 export function pageTrajets(racine) {
   liberer();
   const p = profil();
@@ -32,7 +52,8 @@ export async function pageTrajet(racine, id) {
     <div class="contenu"><div class="grille-photos"><p class="doux">Chargement des photos…</p></div>
       <div class="elements-trajet"></div>
       <button class="btn btn-plein btn-grand" data-a="quiz">Quiz de ce trajet</button>
-      <button class="btn btn-danger" data-a="supprimer">Supprimer ce trajet</button></div></div>`;
+      <button class="btn btn-danger" data-a="supprimer">Supprimer ce trajet</button>
+      ${diagnostic(t)}</div></div>`;
   const photos = await idbTout("photos", `${p.id}/${t.id}/`);
   const grille = racine.querySelector(".grille-photos");
   const quand = ph => t.source === "video" ? `à ${tempsVideo(ph.t || 0)} dans la vidéo` : `à ${heure(ph.quand)}`;

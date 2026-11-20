@@ -17,6 +17,7 @@ const OPTIONS = [
   ["photos", "Photo de chaque élément repéré", "Une photo de la route à chaque annonce, rangée dans « Mes trajets » sur l'accueil. Reste sur le téléphone."],
   ["gps", "Position GPS des photos", "Pour retrouver l'endroit exact sur une carte (caméra seulement). Le téléphone demande l'autorisation."],
   ["video", "Enregistrer chaque trajet en vidéo", "Démarre avec la caméra, cadres et panneau annoncé incrustés. À la fin du trajet : enregistrer ou partager. Le bouton rond en haut lance ou arrête aussi l'enregistrement."],
+  ["loin", "Voir les panneaux de plus loin", "Une partie des analyses regarde en grand le milieu de l'image, là où les panneaux apparaissent : ils sont annoncés plus tôt. L'appli s'en sert seulement si le téléphone calcule assez vite."],
   ["paysage", "Écran en paysage pendant la conduite", "L'écran passe en paysage au lancement : la route à gauche, le panneau annoncé à droite."],
   ["sons", "Effets sonores", "Petits sons des quiz, de l'album et de la quête."],
   ["multicoeur", "Calcul sur plusieurs cœurs", "Analyse plus rapide sur les téléphones sans accélération graphique. À couper si l'appli devient instable. Prend effet à la prochaine ouverture."],
@@ -70,7 +71,7 @@ export function ouvrirReglages({ depuisCamera = false, vers = null } = {}) {
       r.exclus = cible.checked ? r.exclus.filter(x => x !== c) : [...new Set([...r.exclus, c])];
       sauver(); majCompte(corps); reconfigurer();
     }
-    if (cible.dataset.reglage === "debug") reconfigurer();
+    if (["debug", "loin"].includes(cible.dataset.reglage)) reconfigurer();
     if (cible.dataset.bloc) { montrerBloc(cible.dataset.bloc, cible.checked, p); $("[data-r=blocs]", corps)?.classList.toggle("cache", !nbBlocsMasques(p)); }
   });
   corps.addEventListener("click", async e => {
@@ -84,6 +85,10 @@ export function ouvrirReglages({ depuisCamera = false, vers = null } = {}) {
     if (a === "blocs") { r.accueil = {}; sauver(); dessiner(corps, depuisCamera); toast("Tous les blocs sont affichés"); }
     if (a === "tout") { r.familles = {}; r.exclus = []; sauver(); dessiner(corps, depuisCamera); reconfigurer(); }
     if (a === "rien") { r.familles = Object.fromEntries(FAMILLES.map(f => [f.id, false])); sauver(); dessiner(corps, depuisCamera); reconfigurer(); }
+    if (a === "camera") {
+      const c = await (await import("./camera.js")).changerCamera().catch(e => { console.warn(e); return null; });
+      toast(c ? `Caméra ${c.rang} sur ${c.total}${c.nom ? ` : ${c.nom}` : ""}` : "Ce téléphone ne propose qu'une caméra arrière à l'appli. (S'il en a plusieurs, ouvre d'abord la caméra une fois.)");
+    }
     if (a === "effacer") {
       // réglages ouverts depuis la caméra : le trajet filmé en ce moment (et ses photos) est gardé
       const s = (await import("./camera.js")).sessionCamera(), enCours = s?.p === p ? s.trajet.id : null;
@@ -120,6 +125,8 @@ function dessiner(corps, depuisCamera) {
     <div class="ligne-sep"><h3 style="font-family:var(--corps);font-size:1.18rem;margin-bottom:12px">Qualité d'analyse</h3>
       <div class="segments">${QUALITES.map(([id, nom]) => `<button data-r="qualite" data-v="${id}" aria-pressed="${qualite === id}">${nom}</button>`).join("")}</div>
       <p class="doux petit" style="margin-top:8px">Rapide : plus d'images par seconde. Fine : panneaux lointains mieux vus.</p></div>
+    <div class="reglage"><div><h3>Caméra du téléphone</h3><p>L'appli prend la caméra principale du dos. Si l'image paraît très large, déformée ou trop zoomée, passe à la suivante : le choix est gardé sur ce téléphone.</p></div>
+      <button class="btn" style="width:auto;min-height:48px" data-r="camera">Changer</button></div>
     <div class="reglage"><div><h3>Détecteur</h3><p class="etat-detecteur">${esc(window.__etatDetecteur || "Pas encore chargé : il démarre avec la caméra.")}</p></div></div>
     <div class="reglage"><div><h3>Afficher les zones testées</h3><p>Cadres violets de toutes les détections brutes, avant confirmation : pour régler l'appli.</p></div>${bascule("debug", r.debug)}</div>
     <button class="btn" data-r="effacer">Effacer l'historique</button>
