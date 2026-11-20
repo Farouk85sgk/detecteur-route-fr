@@ -336,7 +336,7 @@ async function boucle(moi = C) {
   if (C === moi) C.raf = setTimeout(() => requestAnimationFrame(() => boucle(moi)), 15);
 }
 
-const visibilite = () => { if (C && !document.hidden) C.tPrec = performance.now(); };
+const visibilite = () => { if (C && !document.hidden) { C.tPrec = performance.now(); C.diag.t1 = 0; } };
 const decrireMoteur = () => `Prêt (${moteur.fournisseurs[0] === "webgpu" ? "carte graphique" : `processeur${moteur.gpuEcarte ? " (carte graphique écartée : ses calculs étaient faux)" : ""}, ${moteur.fils > 1 ? `${moteur.fils} fils de calcul` : "un seul fil de calcul"}`}, classifieur ${moteur.cls ? "actif" : "absent"}, `
   + `usagers ${moteur.usagers ? "actifs" : "inactifs"}${moteur.emp ? ", Mes panneaux actif" : ""}, ${Math.round(moteur.ms)} ms par image, ${C?.fps ? C.fps.toFixed(1) : "?"} images/s`
   + `${C?.vw ? `, image de ${C.vw} × ${C.vh} points` : ""}${moteur.loin > 1 ? ", vue au loin active" : ""}).`;
@@ -616,7 +616,11 @@ function prendrePhoto(t, refaite = null) {
     // le trajet est rangé dans « Mes trajets » dès sa première photo : si l'appli est fermée sans toucher la croix, il y
     // reste visible, et ses photos peuvent être supprimées avec lui
     trajet.fin = Date.now();
-    if (!p.trajets.includes(trajet)) p.trajets.unshift(trajet);
+    if (!p.trajets.includes(trajet)) {
+      p.trajets.unshift(trajet);
+      // (même plafond que dans terminer() : qui ne ferme jamais par la croix garderait sinon tous ses trajets et leurs photos)
+      for (const vieux of p.trajets.splice(30)) idbSupprimerPrefixe("photos", `${p.id}/${vieux.id}/`);
+    }
     if (p.album[it.code] && !p.album[it.code].photo) p.album[it.code].photo = cle;
     sauver();
   }, "image/jpeg", 0.74);
@@ -629,6 +633,10 @@ function refairePhotos() {
     const t = a.t;
     if (!moteur.pistes.includes(t) || t.misses > 2 || D.items[moteur.classe(t)]?.code !== a.meta.code) return false;  // perdu, ou renommé (la correction a sa propre photo)
     if (t.misses || cotePiste(t) < 1.5 * a.cote) return true;
+    // Panneau à moins d'une fois sa taille du bord : la photo précédente est gardée. L'image prise est celle que la caméra
+    // montre à cet instant, un peu après l'image analysée : sur un téléphone lent, le panneau en serait déjà sorti.
+    const m = cotePiste(t);
+    if (t.box[0] < m || t.box[2] > C.vw - m || t.box[1] < m / 2) return false;
     prendrePhoto(t, a);
     return a.fois < 3 && a.cote < COTE_PHOTO;
   });
@@ -696,6 +704,7 @@ function basculerPause(forcer = null) {
   if (!C.demarre) return;
   C.pause = forcer ?? !C.pause;
   const { video } = C;
+  C.diag.t1 = 0;  // (diagnostic : le temps de la pause ne compte pas dans le rythme d'analyse)
   if (C.pause) { video.pause(); C.aRevoir = 2; } else { if (C.fichier && video.ended) video.currentTime = 0; video.play().catch(() => {}); C.zoom = { k: 1, x: 0, y: 0 }; disposer(); }
   statut(C.pause ? "En pause" : C.fichier ? "Vidéo" : "Caméra", C.pause ? "pause" : "");
   $(".astuce-cam", C.racine).classList.toggle("cache", !C.pause);

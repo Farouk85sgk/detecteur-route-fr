@@ -11,7 +11,9 @@ const objetUrl = blob => { const u = URL.createObjectURL(blob); urls.push(u); re
 
 export function sousTitreTrajet(t) {
   const min = t.fin ? duree((t.fin - t.debut) / 1000) : "";
-  return [`${t.photos} photo${t.photos > 1 ? "s" : ""}`, min, t.source === "video" ? `vidéo « ${t.fichier || "?"} »` : "caméra"].filter(Boolean).join(", ");
+  // (un long nom de fichier sans espace élargissait la page sur un petit écran : il est abrégé)
+  const f = t.fichier || "?", nom = f.length > 24 ? `${f.slice(0, 14)}…${f.slice(-8)}` : f;
+  return [`${t.photos} photo${t.photos > 1 ? "s" : ""}`, min, t.source === "video" ? `vidéo « ${nom} »` : "caméra"].filter(Boolean).join(", ");
 }
 
 // Diagnostic d'un trajet : ce que la caméra a donné et le rythme d'analyse. À lire quand la détection a trouvé peu de
@@ -24,9 +26,9 @@ function diagnostic(t) {
   const annonces = Object.entries(t.elements || {}).filter(([c]) => D.parCode[c]?.groupe === "s").reduce((n, [, v]) => n + v, 0);
   const conseils = [];
   if (d.ips !== null && d.ips < 4) conseils.push("Le calcul est lent sur ce téléphone : au-dessus de 30 km/h, un panneau passe sans être vu assez de fois. Essaie la qualité « Rapide » dans les réglages.");
-  if (Math.max(w, h) < 1000) conseils.push("L'image donnée par la caméra est petite : les panneaux ne sont reconnus que de très près.");
+  if (Math.max(w, h) < 1000) conseils.push(t.source === "video" ? "L'image de cette vidéo est petite : les panneaux ne sont reconnus que de très près." : "L'image donnée par la caméra est petite : les panneaux ne sont reconnus que de très près.");
   // (d.filtre : des familles étaient coupées dans les réglages ; les panneaux cachés à la demande ne sont pas comptés)
-  if (!d.filtre && d.vus >= 16 && annonces < d.vus / 8) conseils.push("Beaucoup de panneaux ont été aperçus sans être annoncés : ils étaient trop petits ou sont passés trop vite. Fixe le téléphone, la route au milieu de l'image, et essaie « Changer de caméra » dans les réglages si l'image paraît très large.");
+  if (!d.filtre && t.source !== "video" && d.vus >= 16 && annonces < d.vus / 8) conseils.push("Beaucoup de panneaux ont été aperçus sans être annoncés : ils étaient trop petits ou sont passés trop vite. Fixe le téléphone, la route au milieu de l'image, et essaie « Changer de caméra » dans les réglages si l'image paraît très large.");
   if (!d.filtre && t.source !== "video" && d.vus < 3 && d.analyses > 600) conseils.push("Presque aucun panneau n'a été aperçu. S'il y en avait sur ta route, vérifie que la caméra la voit bien : pare-brise propre, pas de reflet, téléphone droit.");
   return `<details class="diag-trajet doux petit"><summary style="padding:12px 0;cursor:pointer"><b>Diagnostic de ce trajet</b></summary>
     <p>Image de ${w} × ${h} points (${w >= h ? "en largeur" : "en hauteur"})${d.zoom && d.zoom > 1.05 ? `, zoom ${fr(d.zoom)}×` : ""}${d.camera ? `, caméra « ${esc(d.camera.slice(0, 40))} »` : ""}.</p>

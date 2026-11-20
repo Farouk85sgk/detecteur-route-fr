@@ -152,7 +152,7 @@ export const nbEclats = p => FAMILLES.filter(f => p.gardiens[f.id]).length;
 
 // ---------- badges ----------
 const CONDITIONS = {
-  trajet1: p => p.trajets.length > 0,
+  trajet1: p => p.trajets.some(t => t.minutes != null),  // un trajet terminé (un trajet en cours est rangé dès sa première photo)
   album10: p => nbAlbum(p) >= 10, album25: p => nbAlbum(p) >= 25, album50: p => nbAlbum(p) >= 50, album100: p => nbAlbum(p) >= 100,
   famille: p => FAMILLES.some(f => familleComplete(p, f.id)),
   code100: p => Object.values(p.code.q).filter(v => v === 1).length >= 100, theme: p => (p.stats.themes || 0) > 0,

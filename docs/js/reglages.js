@@ -109,7 +109,7 @@ function dessiner(corps, depuisCamera) {
   const sections = [["Panneaux", FAMILLES.filter(f => !["marquages", "feux"].includes(f.id))], ["Feux et usagers", FAMILLES.filter(f => f.id === "feux")], ["Marquages au sol", FAMILLES.filter(f => f.id === "marquages")]];
   corps.innerHTML = `
     <div class="reglage" style="border-top:0"><div><h3>Profil</h3><div class="ligne" style="margin-top:8px">${avatar(p, "petit")}<b>${esc(p.nom)}</b></div></div>
-      <button class="btn" style="width:auto" data-r="profils">Changer</button></div>
+      ${depuisCamera ? "" : `<button class="btn" style="width:auto" data-r="profils">Changer</button>`}</div>
     <div class="ligne-sep"><h3 style="font-family:var(--corps);font-size:1.18rem;margin-bottom:14px">Couleur du fond</h3>
       <div class="nuancier">${FONDS.map(f => `<button data-r="fond" data-v="${f.id}" aria-pressed="${p.fond === f.id}"><i style="background:${{ auto: "linear-gradient(135deg,#f3f4f6 50%,#12163a 50%)", blanc: "#fff", creme: "#f4ecda", sauge: "#e3eadf", nuit: "#12163a" }[f.id]}"></i>${f.nom}</button>`).join("")}</div></div>
     ${OPTIONS.map(([id, titre, texte]) => `<div class="reglage"><div><h3>${titre}</h3>${texte ? `<p>${texte}</p>` : ""}</div>${bascule(id, r[id], `aria-label="${esc(titre)}"`)}</div>`).join("")}
@@ -138,7 +138,7 @@ function dessiner(corps, depuisCamera) {
       Icônes des panneaux : schémas de Wikimedia Commons (Roulex 45 et autres auteurs, licences CC BY-SA, CC BY, CC0 ou domaine public), <a href="credits.html" target="_blank" rel="noopener">crédits détaillés</a>.
       Polices Bricolage Grotesque et Overpass, licence OFL.
       <a href="confidentialite.html" target="_blank" rel="noopener">Confidentialité</a> · <a href="${APP.source}" target="_blank" rel="noopener">Code source (licence AGPL-3.0)</a>.
-      Outil d'aide pédagogique : il ne remplace ni ton attention ni la signalisation réelle.${depuisCamera ? "" : ""}</p>`;
+      Outil d'aide pédagogique : il ne remplace ni ton attention ni la signalisation réelle.</p>`;
   majCompte(corps);
 }
 

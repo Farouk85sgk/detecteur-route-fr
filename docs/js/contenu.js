@@ -7,7 +7,7 @@ export const APP = {
   slogan: "Le code de la route, en direct.",
   accroche: "Filme ta route : panneaux, feux, marquages, piétons et cyclistes sont reconnus et expliqués en direct.",
   depot: "https://github.com/Farouk85sgk/detecteur-route-fr",
-  version: "3.1.1",
+  version: "3.2.0",
   // Adresse e-mail de contact de l'éditeur : c'est là qu'arrivent les « Signaler une erreur » des quiz (l'appli de mail
   // de l'élève s'ouvre avec le message prêt). À remplir avant de publier. Vide : le signalement passe par le partage du
   // téléphone, ou il est copié, et l'élève l'envoie à qui il veut (son auto-école, par exemple).

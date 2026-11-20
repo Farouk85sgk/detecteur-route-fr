@@ -118,8 +118,10 @@ photos, trajets et progression restent sur le téléphone. Sur Android ou iPhone
 - **Le bon appareil** : sur un téléphone à plusieurs caméras, l'appli prend la caméra principale du dos quand le
   navigateur en ouvre une autre (très grand-angle, téléobjectif), et un bouton « Changer » passe à la suivante. Une
   fois par version, une image d'essai est calculée par la carte graphique et par le processeur : si les résultats
-  diffèrent (pilote graphique défaillant), tout le calcul passe sur le processeur. Écrit d'après les normes et
-  essayé avec des caméras et une carte graphique simulées, pas sur un vrai téléphone.
+  diffèrent (pilote graphique défaillant), tout le calcul passe sur le processeur. Le classifieur de panneaux et le
+  modèle d'empreintes, eux, tournent toujours sur le processeur (voir « Sur carte graphique », plus bas). Écrit
+  d'après les normes et essayé avec des caméras simulées et la carte graphique logicielle de Chromium, pas sur un
+  vrai téléphone.
 - **Diagnostic** : chaque trajet garde la taille de l'image reçue, le mode de calcul, le rythme d'analyse, le
   nombre de panneaux aperçus et annoncés (bas de la page du trajet) ; avec « Afficher les zones testées », ces
   chiffres s'affichent en direct. C'est ce qu'il faut regarder quand la détection trouve peu de choses.
@@ -131,7 +133,12 @@ photos, trajets et progression restent sur le téléphone. Sur Android ou iPhone
 - **Code de la route** : **685 questions originales en 57 séries**, classées selon les dix thèmes de l'examen
   (circulation, conducteur, route, autres usagers, notions diverses, premiers secours, prendre et quitter son
   véhicule, mécanique, sécurité, environnement), chacune avec son explication ; progression par thème, erreurs à
-  revoir, et **examens blancs** de 40 questions réparties comme à l'épreuve (35 bonnes réponses pour réussir).
+  revoir, et **examens blancs** de 40 questions réparties comme à l'épreuve (35 bonnes réponses pour réussir, 20
+  secondes par question), tirées d'abord parmi les questions jamais vues. Une jauge **« Prêt pour l'examen ? »**
+  (cinq examens blancs réussis de suite, tous les thèmes solides, 60 % des questions vues : seuils `PRET` dans
+  `docs/js/contenu.js`), un bouton **« Signaler une erreur »** sous chaque explication (un texte que l'élève envoie
+  lui-même ; par e-mail si `APP.contact` est renseigné) et une page **« Passer l'examen »** (numéro NEPH,
+  inscription, prix, jour J, résultat, échec, liens officiels).
   Les **séries de l'auto-école** peuvent être importées (voir ci-dessous). Les 685 questions et les 308 fiches ont été
   relues par des relecteurs indépendants, et chaque remarque a été contre-vérifiée avant correction (35 questions et
   18 fiches corrigées).
@@ -399,6 +406,20 @@ voisine, une balise) et trois fausses (un stop pour un sens interdit, un 90 pour
 trajets sont des photos nettes : le flou d'une vraie vidéo ou un objectif très grand-angle font baisser ces chiffres
 (sur six de ces trajets, image entière seule : 87 % sans défaut, 53 % avec un fort flou d'avancée, 72 % avec un
 objectif très grand-angle).
+
+**Sur carte graphique** : jusqu'à la version 3.1.1, tous les essais passaient par le processeur. Rejoués avec une
+vraie carte WebGPU (celle, logicielle, de Chromium : `tools/mesurer_trajets.py --gpu`), trois trajets ont montré un
+défaut d'ONNX Runtime Web 1.20.1 : sur carte graphique, le classifieur ne calcule juste que la première vignette
+d'un lot, et donne aux suivantes des notes fausses de plusieurs milliers, soit un nom au hasard avec une confiance
+de 100 %. Dès que deux panneaux étaient à l'image, le second était mal nommé ou perdu. Depuis la 3.2.0 le
+classifieur et le modèle d'empreintes tournent sur le processeur (quelques millisecondes), le détecteur reste sur la
+carte graphique, et le résultat est le même que sur le processeur seul :
+
+| Trois trajets, 17 passages | Annoncés | Confusions | Autres annonces | Avance |
+|---|---|---|---|---|
+| 3.1.1 sur le processeur | 13 | 0 | 3 | 10 m |
+| 3.1.1 sur la carte graphique | 11 | 2 | 6 | 6 m |
+| **3.2.0 sur la carte graphique** | **13** | **0** | **3** | **10 m** |
 
 ## 4. Améliorer les modèles avec vos propres vidéos
 
