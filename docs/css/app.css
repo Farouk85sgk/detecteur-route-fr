@@ -149,8 +149,12 @@ details[open] > summary .si-ouvert { display: inline; }
 .btn-reglages { display: inline-flex; align-items: center; gap: 6px; padding: 9px 13px; border-radius: 30px; border: 3px solid var(--nuit); background: none;
   color: var(--nuit); font-weight: 700; font-size: 1.02rem; flex: none; }
 .btn-reglages svg { width: 22px; height: 22px; }
-.marque { font-family: var(--titres); font-weight: 800; font-size: clamp(3.4rem, 17vw, 5.6rem); letter-spacing: -.045em; line-height: .95; display: flex;
-  align-items: center; gap: .08em; margin-top: 8px; }
+/* Le nom tient sur une ligne, logo compris, sur toute la largeur du bandeau (il passe devant la ligne de la route, coupée à
+   sa hauteur). Sa taille suit la largeur du bandeau : le nom et le logo font 6,32 fois la taille des lettres. */
+.heros { container-type: inline-size; }
+.marque { font-family: var(--titres); font-weight: 800; font-size: clamp(2.5rem, 13.3vw, 4.4rem); letter-spacing: -.045em; line-height: .95; display: flex;
+  align-items: center; gap: .08em; margin-top: 8px; white-space: nowrap; }
+.heros > .marque { margin-right: 0; background: var(--jaune); padding: .06em 0 .1em; font-size: min(15.4cqw, 5.2rem); }
 .marque svg { width: .78em; height: .78em; flex: none; transform: translateY(.04em); }
 .slogan { font-family: var(--titres); font-weight: 700; font-size: clamp(1.7rem, 7.6vw, 2.25rem); line-height: 1.08; letter-spacing: -.02em; }
 .accroche { font-size: 1.14rem; color: rgba(18, 22, 58, .78); line-height: 1.45; }
