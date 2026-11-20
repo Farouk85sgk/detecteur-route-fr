@@ -35,7 +35,9 @@ EN DIRECT SUR LA ROUTE
 APPRENDRE
 • Une fiche pour chaque panneau : ce qu'il signifie, le bon réflexe, comment le reconnaître.
 • 685 questions de code réparties dans les dix thèmes de l'examen, avec l'explication de chaque réponse.
-• Examens blancs de 40 questions, comme le jour de l'épreuve.
+• Examens blancs de 40 questions, comme le jour de l'épreuve, sans redites : les questions jamais vues passent d'abord.
+• Une jauge « Prêt pour l'examen ? » te dit où tu en es.
+• « Passer l'examen » : numéro NEPH, inscription, prix, jour J, résultat, expliqués simplement.
 • Quiz sur de vraies photos de routes françaises.
 
 JOUER

@@ -208,10 +208,10 @@ async def mesurer(a):
                         bilan, details = juger(v, res, pas, w, h, vers_flux, a.minimum)
                         total.update(bilan); ms.append(res["ms"])
                         tous.append({"trajet": d.name, "bilan": dict(bilan), "details": details, "annonces": res["annonces"]})
+                    if a.gpu and not resultats: print("moteur :", await pg.evaluate("window.__m.fournisseurs.join('+') + (window.__m.gpuEcarte ? ' (carte graphique écartée)' : '')"), flush=True)
                     n = max(1, total["passages"])
                     cle = f"{nom} | {mode} | 1 image sur {pas}"
                     resultats[cle] = {"bilan": dict(total), "trajets": tous, "ms": sum(ms) / max(1, len(ms))}
-                    if a.gpu and not resultats: print("moteur :", await pg.evaluate("window.__m.fournisseurs.join('+') + (window.__m.gpuEcarte ? ' (carte graphique écartée)' : '')"), flush=True)
                     print(f"{cle:44s} passages {total['passages']:3d}  annoncés {total['annonces_justes']:3d} ({100 * total['annonces_justes'] / n:4.0f} %)  confondus {total['confondus']:2d}  "
                           f"manqués {total['manques']:3d}  autres annonces {total['autres_annonces']:3d}  avance {total['avance_images'] / max(1, total['annonces_justes']):.1f} image(s)  "
                           f"dont {total['annonces_au_loin']:2d} par la vue au loin  {sum(ms) / max(1, len(ms)):.0f} ms", flush=True)
