@@ -539,11 +539,16 @@ function dessinerDiagnostic(ctx, dpr, k, dx, dy) {
   if (moteur.loin > 1 && !C.pause) {
     const [x, y, w, h] = moteur.regionLoin(C.vw, C.vh);
     ctx.save(); ctx.setLineDash([7 * dpr, 6 * dpr]); ctx.lineWidth = 1.5 * dpr; ctx.strokeStyle = "rgba(255,255,255,.85)";
-    ctx.strokeRect(x * k + dx, y * k + dy, w * k, h * k); ctx.restore();
+    // (l'image déborde de l'écran : rognée sur les côtés debout, décalée vers la gauche couché ; les côtés du rectangle sont ramenés dans la partie visible)
+    const g = Math.max(2 * dpr, x * k + dx), d = Math.min(C.W * dpr - 2 * dpr, (x + w) * k + dx);
+    ctx.strokeRect(g, y * k + dy, d - g, h * k); ctx.restore();
   }
   const lignes = lignesDiagnostic(), h = 17 * dpr, police = ctx.font;
   ctx.font = `600 ${Math.round(12 * dpr)}px Overpass, system-ui, sans-serif`;
-  const l = Math.max(...lignes.map(t => ctx.measureText(t).width)) + 12 * dpr, x0 = 8 * dpr, y0 = (C.H - C.B) * dpr - lignes.length * h - 10 * dpr;
+  // Téléphone debout : la carte du bas change de hauteur à chaque annonce et pousse vers le haut la rangée des derniers
+  // panneaux et les messages. Le cadre se cale donc sur le haut réel de la zone des messages au moment du dessin.
+  const bas = C.racine.classList.contains("paysage") ? C.H - C.B : Math.min(C.H - C.B, $(".cam-toasts", C.racine).getBoundingClientRect().top - 4);
+  const l = Math.max(...lignes.map(t => ctx.measureText(t).width)) + 12 * dpr, x0 = 8 * dpr, y0 = Math.max(C.T * dpr, bas * dpr - lignes.length * h - 10 * dpr);
   ctx.fillStyle = "rgba(18,22,58,.72)"; ctx.fillRect(x0, y0, l, lignes.length * h + 6 * dpr);
   ctx.fillStyle = "#fff";
   lignes.forEach((t, i) => ctx.fillText(t, x0 + 6 * dpr, y0 + 3 * dpr + h * (i + 0.5)));
