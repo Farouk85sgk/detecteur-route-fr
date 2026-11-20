@@ -33,7 +33,7 @@ async (cfg) => {
   const { Moteur } = await import('./js/moteur.js');
   const { D } = await import('./js/donnees.js');
   const m = window.__m || (window.__m = new Moteur());
-  if (!m.pret) await m.charger({ backend: 'wasm' });
+  if (!m.pret) await m.charger(cfg.gpu ? {} : { backend: 'wasm' });
   // (le moteur sert à tous les cas : chaque cas repart des réglages d'origine, pas de ceux du cas précédent)
   const origine = window.__origine || (window.__origine = { loin: m.loin, proche: m.proche });
   m.configurer({ cote: cfg.cote, avecUsagers: false, actifs: null, ...origine, ...cfg.options });
@@ -182,7 +182,10 @@ async def mesurer(a):
         cas.append((nom, cote, opts, mesure))
     resultats = {}
     async with async_playwright() as p:
-        b = await p.chromium.launch(executable_path=a.chromium or None)
+        # --gpu : carte graphique WebGPU logicielle de Chromium (lente, mais c'est le vrai chemin de calcul des téléphones)
+        gpu = ["--enable-unsafe-webgpu", "--enable-features=Vulkan,WebGPU", "--use-vulkan=swiftshader", "--use-webgpu-adapter=swiftshader", "--ignore-gpu-blocklist",
+               "--use-angle=swiftshader", "--enable-unsafe-swiftshader"] if a.gpu else []
+        b = await p.chromium.launch(executable_path=a.chromium or None, args=gpu)
         ctx = await b.new_context(service_workers="block")
         if a.ort:
             async def cdn(route):
@@ -201,13 +204,14 @@ async def mesurer(a):
                         v = json.loads((d / "verite.json").read_text())
                         w, h, decoupe, vers_flux = cadre(mode, v["vue"]["taille"], mesure.get("echelle", 1.0), int(mesure.get("flux", 1280)), mesure.get("penche", 0.0))
                         images = [f"/trajets/{d.name}/{im['fichier']}" for k, im in enumerate(v["images"]) if k % pas == 0]
-                        res = await pg.evaluate(JS, {"cote": cote, "options": opts, "w": w, "h": h, "cadre": decoupe, "images": images, "degrade": mesure, "rep": int(mesure.get("rep", 1))})
+                        res = await pg.evaluate(JS, {"cote": cote, "options": opts, "w": w, "h": h, "cadre": decoupe, "images": images, "degrade": mesure, "rep": int(mesure.get("rep", 1)), "gpu": a.gpu})
                         bilan, details = juger(v, res, pas, w, h, vers_flux, a.minimum)
                         total.update(bilan); ms.append(res["ms"])
                         tous.append({"trajet": d.name, "bilan": dict(bilan), "details": details, "annonces": res["annonces"]})
                     n = max(1, total["passages"])
                     cle = f"{nom} | {mode} | 1 image sur {pas}"
                     resultats[cle] = {"bilan": dict(total), "trajets": tous, "ms": sum(ms) / max(1, len(ms))}
+                    if a.gpu and not resultats: print("moteur :", await pg.evaluate("window.__m.fournisseurs.join('+') + (window.__m.gpuEcarte ? ' (carte graphique écartée)' : '')"), flush=True)
                     print(f"{cle:44s} passages {total['passages']:3d}  annoncés {total['annonces_justes']:3d} ({100 * total['annonces_justes'] / n:4.0f} %)  confondus {total['confondus']:2d}  "
                           f"manqués {total['manques']:3d}  autres annonces {total['autres_annonces']:3d}  avance {total['avance_images'] / max(1, total['annonces_justes']):.1f} image(s)  "
                           f"dont {total['annonces_au_loin']:2d} par la vue au loin  {sum(ms) / max(1, len(ms)):.0f} ms", flush=True)
@@ -227,4 +231,5 @@ if __name__ == "__main__":
     ap.add_argument("--pas", nargs="+", type=int, default=[1])
     ap.add_argument("--minimum", type=float, default=14, help="taille (points à l'échelle 640) que le panneau doit atteindre pour compter")
     ap.add_argument("--seulement", nargs="*"); ap.add_argument("--sortie", default="")
+    ap.add_argument("--gpu", action="store_true", help="détecteur sur la carte graphique WebGPU logicielle de Chromium, au lieu du processeur")
     asyncio.run(mesurer(ap.parse_args()))

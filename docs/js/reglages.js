@@ -86,8 +86,11 @@ export function ouvrirReglages({ depuisCamera = false, vers = null } = {}) {
     if (a === "tout") { r.familles = {}; r.exclus = []; sauver(); dessiner(corps, depuisCamera); reconfigurer(); }
     if (a === "rien") { r.familles = Object.fromEntries(FAMILLES.map(f => [f.id, false])); sauver(); dessiner(corps, depuisCamera); reconfigurer(); }
     if (a === "camera") {
+      toast("Changement de caméra…");
       const c = await (await import("./camera.js")).changerCamera().catch(e => { console.warn(e); return null; });
-      toast(c ? `Caméra ${c.rang} sur ${c.total}${c.nom ? ` : ${c.nom}` : ""}` : "Ce téléphone ne propose qu'une caméra arrière à l'appli. (S'il en a plusieurs, ouvre d'abord la caméra une fois.)");
+      toast(!c ? "Ce téléphone ne propose qu'une caméra arrière à l'appli. (S'il en a plusieurs, ouvre d'abord la caméra une fois.)"
+        : c.refus ? `La caméra ${c.rang} sur ${c.total} ne s'ouvre pas : l'appli garde la caméra habituelle. Touche encore « Changer » pour essayer la suivante.`
+        : `Caméra ${c.rang} sur ${c.total}${c.nom ? ` : ${c.nom}` : ""}`);
     }
     if (a === "effacer") {
       // réglages ouverts depuis la caméra : le trajet filmé en ce moment (et ses photos) est gardé

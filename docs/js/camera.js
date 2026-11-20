@@ -38,7 +38,8 @@ export function configurerMoteur(p = profil()) {
 // écartés pour ne pas basculer sans cesse.
 const LOIN_DES = { couche: 6.5, debout: 3.5 }, LOIN_SOUS = { couche: 5, debout: 2.5 };  // analyses par seconde
 function reglerLoin() {
-  if (C.p.reglages.loin === false || !C.fps) { if (moteur.loin) moteur.configurer({ loin: 0 }); return; }
+  // (image de moins de 1 000 points : la vue au loin ne ferait qu'agrandir des points que la caméra n'a pas donnés)
+  if (C.p.reglages.loin === false || !C.fps || Math.max(C.vw, C.vh) < 1000) { if (moteur.loin) moteur.configurer({ loin: 0 }); return; }
   const sens = C.vh > C.vw ? "debout" : "couche";
   if (!moteur.loin && C.fps >= LOIN_DES[sens]) moteur.configurer({ loin: 2 });
   else if (moteur.loin && C.fps < LOIN_SOUS[sens]) moteur.configurer({ loin: 0 });
@@ -71,7 +72,7 @@ export async function ouvrirCamera({ fichier = null, apresFermeture = () => {} }
     racine, video, calque, ctx, fichier, apresFermeture, p, pause: false, cadres: true, fini: false, zoom: { k: 1, x: 0, y: 0 },
     trajet: { id: "t" + Date.now().toString(36), debut: Date.now(), source: fichier ? "video" : "camera", fichier: fichier?.name || null, elements: {}, nouveaux: [], photos: 0, evenements: [] },
     dernier: {}, historique: [], file: [], zones: [], derniereCarte: null, dernierePhoto: 0, nPhoto: 0, pos: null, fps: 0, tPrec: performance.now(), lignes: {}, enregistreur: null,
-    diag: { n: 0, nLoin: 0, ms: 0, t0: 0, t1: 0, vus0: moteur.apercus },  // pour le diagnostic du trajet : analyses faites, temps passé, panneaux aperçus
+    diag: { n: 0, nLoin: 0, ms: 0, duree: 0, t1: 0, vus0: moteur.apercus },  // pour le diagnostic du trajet : analyses faites, temps passé à analyser, panneaux aperçus
     aRefaire: [],  // photos prises quand le panneau était encore petit, à refaire quand il aura grossi
   };
   PROG.notifier = message;
@@ -168,23 +169,44 @@ async function ouvrirFlux() {
       flux.getTracks().forEach(t => t.stop());  // (deux caméras ne s'ouvrent pas toujours en même temps)
       flux = (await ouvrir(principale.deviceId, false)) || await ouvrir("");
     }
-  } catch (e) { console.warn("choix de la caméra", e); }
+  } catch (e) {
+    // la caméra 0 a refusé de s'ouvrir et la réouverture aussi (une caméra à peine éteinte ne se rallume pas toujours tout
+    // de suite) : on réessaie une fois, sans rendre un flux éteint, qui donnerait une image noire marquée « Caméra »
+    console.warn("choix de la caméra", e);
+    if (!flux.active) { await new Promise(r => setTimeout(r, 400)); flux = await ouvrir(""); }
+  }
   return flux;
 }
 // Réglages, « Changer de caméra » : passe à la caméra suivante du dos, la mémorise et relance l'image si on filme.
-export async function changerCamera() {
+// Un seul changement à la fois (deux touchers rapprochés ouvraient deux caméras, dont une restait allumée).
+let changement = null, refusee = "";  // refusee : caméra qui vient de refuser de s'ouvrir, pour que le tour passe à la suivante
+export function changerCamera() { return (changement ??= changer().finally(() => (changement = null))); }
+async function changer() {
   const dos = await camerasDos();
   if (dos.length < 2) return null;
-  const actuelle = C?.video.srcObject?.getVideoTracks()[0]?.getSettings?.().deviceId || lireCamera();
-  const suivante = dos[(dos.findIndex(d => d.deviceId === actuelle) + 1) % dos.length];
+  const ouverte = () => C?.video.srcObject?.getVideoTracks()[0]?.getSettings?.().deviceId;
+  // (sans rien de connu, on part de la première caméra, celle que l'appli prend d'elle-même : la suivante est donc la deuxième)
+  const actuelle = refusee || lireCamera() || ouverte(), rang = Math.max(0, dos.findIndex(d => d.deviceId === actuelle));
+  const suivante = dos[(rang + 1) % dos.length];
   noterCamera(suivante.deviceId);
-  if (C && !C.fichier && !C.fini) {
+  refusee = "";
+  let refus = false;
+  // hors d'une séance démarrée (accueil, chargement, « Impossible de démarrer »), le choix est seulement mémorisé
+  if (C && C.demarre && !C.fichier && !C.fini) {
+    const moi = C;
+    if (C.pause) basculerPause(false);  // sinon l'image repartait, mais la séance restait en pause sans le dire
     C.video.srcObject?.getTracks().forEach(t => t.stop());
-    C.objectif = null;
-    await demarrerSource().catch(e => { console.error(e); statut(messageErreur(e), "erreur"); });
+    C.objectif = null; majZoom();       // la nouvelle caméra n'a peut-être pas de zoom
     moteur.reinitialiser();
+    C.video.srcObject = null;           // pas d'analyse de la dernière image de l'ancienne caméra pendant l'ouverture
+    await demarrerSource().catch(e => { console.error(e); if (C === moi) statut(messageErreur(e), "erreur"); });
+    if (C === moi) {
+      moteur.reinitialiser();
+      refus = ouverte() !== suivante.deviceId;  // elle n'a pas voulu s'ouvrir : ouvrirFlux est revenu au choix automatique
+      if (refus) { refusee = suivante.deviceId; noterCamera(""); }
+    }
   }
-  return { rang: dos.indexOf(suivante) + 1, total: dos.length, nom: suivante.label };
+  return { rang: dos.indexOf(suivante) + 1, total: dos.length, nom: suivante.label, refus };
 }
 
 async function demarrerSource() {
@@ -209,6 +231,7 @@ async function demarrerSource() {
     const stream = await ouvrirFlux();
     const eteindre = () => stream.getTracks().forEach(t => t.stop());
     if (C !== moi) return eteindre();  // écran fermé pendant l'ouverture de la caméra : on l'éteint, sinon son voyant reste allumé
+    video.srcObject?.getTracks().forEach(t => t.stop());
     video.srcObject = stream;
     await video.play();
     if (C !== moi) return eteindre();
@@ -288,7 +311,7 @@ async function boucle(moi = C) {
       const tour = C.tour, tA = performance.now();
       const res = await moteur.analyser(video, video.videoWidth, video.videoHeight, { debug: C.p.reglages.debug, net: fige });
       if (C !== moi || C.fini) return;
-      if (!C.pause) { const d = C.diag; d.n++; d.ms += performance.now() - tA; d.t0 ||= tA; d.t1 = performance.now(); if (res.champ) d.nLoin++; }
+      if (!C.pause) { const d = C.diag; d.n++; d.ms += performance.now() - tA; d.duree += Math.min(performance.now() - (d.t1 || tA), 3000); d.t1 = performance.now(); if (res.champ) d.nLoin++; }
       if (tour !== C.tour) {  // on s'est déplacé dans la vidéo pendant le calcul : ce résultat est celui d'une image qu'on ne voit plus
         moteur.reinitialiser();
         C.raf = setTimeout(() => requestAnimationFrame(() => boucle(moi)), 15);
@@ -858,9 +881,9 @@ export async function terminer() {
   const { p, trajet, video } = C;
   // Diagnostic du trajet (affiché en bas de sa page) : ce que la caméra a donné et à quel rythme le téléphone a analysé.
   // Si la détection trouve peu de choses, ces chiffres disent pourquoi (image trop petite, calcul trop lent...).
-  const piste = video.srcObject?.getVideoTracks()[0], dg = C.diag, secondesAnalyse = (dg.t1 - dg.t0) / 1000;
+  const piste = video.srcObject?.getVideoTracks()[0], dg = C.diag, secondesAnalyse = dg.duree / 1000;  // (les pauses et l'écran éteint n'y sont pas : au plus 3 s entre deux analyses)
   trajet.diag = { flux: [video.videoWidth, video.videoHeight], camera: piste?.label || null, zoom: C.objectif ? +(C.objectif.v / C.objectif.min).toFixed(1) : null,
-    moteur: moteur.fournisseurs[0] === "webgpu" ? "gpu" : `cpu${moteur.fils}`, gpuEcarte: !!moteur.gpuEcarte, cote: moteur.cote, loin: dg.n ? +(dg.nLoin / dg.n).toFixed(2) : 0, analyses: dg.n, vus: Math.max(0, moteur.apercus - dg.vus0),
+    moteur: moteur.fournisseurs[0] === "webgpu" ? "gpu" : `cpu${moteur.fils}`, gpuEcarte: !!moteur.gpuEcarte, filtre: !!moteur.actifs, cote: moteur.cote, loin: dg.n ? +(dg.nLoin / dg.n).toFixed(2) : 0, analyses: dg.n, vus: Math.max(0, moteur.apercus - dg.vus0),
     ips: secondesAnalyse > 2 ? +(dg.n / secondesAnalyse).toFixed(1) : null, ms: dg.n ? Math.round(dg.ms / dg.n) : null };
   video.srcObject?.getTracks().forEach(t => t.stop());
   if (C.fichier) URL.revokeObjectURL(video.src);

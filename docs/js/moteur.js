@@ -79,13 +79,20 @@ export class Moteur {
       throw e;
     }
     this.opts = { ...opts, executionProviders: this.fournisseurs };
+    // Le classifieur et le modèle d'empreintes tournent toujours sur le processeur, même quand le détecteur est sur la
+    // carte graphique. Sur carte graphique, ONNX Runtime Web 1.20.1 ne calcule juste que la première vignette d'un lot :
+    // les suivantes reçoivent des notes fausses de plusieurs milliers (mesuré sur une vraie carte WebGPU, voir le README).
+    // Dès que deux panneaux étaient à l'image, le second recevait donc un nom au hasard avec une confiance de 100 % :
+    // fausses annonces, et vrais panneaux jamais annoncés. Ces deux modèles sont petits (vignettes de 64 x 96 points) :
+    // le processeur les calcule en quelques millisecondes, et toujours juste.
+    this.optsCpu = { ...opts, executionProviders: ["wasm"] };
     // classe du détecteur -> élément du catalogue (marquages), SIGN pour « panneau », -1 pour les classes techniques
     this.detMap = D.detecteur.map(n => n === "panneau" ? SIGN : D.parCode[n] ? D.parCode[n].index : -1);
     progression("Classifieur…");
     try {
       const conf = await (await fetch("panneaux.json")).json();
       [this.wCls, this.hCls] = conf.taille;
-      this.cls = await ort.InferenceSession.create("panneaux.onnx", this.opts);
+      this.cls = await ort.InferenceSession.create("panneaux.onnx", this.optsCpu);
       this.clsMap = conf.classes.map(n => D.parCode[n] && D.parCode[n].index < D.nbModele ? D.parCode[n].index : -1);  // -1 : autre panneau ou fond
     } catch (e) { console.warn("Classifieur indisponible : les panneaux ne seront pas identifiés", e); this.cls = null; }
     if (this.fournisseurs[0] === "webgpu") await this.verifierGpu(opts, progression);
@@ -102,20 +109,11 @@ export class Moteur {
     try { const n = JSON.parse(localStorage.getItem("repere.gpu")); return n?.s === `1|${APP.version}|${navigator.userAgent}` ? n : null; } catch { return null; }
   }
   async verifierGpu(opts, progression) {
-    const cle = "repere.gpu", signature = `1|${APP.version}|${navigator.userAgent}`;
-    const note = this.noteGpu();
-    const ecarter = async (det, cls) => {
-      const anciennes = [this.session, this.cls];
-      this.fournisseurs = ["wasm"]; this.gpuEcarte = true;
-      this.opts = { ...opts, executionProviders: ["wasm"] };
-      this.session = det;
-      if (this.cls) this.cls = cls || await ort.InferenceSession.create("panneaux.onnx", this.opts);
-      for (const s of anciennes) s?.release?.().catch(() => {});  // les sessions de la carte graphique ne servent plus
-    };
+    if (this.noteGpu()) return;  // déjà vérifiée et trouvée juste (trouvée fausse : charger() ne l'a même pas préparée)
+    const signature = `1|${APP.version}|${navigator.userAgent}`;
+    let detW = null;
     try {
-      if (note) return;  // déjà vérifiée et trouvée juste (trouvée fausse : charger() ne l'a même pas préparée)
       progression("Vérification de la carte graphique…");
-      const wasm = { ...opts, executionProviders: ["wasm"] };
       // image d'essai : une route grise avec quelques formes de panneaux (toujours la même)
       const essai = document.createElement("canvas"); essai.width = 1280; essai.height = 720;
       const g = essai.getContext("2d");
@@ -124,32 +122,27 @@ export class Moteur {
       const formes = [[980, 250, 46, "#d2161e", "#fff"], [300, 300, 30, "#1c56b5", "#1c56b5"], [1120, 330, 70, "#d2161e", "#fff"], [640, 280, 22, "#f2c200", "#fff"]];
       for (const [x, y, r, bord, dedans] of formes) { g.fillStyle = bord; g.beginPath(); g.arc(x, y, r, 0, 7); g.fill(); g.fillStyle = dedans; g.beginPath(); g.arc(x, y, r * 0.72, 0, 7); g.fill(); g.fillStyle = "#111"; g.fillRect(x - r * 0.3, y - r * 0.12, r * 0.6, r * 0.24); }
       g.fillStyle = "#f4f4f4"; for (let i = 0; i < 6; i++) g.fillRect(560 + i * 30, 470 + i * 40, 26 + i * 8, 14 + i * 4);
-      const ecart = (a, b, pas = 1) => { let m = 0; for (let i = 0; i < a.length; i += pas) { const d = Math.abs(a[i] - b[i]); if (!(d <= m)) m = Number.isFinite(d) ? d : Infinity; } return m; };
-      // détecteur : mêmes cadres (à 4 points près) et mêmes scores (à 0,1 près) sur toute la grille
+      // mêmes cadres (à 4 points près) et mêmes scores (à 0,1 près) sur toute la grille ; un calcul qui échoue sur la carte
+      // graphique (carte perdue, programme refusé par le pilote) compte comme un résultat faux
       const prep = this.tenseur(essai, 1280, 720, this.cote);
-      const detW = await ort.InferenceSession.create("detecteur.onnx", wasm);
+      detW = await ort.InferenceSession.create("detecteur.onnx", this.optsCpu);
       const nom = this.session.inputNames[0], sortie = this.session.outputNames[0];
-      const a = (await this.session.run({ [nom]: prep.t }))[sortie], b = (await detW.run({ [nom]: prep.t }))[sortie];
-      const larg = a.dims[2];
-      let juste = a.data.length === b.data.length;
-      if (juste) for (let i = 0; i < a.data.length && juste; i += larg) {
+      const b = (await detW.run({ [nom]: prep.t }))[sortie];
+      const a = await this.session.run({ [nom]: prep.t }).then(r => r[sortie], e => { console.warn("Calcul impossible sur la carte graphique", e); return null; });
+      let juste = !!a && a.data.length === b.data.length;
+      if (juste) for (let i = 0, larg = a.dims[2]; i < a.data.length && juste; i += larg) {
         for (let k = 0; k < 4; k++) if (!(Math.abs(a.data[i + k] - b.data[i + k]) <= 4)) juste = false;
         if (!(Math.abs(a.data[i + 4] - b.data[i + 4]) <= 0.1)) juste = false;
       }
-      // classifieur : mêmes notes (à 0,5 près) sur deux vignettes
-      let clsW = null;
-      if (juste && this.cls) {
-        const x = this.vignettes(essai, [[934, 204, 1026, 296], [270, 270, 330, 330]], this.wCls, this.hCls);
-        clsW = await ort.InferenceSession.create("panneaux.onnx", wasm);
-        const e = this.cls.inputNames[0], o = this.cls.outputNames[0];
-        const c = (await this.cls.run({ [e]: x }))[o].data, d = (await clsW.run({ [e]: x }))[o].data;
-        juste = c.length === d.length && ecart(c, d) <= 0.5;
-      }
-      try { localStorage.setItem(cle, JSON.stringify({ s: signature, ok: juste })); } catch { /* stockage indisponible */ }
-      if (juste) { detW.release?.().catch(() => {}); clsW?.release?.().catch(() => {}); return; }
+      try { localStorage.setItem("repere.gpu", JSON.stringify({ s: signature, ok: juste })); } catch { /* stockage indisponible */ }
+      if (juste) return;
       console.warn("Carte graphique écartée : ses résultats diffèrent de ceux du processeur");
-      await ecarter(detW, clsW);
-    } catch (e) { console.warn("Vérification de la carte graphique impossible", e); }  // dans le doute, on la garde
+      const ancienne = this.session;
+      this.fournisseurs = ["wasm"]; this.gpuEcarte = true; this.opts = this.optsCpu;
+      this.session = detW; detW = null;  // la session du processeur devient celle du détecteur
+      ancienne.release?.().catch(() => {});
+    } catch (e) { console.warn("Vérification de la carte graphique impossible", e); }  // (processeur indisponible : dans le doute, on la garde)
+    finally { detW?.release?.().catch(() => {}); }
   }
   async chargerUsagers() {
     if (this.usagers || this.chargeUsagers) return this.chargeUsagers;
@@ -161,7 +154,7 @@ export class Moteur {
     try {
       const conf = await (await fetch("empreinte.json")).json();
       this.seuilAppris = conf.seuil;
-      this.emp = await ort.InferenceSession.create("empreinte.onnx", this.opts);
+      this.emp = await ort.InferenceSession.create("empreinte.onnx", this.optsCpu);
     } catch (e) { console.warn("Empreintes indisponibles", e); }
     return this.emp;
   }
@@ -202,7 +195,7 @@ export class Moteur {
   // mètres, et en roulant il ne reste qu'une seconde avant qu'il sorte du champ. Cette région, analysée à pleine
   // définition une image sur deux, le montre presque deux fois plus gros : il est reconnu vers 35 mètres.
   // 36° de large et 19° de haut (de 14° au-dessus de l'horizon à 5° en dessous), pour un objectif qui voit 68° dans sa
-  // grande dimension. L'horizon est celui que donnent les panneaux déjà vus (majHorizonPanneaux), à défaut le haut des
+  // grande dimension. L'horizon est celui que donnent les panneaux déjà vus (voterHorizon), à défaut le haut des
   // lignes de la route (majHorizon), à défaut le milieu de l'image.
   regionLoin(w, h) {
     const ppd = Math.max(w, h) / 68;
@@ -372,7 +365,7 @@ export class Moteur {
       if (d.dist) t.dist = t.dist ? 0.7 * t.dist + 0.3 * d.dist : d.dist;
       t.hits++; t.misses = 0; t.vu = performance.now();
     };
-    for (const [v, i, j] of pairs) { if (tUsed.has(i) || dUsed.has(j)) continue; tUsed.add(i); dUsed.add(j); toucher(this.pistes[i], dets[j], v); }
+    for (const [v, i, j] of pairs) { if (tUsed.has(i) || dUsed.has(j)) continue; tUsed.add(i); dUsed.add(j); toucher(this.pistes[i], dets[j], v); this.voterHorizon(this.pistes[i], w, h, champ); }
     // Seconde passe, panneaux, feux et marquages hors lignes : avec peu d'images par seconde (ou un objet tout proche), l'objet
     // ne recouvre plus son cadre précédent. On le rattache à la piste la plus proche qui porte le même nom (pour un feu : la
     // même couleur), vue il y a deux images au plus (à moins de 2,5 fois sa taille, 1,5 pour un feu, tailles comparables) :
@@ -391,7 +384,7 @@ export class Moteur {
       });
     });
     loin.sort((a, b) => a[0] - b[0]);
-    for (const [, i, j] of loin) { if (tUsed.has(i) || dUsed.has(j)) continue; tUsed.add(i); dUsed.add(j); toucher(this.pistes[i], dets[j], 0); }
+    for (const [, i, j] of loin) { if (tUsed.has(i) || dUsed.has(j)) continue; tUsed.add(i); dUsed.add(j); toucher(this.pistes[i], dets[j], 0); this.voterHorizon(this.pistes[i], w, h, champ); }
     dets.forEach((d, j) => {
       if (dUsed.has(j)) return;
       const t = { id: this.prochainId++, box: d.box.slice(), groupe: groupeDe(d.cls), scores: {}, conf: 0, hits: 0, misses: 0, ok: false, debut: performance.now() };
@@ -401,10 +394,16 @@ export class Moteur {
     });
     // Un objet non retrouvé ne compte comme manqué que si cette passe pouvait le voir : la vue au loin ne voit que sa
     // région, et l'image entière ne voit pas un panneau encore trop petit pour elle (trouvé jusqu'ici par la vue au loin).
+    // Encore faut-il que la vue au loin revienne le regarder : si elle vient d'être coupée (téléphone qui ralentit, réglage)
+    // ou si sa région s'est déplacée, le panneau est compté comme manqué par l'image entière. Sans cela sa piste ne
+    // mourait jamais : cadre figé à l'écran, et le panneau suivant du même nom rattaché à ce fantôme, donc pas annoncé.
+    // (Image arrêtée : la vue au loin ne passe pas, mais le panneau n'a pas bougé non plus ; sa piste est gardée.)
+    const suivie = !champ && (this.loin > 1 || this.net) ? this.regionLoin(w, h) : null;
+    const dans = (r, x, y) => x > r[0] && x < r[0] + r[2] && y > r[1] && y < r[1] + r[3];
     const visible = t => {
       const cx = (t.box[0] + t.box[2]) / 2, cy = (t.box[1] + t.box[3]) / 2, c = Math.max(t.box[2] - t.box[0], t.box[3] - t.box[1]);
-      if (champ) return cx > champ[0] && cx < champ[0] + champ[2] && cy > champ[1] && cy < champ[1] + champ[3];
-      return !(t.groupe === "s" && t.auLoin && c * pleine < 14);
+      if (champ) return dans(champ, cx, cy);
+      return !(t.groupe === "s" && t.auLoin && c * pleine < 14 && suivie && dans(suivie, cx, cy));
     };
     this.pistes.forEach((t, i) => {
       if (!groupes.has(t.groupe)) return;
@@ -499,13 +498,13 @@ export class Moteur {
     this.net = net;
     this.image++;
     // vue au loin : une analyse sur « loin », jamais sur une image arrêtée (là, on veut tout ce que montre l'image)
-    let champ = this.loin > 1 && !net && this.image % this.loin === 0 ? this.regionLoin(w, h) : null;
+    let champ = this.loin > 1 && !net && this.image % this.loin === 0 ? this.regionLoin(w, h) : null, attend = false;
     // Sauf si un panneau proche, vu sur le côté par la dernière image entière, attend encore d'être confirmé : il aura quitté
     // l'image avant la prochaine image entière. On regarde alors de nouveau l'image entière (trois fois de suite au plus,
     // pour qu'un objet douteux sur le côté ne prive pas longtemps de la vue au loin).
     if (champ && this.proche) {
       const pleine = 640 / Math.max(w, h), dedans = b => b[0] > champ[0] + 2 && b[1] > champ[1] + 2 && b[2] < champ[0] + champ[2] - 2 && b[3] < champ[1] + champ[3] - 2;
-      const attend = this.reports < 3 && this.pistes.some(t => t.groupe === "s" && !t.ok && !t.misses && t.hits < 4 && Math.max(t.box[2] - t.box[0], t.box[3] - t.box[1]) * pleine >= 18 && !dedans(t.box));
+      attend = this.reports < 3 && this.pistes.some(t => t.groupe === "s" && !t.ok && !t.misses && t.hits < 4 && Math.max(t.box[2] - t.box[0], t.box[3] - t.box[1]) * pleine >= 18 && !dedans(t.box));
       if (attend) { champ = null; this.reports++; } else this.reports = 0;
     }
     if (champ) return this.analyserLoin(src, w, h, champ, t0, generation, debug);
@@ -516,10 +515,11 @@ export class Moteur {
     const ech = 640 / Math.max(w, h);
     for (const d of dets) d.ech = ech;
     this.majHorizon(dets, w, h);
-    this.majHorizonPanneaux(dets, w, h, null);
     const groupes = new Set(["s", "m"]);
-    // usagers : une analyse sur deux en tout (chaque image entière quand elle alterne avec la vue au loin)
-    if (this.avecUsagers && this.usagers && (this.loin === 2 && !net ? true : this.loin > 2 && !net ? this.pleines % 2 === 0 : this.image % 2 === 0)) {
+    // usagers : une analyse sur deux en tout. Quand l'image entière alterne avec la vue au loin, c'est à chaque image
+    // entière, sauf celle qui remplace une vue au loin reportée : le panneau proche qui attend doit être revu au plus vite.
+    const tourUsagers = net || this.loin < 2 ? this.image % 2 === 0 : this.loin === 2 ? !attend : this.pleines % 2 === 0;
+    if (this.avecUsagers && this.usagers && tourUsagers) {
       const p2 = this.tenseur(src, w, h, Math.min(this.cote, 512));
       const o2 = await this.usagers.run({ [this.usagers.inputNames[0]]: p2.t });
       const { usagers, feux } = this.postUsagers(o2[this.usagers.outputNames[0]], p2, w, h);
@@ -551,7 +551,6 @@ export class Moteur {
     if (generation !== this.generation) return { nouveaux: [], changes: [], brutes: null };
     const ech = 640 / Math.max(champ[2], champ[3]);
     for (const d of dets) d.ech = ech;
-    this.majHorizonPanneaux(dets, w, h, champ);
     const brutes = debug ? dets.map(d => ({ ...d })) : null;
     if (this.actifs) dets = dets.filter(d => this.actifs.has(d.cls));
     const { nouveaux, changes } = this.suivre(dets, new Set(["s"]), w, h, champ);
@@ -573,16 +572,21 @@ export class Moteur {
 
   // Horizon d'après les panneaux eux-mêmes : un panneau encore loin se trouve un peu au-dessus de l'horizon (2,5° en
   // moyenne vu par la vue au loin, 4,5° pour un panneau encore petit dans l'image entière, donc un peu plus proche).
-  // Chaque panneau reconnu corrige donc l'horizon, lissé d'un panneau à l'autre. Quand le téléphone est penché dans son
+  // Chaque panneau suivi corrige donc l'horizon, lissé d'un vote à l'autre. Quand le téléphone est penché dans son
   // support, la vue au loin se replace ainsi là où les panneaux apparaissent, même sans ligne au sol.
-  majHorizonPanneaux(dets, w, h, champ) {
-    const ppd = Math.max(w, h) / 68, pleine = 640 / Math.max(w, h);
-    for (const d of dets) {
-      if (D.items[d.cls]?.groupe !== "s") continue;
-      if (!champ && Math.max(d.box[2] - d.box[0], d.box[3] - d.box[1]) * pleine >= 30) continue;  // image entière : les panneaux encore petits seulement
-      const y = Math.min(Math.max((d.box[1] + d.box[3]) / 2 + (champ ? 2.5 : 4.5) * ppd, 0.2 * h), 0.8 * h), hp = this.horizonPanneaux;
-      this.horizonPanneaux = hp?.w === w && hp.h === h ? { w, h, y: 0.85 * hp.y + 0.15 * y, n: hp.n + 1 } : { w, h, y, n: 1 };
-    }
+  // Un panneau ne vote que lorsqu'il s'est déplacé dans l'image d'au moins la moitié de sa taille depuis son dernier vote :
+  // un objet fixe pris pour un panneau (autocollant, reflet du tableau de bord) ne vote donc jamais, alors qu'il aurait
+  // fini par attirer la vue au loin sur lui.
+  voterHorizon(t, w, h, champ) {
+    if (t.groupe !== "s") return;
+    const cx = (t.box[0] + t.box[2]) / 2, cy = (t.box[1] + t.box[3]) / 2, c = Math.max(t.box[2] - t.box[0], t.box[3] - t.box[1]);
+    if (!t.repere) { t.repere = [cx, cy]; return; }
+    if (Math.hypot(cx - t.repere[0], cy - t.repere[1]) < 0.5 * c) return;
+    t.repere = [cx, cy];
+    const ppd = Math.max(w, h) / 68;
+    if (!champ && c * 640 / Math.max(w, h) >= 30) return;  // image entière : les panneaux encore petits seulement
+    const y = Math.min(Math.max(cy + (champ ? 2.5 : 4.5) * ppd, 0.2 * h), 0.8 * h), hp = this.horizonPanneaux;
+    this.horizonPanneaux = hp?.w === w && hp.h === h ? { w, h, y: 0.85 * hp.y + 0.15 * y, n: hp.n + 1 } : { w, h, y, n: 1 };
   }
 
   // ---------- « Mes panneaux » : panneaux d'une photo, et empreintes d'un panneau choisi ----------
