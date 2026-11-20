@@ -91,6 +91,7 @@ export async function ouvrirCamera({ fichier = null, apresFermeture = () => {} }
   // puis rouvert) pendant le chargement des modèles ou l'ouverture de la caméra.
   const moi = C;
   moteur.reinitialiser();
+  moteur.oublierHorizon();
   try {
     if (!moteur.pret) await (chargement ??= moteur.charger({ backend: new URLSearchParams(location.search).get("backend"), progression: t => statut(t, "charge") }).finally(() => (chargement = null)));
     if (C !== moi) return;

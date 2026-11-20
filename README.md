@@ -390,8 +390,10 @@ panneau hors de l'image.
 
 La vue au loin regarde l'image entière deux fois moins souvent : à quatre analyses par seconde, téléphone couché,
 elle fait perdre trois panneaux proches sur cent. L'appli ne l'allume donc qu'à partir de 6,5 analyses par seconde
-couché et 3,5 debout, et la reporte quand un panneau proche, sur le côté, attend d'être confirmé. Elle annonce aussi
-des panneaux que Panoramax n'a pas annotés : sur neuf de ces annonces contrôlées à l'œil, quatre étaient justes (un
+couché et 3,5 debout, et la reporte quand un panneau proche, sur le côté, attend d'être confirmé. Elle se place
+d'après les panneaux déjà vus (un panneau lointain se trouve un peu au-dessus de l'horizon) : avec un téléphone penché
+de 8° vers le haut ou vers le bas, l'avance reste de 28 m, contre 22 m quand elle ne se fie qu'aux lignes de la route.
+Elle annonce aussi des panneaux que Panoramax n'a pas annotés : sur neuf de ces annonces contrôlées à l'œil, quatre étaient justes (un
 cédez-le-passage, et trois fois un même 50 que l'image entière n'annonçait jamais), deux presque justes (une variante
 voisine, une balise) et trois fausses (un stop pour un sens interdit, un 90 pour le 50, le dos d'un panneau). Ces
 trajets sont des photos nettes : le flou d'une vraie vidéo ou un objectif très grand-angle font baisser ces chiffres

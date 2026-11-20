@@ -19,7 +19,7 @@ annonce (panneau confirmé par le suivi) et la compare à la vérité terrain :
 
 Dans un cas, ces clés décrivent l'image et non le moteur : flux=1920 (définition de la caméra), echelle=0.6 (objectif
 ultra grand-angle : tout est plus petit), zoom=0.02 (flou d'avancée), flou=1.2 (points), bruit=4, jpeg=45, lum=0.6,
-rep=2 (deux analyses par image : téléphone deux fois plus rapide).
+rep=2 (deux analyses par image : téléphone deux fois plus rapide), penche=8 (téléphone penché de 8° vers le haut).
 --pas 2 : une image sur deux (le véhicule roule deux fois plus vite, ou le téléphone calcule deux fois moins vite).
 Les photos sont espacées de 3,6 m en moyenne : à 50 km/h, --pas 1 vaut 4 analyses par seconde, rep=4 en vaut 16.
 """
@@ -38,6 +38,7 @@ async (cfg) => {
   const origine = window.__origine || (window.__origine = { loin: m.loin, proche: m.proche });
   m.configurer({ cote: cfg.cote, avecUsagers: false, actifs: null, ...origine, ...cfg.options });
   m.reinitialiser();
+  m.oublierHorizon?.();  // chaque trajet est une autre voiture, un autre support
   const cv = document.createElement('canvas'); cv.width = cfg.w; cv.height = cfg.h;
   const ctx = cv.getContext('2d', { willReadFrequently: true });
   const annonces = [], vus = [], suivis = [];
@@ -84,15 +85,17 @@ def serveur(racine):
     return srv
 
 
-def cadre(mode, vue, echelle=1.0, flux=1280):
+def cadre(mode, vue, echelle=1.0, flux=1280, penche=0.0):
     """(largeur, hauteur du flux simulé, découpe de la vue -> flux, fonction cadre de la vue -> cadre du flux).
     echelle < 1 : objectif plus large que celui prévu (ultra grand-angle), la vue n'occupe que le milieu de l'image.
-    flux : largeur de l'image de la caméra (1280 ou 1920)."""
+    flux : largeur de l'image de la caméra (1280 ou 1920).
+    penche : téléphone penché de tant de degrés vers le haut (l'horizon descend dans l'image), ou vers le bas si négatif."""
     W, H = vue
+    bascule = penche * flux / 68  # points de l'image par degré, pour un objectif qui voit 68° dans sa grande dimension
     if mode == "couche":
         w, h = flux, flux * 9 // 16
         e = w / W * echelle
-        ox, oy = (w - W * e) / 2, (h - H * e) / 2
+        ox, oy = (w - W * e) / 2, (h - H * e) / 2 + bascule
         return w, h, [0, 0, W, H, ox, oy, W * e, H * e], lambda b: [b[0] * e + ox, b[1] * e + oy, b[2] * e + ox, b[3] * e + oy]
     # debout : le téléphone voit 68° en hauteur et 41,6° en largeur ; la vue (68° x 41,6°) n'en couvre que la bande centrale
     f = (W / 2) / math.tan(math.radians(68 / 2))
@@ -100,7 +103,7 @@ def cadre(mode, vue, echelle=1.0, flux=1280):
     x0, larg = W / 2 - demi, 2 * demi
     w, h = flux * 9 // 16, flux
     e = w / larg
-    dy = (h - H * e) / 2
+    dy = (h - H * e) / 2 + bascule
     return w, h, [x0, 0, larg, H, 0, dy, w, H * e], lambda b: [(b[0] - x0) * e, b[1] * e + dy, (b[2] - x0) * e, b[3] * e + dy]
 
 
@@ -174,8 +177,8 @@ async def mesurer(a):
         nom, _, reste = c.partition(":")
         opts = dict(kv.split("=") for kv in reste.split(",") if kv)
         cote = int(opts.pop("cote", 512))
-        opts = {k: (float(v) if v.replace(".", "", 1).isdigit() else v) for k, v in opts.items()}
-        mesure = {k: opts.pop(k) for k in list(opts) if k in ("zoom", "flou", "bruit", "jpeg", "lum", "echelle", "flux", "rep")}  # défauts de l'image, pas du moteur
+        opts = {k: (float(v) if v.lstrip("-").replace(".", "", 1).isdigit() else v) for k, v in opts.items()}
+        mesure = {k: opts.pop(k) for k in list(opts) if k in ("zoom", "flou", "bruit", "jpeg", "lum", "echelle", "flux", "rep", "penche")}  # défauts de l'image, pas du moteur
         cas.append((nom, cote, opts, mesure))
     resultats = {}
     async with async_playwright() as p:
@@ -196,7 +199,7 @@ async def mesurer(a):
                     total = collections.Counter(); tous = []; ms = []
                     for d in trajets:
                         v = json.loads((d / "verite.json").read_text())
-                        w, h, decoupe, vers_flux = cadre(mode, v["vue"]["taille"], mesure.get("echelle", 1.0), int(mesure.get("flux", 1280)))
+                        w, h, decoupe, vers_flux = cadre(mode, v["vue"]["taille"], mesure.get("echelle", 1.0), int(mesure.get("flux", 1280)), mesure.get("penche", 0.0))
                         images = [f"/trajets/{d.name}/{im['fichier']}" for k, im in enumerate(v["images"]) if k % pas == 0]
                         res = await pg.evaluate(JS, {"cote": cote, "options": opts, "w": w, "h": h, "cadre": decoupe, "images": images, "degrade": mesure, "rep": int(mesure.get("rep", 1))})
                         bilan, details = juger(v, res, pas, w, h, vers_flux, a.minimum)

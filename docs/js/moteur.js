@@ -105,13 +105,15 @@ export class Moteur {
     const cle = "repere.gpu", signature = `1|${APP.version}|${navigator.userAgent}`;
     const note = this.noteGpu();
     const ecarter = async (det, cls) => {
+      const anciennes = [this.session, this.cls];
       this.fournisseurs = ["wasm"]; this.gpuEcarte = true;
       this.opts = { ...opts, executionProviders: ["wasm"] };
-      this.session = det || await ort.InferenceSession.create("detecteur.onnx", this.opts);
+      this.session = det;
       if (this.cls) this.cls = cls || await ort.InferenceSession.create("panneaux.onnx", this.opts);
+      for (const s of anciennes) s?.release?.().catch(() => {});  // les sessions de la carte graphique ne servent plus
     };
     try {
-      if (note) { if (!note.ok) await ecarter(); return; }
+      if (note) return;  // déjà vérifiée et trouvée juste (trouvée fausse : charger() ne l'a même pas préparée)
       progression("Vérification de la carte graphique…");
       const wasm = { ...opts, executionProviders: ["wasm"] };
       // image d'essai : une route grise avec quelques formes de panneaux (toujours la même)
@@ -176,6 +178,8 @@ export class Moteur {
   }
   // « generation » change à chaque remise à zéro : une analyse lancée avant (le calcul sur carte graphique rend la main à la page
   // pendant qu'il tourne) reconnaît ainsi que ses détections sont celles d'une image dépassée, et ne repeuple pas le suivi.
+  // nouvelle séance de caméra ou nouvelle vidéo : le téléphone a pu être remis autrement dans son support
+  oublierHorizon() { this.horizon = null; this.horizonPanneaux = null; }
   reinitialiser() { this.pistes = []; this.prochainId = 1; this.vitesse = { valeur: null, code: null, quand: 0 }; this.image = 0; this.lignes = { g: {}, d: {} }; this.generation = (this.generation || 0) + 1; }
 
   // ---------- pré-traitement : image -> tenseur letterbox (multiple de 32) ----------
@@ -198,11 +202,13 @@ export class Moteur {
   // mètres, et en roulant il ne reste qu'une seconde avant qu'il sorte du champ. Cette région, analysée à pleine
   // définition une image sur deux, le montre presque deux fois plus gros : il est reconnu vers 35 mètres.
   // 36° de large et 19° de haut (de 14° au-dessus de l'horizon à 5° en dessous), pour un objectif qui voit 68° dans sa
-  // grande dimension ; l'horizon est pris au milieu de l'image tant que les lignes de la route n'ont pas dit mieux.
+  // grande dimension. L'horizon est celui que donnent les panneaux déjà vus (majHorizonPanneaux), à défaut le haut des
+  // lignes de la route (majHorizon), à défaut le milieu de l'image.
   regionLoin(w, h) {
     const ppd = Math.max(w, h) / 68;
     const rw = Math.min(w, Math.round(36 * ppd)), rh = Math.min(h, Math.round(19 * ppd));
-    const yh = this.horizon?.w === w && this.horizon.h === h ? this.horizon.y : h / 2;
+    const hp = this.horizonPanneaux, hl = this.horizon;
+    const yh = hp?.w === w && hp.h === h && hp.n >= 3 ? hp.y : hl?.w === w && hl.h === h ? hl.y : h / 2;
     return [Math.round((w - rw) / 2), Math.round(Math.min(Math.max(0, yh - 14 * ppd), h - rh)), rw, rh];
   }
 
@@ -510,6 +516,7 @@ export class Moteur {
     const ech = 640 / Math.max(w, h);
     for (const d of dets) d.ech = ech;
     this.majHorizon(dets, w, h);
+    this.majHorizonPanneaux(dets, w, h, null);
     const groupes = new Set(["s", "m"]);
     // usagers : une analyse sur deux en tout (chaque image entière quand elle alterne avec la vue au loin)
     if (this.avecUsagers && this.usagers && (this.loin === 2 && !net ? true : this.loin > 2 && !net ? this.pleines % 2 === 0 : this.image % 2 === 0)) {
@@ -544,6 +551,7 @@ export class Moteur {
     if (generation !== this.generation) return { nouveaux: [], changes: [], brutes: null };
     const ech = 640 / Math.max(champ[2], champ[3]);
     for (const d of dets) d.ech = ech;
+    this.majHorizonPanneaux(dets, w, h, champ);
     const brutes = debug ? dets.map(d => ({ ...d })) : null;
     if (this.actifs) dets = dets.filter(d => this.actifs.has(d.cls));
     const { nouveaux, changes } = this.suivre(dets, new Set(["s"]), w, h, champ);
@@ -561,6 +569,20 @@ export class Moteur {
     if (haut === null) return;
     haut = Math.min(Math.max(haut, 0.3 * h), 0.7 * h);
     this.horizon = this.horizon?.w === w && this.horizon.h === h ? { w, h, y: 0.92 * this.horizon.y + 0.08 * haut } : { w, h, y: haut };
+  }
+
+  // Horizon d'après les panneaux eux-mêmes : un panneau encore loin se trouve un peu au-dessus de l'horizon (2,5° en
+  // moyenne vu par la vue au loin, 4,5° pour un panneau encore petit dans l'image entière, donc un peu plus proche).
+  // Chaque panneau reconnu corrige donc l'horizon, lissé d'un panneau à l'autre. Quand le téléphone est penché dans son
+  // support, la vue au loin se replace ainsi là où les panneaux apparaissent, même sans ligne au sol.
+  majHorizonPanneaux(dets, w, h, champ) {
+    const ppd = Math.max(w, h) / 68, pleine = 640 / Math.max(w, h);
+    for (const d of dets) {
+      if (D.items[d.cls]?.groupe !== "s") continue;
+      if (!champ && Math.max(d.box[2] - d.box[0], d.box[3] - d.box[1]) * pleine >= 30) continue;  // image entière : les panneaux encore petits seulement
+      const y = Math.min(Math.max((d.box[1] + d.box[3]) / 2 + (champ ? 2.5 : 4.5) * ppd, 0.2 * h), 0.8 * h), hp = this.horizonPanneaux;
+      this.horizonPanneaux = hp?.w === w && hp.h === h ? { w, h, y: 0.85 * hp.y + 0.15 * y, n: hp.n + 1 } : { w, h, y, n: 1 };
+    }
   }
 
   // ---------- « Mes panneaux » : panneaux d'une photo, et empreintes d'un panneau choisi ----------
