@@ -128,7 +128,14 @@ export class Moteur {
       detW = await ort.InferenceSession.create("detecteur.onnx", this.optsCpu);
       const nom = this.session.inputNames[0], sortie = this.session.outputNames[0];
       const b = (await detW.run({ [nom]: prep.t }))[sortie];
-      const a = await this.session.run({ [nom]: prep.t }).then(r => r[sortie], e => { console.warn("Calcul impossible sur la carte graphique", e); return null; });
+      const a = await Promise.race([
+        this.session.run({ [nom]: prep.t }).then(r => r[sortie], e => { console.warn("Calcul impossible sur la carte graphique", e); return null; }),
+        new Promise(r => setTimeout(() => r(undefined), 60000)),
+      ]);
+      // Sans réponse au bout d'une minute (carte perdue en plein calcul), l'appli resterait bloquée sur ce message, et le
+      // moteur de calcul refuserait tout autre travail dans la page : la carte est notée fautive et l'appli se recharge,
+      // cette fois sur le processeur. (Si la note ne peut pas être écrite, pas de rechargement : il se répéterait sans fin.)
+      if (a === undefined) { localStorage.setItem("repere.gpu", JSON.stringify({ s: signature, ok: false })); location.reload(); await new Promise(() => {}); }
       let juste = !!a && a.data.length === b.data.length;
       if (juste) for (let i = 0, larg = a.dims[2]; i < a.data.length && juste; i += larg) {
         for (let k = 0; k < 4; k++) if (!(Math.abs(a.data[i + k] - b.data[i + k]) <= 4)) juste = false;
