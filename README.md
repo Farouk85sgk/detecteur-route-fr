@@ -111,8 +111,21 @@ photos, trajets et progression restent sur le téléphone. Sur Android ou iPhone
   Si le nom change quand le panneau se lit mieux de près, l'annonce est refaite. Un objet fixe devant la caméra
   (autocollant, reflet) pris pour un panneau n'est annoncé qu'une fois. Neuf panneaux souvent annoncés à tort
   (balises, vidange pour camping-cars, parking...) ont un seuil plus sévère (`SEUILS` dans `route_fr/classes.py`).
+- **Voir de plus loin** : quand le téléphone analyse assez d'images par seconde, une analyse sur deux regarde en
+  grand le milieu de l'image, là où les panneaux apparaissent. Ils sont annoncés deux à trois fois plus tôt, et des
+  panneaux restés trop petits pour l'image entière sont enfin vus (mesures plus bas). Un panneau repéré mais pas
+  encore confirmé porte un fin contour blanc. Réglage « Voir les panneaux de plus loin ».
+- **Le bon appareil** : sur un téléphone à plusieurs caméras, l'appli prend la caméra principale du dos quand le
+  navigateur en ouvre une autre (très grand-angle, téléobjectif), et un bouton « Changer » passe à la suivante. Une
+  fois par version, une image d'essai est calculée par la carte graphique et par le processeur : si les résultats
+  diffèrent (pilote graphique défaillant), tout le calcul passe sur le processeur. Écrit d'après les normes et
+  essayé avec des caméras et une carte graphique simulées, pas sur un vrai téléphone.
+- **Diagnostic** : chaque trajet garde la taille de l'image reçue, le mode de calcul, le rythme d'analyse, le
+  nombre de panneaux aperçus et annoncés (bas de la page du trajet) ; avec « Afficher les zones testées », ces
+  chiffres s'affichent en direct. C'est ce qu'il faut regarder quand la détection trouve peu de choses.
 - **Mes trajets** : une photo de la route à chaque élément repéré (cadres incrustés), avec l'heure, le moment de la
-  vidéo et la position GPS (lien vers la carte) ; vidéo du trajet à enregistrer ou partager ; quiz du trajet.
+  vidéo et la position GPS (lien vers la carte) ; la photo d'un panneau annoncé de loin est refaite quand il a
+  grossi ; vidéo du trajet à enregistrer ou partager ; quiz du trajet.
 - **Album** : 316 éléments rangés en 14 familles, avec les schémas officiels des panneaux ; en couleur une fois
   repérés sur la route, avec leur fiche (sens, bon réflexe, comment le reconnaître, ta photo).
 - **Code de la route** : **685 questions originales en 57 séries**, classées selon les dix thèmes de l'examen
@@ -361,6 +374,30 @@ environ une fois sur deux, un panneau est annoncé en trop, à la place d'un pan
 pour un « cassis ou dos-d'âne » A2a, ou un « débouché sur un quai » A20). Sur un seul cœur de processeur, sans
 carte graphique, l'analyse y prend environ 140 ms par image (machine d'essai) ; environ 100 ms sur deux cœurs.
 
+**En roulant** : seize « trajets de contrôle » (`tools/trajets_reels.py`), des suites de 23 à 112 photos prises tous
+les 3,6 m en moyenne dans les zones de validation, ramenées au champ d'un téléphone. Le vrai moteur de l'appli les
+reçoit une par une dans un navigateur (`tools/mesurer_trajets.py`) : à 50 km/h, une analyse par photo vaut quatre
+analyses par seconde, deux analyses par photo en valent huit. Un « passage » est un vrai panneau suivi sur plusieurs
+photos (59 passages téléphone couché, 48 debout, où le champ est plus étroit) ; il est annoncé si le suivi tient à
+cet endroit un panneau annoncé sous le bon nom. L'avance est la distance parcourue entre l'annonce et la sortie du
+panneau hors de l'image.
+
+| Analyses par seconde (à 50 km/h) | Couché, image entière seule | Couché, avec la vue au loin | Debout, image entière seule | Debout, avec la vue au loin |
+|---|---|---|---|---|
+| 4 | 83 % annoncés, 13 m d'avance | 80 %, 27 m | 83 %, 8 m | 81 %, 26 m |
+| 8 | 85 %, 13 m | **86 %, 30 m** | 81 %, 8 m | **85 %, 28 m** |
+| 15 | 85 %, 14 m | **88 %, 30 m** | | |
+
+La vue au loin regarde l'image entière deux fois moins souvent : à quatre analyses par seconde, téléphone couché,
+elle fait perdre trois panneaux proches sur cent. L'appli ne l'allume donc qu'à partir de 6,5 analyses par seconde
+couché et 3,5 debout, et la reporte quand un panneau proche, sur le côté, attend d'être confirmé. Elle annonce aussi
+des panneaux que Panoramax n'a pas annotés : sur neuf de ces annonces contrôlées à l'œil, quatre étaient justes (un
+cédez-le-passage, et trois fois un même 50 que l'image entière n'annonçait jamais), deux presque justes (une variante
+voisine, une balise) et trois fausses (un stop pour un sens interdit, un 90 pour le 50, le dos d'un panneau). Ces
+trajets sont des photos nettes : le flou d'une vraie vidéo ou un objectif très grand-angle font baisser ces chiffres
+(sur six de ces trajets, image entière seule : 87 % sans défaut, 53 % avec un fort flou d'avancée, 72 % avec un
+objectif très grand-angle).
+
 ## 4. Améliorer les modèles avec vos propres vidéos
 
 Filmez vos trajets habituels (caméra embarquée ou téléphone sur support), puis :
@@ -424,6 +461,10 @@ python tools/miner_rejets.py && python tools/train_classifieur.py --data dataset
 python tools/corriger_vignettes.py --data datasets/vignettes --corrections data/panoramax_corrections.txt --reel datasets/reel --vues datasets_src/panoramax
 python tools/train_classifieur.py --data datasets/vignettes datasets/vignettes_synth --depart weights/panneaux_cls.pt --epochs 6 --lr 8e-4
 python tools/evaluer_chaine.py --poids weights/route_fr_yolov5n.pt --classifieur weights/panneaux_cls.pt
+# --- détection en direct : trajets de contrôle (suites de photos Panoramax), puis mesure dans un navigateur ---
+python tools/trajets_reels.py telecharge --out datasets/trajets_reels
+python tools/mesurer_trajets.py --trajets datasets/trajets_reels --modes couche debout --cas "sans:cote=512,loin=0" "loin:cote=512,loin=2,rep=2"
+
 # --- appli ---
 python tools/make_icons.py --commons datasets_src/commons   # icônes (schémas officiels de Wikimedia Commons)
 python tools/construire_series.py                           # banque de questions du code
