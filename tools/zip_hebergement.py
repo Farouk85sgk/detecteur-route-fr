@@ -38,8 +38,8 @@ AddDefaultCharset utf-8
 </IfModule>
 """
 
-LISEZ_MOI = """REPÈRE : mettre l'appli sur votre site, puis sur votre téléphone
-================================================================
+LISEZ_MOI = """PERMISCOPE : mettre l'appli sur votre site, puis sur votre téléphone
+====================================================================
 
 1) Sur Hostinger
    - Ouvrez hPanel, puis « Sites web » et « Gestionnaire de fichiers ».
